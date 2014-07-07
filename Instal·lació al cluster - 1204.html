@@ -1,0 +1,126 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<!-- saved from url=(0057)file:///tmp/Instal%C2%B7laci%C3%B3_al_cluster_-_1204.html -->
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Instal·lació al cluster - 1204</title>
+
+<style>
+body { font:80% Verdana,Tahoma,Arial,sans-serif; }
+h1, h2, h3, h4 {  font-family: "Trebuchet MS",Georgia,"Times New Roman",serif; }
+ul.toc { padding: 4px; margin-left: 0; }
+ul.toc li { list-style-type:none; }
+ul.toc li.heading2 { margin-left: 1em; }
+ul.toc li.heading3 { margin-left: 2em; }
+a.wiki-anchor { display: none; margin-left: 6px; text-decoration: none; }
+a.wiki-anchor:hover { color: #aaa !important; text-decoration: none; }
+h1:hover a.wiki-anchor, h2:hover a.wiki-anchor, h3:hover a.wiki-anchor { display: inline; color: #ddd; }
+</style>
+</head>
+<body>
+<a name="Instal·lació-al-cluster-1204"></a>
+<h1>Instal·lació al cluster - 12.04<a href="file:///tmp/Instal%C2%B7laci%C3%B3_al_cluster_-_1204.html#Instal·lació-al-cluster-1204" class="wiki-anchor">¶</a></h1>
+
+
+Notes:
+	<ul>
+	<li>tota el procés d'instal·lació es fa com a usuari "forero" dins el directori /home/soft/asiya</li>
+		<li>se suposa que perl, java i svn ja estan instal·lats</li>
+		<li>algunes llibreries externes estan instal·lades a /home/usuaris/emt ( Veure <a href="file:///tmp/Instal%C2%B7laci%C3%B3_al_cluster.html" class="wiki-page"> Instal·lació al cluster - 10.04</a> )</li>
+	</ul>
+
+
+	<a name="BUILDING-ASIYA"></a>
+<h2>BUILDING ASIYA<a href="file:///tmp/Instal%C2%B7laci%C3%B3_al_cluster_-_1204.html#BUILDING-ASIYA" class="wiki-anchor">¶</a></h2>
+
+
+	<p>1.- Asiya es baixa del svn públic i segueix el procediment habitual (veure <a href="file:///tmp/Instal%C2%B7laci%C3%B3_al_cluster.html" class="wiki-page"> Instal·lació al cluster - 10.04</a>)    <br>    ~$ cd /home/soft/asiya<br>    ~$ svn co <a class="external" href="http://svn-rdlab.lsi.upc.edu/subversion/asiya/public">http://svn-rdlab.lsi.upc.edu/subversion/asiya/public</a><br>    ~$ perl Makefile.PL</p>
+
+
+	<p>2.- Instal·lar mòduls de perl del CPAN:</p>
+
+
+	<pre><code>La majoria de paquets perl ja venen amb la instal·lació per defecte. <br>    Tot i així, els que no s'instal·len en la llibreria de sistema per a que es puguin usar des dels nodes, <br>    i també a /home/usuaris/emt/perl5  per poder executar-ho des de els nodes login.</code></pre>
+
+
+	<pre><code>~$ perl -MCPAN -we 'install "XML::DOM"' .. i així per a tots els paquets marcats com a dependències al manual.</code></pre>
+
+
+	<pre><code>Quan hi ha problemes amb el yaml lock:</code></pre>
+
+
+	<pre><code>~$ perl -MCPAN -e '*CPAN::_flock = sub { 1 }; install( "Modern::Perl" )'</code></pre>
+
+
+	<pre><code>En la versió actual faltaven els següents mòduls:</code></pre>
+
+
+	<pre><code>cpan -install Modern::Perl<br>        perl -MCPAN -e '*CPAN::_flock = sub { 1 }; install( "Unicode::String" )'<br>        perl -MCPAN -e '*CPAN::_flock = sub { 1 }; install( "Data::UUID" )'<br>        perl -MCPAN -e '*CPAN::_flock = sub { 1 }; install( "File::ReadBackwards" )'<br>        perl -MCPAN -e '*CPAN::_flock = sub { 1 }; install( "boolean" )'<br>        perl -MCPAN -e '*CPAN::_flock = sub { 1 }; install( "Statistics::LSNoHistory" )'<br>        perl -MCPAN -e '*CPAN::_flock = sub { 1 }; install( "Statistics::RankCorrelation" )'<br>        perl -MCPAN -e '*CPAN::_flock = sub { 1 }; install( "Statistics::Distributions" )'<br>        perl -MCPAN -e '*CPAN::_flock = sub { 1 }; install( "Statistics/Descriptive.pm" )'</code></pre>
+
+
+	<p>3.- Instal·lar SVMTool</p>
+
+
+	<pre><code>~$ cd ~/sources/asiya/tools/svmtool-1.3/<br>    ~$ perl Makefile.PL<br>    ~$ make<br>    ~$ make install</code></pre>
+
+
+	<p>4.- Instal·lar asiya</p>
+
+
+	<pre><code>~$ cd ~/sources/asiya/<br>    ~$ perl Makefile.PL (comprovem que no hi ha dependències pendents)<br>    ~$ make<br>    ~$ make install</code></pre>
+
+
+	<a name="EXTERNAL-COMPONENTS"></a>
+<h2>EXTERNAL COMPONENTS<a href="file:///tmp/Instal%C2%B7laci%C3%B3_al_cluster_-_1204.html#EXTERNAL-COMPONENTS" class="wiki-anchor">¶</a></h2>
+
+
+	<pre><code>Tots els components externs estan instal·lats a /home/usuaris/emt (veure [[Instal·lació al cluster| Instal·lació al cluster - 10.04]])<br>    Els següents components són programes que es troben al directori tools d'Asiya. Aquests sí s'han de reinstal·lar:</code></pre>
+
+
+	<p>1.- Instal·lar Swirl:</p>
+
+
+	<pre><code>En cas que els binaris de swirl no funcionin (p.e. swirl-1.1.0/src/bin/swirl_classify cannot execute binary file), <br>        cal tornar a a compilar els fonts de swirl.</code></pre>
+
+
+	<pre><code>~$ cd ~/sources/asiya/tools/swirl-1.1.0/<br>    ~$ ./configure --prefix=/path/to/intall (i.e. /home/usuaris/emt/asiya)<br>    ~$ make<br>    ~$ make install</code></pre>
+
+
+	<pre><code>Pot ser que no compilin perquè no troba les llibreries de WN (p.e. /usr/bin/ld: cannot find -lw )<br>    En aquest cas he copiat les llibreries libwn.a i libWN.a des de nlp.</code></pre>
+
+
+	<p>2.- Instal·lar candc:</p>
+
+
+	<pre><code>En cas que els binaris de candc no funcionin (p.e. candc/bin/boxer cannot execute binary file), <br>        cal tornar a compilar els fonts de candc.</code></pre>
+
+
+	<pre><code>~$ cd ~/sources/asiya/tools/candc/<br>    ~$ make</code></pre>
+
+
+	<pre><code>NOTA: el Makefile presuposa que l'executable de prolog és "pl". <br>        Cal modificar el Makefile en cas s'usi un altre sistema prolog (p.e. "swipl").</code></pre>
+
+
+	<p>3.- Instal·lar reranking-parser<br>        En cas que els binaris de reranking-parser no funcionin (p.e. first-stage/PARSE/parseIt cannot execute binary file), cal tornar a compilar els fonts.<br>        Per compilar els fonts es necessita tenir la llibreria boost-dev, liblapack, libblas-dev, i el TAO/PETSC instal·lat:<br>        - libboost-dev, liblapack i libblas-dev s'ha instal·lat des de synaptic. </p>
+
+
+	<pre><code>- per instal·lar PETSC:<br>            - baixar els fonts des de la pàgina web i descomprimir a /home/usuaris/emt/asiya i editar la variable d'entorn PETSC_HOME ~/.bashrc<br>            ~$ wget  <a class="external" href="http://ftp.mcs.anl.gov/pub/petsc/release-snapshots/petsc-3.3-p3.tar.gz">http://ftp.mcs.anl.gov/pub/petsc/release-snapshots/petsc-3.3-p3.tar.gz</a><br>            ~$ tar -xvzf petsc-3.2-p7.tar.gz<br>            ~$ export PETSC_DIR=/home/usuaris/emt/asiya/petsc-3.3-p3<br>            ~$ export PETSC_ARCH=arch-linux2-cxx-debug<br>            ~$ ./config/configure.py --with-clanguage="C++" --with-x=0 --with-mpi=0 --with-shared-libraries<br>            ~$ make PETSC_DIR=/usr/local/share/petsc-3.2-p7 PETSC_ARCH=arch-linux2-cxx-debug all  (WARNING! l'arquitectura la dona el config!)</code></pre>
+
+
+	<pre><code>- per instal·lar TAO: ?????<br>            - baixar els fonts des de la pàgina web i descomprimir a /usr/local/share<br>            ~$ tar -xvzf tao-2.0-p3.tar.gz<br>            - set the environment variables (i.e., afegir-ho al .bashrc i/o al env del apache)<br>            ~$ setenv TAO_DIR /usr/local/share/tao<br>            ~$ setenv PETSC_DIR /usr/local/share/petsc<br>            ~$ setenv PETSC_ARCH 'el que hagi sortit al fer el make de PETSC'<br>            ~$ setenv BOPT O_c++<br>            - add  -I${PETSC_DIR}/include and other includes into the tao/conf/tao_variables file<br>            ~$ make all</code></pre>
+
+
+	<pre><code>- COMPILAR reranking-parser<br>           - modificar scond-stage/programs/wlle/Makefile amb els includes del PETSC i TAO (p.e. -I${PETSC_DIR}/arch-linux2-cxx-debug/include)<br>           - si necessita el paquet gnu/stubs , instal·lar el paquet multilib <br>           - si hi ha problemes al linkar (v.64 vs. i386) fer: make LDFLAGS=-m64  (comprovar tb els flags a env i comprovar que el kernel es de 64bits!!!!)</code></pre>
+
+
+	<p>4.- Instal·lar Berkeley parser<br>        - Berkeley s'usa per calcular SP i CP metrics per l'aleman. <br>        - Cal actualitzar les variables d'entorn:</p>
+
+
+	<pre><code>export BKY_PARSER=$ASIYA_HOME/tools/berkeleyparser<br>           export PATH=$BKY_PARSER:$PATH<br>           export CLASSPATH=$BKY_PARSER:$CLASSPATH</code></pre>
+
+
+	<p>5.- Instal·lar Bonsai v3.2 (MALT Parser per francés)<br>        - Bonsai proporciona les mètriques CP-DP pel francés. Es un tot en un. <br>        - Bonsai necessita MALT-1.3.1 i python <br>        - A les especificacions diu que necessita MElt tagger, però nosaltres usem SVM-tools<br>        - s'han de ficar les variables d'entorn:</p>
+
+
+	<pre><code>export BONSAI=$ASIYA_HOME/tools/bonsai_v3.2<br>           export MALT_BONSAI_DIR=$ASIYA_HOME/tools/malt-1.3.1<br>           export MALT_DIR=$ASIYA_HOME/tools/malt-1.7.2<br>           export PYTHONPATH=/usr/local/lib/python2.7/site-packages:$ASIYA_HOME/tools/melt-0.6/lib/python2.7/site-packages</code></pre>
+
+
+</body></html>
