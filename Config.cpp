@@ -20,7 +20,7 @@ struct Config {
 	map<string, vector<vector<string> > > IDX;
 	//map<,> segments
 	//testbedid
-	//ASIYA_HOME
+    char* PATH;
 };
 
 
@@ -86,12 +86,34 @@ Config default_config() {
     $CONFIG{train_prop} = $Common::TRAINING_PROPORTION_DEFAULT;
     $CONFIG{model} = $Common::MODEL_DEFAULT;
 
-    if (exists($ENV{ASIYA_HOME})) { $CONFIG{PATH} = $ENV{ASIYA_HOME}; }
+    char* path = getenv("ASIYA_HOME");
+    if (path) CONFIG.PATH = path;//cout << "path: " << path << endl;    
 
     return CONFIG;
 }
 
-void process_config_file($config_file, $options) {
+void process_config_file($config_file, map<string, string> options) {
+    my $IQ_config = config_file;
+    my $options = options;
+
+    Config CONFIG = default_config();
+    string METRICS = "";
+    string SYSTEMS = "";
+    string REFERENCES = "";
+    string SEGMENTS = "";
+
+    for (map<string,string>::const_iterator it = Options.begin(); it != Options.end(); it++) {
+        switch(it->first) {        
+            case "metric_set": METRICS = it->second;
+            case "system_set": SYSTEMS = it->second;
+            case "reference_set": REFERENCES = it->second;
+            case "test_cases": SEGMENTS = it->second;
+            case "no_tok": CONFIG.tokenize = 0;
+            case "remake": CONFIG.remake = 1;
+            case "data_path": //    if (defined($options->{"data_path"})) { $options->{"data_path"} =~ s/\/\s*$//; $Common::DATA_PATH = $options->{"data_path"}; }
+        }
+    }
+
 
 }
 
