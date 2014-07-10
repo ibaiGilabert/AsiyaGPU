@@ -1,0 +1,15 @@
+Generate .o:
+
+	$g++ -c Common.cpp
+	$g++ -c Asiya.cpp
+
+
+Link and generate executable:
+
+	$g++ -o Asiya Asiya.o Common.o
+
+
+Linking Reference bin libraries:
+
+	#include <boost/regex.hpp>				->		-lboos_regex
+	#include <boost/filesystem.hpp>			->		-lboost_system -lboost_filesystem

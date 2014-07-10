@@ -1,0 +1,1 @@
+http://stackoverflow.com/questions/21457974/can-i-use-c11-in-the-cu-files-cuda5-5-in-windows7x64-msvc-and-linux64-gc
