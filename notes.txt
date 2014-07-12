@@ -13,3 +13,9 @@ Linking Reference bin libraries:
 
 	#include <boost/regex.hpp>				->		-lboos_regex
 	#include <boost/filesystem.hpp>			->		-lboost_system -lboost_filesystem
+
+
+
+REVISAR:
+
+	Config.cpp -> Obtenció de "SYSTEM" del fitxer de configuració. (sub process_config_file)

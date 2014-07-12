@@ -1,9 +1,12 @@
 #include <iostream>
 #include <stdio.h>
 #include <getopt.h>
+#include <vector>
 #include <string>
 #include <map>
 #include "Common.hpp"
+#include "Config.hpp"
+
 using namespace std;
 
 map<string, string> Options;
@@ -25,6 +28,9 @@ int main(int argc, char *argv[]) {
 	};
 
 	int opt, long_index;
+
+	char* Asiya_config = argv[1];
+	cout << "Config_file: " << string(Asiya_config) << endl;
 
 	while( (opt = getopt_long_only(argc, argv, "", long_opts, &long_index)) != -1)
 	{
@@ -59,12 +65,42 @@ if ($options{"metric_names"} && $options{"srclang"} && $options{"trglang"} ){
 int narg = 1;
 if (argc < narg) usage;
 
-char* Asiya_config = argv[1];
+/*
+cout << "rLANGS:" << endl;
+for (map<string, int>::const_iterator it = rLANGS.begin(); it != rLANGS.end(); it++) {
+	cout << '\t' <<  it->first << " -> " << it->second << endl;
+} cout << endl;
 
-cout << "AppAuthor: " << appAUTHOR << endl;
+cout << "eval_schemes:" << endl;
+for (map<string, int>::const_iterator it = eval_schemes.begin(); it != eval_schemes.end(); it++) {
+	cout << '\t' << it->first << " -> " << it->second << endl;
+} cout << endl;
 
+cout << "rCI:" << endl;
+for (map<string, int>::const_iterator it = rCI.begin(); it != rCI.end(); it++) {
+	cout << '\t' << it->first << " -> " << it->second << endl;
+} cout << endl;
+
+cout << "rCORRS:" << endl;
+for (map<string, int>::const_iterator it = rCORRS.begin(); it != rCORRS.end(); it++) {
+	cout << '\t' << it->first << " -> " << it->second << endl;
+} cout << endl;
+
+cout << "rMRANKS:" << endl;
+for (map<string, int>::const_iterator it = rMRANKS.begin(); it != rMRANKS.end(); it++) {
+	cout << '\t' << it->first << " -> " << it->second << endl;
+} cout << endl;
+
+cout << "metaeval_criteria:" << endl;
+for (map<string, int>::const_iterator it = metaeval_criteria.begin(); it != metaeval_criteria.end(); it++) {
+	cout << '\t' << it->first << " -> " << it->second << endl;
+} cout << endl;*/
+
+
+vector<string> metaeval_options, optimize_options;
 // -- read config file --------------------------------------------------------------------------------
-	//Config CONFIG = read_configuration_options(Asiya_config, options/*, metaevaluation_params, optimization_params*/);
+Config CONFIG = read_configuration_options(Asiya_config, Options, metaeval_options, optimize_options);
+/*, metaevaluation_params, optimization_params);*/
 
 // -- process configuration options -------------------------------------------------------------------
 	//process_configuration(CONFIG);
