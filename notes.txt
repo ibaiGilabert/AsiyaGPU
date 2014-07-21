@@ -19,3 +19,7 @@ Linking Reference bin libraries:
 REVISAR:
 
 	Config.cpp -> Obtenció de "SYSTEM" del fitxer de configuració. (sub process_config_file)
+
+	Config.cpp -> Les funcions process_nist_file i process_raw_file estan incompletes. (dependència NISTXML.pm)
+
+	Config.cpp -> sizes dels scalar(rIDX) (el sospitós -1)

@@ -1,4 +1,7 @@
 #include <sstream>
+#include <boost/regex.hpp>
+#include <boost/filesystem.hpp>
+
 #include "Common.hpp"
 
 //FILE EXTENSIONS
@@ -213,3 +216,17 @@ const int SENSIBLE_MAX_N = 1000000;
 const string ID_SEPARATOR = "@@";
 const string CE = "CE";
 const string LeM = "LeM";
+
+void execute_or_die(string command, string message) {
+    boost::regex re("\\R");
+    command = boost::regex_replace(command, re, "");
+    if (system(command.c_str())) {
+    	fprintf(stderr, "%s\n%s\n", message.c_str(), command.c_str());
+    	exit(1);
+    }
+}
+
+string give_system_name(string file) {
+  boost::filesystem::path pathname (file);
+  return pathname.filename().string();
+}

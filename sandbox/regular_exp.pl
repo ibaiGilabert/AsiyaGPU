@@ -12,3 +12,8 @@ print "tools.b: $TOOLS|\n";
 
 $TOOLS = "/home/ibai/Escriptori/AsiyaGPU/";
 if (!(-d $TOOLS)) { die "[$Common::appNAME] directory <$TOOLS> does not exist!\n"; }
+
+$command = "[$Common::appNAME\n] directory <$TOOLS> does not exist!\n";
+print "command before: $command";
+$command =~ s/\R/ /g;
+print "command after: $command";

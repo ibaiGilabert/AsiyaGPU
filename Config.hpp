@@ -8,11 +8,12 @@
 
 
 #include "Common.hpp"
+#include "NISTXML.hpp"
 using namespace std;
 
 struct Config {
 	map<string, string> Hrefs, 		Hsystems;
-	map<string, int> 	Hmetrics, 	wc, 	eval_schemes;
+	map<string, int> 	Hmetrics, 	wc, 	eval_schemes,	metaeval_criteria;
 	vector<string> 		COMBO;	//metrics,	systems,		references;
 	map<string, vector<vector<string> > > 	IDX;
 	set<string> metrics,	systems,	references;
@@ -35,12 +36,12 @@ struct Config {
 
 void set_output_format();
 void set_metrics();
-void process_nist_file();
-void process_raw_file();
+void process_nist_file(Config &CONFIG, string file, string type);
+void process_raw_file(Config &CONFIG, string file, string type);
 Config default_config();
 void read_selection();
 Config process_config_file(char* config_file, map<string, string> options);
-void process_command_line_options();
+void process_command_line_options(Config &CONFIG, map<string, string> options, vector<string> metaeval_options, vector<string> optimize_options);
 void validate_configuration();
 void print_configuration_options();
 void use_nist_output_format();

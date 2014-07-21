@@ -17,4 +17,10 @@ int main(){
   cout << tools << endl;
   tools = boost::regex_replace(tools, re2, "/");
   cout << tools << endl;
+
+  string command = "[\n] directory <\n> does not exist!\n";
+  cout << "command before: " << command;
+  boost::regex re3("\\R");
+  command = boost::regex_replace(command, re3, "");
+  cout << "command after: " << command;
 }

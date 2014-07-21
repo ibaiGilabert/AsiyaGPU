@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mteval SYSTEM "ftp://jaguar.ncsl.nist.gov/mt/resources/mteval-xml-v1.5.dtd">
+<mteval>
+<refset setid="newssyscombtest2010" srclang="Spanish" trglang="English" refid="reference01">
+<doc docid="idnes.cz/2009/12/11/76492" genre="nw">
+<hl>
+<seg id="1"> Lack of snow in mountains causes problems for hoteliers </seg>
+</hl>
+<p>
+<seg id="2"> It&apos;s not only Krkonoše ski-lift operators who are worried by these bare slopes. </seg>
+<seg id="3"> The lack of snow is putting people off booking ski holidays in hotels and guest houses. </seg>
+<seg id="4"> This means vacancies are still available in the Krkonoše throughout the winter, including Christmas and New Year&apos;s Eve. </seg>
+</p>
+<p>
+<seg id="5"> We&apos;re getting plenty of visitors to our site. </seg>
+<seg id="6"> People are browsing the offers, checking prices, but, so far, are worried about making a definite booking. </seg>
+<seg id="7"> &quot;When they call, the first thing they ask is if we think they&apos;ll see snow or mud,&quot; says Martin Jandura, who runs the Spindl.Info information web site. </seg>
+</p>
+<p>
+<seg id="8"> Anyone who wants to spend New Year&apos;s Eve in Špindlerův Mlýn just how they want, had better start thinking about booking soon. </seg>
+<seg id="9"> Those preferring to save money and go for cheaper accommodation can still give it a few days. </seg>
+</p>
+<p>
+<seg id="10"> Hoteliers in Špindlerův Mlýn are so far just offering week-long stays for New Year&apos;s Eve. </seg>
+</p>
+</doc>
+<doc docid="lidovky.cz/2009/12/10/75519" genre="nw">
+<hl>
+<seg id="1"> USA: Repetition is the mother of wisdom </seg>
+</hl>
+<p>
+<seg id="2"> It&apos;s almost funny to see how Barack Obama, reputedly the wisest president, is trying so hard in the matter of the Afghan war to repeat the strategy of his predecessor, having himself considered him to be the most foolish. </seg>
+</p>
+<p>
+<seg id="3"> When he finally came out with his long-awaited Afghan doctrine, it appeared that he had made a carbon copy of Bush&apos;s Iraq scenario three years earlier. </seg>
+<seg id="4"> It&apos;s not just that in the text itself he repeatedly uses the words &quot;just like in Iraq&quot;, but he even went as far as to use the name of Bush&apos;s declaration from January 2007 as the title of his own declaration:&quot;The new way forward&quot;. </seg>
+</p>
+<p>
+<seg id="5"> While three years ago he himself criticised Bush&apos;s idea to send fresh troops to help in the beleaguered civil war in Iraq as &quot;an irresponsible decision with catastrophic consequences&quot;. </seg>
+<seg id="6"> The following months, however, showed that Bush&apos;s strategy, which was recommended by his field commanders, was the only possible course of action and so successful that there are no reports in the news about Iraq. </seg>
+<seg id="7"> It didn&apos;t help Bush&apos;s reputation, but in objective terms, it left his successor in a much more favourable position than might be expected. </seg>
+<seg id="8"> Barack Obama hopes that, in Afghanistan, the miracle will repeat itself. </seg>
+</p>
+<p>
+<seg id="9"> He was again asked to increase the military contingent by his field commanders, particularly the supreme commander of the Afghan operation General Stanley McChrystal, who even went against the custom of his subordinates to harshly criticise the reluctant gunners in the White House. </seg>
+<seg id="10"> He asked for 40 thousand men to turn the situation around. </seg>
+</p>
+</doc>
+<doc docid="lidovky.cz/2009/12/10/75501" genre="nw">
+<hl>
+<seg id="1"> Managers at Goldman Sachs no longer to receive cash bonuses </seg>
+</hl>
+<p>
+<seg id="2"> The top management of the American bank Goldman Sachs will not receive their bonuses in cash this year. </seg>
+<seg id="3"> The announcement came from the company as a reaction to the harsh criticism of their salary policies. </seg>
+</p>
+<p>
+<seg id="4"> Instead of money, the group of 30 top managers will receive shares, which cannot be sold for another five years. </seg>
+<seg id="5"> The shares can also be confiscated if the managers take excessive risks. </seg>
+</p>
+<p>
+<seg id="6"> According to Reuters, Goldman Sachs is leading the effort to link Wall Street bonuses with long-term performance. </seg>
+<seg id="7"> I assume that Wall Street is well aware of the broader path it has to take, said former investment banker for JPMorgan, Douglas Elliott. </seg>
+<seg id="8"> The problem lies in the details, he added. </seg>
+</p>
+<p>
+<seg id="9"> Goldman Sachshas been targeted by critics since it set aside almost 17 billion dollars (almost 300 billion crowns) for bonuses in the first three quarters of this year. </seg>
+<seg id="10"> Reuters claims that the total bonuses awarded by the business this year, despite today&apos;s announcement, exceeds 20 billion dollars. </seg>
+</p>
+<p>
+<seg id="11"> High bonuses in the banking sector, what with the economic crisis, have become a political hot potato. </seg>
+<seg id="12"> On Wednesday, Britain announced that it had decided to charge a one-off fifty percent tax rate on bankers&apos; bonuses exceeding 25,000 pounds (around 712,000 CZK). </seg>
+<seg id="13"> France is preparing similar measures. </seg>
+</p>
+</doc>
+</refset>
+</mteval>

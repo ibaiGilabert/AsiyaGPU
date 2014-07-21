@@ -168,7 +168,7 @@ extern const string ID_SEPARATOR;
 extern const string CE ;
 extern const string LeM;
 
-bool exists(string key) {
-	const_iterat
-}
+void execute_or_die(string command, string message);
+string give_system_name(string file);
+
 #endif
