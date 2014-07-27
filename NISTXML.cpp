@@ -6,15 +6,15 @@
 #include <boost/regex.hpp>
 
 
-vector<vector<string> > write_fake_idx_file(string file, string IDX, int verbose) {
+vector<vector<string> > NISTXML::write_fake_idx_file(string file, string IDX, int verbose) {
     vector<vector <string> > lIDX(0, vector<string>());
 
 	if (verbose) fprintf(stderr, "reading raw file <%s>\n", file.c_str());
-	string system_name = give_system_name(file);
+	string system_name = Common::give_system_name(file);
     ofstream f_idx(system_name.c_str());
     if (f_idx) {
         stringstream ss;
-        ss << UNKNOWN_SET << " " << UNKNOWN_LANG << " " << UNKNOWN_LANG;
+        ss << Common::UNKNOWN_SET << " " << Common::UNKNOWN_LANG << " " << Common::UNKNOWN_LANG;
         string fake_header = ss.str();
 
         f_idx << fake_header << endl;
@@ -35,7 +35,7 @@ vector<vector<string> > write_fake_idx_file(string file, string IDX, int verbose
 
             while (getline(f_raw, line)) {
                 stringstream sf;
-                sf << UNKNOWN_DOC << " " << UNKNOWN_GENRE << " " << system_name << " " << i;
+                sf << Common::UNKNOWN_DOC << " " << Common::UNKNOWN_GENRE << " " << system_name << " " << i;
                 string fake_line = sf.str();
 
                 vector<string> l;

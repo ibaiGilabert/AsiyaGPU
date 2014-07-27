@@ -96,10 +96,11 @@ for (map<string, int>::const_iterator it = metaeval_criteria.begin(); it != meta
 	cout << '\t' << it->first << " -> " << it->second << endl;
 } cout << endl;*/
 
-
+Config CONFIG;
 vector<string> metaeval_options, optimize_options;
 // -- read config file --------------------------------------------------------------------------------
-Config CONFIG = read_configuration_options(Asiya_config, Options, metaeval_options, optimize_options);
+//Config CONFIG = read_configuration_options(Asiya_config, Options, metaeval_options, optimize_options);
+CONFIG.read_configuration_options(Asiya_config, Options, metaeval_options, optimize_options);
 /*, metaevaluation_params, optimization_params);*/
 
 // -- process configuration options -------------------------------------------------------------------
