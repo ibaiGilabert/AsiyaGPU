@@ -23,3 +23,5 @@ REVISAR:
 	Config.cpp -> Les funcions process_nist_file i process_raw_file estan incompletes. (dependència NISTXML.pm)
 
 	Config.cpp -> sizes dels scalar(rIDX) (el sospitós -1)
+
+	Core.cpp -> Creació de la TSDatabase (do_score)

@@ -6,6 +6,7 @@
 #include <map>
 #include "Common.hpp"
 #include "Config.hpp"
+#include "Core.hpp"
 
 using namespace std;
 
@@ -14,6 +15,13 @@ int v, help;
 
 void usage() {
 	fprintf(stderr, "Wrong answer\n");
+}
+
+void process_configuration() {
+	Core CORE;
+	cout << "LET'S DO SOME STUFF SCORES!!!" << endl;
+	CORE.do_scores();
+	cout << "[FINISHED]" << endl;
 }
 
 int main(int argc, char *argv[]) {
@@ -102,6 +110,8 @@ vector<string> metaeval_options, optimize_options;
 //Config CONFIG = read_configuration_options(Asiya_config, Options, metaeval_options, optimize_options);
 CONFIG.read_configuration_options(Asiya_config, Options, metaeval_options, optimize_options);
 /*, metaevaluation_params, optimization_params);*/
+
+process_configuration();
 
 // -- process configuration options -------------------------------------------------------------------
 	//process_configuration(CONFIG);

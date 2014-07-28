@@ -175,6 +175,11 @@ public:
 
 	static void execute_or_die(string command, string message);
 	static string give_system_name(string file);
+
+	//Printing
+	static void print_hline(char c, int l);
+	static void print_hline_stderr(char c, int l);
+
 };
 
 

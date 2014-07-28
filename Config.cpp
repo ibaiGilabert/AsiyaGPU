@@ -42,7 +42,8 @@
 
 
     map<string, string>                      Config::Hrefs,         Config::Hsystems;
-    map<string, int>                         Config::Hmetrics,      Config::wc,         Config::eval_schemes,   Config::metaeval_criteria;
+    map<string, int>                         Config::Hmetrics,      Config::wc;
+    map<string, int>                         Config::eval_schemes,  Config::metaeval_schemes,     Config::optimize_schemes,     Config::metaeval_criteria,  Config::optimize_criteria;
     map<string, vector<vector<string> > >    Config::IDX;
     set<string>                              Config::metrics,       Config::systems,    Config::references;
     vector<string>                           Config::COMBO;  //metrics,  systems,        references;
@@ -52,6 +53,7 @@
     string Config::G,           Config::I,              Config::O;
     string Config::SRCCASE,     Config::SRCLANG,        Config::src;
     string Config::tools,       Config::model;
+    string Config::parser,      Config::SRCparser;
 
     int Config::do_metric_names,    Config::do_system_names,    Config::do_reference_names, Config::do_refs,        Config::do_time;
     int Config::min_dist,           Config::setid_length,       Config::segid_length,       Config::docid_length;
@@ -633,4 +635,16 @@ void Config::read_configuration_options(char* config_file, map<string, string> o
     print_configuration_options($CONFIG);*/
 
     //return CONFIG;
+}
+
+void Config::terminate() {
+    //description _ terminates, if the given configuration parameters determine so
+    if (Config::do_metric_names or Config::do_system_names or Config::do_reference_names) exit(0);
+}
+
+void Config::finish_asiya() {
+    //description _ clean the workspace and announces the end of the execution
+
+    //if (-d "$Common::DATA_PATH/$Common::TMP") { system "rm -rf $Common::DATA_PATH/$Common::TMP"; } #TEMPORARY DIRECTORY
+    if (verbose) fprintf(stderr, "[FINISHED]\n");
 }
