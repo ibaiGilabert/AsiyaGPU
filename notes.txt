@@ -25,3 +25,9 @@ REVISAR:
 	Config.cpp -> sizes dels scalar(rIDX) (el sospitós -1)
 
 	Core.cpp -> Creació de la TSDatabase (do_score)
+
+
+if (!(-e))
+
+    boost::filesystem::path p (TOOLS);   // p reads clearer than argv[1] in the following code
+    if (!exists(p)) {

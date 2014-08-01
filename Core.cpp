@@ -3,8 +3,44 @@
 #include <omp.h>
 #include <stdio.h>
 #include <iostream>
+   my %HREF;
+   my @sorted_refs = sort @{$Lref};
+   foreach my $r (@sorted_refs) { if (exists($Href->{$r})) { $HREF{$r} = $Href->{$r}; } }
+   my $REF = join("_", sort keys %HREF);
 
-void Core::doMultiMetrics() {
+   if ($verbose > 1) { print STDERR "computing similarities [$HYP]...\n"; }
+   elsif ($verbose == 1) { print STDERR "$HYP - $REF ["; }
+
+
+   CE::doCE($config, $HYP, $HYP_file, $REF, $hOQ);			//Confident Estimation
+   LeM::doMultiLeM($config, $HYP, $HYP_file, $REF, $hOQ);
+
+   if (scalar(@{$Lref}) > 0) {
+      BLEU::doMultiBLEU($config, $HYP, $HYP_file, $REF, \%HREF, "", $hOQ);
+      NIST::doMultiNIST($config, $HYP, $HYP_file, $REF, \%HREF, "", $hOQ);
+      BLEUNIST::doMultiBLEUNIST($config, $HYP, $HYP_file, $REF, \%HREF, "", $hOQ);
+      NGRAM::doMultiNGRAM($config, $HYP, $HYP_file, $REF, \%HREF, "", $hOQ);
+      ESA::doMultiESA($config, $HYP, $HYP_file, $REF, \%HREF, "", $hOQ);
+      WER::doMultiWER($config, $HYP, $HYP_file, $REF, \%HREF, $hOQ);
+      PER::doMultiPER($config, $HYP, $HYP_file, $REF, \%HREF, $hOQ);
+      TERp::doMultiTER($config, $HYP, $HYP_file, $REF, \%HREF, $hOQ);
+      Overlap::doMultiOl($config, $HYP, $HYP_file, $REF, \%HREF, $hOQ);
+      Align::doMultiAr($config, $HYP, $HYP_file, $REF, \%HREF, $hOQ);
+      GTM::doMultiGTM($config, $HYP, $HYP_file, $REF, \%HREF, "", $hOQ);
+      METEOR::doMultiMETEOR($config, $HYP, $HYP_file, $REF, \%HREF, $hOQ);
+      ROUGE::doMultiROUGE($config, $HYP, $HYP_file, $REF, \%HREF, 1, "", $hOQ); # + stemming
+      SP::doMultiSP($config, $HYP, $HYP_file, $REF, \%HREF, $hOQ);
+      DP::doMultiDP($config, $HYP, $HYP_file, $REF, \%HREF, $hOQ);
+      DPmalt::doMultiDP($config, $HYP, $HYP_file, $REF, \%HREF, $hOQ);
+      NE::doMultiNE($config, $HYP, $HYP_file, $REF, \%HREF, $hOQ);
+      CP::doMultiCP($config, $HYP, $HYP_file, $REF, \%HREF, $hOQ);
+      SR::doMultiSR($config, $HYP, $HYP_file, $REF, \%HREF, $hOQ);
+      DR::doMultiDR($config, $HYP, $HYP_file, $REF, \%HREF, 0, $hOQ);
+      DR::doMultiDR($config, $HYP, $HYP_file, $REF, \%HREF, 1, $hOQ);
+   }
+
+   if ($verbose == 1) { print STDERR "]\n"; }
+void Core::doMultiMetrics(string HYP, map<string, double> &hOQ) {
    // description _ launches automatic MT evaluation metrics (for multiple references)
    //                              * computes GTM (by calling Proteus java gtm) -> e = 1..3
    //                              * computes BLEU score (by calling NIST mteval script) -> n = 4
@@ -20,13 +56,29 @@ void Core::doMultiMetrics() {
    //                              * computes CP-based (Full Parsing)
    //                              * computes SR-based (Semantic Role Labeling)
    //                              * computes DR-based (Discourse Representation - Semantics)
-   // param1  _ configuration
    // param2  _ candidate hypothesis (KEY)
    // param3  _ candidate filename (string)
-   // param4  _ reference list (KEY LIST)
-   // param5  _ reference filenames (hash ref)
-   // param6  _ hash of scores
+   // param4  _ reference list (KEY LIST)		(Config::references)
+   // param5  _ reference filenames (hash ref)		(Config::Hrefs)
+   // param2  _ hash of scores
 
+/*
+	doMultiMetrics($config, $sys, $config->{Hsystems}->{$sys}, $config->{references}, $config->{Hrefs}, $hOQ);
+
+   my $HYP = shift;
+   my $HYP_file = shift;
+   my $Lref = shift;	Config::references
+   my $Href = shift;	Config::Hrefs
+   my $hOQ = shift;
+*/
+   string HYP_file = Config::Hsystems[HYP];
+   for (map<string, string>::const_iterator it = Config::Href.begin(); it != Config::Href.end(); ++it) {
+
+   }
+   if (Config::verbose > 1) fprintf(stderr, "computing similarities [$HYP]...\n");
+   else if (Config::verbose == 1) fprintf(stderr, "$HYP - $REF [");
+
+   BLEU.doMetric(HYP, REF, "", hOQ);
 }
 
 void Core::find_max_scores(map<string, double> &hOQ) {
@@ -66,7 +118,8 @@ double Core::do_scores() {
 
 		for (set<string>::const_iterator it = Config::systems.begin(); it != Config::systems.end(); ++it) {	//systems Vs. references
 			double time1 = omp_get_wtime();
-			doMultiMetrics(/*, hOQ*/);
+			doMultiMetrics(*it, hOQ);
+         	//doMultiMetrics($config, $sys, $config->{Hsystems}->{$sys}, $config->{references}, $config->{Hrefs}, $hOQ);
 
 			if (Config::eval_schemes.find(Common::S_QUEEN) != Config::eval_schemes.end() or \
 				Config::metaeval_schemes.find(Common::S_QUEEN) != Config::metaeval_schemes.end() or \
