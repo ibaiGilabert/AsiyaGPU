@@ -26,8 +26,28 @@ REVISAR:
 
 	Core.cpp -> Creació de la TSDatabase (do_score)
 
+	Scores.cpp -> La puntuació de l'atribut "all" de scores és -1 en comptes de {} en l'original %hOQ.
 
-if (!(-e))
+SHORTCUTS
 
-    boost::filesystem::path p (TOOLS);   // p reads clearer than argv[1] in the following code
-    if (!exists(p)) {
+	-->IF file exists
+
+	if (!(-e))
+
+	    boost::filesystem::path p (TOOLS);   // p reads clearer than argv[1] in the following code
+	    if (!exists(p)) {
+
+	-->SPLIT string
+
+    boost::regex reeq(" ");
+    boost::sregex_token_iterator i(entry.second.begin(), entry.second.end(), reeq, -1);
+    boost::sregex_token_iterator j;
+    while (i != j) {
+        Config::systems.insert(*i++);
+    }
+
+    	//MILLOR ALTERNATIVA
+
+    	#include <boost/algorithm/string.hpp>
+		std::vector<std::string> strs;
+		boost::split(strs, "string to split", boost::is_any_of("\t "));

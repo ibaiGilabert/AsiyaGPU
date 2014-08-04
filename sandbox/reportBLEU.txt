@@ -1,0 +1,31 @@
+MT evaluation scorer began on 2014 Aug 4 at 18:56:27
+command line:  /home/soft/asiya/tools/mteval-kit/mteval-v13a.pl -b -d 2 -c -s /home/usuaris/gilabert/asiya/gpu/sample/tmp/2548.62907649116.src.BLEU.sgml -t /home/usuaris/gilabert/asiya/gpu/sample/tmp/5887.09441552968.out.BLEU.sgml -r /home/usuaris/gilabert/asiya/gpu/sample/tmp/3839.33171953203.ref.BLEU.sgml
+  Evaluation of dummylang-to-dummylang translation using:
+    src set "dummyset" (1 docs, 3 segs)
+    ref set "dummyset" (1 refs)
+    tst set "dummyset" (1 systems)
+
+  cumulative-BLEU score using 4-grams = 0.6500 0.5231 0.3121 0.2057 for system "dummysysTST" on segment 1 of document "dummydoc" (20 words)
+  individual-BLEU score using 4-grams = 0.6500 0.4211 0.1111 0.0588 for system "dummysysTST" on segment 1 of document "dummydoc" (20 words)
+  cumulative-BLEU score using 4-grams = 0.7647 0.6559 0.5562 0.4709 for system "dummysysTST" on segment 2 of document "dummydoc" (17 words)
+  individual-BLEU score using 4-grams = 0.7647 0.5625 0.4000 0.2857 for system "dummysysTST" on segment 2 of document "dummydoc" (17 words)
+  cumulative-BLEU score using 4-grams = 0.7123 0.5242 0.4109 0.2831 for system "dummysysTST" on segment 3 of document "dummydoc" (13 words)
+  individual-BLEU score using 4-grams = 0.7692 0.4167 0.2727 0.1000 for system "dummysysTST" on segment 3 of document "dummydoc" (13 words)
+BLEU score using   4-grams = 0.3332 for system "dummysysTST" on document "dummydoc" (3 segments, 50 words)
+
+BLEU score = 0.3332 for system "dummysysTST"
+
+# ------------------------------------------------------------------------
+
+Individual N-gram scoring
+        1-gram   2-gram   3-gram   4-gram   5-gram   6-gram   7-gram   8-gram   9-gram
+        ------   ------   ------   ------   ------   ------   ------   ------   ------
+ BLEU:  0.7200   0.4681   0.2500   0.1463   0.0789   0.0571   0.0312   0.0172   0.0096  "dummysysTST"
+
+# ------------------------------------------------------------------------
+Cumulative N-gram scoring
+        1-gram   2-gram   3-gram   4-gram   5-gram   6-gram   7-gram   8-gram   9-gram
+        ------   ------   ------   ------   ------   ------   ------   ------   ------
+
+ BLEU:  0.7200   0.5805   0.4384   0.3332   0.2498   0.1954   0.1504   0.1147   0.0871  "dummysysTST"
+MT evaluation scorer ended on 2014 Aug 4 at 18:56:27

@@ -2,6 +2,7 @@
 #define CORE_HPP
 
 #include <map>
+#include <vector>
 #include <string>
 using namespace std;
 
@@ -19,6 +20,8 @@ private:
 public:
 	//Compute scores
 	double do_scores();
+
+	pair<vector<double>, vector<double> > get_seg_doc_scores();
 
 	//Printing
 	void do_metric_names();

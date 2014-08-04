@@ -1,8 +1,11 @@
 #include "Core.hpp"
 #include "Config.hpp"
+#include "Scores.hpp"
+
 #include <omp.h>
 #include <stdio.h>
 #include <iostream>
+
    my %HREF;
    my @sorted_refs = sort @{$Lref};
    foreach my $r (@sorted_refs) { if (exists($Href->{$r})) { $HREF{$r} = $Href->{$r}; } }
@@ -94,7 +97,8 @@ double Core::do_scores() {
     //param2  _ hash of scores
     //@return _ overall benchmark time (in secs)
 
-	map<string, double> hOQ;
+	//map<string, double> hOQ;
+	Scores hOQ;
 
     Config::parser = "";
     Config::SRCparser = "";
@@ -219,4 +223,8 @@ double Core::do_scores() {
 	}
 
 	return TIME;
+}
+
+pair<vector<double>, vector<double> > get_seg_doc_scores() {
+
 }
