@@ -1,5 +1,7 @@
 #include "BLEU.hpp"
+#include "Core.hpp"
 #include "Common.hpp"
+#include "Config.hpp"
 #include "NISTXML.hpp"
 
 #include <stdio.h>
@@ -39,7 +41,7 @@ vector<double> BLEU::read_bleu(string reportBLEU) {
     string str;
     bool individual = false;
     vector<double> lbleu(4), lbleui(4);
-    ifstream file(reportBLEU);
+    ifstream file(reportBLEU.c_str());
     if (file) {
 	    while (getline(file, str)) {
 	    	boost::match_results<string::const_iterator> results;
@@ -64,7 +66,7 @@ vector<double> BLEU::read_bleu(string reportBLEU) {
 	        }
 	    }
         file.close();
-    } else { fprintf(stderr, "couldn't open file: %s\n", reportBLEU); exit(1); }
+    } else { fprintf(stderr, "couldn't open file: %s\n", reportBLEU.c_str()); exit(1); }
 
 	    for (int i = 0; i < 4; ++i) cout << "lbleu[" << i << "]: " << lbleu[i] << endl;
 	    for (int i = 0; i < 4; ++i) cout << "lbleui[" << i << "]: " << lbleui[i] << endl;
@@ -157,10 +159,10 @@ vector<vector<double> > BLEU::read_bleu_segments(string reportBLEU) {
 }
 
 
-pair<vector<double>, vector<vector<double> > > BLEU::computeBLEU(string tools, string remakeREPORTS, int verbose) {
+pair<vector<double>, vector<vector<double> > > BLEU::computeBLEU() {
 	stringstream tBLEU;
-	tBLEU << "perl " << tools << "/" << BLEU::TBLEU << "/" << "mteval-v13a.pl -b -d 2 ";
-	//string toolBLEU = tBLEU.str();
+	tBLEU << "perl " << Config::tools << "/" << BLEU::TBLEU << "/" << "mteval-v13a.pl -b -d 2 ";
+	string toolBLEU = tBLEU.str();
 	if (Config::CASE == Common::CASE_CS) tBLEU << "-c "; //toolBLEU += "-c ";
 
 	srand(time(NULL));
@@ -171,17 +173,17 @@ pair<vector<double>, vector<vector<double> > > BLEU::computeBLEU(string tools, s
 	ssOut << Common::DATA_PATH << "/" << Common::TMP << "/" << rand() % (Common::NRAND + 1) << "." << Common::SYSEXT << "." << BLEU::BLEUEXT << "." << Common::SGMLEXT;
 	ssReport << Common::DATA_PATH << "/" << Common::TMP << "/" << rand() % (Common::NRAND + 1) << "." << BLEU::BLEUEXT << "." << Common::REPORTEXT;
 
-    boost::filesystem::path refBLEUsgml(ssRef.str()));
-    boost::filesystem::path srcBLEUsgml(ssSrc.str()));
-    boost::filesystem::path outBLEUsgml(ssOut.str()));
-    boost::filesystem::path reportBLEUsgml(ssReport.str()));
+    boost::filesystem::path refBLEUsgml(ssRef.str());
+    boost::filesystem::path srcBLEUsgml(ssSrc.str());
+    boost::filesystem::path outBLEUsgml(ssOut.str());
+    boost::filesystem::path reportBLEUsgml(ssReport.str());
 
-	if (!exists(refBLEUsgml) or remakeREPORTS) NISTXML::SGML_f_create_mteval_multidoc(refBLEUsgml.string(), 2, $verbose);
-	if (!exists(srcBLEUsgml) or remakeREPORTS) NISTXML::SGML_f_create_mteval_multidoc(refBLEUsgml.string(), 0, $verbose);
-	if (!exists(refBLEUsgml) or remakeREPORTS) NISTXML::SGML_f_create_mteval_multidoc(refBLEUsgml.string(), 1, $verbose);
-	if (verbose > 1) fprintf(stderr, "building %s\n", reportBLEUsgml.string().c_str());
+	//if (!exists(refBLEUsgml) or Config::remake) NISTXML::SGML_f_create_mteval_multidoc(refBLEUsgml.string(), 2);
+	//if (!exists(srcBLEUsgml) or Config::remake) NISTXML::SGML_f_create_mteval_multidoc(refBLEUsgml.string(), 0);
+	//if (!exists(refBLEUsgml) or Config::remake) NISTXML::SGML_f_create_mteval_multidoc(refBLEUsgml.string(), 1);
+	if (Config::verbose > 1) fprintf(stderr, "building %s\n", reportBLEUsgml.string().c_str());
 
-    stringstream sc;
+    stringstream sc;// = tBLEU;
     sc << toolBLEU << " -s " << ssSrc.str() << " -t " << ssOut.str() << " -r " << ssRef.str() << " > " << ssReport.str();
     string ms = "[ERROR] problems running BLEU...";
 	Common::execute_or_die(sc.str(), ms);
@@ -206,28 +208,28 @@ pair<vector<double>, vector<vector<double> > > BLEU::computeBLEU(string tools, s
 }
 
 
-void BLEU::doMetric(string TGT, string REF, string prefix, map<string, double> &hOQ) {
+void BLEU::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
    // description _ computes BLEU score (by calling NIST mteval script) -> n = 1..4 (multiple references)
-	string src = Config::src;
-	int remakeREPORTS = Config::remake;
-	string tools = Config::tools;
+	//int remakeREPORTS = Config::remake;
 	map<string, int> M = Config::Hmetrics;
-	int verbose = Config::verbose;
+	vector<string> mBLEU(M.size());
 
-	int GO = 0;
-	int i = 0;
-	set<string> mBLEU;
+	int GO , i;
+	GO = i = 0;
 	for (map<string, int>::const_iterator it = BLEU::rBLEU.begin(); it != rBLEU.end(); ++it) {
-		mBLEU.insert(it->first);
+		//mBLEU.insert(it->first);
+		mBLEU[i++] = it->first;
 	}
+
+	i = 0;
 	while (i < mBLEU.size() and !GO) {
-		string aux = prefix; aux += $mBLEU[i];
+		string aux = prefix; aux += mBLEU[i];
 		if (M.find(aux) != M.end()) { GO = 1; }
 		++i;
 	}
 
 	if (GO) {
-		if (verbose == 1) fprintf(stderr, "%s\n", BLEU::BLEUEXT);
+		if (Config::verbose == 1) fprintf(stderr, "%s\n", BLEU::BLEUEXT.c_str());
 		stringstream ss1, ss2, ss3, ss4, ss2i, ss3i, ss4i;
 		ss1 << Common::DATA_PATH << "/" << Common::REPORTS << "/" << TGT << "/" << REF << prefix << BLEU::BLEUEXT << "-1." << Common::XMLEXT;
 		ss2 << Common::DATA_PATH << "/" << Common::REPORTS << "/" << TGT << "/" << REF << prefix << BLEU::BLEUEXT << "-2." << Common::XMLEXT;
@@ -246,34 +248,42 @@ void BLEU::doMetric(string TGT, string REF, string prefix, map<string, double> &
 		string reportBLEUi4xml = ss4i.str();
 
 	    boost::filesystem::path reportBLEU1xml_path(reportBLEU1xml);
-		boost::filesystem::path reportBLEU2xml_pathreportBLEU1xml);
-	    boost::filesystem::path reportBLEU3xml_path(reportBLEU1xml);
-	    boost::filesystem::path reportBLEU4xml_path(reportBLEU1xml);
-	    boost::filesystem::path reportBLEU2ixml_path(reportBLEU1xml);
-	    boost::filesystem::path reportBLEU3ixml_path(reportBLEU1xml);
-	    boost::filesystem::path reportBLEU4ixml_path(reportBLEU1xml);
-		boost::filesystem::path reportBLEU1xml_ext(reportBLEU1xml + "." + Common::CZEXT);
-	    boost::filesystem::path reportBLEU1xml_ext(reportBLEU1xml + "." + Common::CZEXT);
-	    boost::filesystem::path reportBLEU1xml_ext(reportBLEU1xml + "." + Common::CZEXT);
-	    boost::filesystem::path reportBLEU1xml_ext(reportBLEU1xml + "." + Common::CZEXT);
-	    boost::filesystem::path reportBLEU1xml_ext(reportBLEU1xml + "." + Common::CZEXT);
-	    boost::filesystem::path reportBLEU1xml_ext(reportBLEU1xml + "." + Common::CZEXT);
-	    boost::filesystem::path reportBLEU1xml_ext(reportBLEU1xml + "." + Common::CZEXT);
+		boost::filesystem::path reportBLEU2xml_path(reportBLEU2xml);
+	    boost::filesystem::path reportBLEU3xml_path(reportBLEU3xml);
+	    boost::filesystem::path reportBLEU4xml_path(reportBLEU4xml);
+	    boost::filesystem::path reportBLEUi2xml_path(reportBLEUi2xml);
+	    boost::filesystem::path reportBLEUi3xml_path(reportBLEUi3xml);
+	    boost::filesystem::path reportBLEUi4xml_path(reportBLEUi4xml);
+		boost::filesystem::path reportBLEU1xml_ext(reportBLEU1xml + "." + Common::GZEXT);
+	    boost::filesystem::path reportBLEU2xml_ext(reportBLEU2xml + "." + Common::GZEXT);
+	    boost::filesystem::path reportBLEU3xml_ext(reportBLEU3xml + "." + Common::GZEXT);
+	    boost::filesystem::path reportBLEU4xml_ext(reportBLEU4xml + "." + Common::GZEXT);
+	    boost::filesystem::path reportBLEUi2xml_ext(reportBLEUi2xml + "." + Common::GZEXT);
+	    boost::filesystem::path reportBLEUi3xml_ext(reportBLEUi3xml + "." + Common::GZEXT);
+	    boost::filesystem::path reportBLEUi4xml_ext(reportBLEUi4xml + "." + Common::GZEXT);
 
 
 	    if ( (!exists(reportBLEU1xml_path) and !exists(reportBLEU1xml_ext)) or \
 	    (!exists(reportBLEU2xml_path) and !exists(reportBLEU2xml_ext)) or \
 	    (!exists(reportBLEU3xml_path) and !exists(reportBLEU3xml_ext)) or \
 	    (!exists(reportBLEU4xml_path) and !exists(reportBLEU4xml_ext)) or \
-	    (!exists(reportBLEU2ixml_path) and !exists(reportBLEU2ixml_ext)) or \
-	    (!exists(reportBLEU3ixml_path) and !exists(reportBLEU3ixml_ext)) or \
-	    (!exists(reportBLEU4ixml_path) and !exists(reportBLEU4ixml_ext)) or remakeREPORTS) {
+	    (!exists(reportBLEUi2xml_path) and !exists(reportBLEUi2xml_ext)) or \
+	    (!exists(reportBLEUi3xml_path) and !exists(reportBLEUi3xml_ext)) or \
+	    (!exists(reportBLEUi4xml_path) and !exists(reportBLEUi4xml_ext)) or Config::remake) {
 	     	//my ($SYS, $SEGS) = BLEU::computeMultiBLEU($src, $out, $Href, $remakeREPORTS, $config->{CASE}, $tools, $verbose);
-	    	pair<vector<double>, vector<vector<double> > > res = computeBLEU(tools, remakeREPORTS, verbose);
+	    	pair<vector<double>, vector<vector<double> > > res = computeBLEU();
+
+			pair<vector<double>, vector<double> > doc_seg =  Core::get_seg_doc_scores(res.second[0], 0, TGT);
+         	//if (Config::O_STORAGE == 1) IQXML::write_report();
+         	string prefBE1 = prefix;	prefBE1 += BLEU::BLEUEXT;	prefBE1 += "-1";
+	    	hOQ.save_hash_scores(prefBE1, TGT, REF, res.first[0], doc_seg.first, doc_seg.second);
 
 
-	    	string prefBE1 = prefix;	prefBE1 += BLEU::BLEUEXT;	prefBE1 += "-1";
-	    	Scores::save_hash_scores(prefBE1, TGT, REF, res->first[0], doc_scores, seg_scores, hOQ);
+			doc_seg = Core::get_seg_doc_scores(res.second[1], 0, TGT);
+         	//if (Config::O_STORAGE == 1) IQXML::write_report();
+	    	string prefBE2 = prefix;	prefBE1 += BLEU::BLEUEXT;	prefBE1 += "-2";
+	    	hOQ.save_hash_scores(prefBE1, TGT, REF, res.first[1], doc_seg.first, doc_seg.second);
+
 	    }
 
 	}

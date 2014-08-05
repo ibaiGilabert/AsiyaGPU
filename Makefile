@@ -3,8 +3,8 @@ LDFLAGS	= -lboost_system -lboost_filesystem -lboost_regex -lgomp
 
 all: Asiya
 
-Asiya: Asiya.o Config.o Common.o Core.o Scores.o NISTXML.o
-	g++ -o Asiya Asiya.o Config.o Common.o Core.o Scores.o NISTXML.o $(LDFLAGS)
+Asiya: Asiya.o Config.o Common.o Core.o Scores.o BLEU.o NISTXML.o
+	g++ -o Asiya Asiya.o Config.o Common.o Core.o Scores.o BLEU.o NISTXML.o $(LDFLAGS)
 
 Asiya.o: Asiya.cpp
 	g++ -c Asiya.cpp
@@ -20,6 +20,9 @@ Core.o: Core.hpp Core.cpp
 
 Scores.o: Scores.hpp Scores.cpp
 	g++ -c Scores.cpp
+
+BLEU.o: BLEU.hpp BLEU.cpp
+	g++ -c BLEU.cpp
 
 NISTXML.o: NISTXML.hpp NISTXML.cpp
 	g++ -c NISTXML.cpp

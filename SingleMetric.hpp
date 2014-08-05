@@ -5,7 +5,7 @@ class SingleMetric {
 private:
 
 public:
-	virtual void doMetric(map<string, double> &hOQ);
+	virtual void doMetric();
 
 };
 

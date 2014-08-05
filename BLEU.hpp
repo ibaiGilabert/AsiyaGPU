@@ -1,7 +1,8 @@
 #ifndef BLEU_HPP
 #define BLEU_HPP
 
-#include "Scores"
+#include "Scores.hpp"
+#include "SingleMetric.hpp"
 
 #include <vector>
 
@@ -12,9 +13,8 @@ private:
 
 	pair<vector<double>, vector<vector<double> > > computeBLEU();
 
-
 public:
-	void doMetric(Scores &hOQ);	//map<string, double> &hOQ);
+	void doMetric(string TGT, string REF, string prefix, Scores &hOQ);
 
 	static const string BLEUEXT,	BLEUEXTi,	TBLEU;
 	static const map<string, int> rBLEU;

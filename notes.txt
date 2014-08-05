@@ -15,6 +15,10 @@ Linking Reference bin libraries:
 	#include <boost/filesystem.hpp>			->		-lboost_system -lboost_filesystem
 
 
+AXIOMES:
+
+	undef de perl és equivalent a -1
+
 
 REVISAR:
 
@@ -27,6 +31,10 @@ REVISAR:
 	Core.cpp -> Creació de la TSDatabase (do_score)
 
 	Scores.cpp -> La puntuació de l'atribut "all" de scores és -1 en comptes de {} en l'original %hOQ.
+
+	Core.cpp ->	HREF pot ser un hash multiple (del(s?) references files)
+
+
 
 SHORTCUTS
 
@@ -51,3 +59,9 @@ SHORTCUTS
     	#include <boost/algorithm/string.hpp>
 		std::vector<std::string> strs;
 		boost::split(strs, "string to split", boost::is_any_of("\t "));
+
+
+
+TODO LIST
+	-	CLUSTER	->	Comprovar els sets que es passen a Metrics::doMultiMetric (Lref)
+	-	LOCAL	->	Compilar Asiya. Hi ha problemes amb l'herència de SingleMetric

@@ -11,7 +11,7 @@ private:
 public:
 	static vector<vector<string> > write_fake_idx_file(string file, string IDX, int verbose);
 
-	static void SGML_f_create_mteval_multidoc(string output, int type, int verbose);
+	static void SGML_f_create_mteval_multidoc(string output, int type);
 };
 
 #endif

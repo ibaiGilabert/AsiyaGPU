@@ -1,11 +1,12 @@
 #include "Core.hpp"
 #include "Config.hpp"
 #include "Scores.hpp"
+#include "BLEU.hpp"
 
 #include <omp.h>
 #include <stdio.h>
 #include <iostream>
-
+/*
    my %HREF;
    my @sorted_refs = sort @{$Lref};
    foreach my $r (@sorted_refs) { if (exists($Href->{$r})) { $HREF{$r} = $Href->{$r}; } }
@@ -42,8 +43,9 @@
       DR::doMultiDR($config, $HYP, $HYP_file, $REF, \%HREF, 1, $hOQ);
    }
 
-   if ($verbose == 1) { print STDERR "]\n"; }
-void Core::doMultiMetrics(string HYP, map<string, double> &hOQ) {
+   if ($verbose == 1) { print STDERR "]\n"; }*/
+
+void Core::doMultiMetrics(string HYP, const set<string> &Lref, Scores &hOQ) {
    // description _ launches automatic MT evaluation metrics (for multiple references)
    //                              * computes GTM (by calling Proteus java gtm) -> e = 1..3
    //                              * computes BLEU score (by calling NIST mteval script) -> n = 4
@@ -74,17 +76,29 @@ void Core::doMultiMetrics(string HYP, map<string, double> &hOQ) {
    my $Href = shift;	Config::Hrefs
    my $hOQ = shift;
 */
-   string HYP_file = Config::Hsystems[HYP];
-   for (map<string, string>::const_iterator it = Config::Href.begin(); it != Config::Href.end(); ++it) {
 
+
+   //Lref is already sorted (set's wonders)
+
+   string HYP_file = Config::Hsystems[HYP];
+
+   set<string>::const_iterator it = Lref.begin();
+   string REF = *it;
+   ++it;
+   while (it != Lref.end()) {
+   		REF += "_"; REF += *it;
+   		++it;
    }
+
    if (Config::verbose > 1) fprintf(stderr, "computing similarities [$HYP]...\n");
    else if (Config::verbose == 1) fprintf(stderr, "$HYP - $REF [");
+   BLEU Bleu;
+   Bleu.doMetric(HYP, REF, "", hOQ);
 
-   BLEU.doMetric(HYP, REF, "", hOQ);
+   if (Config::verbose == 1) fprintf(stderr, "]\n");
 }
 
-void Core::find_max_scores(map<string, double> &hOQ) {
+void Core::find_max_scores(const Scores &hOQ) {
     // description _ finds maximum score for each metric (), considering system translations by default.
     //               If "do_refs" reference ranslations are considered as well.
     // param1  _ configuration
@@ -122,15 +136,15 @@ double Core::do_scores() {
 
 		for (set<string>::const_iterator it = Config::systems.begin(); it != Config::systems.end(); ++it) {	//systems Vs. references
 			double time1 = omp_get_wtime();
-			doMultiMetrics(*it, hOQ);
-         	//doMultiMetrics($config, $sys, $config->{Hsystems}->{$sys}, $config->{references}, $config->{Hrefs}, $hOQ);
+//doMultiMetrics($config, $sys, $config->{Hsystems}->{$sys}, $config->{references}, $config->{Hrefs}, $hOQ);
+			doMultiMetrics(*it, Config::references, hOQ);
 
 			if (Config::eval_schemes.find(Common::S_QUEEN) != Config::eval_schemes.end() or \
 				Config::metaeval_schemes.find(Common::S_QUEEN) != Config::metaeval_schemes.end() or \
 				Config::optimize_schemes.find(Common::S_QUEEN) != Config::optimize_schemes.end()) {
 
 				for (set<string>::const_iterator itr = Config::references.begin(); itr != Config::references.end(); ++itr) {	//systems Vs. references
-					doMultiMetrics(/**itr*/);
+					doMultiMetrics(*it, set<string>(itr, itr), hOQ);
 				}
 			}
 
@@ -159,7 +173,8 @@ double Core::do_scores() {
 		for (set<string>::const_iterator it = Config::references.begin(); it != Config::references.end(); ++it) {	//references Vs. references
 			double time1 = omp_get_wtime();
 			for (set<string>::const_iterator itr = Config::references.begin(); itr != Config::references.end(); ++itr) {	//references Vs. references
-				if (*it != *itr) doMultiMetrics();
+				if (*it != *itr) doMultiMetrics(*it, set<string> (itr, itr), hOQ);
+//doMultiMetrics($config, $ref1, $config->{Hrefs}->{$ref1}, [$ref2], $config->{Hrefs}, $hOQ); }
 			}
 			double time2 = omp_get_wtime();
 			double t = time2 - time1;	//Common::get_raw_Benchmark;
@@ -183,14 +198,18 @@ double Core::do_scores() {
 				if (*it != *itr) all_other_refs.insert(*itr);
 			}
 			if (all_other_refs.size() > 1) {
-				doMultiMetrics();
+				doMultiMetrics(*it, all_other_refs, hOQ);
+//doMultiMetrics($config, $ref1, $config->{Hrefs}->{$ref1}, \@all_other_refs, $config->{Hrefs}, $hOQ);
+
 				if (Config::metaeval_criteria.find(Common::C_KING) != Config::metaeval_criteria.end() or \
 					Config::optimize_criteria.find(Common::C_KING) != Config::optimize_criteria.end() or \
 					Config::metaeval_criteria.find(Common::C_ORANGE) != Config::metaeval_criteria.end() or \
 					Config::optimize_criteria.find(Common::C_ORANGE) != Config::optimize_criteria.end()) {
 
 					for (set<string>::const_iterator it = Config::systems.begin(); it != Config::systems.end(); ++it) {	//systems Vs. all other references
-						doMultiMetrics();
+						doMultiMetrics(*it, all_other_refs, hOQ);
+//doMultiMetrics($config, $sys, $config->{Hsystems}->{$sys}, \@all_other_refs, $config->{Hrefs}, $hOQ);
+
 					}
 				}
 			}
@@ -225,6 +244,46 @@ double Core::do_scores() {
 	return TIME;
 }
 
-pair<vector<double>, vector<double> > get_seg_doc_scores() {
+pair<vector<double>, vector<double> > get_seg_doc_scores(const vector<double> &scores, int DO_doc, string TGT) {
+    // description _ returns segment and document scores, given an index structure which
+    //               contains information on the number of segments per document
 
+	vector<vector<string> > idx = Config::IDX[TGT];
+	vector<double> D_scores, S_scores;
+	string docid = "";
+	int sum = -1;
+	int n, n_doc;
+	n = n_doc = 0;
+
+	int i = 1;
+	while(i < idx.size()) {
+		if (DO_doc) {	//doc-level scores
+			if (idx[i][0] != docid)	{	//NEW DOCUMENT
+				D_scores.push_back(scores[n_doc]);
+				docid = idx[i][0];
+				++n_doc;
+			}
+			S_scores.push_back(scores[n_doc-1]);
+		}
+		else {	//segment-level scores
+			if (idx[i][0] != docid)	{	//NEW DOCUMENT
+				if (sum != -1) D_scores.push_back(sum/n);
+				docid = idx[i][0];
+				sum = n = 0;
+			}
+			double x = 0;
+			if (scores[i-1] != -1) x = scores[i-1];
+			S_scores.push_back(x);
+			sum += x;
+			++n;
+		}
+		++i;
+	}
+
+	// last document (only if segment-level scores)
+	if (!DO_doc) {
+		if (sum != -1) D_scores.push_back(sum/n);
+	}
+
+	return make_pair(D_scores, S_scores);
 }
