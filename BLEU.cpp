@@ -165,11 +165,11 @@ pair<vector<double>, vector<vector<double> > > BLEU::computeBLEU() {
 	cout << "Config::tools ->" << Config::tools << endl << endl;
 
 	tBLEU << "perl " << Config::tools << "/" << BLEU::TBLEU << "/" << "mteval-v13a.pl -b -d 2 ";
+
+	if (Config::CASE == Common::CASE_CS) tBLEU << "-c "; //toolBLEU += "-c ";
 	string toolBLEU = tBLEU.str();
 
 	cout << "toolBLEU ->" << toolBLEU << endl << endl;
-
-	if (Config::CASE == Common::CASE_CS) tBLEU << "-c "; //toolBLEU += "-c ";
 
 	srand(time(NULL));
 	//double nr = rand() % (Common::NRAND + 1);	//random number [0, Common::NRAND];
