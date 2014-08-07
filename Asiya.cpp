@@ -1,12 +1,15 @@
+#include "Common.hpp"
+#include "Config.hpp"
+#include "Core.hpp"
+
 #include <iostream>
 #include <stdio.h>
 #include <getopt.h>
 #include <vector>
 #include <string>
 #include <map>
-#include "Common.hpp"
-#include "Config.hpp"
-#include "Core.hpp"
+
+//#include <stdlib.h>	//atoi
 
 using namespace std;
 
@@ -47,7 +50,7 @@ int main(int argc, char *argv[]) {
 		case 'e': Options["eval"] = optarg; break;
 		case 'm': Options["metric_set"] = optarg; break;
 		case 'h': help = 1; break;
-		case 'v': v = 1; break;
+		case 'v': Options["v"] = "1"; break;
 		//default: usage();
 		}
 	}
@@ -55,7 +58,7 @@ int main(int argc, char *argv[]) {
     for (map<string,string>::const_iterator it = Options.begin(); it != Options.end(); it++) {
     	cout << it->first << " -> " << it->second << endl;
     }
-    if (v) cout << "v" << " -> " << v << endl;
+    //if (Options["v"]) cout << "v" << " -> " << v << endl;
 	//if (Options.find("v") == Options.end())
 
 	if (help) usage;
@@ -108,6 +111,7 @@ Config CONFIG;
 vector<string> metaeval_options, optimize_options;
 // -- read config file --------------------------------------------------------------------------------
 //Config CONFIG = read_configuration_options(Asiya_config, Options, metaeval_options, optimize_options);
+
 CONFIG.read_configuration_options(Asiya_config, Options, metaeval_options, optimize_options);
 /*, metaevaluation_params, optimization_params);*/
 

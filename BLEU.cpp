@@ -31,7 +31,7 @@ map<string, int> create_rBLEU() {
 	aux = BLEU::BLEUEXTi + "-4";		rBLEU[aux] = 1;
 	return rBLEU;
 }
-const map<string, int> rBLEU = create_rBLEU();
+const map<string, int> BLEU::rBLEU = create_rBLEU();
 
 vector<double> BLEU::read_bleu(string reportBLEU) {
 	// description _ read BLEU value from report file
@@ -161,8 +161,14 @@ vector<vector<double> > BLEU::read_bleu_segments(string reportBLEU) {
 
 pair<vector<double>, vector<vector<double> > > BLEU::computeBLEU() {
 	stringstream tBLEU;
+
+	cout << "Config::tools ->" << Config::tools << endl << endl;
+
 	tBLEU << "perl " << Config::tools << "/" << BLEU::TBLEU << "/" << "mteval-v13a.pl -b -d 2 ";
 	string toolBLEU = tBLEU.str();
+
+	cout << "toolBLEU ->" << toolBLEU << endl << endl;
+
 	if (Config::CASE == Common::CASE_CS) tBLEU << "-c "; //toolBLEU += "-c ";
 
 	srand(time(NULL));
@@ -216,7 +222,7 @@ void BLEU::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 
 	int GO , i;
 	GO = i = 0;
-	for (map<string, int>::const_iterator it = BLEU::rBLEU.begin(); it != rBLEU.end(); ++it) {
+	for (map<string, int>::const_iterator it = BLEU::rBLEU.begin(); it != BLEU::rBLEU.end(); ++it) {
 		//mBLEU.insert(it->first);
 		mBLEU[i++] = it->first;
 	}

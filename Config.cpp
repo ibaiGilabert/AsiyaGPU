@@ -119,6 +119,23 @@ void Config::default_config() {
     //return CONFIG;
 }
 
+void Config::printMapInt(const map<string, int> &m) {
+    cout << "---------------------" << endl;
+    for (map<string, int>::const_iterator it = m.begin(); it != m.end(); ++it) {
+        cout << "\t" << it->first << " -> " << it->second << endl;
+    }
+    cout << "---------------------" << endl;
+}
+
+void Config::printMapString(const map<string, string> &m) {
+    cout << "---------------------" << endl;
+    for (map<string, string>::const_iterator it = m.begin(); it != m.end(); ++it) {
+        cout << "\t" << it->first << " -> " << it->second << endl;
+    }
+    cout << "---------------------" << endl;
+}
+
+
 void Config::Dumper() {
     cout << "\tverbose -> " << Config::verbose << endl;
     cout << "\tmin_dist -> " << Config::min_dist << endl;
@@ -182,6 +199,14 @@ void Config::Dumper() {
     cout << "\tmetrics-> (" << Config::metrics.size() << ")" << endl;
     for (set<string>::const_iterator it = Config::metrics.begin(); it != Config::metrics.end(); ++it) {
         cout << "\t\t" << *it << endl;
+    }
+    cout << "\twc-> (" << Config::Hmetrics.size() << ")" << endl;
+    for (map<string, int>::const_iterator it = Config::wc.begin(); it != Config::wc.end(); ++it) {
+        cout << "\t\t" << it->first << " -> " << it->second << endl;
+    }
+    cout << "\teval_schemes-> (" << Config::Hmetrics.size() << ")" << endl;
+    for (map<string, int>::const_iterator it = Config::eval_schemes.begin(); it != Config::eval_schemes.end(); ++it) {
+        cout << "\t\t" << it->first << " -> " << it->second << endl;
     }
     cout << "\tO -> " << Config::O << endl;
     cout << "\ttsearch -> " << Config::tsearch << endl;
@@ -344,7 +369,7 @@ void Config::process_raw_file(string file, string type) {
     string tokfile = ss.str();
 
 
-    cout << "process_raw_file: file : '" << file << "' type: '" << type << "'" << endl;
+    //cout << "process_raw_file: file : '" << file << "' type: '" << type << "'" << endl;
 
     string lang;
     if (type == "source" or type == "src") {
@@ -418,7 +443,7 @@ void Config::process_config_file(char* config_file, map<string, string> Options)
     cout << "REFERENCES = " << REFERENCES << endl;
 
     // string TOOLS = Config::PATH;
-    string TOOLS = "/home/ibai/Escriptori/AsiyaGPU"; ///home/soft/asiya/tools";
+    string TOOLS = "/home/ibai/Escriptori/AsiyaGPUsvn/tools"; // /home/soft/asiya/tools";
     boost::regex re2("/+");
     TOOLS = boost::regex_replace(TOOLS, re2, "/");
 
@@ -463,11 +488,11 @@ void Config::process_config_file(char* config_file, map<string, string> Options)
         int i = 0;
 
         while (getline(file, str)) {
-            cout << "Linia " << ++i << endl;
-            cout << '\t' << str << endl;
+            //cout << "Linia " << ++i << endl;
+            //cout << '\t' << str << endl;
             boost::match_results<string::const_iterator> results;
             if (boost::regex_match(str, results, re)) {
-                cout << "\t That was a kind of line" << endl;
+                //cout << "\t That was a kind of line" << endl;
 
                 string s = results[0];
 
@@ -502,11 +527,11 @@ void Config::process_config_file(char* config_file, map<string, string> Options)
         string str;
         int i = 0;
         while (getline(file, str)) {
-            cout << "Linia " << ++i << endl;
-            cout << '\t' << str << endl;
+            //cout << "Linia " << ++i << endl;
+            //cout << '\t' << str << endl;
             boost::match_results<string::const_iterator> results;
             if (boost::regex_match(str, results, re)) {
-                cout << "\t That was a kind of line" << endl;
+                //cout << "\t That was a kind of line" << endl;
 
                 string s = results[0];
 
@@ -589,6 +614,8 @@ void Config::process_config_file(char* config_file, map<string, string> Options)
                     boost::sregex_token_iterator i(entry.second.begin(), entry.second.end(), reeq, -1);
                     boost::sregex_token_iterator j;
                     while (i != j) {
+                        cout << "Add " << *i << " to systems" << endl;
+
                         Config::systems.insert(*i++);
                     }
 
@@ -599,6 +626,8 @@ void Config::process_config_file(char* config_file, map<string, string> Options)
                     boost::sregex_token_iterator i(entry.second.begin(), entry.second.end(), reeq, -1);
                     boost::sregex_token_iterator j;
                     while (i != j) {
+                        cout << "Add " << *i << " to references" << endl;
+
                         Config::references.insert(*i++);
                     }
 
@@ -613,11 +642,54 @@ void Config::process_config_file(char* config_file, map<string, string> Options)
     } else { fprintf(stderr, "couldn't open file: %s\n", config_file); exit(1); }
 
     if (Config::verbose) fprintf(stderr, " [DONE]\n");
-
-    Dumper();
-
-    //return CONFIG;
 }
+
+void Config::validate_configuration() {
+    // description _ validate configuration (through simple verifications on mandatory arguments and option values)
+
+    if (Config::PATH == "") {
+        fprintf(stderr, "[ERROR] PATH undefined\n");
+        exit(1);
+    }
+    boost::filesystem::path p (Config::PATH);   // p reads clearer than argv[1] in the following code
+    if (!is_directory(p)) {
+        fprintf(stderr, "[ERROR] PATH directory <%s> does not exist!\n", Config::PATH);
+        exit(1);
+    }
+    boost::filesystem::path t (Config::tools);   // p reads clearer than argv[1] in the following code
+    if (!is_directory(t)) {
+        fprintf(stderr, "[ERROR] PATH directory <%s> does not exist!\n", Config::tools.c_str());
+        exit(1);
+    }
+    if (!Config::references.empty()) {
+        for (set<string>::const_iterator it = Config::references.begin(); it != Config::references.end(); ++it) {
+            if (Config::Hrefs.find(*it) == Config::Hrefs.end()) {
+                fprintf(stderr, "[ERROR] reference '%s' not in test suite!!\n", it->c_str());
+                exit(1);
+            }
+        }
+    } else {
+        for (map<string, string>::const_iterator it = Config::Hrefs.begin(); it != Config::Hrefs.end(); ++it) Config::references.insert(it->first);
+    }
+
+    if (!Config::systems.empty()) {
+        for (set<string>::const_iterator it = Config::systems.begin(); it != Config::systems.end(); ++it) {
+            if (Config::Hsystems.find(*it) == Config::Hsystems.end()) {
+                fprintf(stderr, "[ERROR] system '%s' not in test suite!!\n", it->c_str());
+                exit(1);
+            }
+        }
+    } else {
+        for (map<string, string>::const_iterator it = Config::Hsystems.begin(); it != Config::Hsystems.end(); ++it) Config::systems.insert(it->first);
+        if (Config::systems.empty()) {
+            fprintf(stderr, "[ERROR] set of systems undefined!!\n");
+            exit(1);
+        }
+    }
+
+}
+
+
 
 //$Asiya_config, \%options, \@metaevaluation_params, \@optimization_params);
 //Config read_configuration_options(char* config_file, map<string, string> options, vector<string> metaeval_options, vector<string> optimize_options) {
@@ -630,6 +702,12 @@ void Config::read_configuration_options(char* config_file, map<string, string> o
     //Config CONFIG = process_config_file(config_file, options);
     process_config_file(config_file, options);
     process_command_line_options(options, metaeval_options, optimize_options);
+
+    /*Dumper();
+    cout << "Options readed, dump:" << endl;
+    Config::printMapString(options);*/
+    validate_configuration();
+
     /*process_command_line_options($CONFIG, $options, $metaeval_options, $optimize_options);
     validate_configuration($CONFIG);
     print_configuration_options($CONFIG);*/

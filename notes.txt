@@ -34,7 +34,7 @@ REVISAR:
 
 	Core.cpp ->	HREF pot ser un hash multiple (del(s?) references files)
 
-
+	Config.cpp	->	validate_configuration inacabat
 
 SHORTCUTS
 
@@ -63,5 +63,4 @@ SHORTCUTS
 
 
 TODO LIST
-	-	CLUSTER	->	Comprovar els sets que es passen a Metrics::doMultiMetric (Lref)
-	-	LOCAL	->	Compilar Asiya. Hi ha problemes amb l'herència de SingleMetric
+	-	LOCAL	->	Verificar la compilacio d'Asiya i que tant BLEU com el polimorfisme rula be.

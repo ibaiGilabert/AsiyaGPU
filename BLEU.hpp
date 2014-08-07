@@ -14,6 +14,8 @@ private:
 	pair<vector<double>, vector<vector<double> > > computeBLEU();
 
 public:
+	BLEU() {}
+
 	void doMetric(string TGT, string REF, string prefix, Scores &hOQ);
 
 	static const string BLEUEXT,	BLEUEXTi,	TBLEU;

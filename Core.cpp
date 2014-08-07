@@ -1,6 +1,7 @@
 #include "Core.hpp"
 #include "Config.hpp"
 #include "Scores.hpp"
+#include "SingleMetric.hpp"
 #include "BLEU.hpp"
 
 #include <omp.h>
@@ -92,8 +93,11 @@ void Core::doMultiMetrics(string HYP, const set<string> &Lref, Scores &hOQ) {
 
    if (Config::verbose > 1) fprintf(stderr, "computing similarities [$HYP]...\n");
    else if (Config::verbose == 1) fprintf(stderr, "$HYP - $REF [");
-   BLEU Bleu;
-   Bleu.doMetric(HYP, REF, "", hOQ);
+
+   	cout << "LET'S GONNA DO BLEU METRIC!!!" << endl;
+   SingleMetric *pBLEU = new BLEU;
+   pBLEU->doMetric(HYP, REF, "", hOQ);
+    cout << "BLEU DONE!!!" << endl;
 
    if (Config::verbose == 1) fprintf(stderr, "]\n");
 }
@@ -125,6 +129,9 @@ double Core::do_scores() {
     double TIME = 0;
 
     // --- end creation of tsearch
+    cout << "do_scores -> eval_schemes <- " << endl;
+    Config::printMapInt(Config::eval_schemes);
+
 	if (Config::eval_schemes.find(Common::S_SINGLE) != Config::eval_schemes.end() or \
 		Config::metaeval_schemes.find(Common::S_SINGLE) != Config::metaeval_schemes.end() or \
 		Config::optimize_schemes.find(Common::S_SINGLE) != Config::optimize_schemes.end() or \
@@ -137,6 +144,7 @@ double Core::do_scores() {
 		for (set<string>::const_iterator it = Config::systems.begin(); it != Config::systems.end(); ++it) {	//systems Vs. references
 			double time1 = omp_get_wtime();
 //doMultiMetrics($config, $sys, $config->{Hsystems}->{$sys}, $config->{references}, $config->{Hrefs}, $hOQ);
+			cout << "MultiMetric o ke ase?" << endl;
 			doMultiMetrics(*it, Config::references, hOQ);
 
 			if (Config::eval_schemes.find(Common::S_QUEEN) != Config::eval_schemes.end() or \
@@ -244,7 +252,7 @@ double Core::do_scores() {
 	return TIME;
 }
 
-pair<vector<double>, vector<double> > get_seg_doc_scores(const vector<double> &scores, int DO_doc, string TGT) {
+pair<vector<double>, vector<double> > Core::get_seg_doc_scores(const vector<double> &scores, int DO_doc, string TGT) {
     // description _ returns segment and document scores, given an index structure which
     //               contains information on the number of segments per document
 

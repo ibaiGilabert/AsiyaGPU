@@ -17,11 +17,14 @@ private:
 	void default_config();
 
 	//Print attributes
-	void Dumper();
+	static void Dumper();
 
 	//Process configuration file
 	void process_nist_file(string file, string type);
 	void process_raw_file(string file, string type);
+
+	void validate_configuration();
+
 
 	//Setting attributes
 	void process_config_file(char* config_file, map<string, string> options);
@@ -63,6 +66,10 @@ public:
 	void use_DR_metrics();
 	void use_DRdoc_metrics();
 	void use_ULCh_metrics();*/
+
+	//Print methods
+	static void printMapInt(const map<string, int> &m);
+	static void printMapString(const map<string, string> &m);
 
 	//Process
 	void read_configuration_options(char* config_file, map<string, string >options, vector<string> metaeval_options, vector<string> optimize_options);
