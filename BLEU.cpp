@@ -10,6 +10,7 @@
 
 #include <iostream>
 #include <fstream>
+#include <sstream>
 
 #include <boost/regex.hpp>
 #include <boost/filesystem.hpp>
@@ -185,12 +186,18 @@ pair<vector<double>, vector<vector<double> > > BLEU::computeBLEU() {
     boost::filesystem::path reportBLEUsgml(ssReport.str());
 
 	//if (!exists(refBLEUsgml) or Config::remake) NISTXML::SGML_f_create_mteval_multidoc(refBLEUsgml.string(), 2);
-	//if (!exists(srcBLEUsgml) or Config::remake) NISTXML::SGML_f_create_mteval_multidoc(refBLEUsgml.string(), 0);
-	//if (!exists(refBLEUsgml) or Config::remake) NISTXML::SGML_f_create_mteval_multidoc(refBLEUsgml.string(), 1);
+	//if (!exists(srcBLEUsgml) or Config::remake) NISTXML::SGML_f_create_mteval_doc(refBLEUsgml.string(), 0);
+	//if (!exists(refBLEUsgml) or Config::remake) NISTXML::SGML_f_create_mteval_doc(refBLEUsgml.string(), 1);
 	if (Config::verbose > 1) fprintf(stderr, "building %s\n", reportBLEUsgml.string().c_str());
 
     stringstream sc;// = tBLEU;
     sc << toolBLEU << " -s " << ssSrc.str() << " -t " << ssOut.str() << " -r " << ssRef.str() << " > " << ssReport.str();
+
+        cout << "\tsource: " <<  ssSrc.str() << endl;
+        cout << "\tout: " << ssOut.str() << endl;
+        cout << " \tref: " << ssRef.str() << endl;
+        exit(0);
+
     string ms = "[ERROR] problems running BLEU...";
 	Common::execute_or_die(sc.str(), ms);
 

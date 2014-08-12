@@ -175,6 +175,7 @@ public:
 
 	static void execute_or_die(string command, string message);
 	static string give_system_name(string file);
+	static string replace_special_characters(string input);
 
 	//Printing
 	static void print_hline(char c, int l);

@@ -15,6 +15,22 @@ Linking Reference bin libraries:
 	#include <boost/filesystem.hpp>			->		-lboost_system -lboost_filesystem
 
 
+
+XML PARSER
+
+	Install:
+
+		$apt-get intall libxml2-dev
+
+	Compile:
+
+		$g++ libxml.cpp -o libxml -lxml2 -I/usr/include/libxml2
+
+
+	EXEMPLE useful de construcció del document xml: writer_newxml.cpp
+
+
+
 AXIOMES:
 
 	undef de perl és equivalent a -1
@@ -39,11 +55,18 @@ REVISAR:
 SHORTCUTS
 
 	-->IF file exists
+	#include <boost/filesystem.hpp>
 
-	if (!(-e))
+	  boost::filesystem::path p (TOOLS);   // p reads clearer than argv[1] in the following code
 
-	    boost::filesystem::path p (TOOLS);   // p reads clearer than argv[1] in the following code
-	    if (!exists(p)) {
+	  if (exists(p))    // does p actually exist?
+	  {
+	    if (is_regular_file(p))        // is p a regular file?
+	      cout << p << " size is " << file_size(p) << '\n';
+
+	    else if (is_directory(p))      // is p a directory?
+   		   cout << p << " is a directory\n";
+
 
 	-->SPLIT string
 
@@ -63,4 +86,4 @@ SHORTCUTS
 
 
 TODO LIST
-	-	LOCAL	->	Verificar la compilacio d'Asiya i que tant BLEU com el polimorfisme rula be.
+	-	LOCAL	->	Provar la creacio de fitxers SGML_f_ (es a dir, provar el parser joder)

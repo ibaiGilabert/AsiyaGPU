@@ -1,10 +1,13 @@
+IDIR = /usr/include/libxml2
+
 CC		= g++
-LDFLAGS	= -lboost_system -lboost_filesystem -lboost_regex -lgomp
+CFLAGS = -I$(IDIR)
+LDFLAGS	= -lboost_system -lboost_filesystem -lboost_regex -lgomp -lxml2
 
 all: Asiya
 
 Asiya: Asiya.o Config.o Common.o Core.o Scores.o BLEU.o NISTXML.o
-	g++ -o Asiya Asiya.o Config.o Common.o Core.o Scores.o BLEU.o NISTXML.o $(LDFLAGS)
+	g++ -o Asiya Asiya.o Config.o Common.o Core.o Scores.o BLEU.o NISTXML.o $(LDFLAGS) $(CFLAGS)
 
 Asiya.o: Asiya.cpp
 	g++ -c Asiya.cpp
@@ -25,7 +28,7 @@ BLEU.o: BLEU.hpp BLEU.cpp
 	g++ -c BLEU.cpp
 
 NISTXML.o: NISTXML.hpp NISTXML.cpp
-	g++ -c NISTXML.cpp
+	g++ -c NISTXML.cpp	$(CFLAGS)
 
 clean:
 	rm *.o Asiya
