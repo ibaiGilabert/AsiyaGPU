@@ -1,14 +1,14 @@
 #ifndef CONFIG_HPP
 #define CONFIG_HPP
 
+#include "Common.hpp"
+#include "NISTXML.hpp"
+
 #include <string>
 #include <vector>
 #include <map>
 #include <set>
 
-
-#include "Common.hpp"
-#include "NISTXML.hpp"
 using namespace std;
 
 class Config {

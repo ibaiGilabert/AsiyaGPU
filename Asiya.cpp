@@ -50,7 +50,7 @@ int main(int argc, char *argv[]) {
 		case 'e': Options["eval"] = optarg; break;
 		case 'm': Options["metric_set"] = optarg; break;
 		case 'h': help = 1; break;
-		case 'v': Options["v"] = "1"; break;
+		case 'v': Options["v"] = "3"; break;
 		//default: usage();
 		}
 	}

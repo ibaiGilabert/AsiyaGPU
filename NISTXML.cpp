@@ -64,6 +64,97 @@ vector<vector<string> > NISTXML::write_fake_idx_file(string file, string IDX, in
     return lIDX;
 }
 
+void SGML_f_create_create_doc(string input, string output, int type, string sysid, xmlDocPtr &doc, xmlNodePtr &root_node) {
+        string randomInput, randomInput2;
+
+        //if exists input....
+        string input_gz = input + Common::GZEXT;
+        boost::filesystem::path p (input);
+        boost::filesystem::path p_gz (input_gz);
+        if (exists(p) or exists(p_gz)) {
+
+            if (Config::verbose > 1) printf("reading <%s\n>", input.c_str());
+
+            if (!exists(p)) {
+                string input2 = Common::replace_special_characters(input);
+                stringstream rIn, rIn2, st;
+                rIn << Common::DATA_PATH << "/" << Common::TMP << "/" << Common::give_system_name(input) << "." << rand() % (Common::NRAND + 1);
+                rIn2 << Common::DATA_PATH << "/" << Common::TMP << "/" << Common::give_system_name(input2) << "." << rand() % (Common::NRAND + 1);
+                randomInput = rIn.str();
+                randomInput2 = rIn2.str();
+
+                st << Common::GUNZIP << " -c " << input2 << "." << Common::GZEXT << " > " << randomInput2;
+                string command = st.str();
+
+                system(command.c_str());
+            }
+
+            int nSEGMENTS = 1;
+
+            // STORE DOCUMENT
+            xmlNodePtr doc_node = xmlNewChild(root_node, NULL, BAD_CAST "DOC", NULL);
+
+            xmlNewProp(doc_node, BAD_CAST "docid", BAD_CAST "dummydoc");
+            xmlNewProp(doc_node, BAD_CAST "sysid", BAD_CAST sysid.c_str());
+
+            // DOCUMENTS
+            string str, input_file;
+
+            if (exists(p)) input_file = input;
+            else input_file = randomInput;
+
+            ifstream file(input_file.c_str());
+            if (file) {
+                cout << "OPENED : " << input_file << endl;
+                while (getline(file, str)) {
+                    boost::regex re("\\s+$");
+                    string line = boost::regex_replace(str, re, "");
+
+                    if (line == "") line = Common::EMPTY_ITEM;
+
+                    xmlNodePtr seg_node = xmlNewChild(doc_node, NULL, BAD_CAST "seg", BAD_CAST line.c_str());
+                    char buffer[50];
+                    sprintf(buffer, "%d", nSEGMENTS);
+                    xmlNewProp(seg_node, BAD_CAST "id", (const xmlChar *) buffer);
+                    ++nSEGMENTS;
+                }
+                file.close();
+            } else { fprintf(stderr, "couldn't open file: %s\n", input_file.c_str()); exit(1); }
+        } else fprintf(stderr, "\n[ERROR] UNAVAILABLE file <%s>!!!\n", input.c_str());
+}
+
+void NISTXML::SGML_f_create_mteval_doc(string input, string output, int type) {
+    // description _ creation of a NIST SGML evaluation document from a "sentence-per-line" format corpus
+    if (Config::verbose > 1) fprintf(stderr, "OPENING <%s> for NIST xml-parsing [type = %s]...\n", input.c_str(), (type == 0)? "SRC" : (type == 1)? "TST" : "REF");
+
+    string set, sysid;
+    switch(type) {
+        case 0: set = "srcset"; sysid = "dummysysSRC"; break;
+        case 1: set = "tstset"; sysid = "dummysysTST"; break;
+        case 2: set = "refset"; sysid = "dummysysREF"; break;
+    }
+    cout << "--> type: " << type << " | set: " << set << " | sysid: " << sysid << endl;
+
+    // Creates a new document, a node and a set it as a root node
+    xmlDocPtr doc = xmlNewDoc(BAD_CAST "1.0");
+    xmlNodePtr root_node = xmlNewNode(NULL, BAD_CAST set.c_str());
+    xmlDocSetRootElement(doc, root_node);
+
+    // STORE DOCUMENT
+    xmlNewProp(root_node, BAD_CAST "setid", BAD_CAST "dummyset");
+    xmlNewProp(root_node, BAD_CAST "srclang", BAD_CAST "dummylang");
+    xmlNewProp(root_node, BAD_CAST "trglang", BAD_CAST "dummylang");
+
+    srand(time(NULL));
+    //string randomInput, randomInput2;
+
+    SGML_f_create_create_doc(input, output, type, sysid, doc, root_node);
+
+    xmlSaveFormatFileEnc(output.c_str(), doc, "UTF-8", 1);
+    xmlFreeDoc(doc);
+    xmlCleanupParser();
+}
+
 void NISTXML::SGML_f_create_mteval_multidoc(string output, int type) {
     // description _ creation of a NIST SGML evaluation document from a "sentence-per-line" format corpus
     //              (multi-document)
@@ -98,10 +189,11 @@ void NISTXML::SGML_f_create_mteval_multidoc(string output, int type) {
     xmlNewProp(root_node, BAD_CAST "trglang", BAD_CAST "dummylang");
 
     srand(time(NULL));
-    string randomInput, randomInput2;
+    //string randomInput, randomInput2;
 
     for (map<string, string>::const_iterator it = Config::Hrefs.begin(); it != Config::Hrefs.end(); ++it) {
-        string input = it->second;
+        SGML_f_create_create_doc(it->second, output, type, it->first, doc, root_node);
+        /*string input = it->second;
 
         //if exists input....
         string input_gz = input + Common::GZEXT;
@@ -133,7 +225,6 @@ void NISTXML::SGML_f_create_mteval_multidoc(string output, int type) {
             xmlNewProp(doc_node, BAD_CAST "docid", BAD_CAST "dummydoc");
             xmlNewProp(doc_node, BAD_CAST "sysid", BAD_CAST it->first.c_str());
 
-
             // DOCUMENTS
             string str, input_file;
 
@@ -142,20 +233,22 @@ void NISTXML::SGML_f_create_mteval_multidoc(string output, int type) {
 
             ifstream file(input_file.c_str());
             if (file) {
+                cout << "OPENED : " << input_file << endl;
                 while (getline(file, str)) {
                     boost::regex re("\\s+$");
                     string line = boost::regex_replace(str, re, "");
 
                     if (line == "") line = Common::EMPTY_ITEM;
 
-                    xmlNewChild(doc_node, NULL, BAD_CAST "seg", BAD_CAST line.c_str());
-                    xmlNewProp(doc_node, BAD_CAST "id", (const xmlChar *)nSEGMENTS);
+                    xmlNodePtr seg_node = xmlNewChild(doc_node, NULL, BAD_CAST "seg", BAD_CAST line.c_str());
+                    char buffer[50];
+                    sprintf(buffer, "%d", nSEGMENTS);
+                    xmlNewProp(seg_node, BAD_CAST "id", (const xmlChar *) buffer);
                     ++nSEGMENTS;
                 }
                 file.close();
             } else { fprintf(stderr, "couldn't open file: %s\n", input_file.c_str()); exit(1); }
-
-        } else fprintf(stderr, "\n[ERROR] UNAVAILABLE file <%s>!!!\n", input.c_str());
+        } else fprintf(stderr, "\n[ERROR] UNAVAILABLE file <%s>!!!\n", input.c_str());*/
     }
     xmlSaveFormatFileEnc(output.c_str(), doc, "UTF-8", 1);
     xmlFreeDoc(doc);

@@ -160,7 +160,7 @@ vector<vector<double> > BLEU::read_bleu_segments(string reportBLEU) {
 }
 
 
-pair<vector<double>, vector<vector<double> > > BLEU::computeBLEU() {
+pair<vector<double>, vector<vector<double> > > BLEU::computeBLEU(string TGT) {
 	stringstream tBLEU;
 
 	cout << "Config::tools ->" << Config::tools << endl << endl;
@@ -185,18 +185,14 @@ pair<vector<double>, vector<vector<double> > > BLEU::computeBLEU() {
     boost::filesystem::path outBLEUsgml(ssOut.str());
     boost::filesystem::path reportBLEUsgml(ssReport.str());
 
-	//if (!exists(refBLEUsgml) or Config::remake) NISTXML::SGML_f_create_mteval_multidoc(refBLEUsgml.string(), 2);
-	//if (!exists(srcBLEUsgml) or Config::remake) NISTXML::SGML_f_create_mteval_doc(refBLEUsgml.string(), 0);
-	//if (!exists(refBLEUsgml) or Config::remake) NISTXML::SGML_f_create_mteval_doc(refBLEUsgml.string(), 1);
+	if (!exists(refBLEUsgml) or Config::remake) NISTXML::SGML_f_create_mteval_multidoc(refBLEUsgml.string(), 2);
+	if (!exists(srcBLEUsgml) or Config::remake) NISTXML::SGML_f_create_mteval_doc(Config::src, srcBLEUsgml.string(), 0);
+	if (!exists(outBLEUsgml) or Config::remake) NISTXML::SGML_f_create_mteval_doc(Config::Hsystems[TGT], outBLEUsgml.string(), 1);
+
 	if (Config::verbose > 1) fprintf(stderr, "building %s\n", reportBLEUsgml.string().c_str());
 
     stringstream sc;// = tBLEU;
     sc << toolBLEU << " -s " << ssSrc.str() << " -t " << ssOut.str() << " -r " << ssRef.str() << " > " << ssReport.str();
-
-        cout << "\tsource: " <<  ssSrc.str() << endl;
-        cout << "\tout: " << ssOut.str() << endl;
-        cout << " \tref: " << ssRef.str() << endl;
-        exit(0);
 
     string ms = "[ERROR] problems running BLEU...";
 	Common::execute_or_die(sc.str(), ms);
@@ -284,7 +280,7 @@ void BLEU::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 	    (!exists(reportBLEUi3xml_path) and !exists(reportBLEUi3xml_ext)) or \
 	    (!exists(reportBLEUi4xml_path) and !exists(reportBLEUi4xml_ext)) or Config::remake) {
 	     	//my ($SYS, $SEGS) = BLEU::computeMultiBLEU($src, $out, $Href, $remakeREPORTS, $config->{CASE}, $tools, $verbose);
-	    	pair<vector<double>, vector<vector<double> > > res = computeBLEU();
+	    	pair<vector<double>, vector<vector<double> > > res = computeBLEU(TGT);
 
 			pair<vector<double>, vector<double> > doc_seg =  Core::get_seg_doc_scores(res.second[0], 0, TGT);
          	//if (Config::O_STORAGE == 1) IQXML::write_report();
@@ -297,6 +293,8 @@ void BLEU::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 	    	string prefBE2 = prefix;	prefBE1 += BLEU::BLEUEXT;	prefBE1 += "-2";
 	    	hOQ.save_hash_scores(prefBE1, TGT, REF, res.first[1], doc_seg.first, doc_seg.second);
 
+	    	hOQ.print_scores();
+	    	exit(1);
 	    }
 
 	}

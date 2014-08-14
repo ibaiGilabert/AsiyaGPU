@@ -11,7 +11,7 @@ private:
 	vector<double> read_bleu(string reportBLEU);
 	vector<vector<double> > read_bleu_segments(string reportBLEU);
 
-	pair<vector<double>, vector<vector<double> > > computeBLEU();
+	pair<vector<double>, vector<vector<double> > > computeBLEU(string TGT);
 
 public:
 	BLEU() {}
