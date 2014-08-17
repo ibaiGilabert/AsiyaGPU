@@ -1,0 +1,32 @@
+MT evaluation scorer began on 2014 Aug 15 at 19:55:51
+command line:  /home/soft/asiya/tools/mteval-kit/mteval-v13a.pl -n -d 2 -c -s /home/usuaris/gilabert/asiya/gpu/sample/tmp/5459.41332428814.src.NIST.sgml -t /home/usua
+ris/gilabert/asiya/gpu/sample/tmp/3425.93198017315.out.NIST.sgml -r /home/usuaris/gilabert/asiya/gpu/sample/tmp/1194.44068146066.ref.NIST.sgml
+  Evaluation of dummylang-to-dummylang translation using:
+    src set "dummyset" (1 docs, 3 segs)
+    ref set "dummyset" (1 refs)
+    tst set "dummyset" (1 systems)
+
+  cumulative-NIST score using 5-grams = 2.9992 3.2522 3.2522 3.2522 3.2522 for system "dummysysTST" on segment 1 of document "dummydoc" (20 words)
+  individual-NIST score using 5-grams = 2.9992 0.2530 0.0000 0.0000 0.0000 for system "dummysysTST" on segment 1 of document "dummydoc" (20 words)
+  cumulative-NIST score using 5-grams = 3.4697 4.1210 4.1210 4.1210 4.1210 for system "dummysysTST" on segment 2 of document "dummydoc" (17 words)
+  individual-NIST score using 5-grams = 3.4697 0.6514 0.0000 0.0000 0.0000 for system "dummysysTST" on segment 2 of document "dummydoc" (17 words)
+  cumulative-NIST score using 5-grams = 3.5894 3.9808 4.0696 4.0696 4.0696 for system "dummysysTST" on segment 3 of document "dummydoc" (13 words)
+  individual-NIST score using 5-grams = 3.5894 0.3914 0.0888 0.0000 0.0000 for system "dummysysTST" on segment 3 of document "dummydoc" (13 words)
+NIST score using   5-grams = 3.7835 for system "dummysysTST" on document "dummydoc" (3 segments, 50 words)
+NIST score = 3.7835  for system "dummysysTST"
+
+# ------------------------------------------------------------------------
+
+Individual N-gram scoring
+        1-gram   2-gram   3-gram   4-gram   5-gram   6-gram   7-gram   8-gram   9-gram
+        ------   ------   ------   ------   ------   ------   ------   ------   ------
+ NIST:  3.3345   0.4263   0.0227   0.0000   0.0000   0.0000   0.0000   0.0000   0.0000  "dummysysTST"
+
+
+# ------------------------------------------------------------------------
+Cumulative N-gram scoring
+        1-gram   2-gram   3-gram   4-gram   5-gram   6-gram   7-gram   8-gram   9-gram
+        ------   ------   ------   ------   ------   ------   ------   ------   ------
+ NIST:  3.3345   3.7608   3.7835   3.7835   3.7835   3.7835   3.7835   3.7835   3.7835  "dummysysTST"
+
+MT evaluation scorer ended on 2014 Aug 15 at 19:55:51

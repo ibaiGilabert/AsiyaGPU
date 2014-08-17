@@ -6,8 +6,8 @@ LDFLAGS	= -lboost_system -lboost_filesystem -lboost_regex -lgomp -lxml2
 
 all: Asiya
 
-Asiya: Asiya.o Config.o Common.o Core.o Scores.o BLEU.o NISTXML.o
-	g++ -o Asiya Asiya.o Config.o Common.o Core.o Scores.o BLEU.o NISTXML.o $(LDFLAGS) $(CFLAGS)
+Asiya: Asiya.o Config.o Common.o Core.o Scores.o BLEU.o NIST.o BLEUNIST.o NISTXML.o NISTSCR.o
+	g++ -o Asiya Asiya.o Config.o Common.o Core.o Scores.o BLEU.o NIST.o BLEUNIST.o NISTXML.o NISTSCR.o $(LDFLAGS) $(CFLAGS)
 
 Asiya.o: Asiya.cpp
 	g++ -c Asiya.cpp $(CFLAGS)
@@ -27,8 +27,17 @@ Scores.o: Scores.hpp Scores.cpp
 BLEU.o: BLEU.hpp BLEU.cpp
 	g++ -c BLEU.cpp $(CFLAGS)
 
+NIST.o: NIST.hpp NIST.cpp
+	g++ -c NIST.cpp $(CFLAGS)
+
+BLEUNIST.o: BLEUNIST.hpp BLEUNIST.cpp
+	g++ -c BLEUNIST.cpp $(CFLAGS)
+
 NISTXML.o: NISTXML.hpp NISTXML.cpp
-	g++ -c NISTXML.cpp	$(CFLAGS)
+	g++ -c NISTXML.cpp $(CFLAGS)
+
+NISTSCR.o: NISTSCR.hpp NISTSCR.cpp
+	g++ -c NISTSCR.cpp
 
 clean:
 	rm *.o Asiya

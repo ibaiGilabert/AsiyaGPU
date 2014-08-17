@@ -246,6 +246,47 @@ string Common::replace_special_characters(string input) {
 	re = ("\\?");	input = boost::regex_replace(input, re, "\\\\?");
 	return input;
 }
+/*
+vector<int> Common::reorder_scores(map<string, int> &hscores, string TGT, string G) {
+	// description _ converts a hash of scores into an ordered array according to the IDX file
+	vector<vector<string> > bIDX = IDX[TGT];
+
+	vector<string> order_keys;	//(bIDX.size() - 1);
+	if (!IDX.empty()) {
+		if (G == Common::G_SEG) {
+			for (count = 1; count < bIDX.size(); ++count) {
+				vector<string> idx = bIDX[count];
+				string k = "sys::" + idx[2] + "::doc::" + idx[0] + "::seg::" + idx[3];
+				order_keys.push_back(k);	//order_keys[count] = k;
+			}
+		}
+		else if (G == Common::G_DOC) {
+			for (count = 1; count < bIDX.size(); ++count) {
+				vector<string> idx = bIDX[count];
+				string k = "sys::" + idx[2] + "::doc::" + idx[0];
+				order_keys.push_back(k);
+			}
+		}
+		else if (G == Common::G_SYS) {
+			for (count = 1; count < bIDX.size(); ++count) {
+				vector<string> idx = bIDX[count];
+				string k = "sys::" + idx[2];
+				order_keys.push_back(k);
+			}
+		}
+	}
+	else {
+		for (map<string, int>::const_iterator it = hscores.begin(); it != hscores.end(); ++it) order_keys.push_back(it->first);
+	}
+
+	vector<int> scores;
+	for (int i = 0; i < order_keys.size(); ++i) {
+		scores.push_back(hscores[k]);
+	}
+
+	return scores;
+}*/
+
 
 
 void Common::print_hline(char c, int l) {

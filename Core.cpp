@@ -3,6 +3,7 @@
 #include "Scores.hpp"
 #include "SingleMetric.hpp"
 #include "BLEU.hpp"
+#include "NIST.hpp"
 
 #include <omp.h>
 #include <stdio.h>
@@ -81,25 +82,25 @@ void Core::doMultiMetrics(string HYP, const set<string> &Lref, Scores &hOQ) {
 
    //Lref is already sorted (set's wonders)
 
-   string HYP_file = Config::Hsystems[HYP];
+	string HYP_file = Config::Hsystems[HYP];
 
-   set<string>::const_iterator it = Lref.begin();
-   string REF = *it;
-   ++it;
-   while (it != Lref.end()) {
-   		REF += "_"; REF += *it;
-   		++it;
-   }
+	set<string>::const_iterator it = Lref.begin();
+	string REF = *it;	++it;
+	while (it != Lref.end()) {
+		REF += "_"; REF += *it;
+		++it;
+	}
 
-   if (Config::verbose > 1) fprintf(stderr, "computing similarities [$HYP]...\n");
-   else if (Config::verbose == 1) fprintf(stderr, "$HYP - $REF [");
+	if (Config::verbose > 1) fprintf(stderr, "computing similarities [$HYP]...\n");
+	else if (Config::verbose == 1) fprintf(stderr, "$HYP - $REF [");
 
-   	cout << "LET'S GONNA DO BLEU METRIC!!!" << endl;
-   SingleMetric *pBLEU = new BLEU;
-   pBLEU->doMetric(HYP, REF, "", hOQ);
-    cout << "BLEU DONE!!!" << endl;
+	SingleMetric *pBLEU = new BLEU;
+	SingleMetric *pNIST = new NIST;
 
-   if (Config::verbose == 1) fprintf(stderr, "]\n");
+	pBLEU->doMetric(HYP, REF, "", hOQ);
+	pNIST->doMetric(HYP, REF, "", hOQ);
+
+	if (Config::verbose == 1) fprintf(stderr, "]\n");
 }
 
 void Core::find_max_scores(const Scores &hOQ) {

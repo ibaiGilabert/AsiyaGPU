@@ -1,3 +1,9 @@
+Build Asiya:
+
+	$qlogin		//S'ha de construir en un node de còmput.
+	$bash
+	$make
+
 Generate .o:
 
 	$g++ -c Common.cpp
@@ -86,4 +92,6 @@ SHORTCUTS
 
 
 TODO LIST
-	-	LOCAL	->	Provar la creacio de fitxers SGML_f_ (es a dir, provar el parser joder)
+	-	LOCAL	->
+
+	-	CLUSTER	->	AsiyaGPU::Ara que BLEU executa, comprovar que ho fa de PUTA mare.

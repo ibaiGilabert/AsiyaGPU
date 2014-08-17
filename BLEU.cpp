@@ -20,7 +20,8 @@
 const string BLEU::BLEUEXT = "BLEU";
 const string BLEU::BLEUEXTi = "BLEUi";
 const string BLEU::TBLEU = "mteval-kit";
-map<string, int> create_rBLEU() {
+
+map<string, int> BLEU::create_rBLEU() {
 	map<string, int> rBLEU;
 	string aux;
 	aux = BLEU::BLEUEXT + "-1";		rBLEU[aux] = 1;
@@ -219,7 +220,7 @@ pair<vector<double>, vector<vector<double> > > BLEU::computeBLEU(string TGT) {
 
 void BLEU::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
    // description _ computes BLEU score (by calling NIST mteval script) -> n = 1..4 (multiple references)
-	//int remakeREPORTS = Config::remake;
+
 	map<string, int> M = Config::Hmetrics;
 	vector<string> mBLEU(M.size());
 
