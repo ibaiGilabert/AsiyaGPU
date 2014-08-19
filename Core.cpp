@@ -1,9 +1,9 @@
 #include "Core.hpp"
 #include "Config.hpp"
 #include "Scores.hpp"
-#include "SingleMetric.hpp"
 #include "BLEU.hpp"
 #include "NIST.hpp"
+#include "BLEUNIST.hpp"
 
 #include <omp.h>
 #include <stdio.h>
@@ -96,9 +96,23 @@ void Core::doMultiMetrics(string HYP, const set<string> &Lref, Scores &hOQ) {
 
 	SingleMetric *pBLEU = new BLEU;
 	SingleMetric *pNIST = new NIST;
+	SingleMetric *pBLEUNIST = new BLEUNIST;
 
 	pBLEU->doMetric(HYP, REF, "", hOQ);
 	pNIST->doMetric(HYP, REF, "", hOQ);
+	pBLEUNIST->doMetric(HYP, REF, "", hOQ);
+
+	/*BLEU bleu;
+	NIST nist;
+	BLEUNIST bleunist;
+
+	cout << "hola bleu" << endl;
+	bleu.doMetric(HYP, REF, "", hOQ);
+	cout << "hola nist" << endl;
+	nist.doMetric(HYP, REF, "", hOQ);
+	cout << "hola bleunist" << endl;
+	bleunist.doMetric(HYP, REF, "", hOQ);*/
+	delete pBLEU, pNIST, pBLEUNIST;
 
 	if (Config::verbose == 1) fprintf(stderr, "]\n");
 }
@@ -260,7 +274,7 @@ pair<vector<double>, vector<double> > Core::get_seg_doc_scores(const vector<doub
 	vector<vector<string> > idx = Config::IDX[TGT];
 	vector<double> D_scores, S_scores;
 	string docid = "";
-	int sum = -1;
+	double sum = -1;
 	int n, n_doc;
 	n = n_doc = 0;
 

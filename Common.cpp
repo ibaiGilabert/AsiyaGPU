@@ -287,6 +287,20 @@ vector<int> Common::reorder_scores(map<string, int> &hscores, string TGT, string
 	return scores;
 }*/
 
+double Common::trunk_and_trim_number(double n, int l, int p) {
+	// description _ trunks the given number into a float (given length and precision) and trims trailing white spaces.
+	if (n == -1) return 0;
+
+	char buffer[64];
+
+	cout << "COMMON::->n : " << n << ", l: " << l << ", p: " << p << endl;
+
+	sprintf(buffer, "%.d.%df", l, p); //sz contains 0.6000
+	cout << "->x: |" << atof(buffer) << "|" << endl;
+
+	return atof(buffer);
+}
+
 
 
 void Common::print_hline(char c, int l) {

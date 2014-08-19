@@ -47,4 +47,33 @@ void Scores::print_scores() {
 		cout << "\t\t}" << endl;
 	}
 	cout << "\t}" << endl;
+
+	cout << "\tdoc : " << endl;
+	for (oMap::const_iterator i = doc.begin(); i != doc.end(); ++i) {
+		cout << "\t\t" << i->first << " -> " << endl;
+		iMap metric_name = i->second;
+		for (iMap::const_iterator j = metric_name.begin(); j != metric_name.end(); ++j) {
+			cout << "\t\t\t" << j->first << " -> {" << endl;
+			vector<Score> system_name = j->second;
+			for (int k = 0; k < system_name.size(); ++k) {
+				cout << "\t\t\t\t" << system_name[k].first << " => " << system_name[k].second << endl;
+			}
+			cout << "\t\t\t}" << endl;
+		}
+		cout << "\t\t}" << endl;
+	}
+	cout << "\tseg : " << endl;
+	for (oMap::const_iterator i = seg.begin(); i != seg.end(); ++i) {
+		cout << "\t\t" << i->first << " -> " << endl;
+		iMap metric_name = i->second;
+		for (iMap::const_iterator j = metric_name.begin(); j != metric_name.end(); ++j) {
+			cout << "\t\t\t" << j->first << " -> {" << endl;
+			vector<Score> system_name = j->second;
+			for (int k = 0; k < system_name.size(); ++k) {
+				cout << "\t\t\t\t" << system_name[k].first << " => " << system_name[k].second << endl;
+			}
+			cout << "\t\t\t}" << endl;
+		}
+		cout << "\t\t}" << endl;
+	}
 }

@@ -35,6 +35,7 @@ map<string, int> BLEU::create_rBLEU() {
 }
 const map<string, int> BLEU::rBLEU = create_rBLEU();
 
+
 vector<double> BLEU::read_bleu(string reportBLEU) {
 	// description _ read BLEU value from report file
 
@@ -53,7 +54,7 @@ vector<double> BLEU::read_bleu(string reportBLEU) {
 	            cout << "line: |" << s << "|" << endl;
 
 				boost::regex re2("^\\s+BLEU:\\s+");	//, boost::regex::perl|boost::regex::icase);
-				s = boost::regex_replace(s, re2, "2");
+				s = boost::regex_replace(s, re2, "");
 
 				cout << "\tline1: " << s << endl;
 
@@ -98,7 +99,7 @@ vector<vector<double> > BLEU::read_bleu_segments(string reportBLEU) {
     vector<vector<double> > SEG(8);
 
     string str;
-    ifstream file("reportBLEU.txt");
+    ifstream file(reportBLEU.c_str());
     if (file) {
 	    while (getline(file, str)) {
 	    	boost::match_results<string::const_iterator> results;
@@ -238,7 +239,9 @@ void BLEU::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 		++i;
 	}
 
+	cout << "BLEU ei!" << endl;
 	if (GO) {
+		cout << "GO! BLEU GO!" << endl;
 		if (Config::verbose == 1) fprintf(stderr, "%s\n", BLEU::BLEUEXT.c_str());
 		stringstream ss1, ss2, ss3, ss4, ss2i, ss3i, ss4i;
 		ss1 << Common::DATA_PATH << "/" << Common::REPORTS << "/" << TGT << "/" << REF << prefix << BLEU::BLEUEXT << "-1." << Common::XMLEXT;
@@ -283,19 +286,70 @@ void BLEU::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 	     	//my ($SYS, $SEGS) = BLEU::computeMultiBLEU($src, $out, $Href, $remakeREPORTS, $config->{CASE}, $tools, $verbose);
 	    	pair<vector<double>, vector<vector<double> > > res = computeBLEU(TGT);
 
-			pair<vector<double>, vector<double> > doc_seg =  Core::get_seg_doc_scores(res.second[0], 0, TGT);
-         	//if (Config::O_STORAGE == 1) IQXML::write_report();
-         	string prefBE1 = prefix;	prefBE1 += BLEU::BLEUEXT;	prefBE1 += "-1";
-	    	hOQ.save_hash_scores(prefBE1, TGT, REF, res.first[0], doc_seg.first, doc_seg.second);
+                /*vector<double> SYS = res.first;
+                vector<vector<double> > SEG = res.second;
+                cout << "--------------------------------BLEU::SYS---------------------------------" << endl;
+                for (int i = 0; i < SYS.size(); ++i) {
+                        cout << "\tSYS[" << i << "]: " << SYS[i] << endl;
+                }
+                cout << "--------------------------------BLEU::SEG---------------------------------" << endl;
+                for (int i = 0; i < SEG.size(); ++i) {
+                        cout << "\tSEG[" << i << "]" << endl;
+                        for(int j = 0; j < SEG[i].size(); ++j) {
+                                cout << "\t\tSEG[" << i << "][" << j << "]: " << SEG[i][j] << endl;
+                        }
+                        cout << endl;
+                }
+                cout << "--------------------------------------------------------------------------" << endl;*/
 
+
+	    	//Scores::save_hash_scores(string metric_name, string system_name, string refere_name, double sys_score, const vector<double> &doc_scores, const vector<double> &seg_scores) {
+
+			pair<vector<double>, vector<double> > doc_seg =  Core::get_seg_doc_scores(res.second[0], 0, TGT);
+         	string prefB = prefix;	prefB += BLEU::BLEUEXT;	prefB += "-1";
+	    	//if (Config::O_STORAGE == 1) IQXML::write_report(TGT, REF, prefB, res.first[0], doc_seg.first, doc_seg.second);
+         	hOQ.save_hash_scores(prefB, TGT, REF, res.first[0], doc_seg.first, doc_seg.second);
 
 			doc_seg = Core::get_seg_doc_scores(res.second[1], 0, TGT);
          	//if (Config::O_STORAGE == 1) IQXML::write_report();
-	    	string prefBE2 = prefix;	prefBE1 += BLEU::BLEUEXT;	prefBE1 += "-2";
-	    	hOQ.save_hash_scores(prefBE1, TGT, REF, res.first[1], doc_seg.first, doc_seg.second);
+	    	prefB = prefix + BLEU::BLEUEXT + "-2";
+	    	hOQ.save_hash_scores(prefB, TGT, REF, res.first[1], doc_seg.first, doc_seg.second);
 
-	    	hOQ.print_scores();
-	    	exit(1);
+			doc_seg = Core::get_seg_doc_scores(res.second[2], 0, TGT);
+         	//if (Config::O_STORAGE == 1) IQXML::write_report();
+	    	prefB = prefix + BLEU::BLEUEXT + "-3";
+	    	hOQ.save_hash_scores(prefB, TGT, REF, res.first[2], doc_seg.first, doc_seg.second);
+
+			doc_seg = Core::get_seg_doc_scores(res.second[3], 0, TGT);
+         	//if (Config::O_STORAGE == 1) IQXML::write_report();
+	    	prefB = prefix + BLEU::BLEUEXT + "-4";
+	    	hOQ.save_hash_scores(prefB, TGT, REF, res.first[3], doc_seg.first, doc_seg.second);
+
+			doc_seg = Core::get_seg_doc_scores(res.second[4], 0, TGT);
+         	//if (Config::O_STORAGE == 1) IQXML::write_report();
+	    	prefB = prefix + BLEU::BLEUEXTi + "-2";
+	    	hOQ.save_hash_scores(prefB, TGT, REF, res.first[4], doc_seg.first, doc_seg.second);
+
+	    	doc_seg = Core::get_seg_doc_scores(res.second[5], 0, TGT);
+         	//if (Config::O_STORAGE == 1) IQXML::write_report();
+	    	prefB = prefix + BLEU::BLEUEXTi + "-3";
+	    	hOQ.save_hash_scores(prefB, TGT, REF, res.first[5], doc_seg.first, doc_seg.second);
+
+	    	doc_seg = Core::get_seg_doc_scores(res.second[6], 0, TGT);
+         	//if (Config::O_STORAGE == 1) IQXML::write_report();
+	    	prefB = prefix + BLEU::BLEUEXTi + "-3";
+	    	hOQ.save_hash_scores(prefB, TGT, REF, res.first[6], doc_seg.first, doc_seg.second);
+
+	    	doc_seg = Core::get_seg_doc_scores(res.second[7], 0, TGT);
+         	//if (Config::O_STORAGE == 1) IQXML::write_report();
+	    	prefB = prefix + BLEU::BLEUEXTi + "-4";
+	    	hOQ.save_hash_scores(prefB, TGT, REF, res.first[7], doc_seg.first, doc_seg.second);
+
+                /*cout << "-----------------------------------------BLEU-SCORES---------------------------------" << endl;
+                hOQ.print_scores();
+                cout << "-------------------------------------------------------------------------------------" << endl;
+                exit(1);*/
+
 	    }
 
 	}

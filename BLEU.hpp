@@ -1,7 +1,6 @@
 #ifndef BLEU_HPP
 #define BLEU_HPP
 
-#include "Scores.hpp"
 #include "SingleMetric.hpp"
 
 #include <vector>
@@ -16,6 +15,9 @@ private:
 	pair<vector<double>, vector<vector<double> > > computeBLEU(string TGT);
 
 public:
+	BLEU() { cout << "######################## CONSTRUCTOR BLEU #########################" << endl; }
+	~BLEU() { cout << "######################## DESTRUCTOR BLEU #########################" << endl; }
+
 	void doMetric(string TGT, string REF, string prefix, Scores &hOQ);
 
 	static const string BLEUEXT,	BLEUEXTi,	TBLEU;

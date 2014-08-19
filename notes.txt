@@ -21,6 +21,12 @@ Linking Reference bin libraries:
 	#include <boost/filesystem.hpp>			->		-lboost_system -lboost_filesystem
 
 
+DEBUGGING
+
+	Afegir -ggdb al Makefile
+
+	$gdb Asiya
+	>run (entrada)
 
 XML PARSER
 
@@ -41,6 +47,7 @@ AXIOMES:
 
 	undef de perl és equivalent a -1
 
+	extract xml.gz	->	$gunzip file
 
 REVISAR:
 
@@ -57,6 +64,9 @@ REVISAR:
 	Core.cpp ->	HREF pot ser un hash multiple (del(s?) references files)
 
 	Config.cpp	->	validate_configuration inacabat
+
+	BLEUNIST.cpp	->	NO fa servir hOQ, es passa el paràmetre només per complir l'herència.
+
 
 SHORTCUTS
 
@@ -89,9 +99,22 @@ SHORTCUTS
 		std::vector<std::string> strs;
 		boost::split(strs, "string to split", boost::is_any_of("\t "));
 
+	-->	MATCH DE CARACTERS ESPECIALS	(joc de proves a sandbox/boost_replace.cc)
+	    re = ("\\*");   report_xml = boost::regex_replace(report_xml, re, "\\\\*");
+	    re = (";");     report_xml = boost::regex_replace(report_xml, re, "\\\\;");
+	    re = ("`");     report_xml = boost::regex_replace(report_xml, re, "\\\\`");
+	    re = ("'");     report_xml = boost::regex_replace(report_xml, re, "\\\\'");
+	    re = ("\\(");   report_xml = boost::regex_replace(report_xml, re, "\\\\(");
+	    re = ("\\)");   report_xml = boost::regex_replace(report_xml, re, "\\\\)");
+	    re = ("\\?");   report_xml = boost::regex_replace(report_xml, re, "\\\\?");
 
 
 TODO LIST
-	-	LOCAL	->
+	-	LOCAL	->	Provar el write_report (IQXML) i de passada el trunk and trim de Common.hpp. Exemples dels reports de la sortida a /scores del cluster (ja fets).
 
-	-	CLUSTER	->	AsiyaGPU::Ara que BLEU executa, comprovar que ho fa de PUTA mare.
+	-	CLUSTER	->	Ara sembla que en local compila pero al cluster no
+
+
+		//Versions canviades a tenir en compte
+
+			Core.cpp.old	->	get_seg_doc_scores està inflat a xivatos.

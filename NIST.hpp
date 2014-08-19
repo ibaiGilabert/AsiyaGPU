@@ -1,7 +1,6 @@
 #ifndef NIST_HPP
 #define NIST_HPP
 
-#include "Scores.hpp"
 #include "SingleMetric.hpp"
 
 #include <vector>
@@ -16,6 +15,9 @@ private:
 	pair<vector<double>, vector<vector<double> > > computeNIST(string TGT);
 
 public:
+	NIST() { cout << "######################## CONSTRUCTOR NIST #########################" << endl; }
+	~NIST() { cout << "######################## DESTRUCTOR NIST #########################" << endl; }
+
 	void doMetric(string TGT, string REF, string prefix, Scores &hOQ);
 
 	static const string NISTEXT,	NISTEXTi,	TNIST;

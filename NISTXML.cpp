@@ -193,62 +193,6 @@ void NISTXML::SGML_f_create_mteval_multidoc(string output, int type) {
 
     for (map<string, string>::const_iterator it = Config::Hrefs.begin(); it != Config::Hrefs.end(); ++it) {
         SGML_f_create_create_doc(it->second, output, type, it->first, doc, root_node);
-        /*string input = it->second;
-
-        //if exists input....
-        string input_gz = input + Common::GZEXT;
-        boost::filesystem::path p (input);
-        boost::filesystem::path p_gz (input_gz);
-        if (exists(p) or exists(p_gz)) {
-
-            if (Config::verbose > 1) printf("reading <%s\n>", input.c_str());
-
-            if (!exists(p)) {
-                string input2 = Common::replace_special_characters(input);
-                stringstream rIn, rIn2, st;
-                rIn << Common::DATA_PATH << "/" << Common::TMP << "/" << Common::give_system_name(input) << "." << rand() % (Common::NRAND + 1);
-                rIn2 << Common::DATA_PATH << "/" << Common::TMP << "/" << Common::give_system_name(input2) << "." << rand() % (Common::NRAND + 1);
-                randomInput = rIn.str();
-                randomInput2 = rIn2.str();
-
-                st << Common::GUNZIP << " -c " << input2 << "." << Common::GZEXT << " > " << randomInput2;
-                string command = st.str();
-
-                system(command.c_str());
-            }
-
-            int nSEGMENTS = 1;
-
-            // STORE DOCUMENT
-            xmlNodePtr doc_node = xmlNewChild(root_node, NULL, BAD_CAST "DOC", NULL);
-
-            xmlNewProp(doc_node, BAD_CAST "docid", BAD_CAST "dummydoc");
-            xmlNewProp(doc_node, BAD_CAST "sysid", BAD_CAST it->first.c_str());
-
-            // DOCUMENTS
-            string str, input_file;
-
-            if (exists(p)) input_file = input;
-            else input_file = randomInput;
-
-            ifstream file(input_file.c_str());
-            if (file) {
-                cout << "OPENED : " << input_file << endl;
-                while (getline(file, str)) {
-                    boost::regex re("\\s+$");
-                    string line = boost::regex_replace(str, re, "");
-
-                    if (line == "") line = Common::EMPTY_ITEM;
-
-                    xmlNodePtr seg_node = xmlNewChild(doc_node, NULL, BAD_CAST "seg", BAD_CAST line.c_str());
-                    char buffer[50];
-                    sprintf(buffer, "%d", nSEGMENTS);
-                    xmlNewProp(seg_node, BAD_CAST "id", (const xmlChar *) buffer);
-                    ++nSEGMENTS;
-                }
-                file.close();
-            } else { fprintf(stderr, "couldn't open file: %s\n", input_file.c_str()); exit(1); }
-        } else fprintf(stderr, "\n[ERROR] UNAVAILABLE file <%s>!!!\n", input.c_str());*/
     }
     xmlSaveFormatFileEnc(output.c_str(), doc, "UTF-8", 1);
     xmlFreeDoc(doc);

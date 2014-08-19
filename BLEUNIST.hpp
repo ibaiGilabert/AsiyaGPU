@@ -1,7 +1,6 @@
 #ifndef BLEUNIST_HPP
 #define BLEUNIST_HPP
 
-#include "Scores.hpp"
 #include "SingleMetric.hpp"
 
 #include <vector>
@@ -23,6 +22,9 @@ private:
 	pair<ReadScores, ReadScores> computeBLEUNIST(string TGT);
 
 public:
+	BLEUNIST() { cout << "######################## CONSTRUCTOR BLEUNIST #########################" << endl; }
+	~BLEUNIST() { cout << "######################## DESTRUCTOR BLEUNIST #########################" << endl; }
+
 	void doMetric(string TGT, string REF, string prefix, Scores &hOQ);
 
 	static const string BLEUEXT, NISTEXT, TBLEUNIST;

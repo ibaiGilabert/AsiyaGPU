@@ -3,8 +3,6 @@
 
 #include <string>
 #include <vector>
-#include <libxml/parser.h>
-#include <libxml/tree.h>
 
 using namespace std;
 
