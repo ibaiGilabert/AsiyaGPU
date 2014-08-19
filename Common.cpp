@@ -234,17 +234,17 @@ string Common::give_system_name(string file) {
 	return pathname.filename().string();
 }
 
-string Common::replace_special_characters(string input) {
+string Common::replace_special_characters(string &input) {
    // description _ replaces conflictive characters inside a given string (~filename)
 	boost::regex re;
-	re = ("\\*");	input = boost::regex_replace(input, re, "\\\\*");
-	re = ("\\'");	input = boost::regex_replace(input, re, "\\\\'");
-	re = ("\\`");	input = boost::regex_replace(input, re, "\\\\`");
-	re = ("\\(");	input = boost::regex_replace(input, re, "\\\\(");
-	re = ("\\)");	input = boost::regex_replace(input, re, "\\\\)");
-	re = ("\\;");	input = boost::regex_replace(input, re, "\\\\;");
-	re = ("\\?");	input = boost::regex_replace(input, re, "\\\\?");
-	return input;
+    re = ("\\*");   input = boost::regex_replace(input, re, "\\\\*");
+    re = (";");     input = boost::regex_replace(input, re, "\\\\;");
+    re = ("`");     input = boost::regex_replace(input, re, "\\\\`");
+    re = ("'");     input = boost::regex_replace(input, re, "\\\\'");
+    re = ("\\(");   input = boost::regex_replace(input, re, "\\\\(");
+    re = ("\\)");   input = boost::regex_replace(input, re, "\\\\)");
+    re = ("\\?");   input = boost::regex_replace(input, re, "\\\\?");
+    return input;
 }
 /*
 vector<int> Common::reorder_scores(map<string, int> &hscores, string TGT, string G) {

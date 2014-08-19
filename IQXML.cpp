@@ -4,9 +4,7 @@
 
 #include <sstream>
 
-#include <boost/regex.hpp>
 #include <boost/filesystem.hpp>
-//#include <boost/algorithm/string.hpp>
 
 #include <libxml/parser.h>
 #include <libxml/tree.h>
@@ -133,15 +131,7 @@ void IQXML::write_report(string TGT, string REF, string METRIC, double sys_score
 
     save_xml(report_xml, TGT, REF, METRIC, sys_score, doc_scores, seg_scores);
 
-    boost::regex re;
-
-    re = ("\\*");   report_xml = boost::regex_replace(report_xml, re, "\\\\*");
-    re = (";");     report_xml = boost::regex_replace(report_xml, re, "\\\\;");
-    re = ("`");     report_xml = boost::regex_replace(report_xml, re, "\\\\`");
-    re = ("'");     report_xml = boost::regex_replace(report_xml, re, "\\\\'");
-    re = ("\\(");   report_xml = boost::regex_replace(report_xml, re, "\\\\(");
-    re = ("\\)");   report_xml = boost::regex_replace(report_xml, re, "\\\\)");
-    re = ("\\?");   report_xml = boost::regex_replace(report_xml, re, "\\\\?");
+    Common::replace_special_characters(report_xml);
 
     string command = Common::GZIP + " " + report_xml;
     string error = "Couldn't " + Common::GZIP + " " + report_xml;
