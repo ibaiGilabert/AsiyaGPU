@@ -35,6 +35,7 @@ int main(int argc, char *argv[]) {
 		{"help",        no_argument,        0, 'h'},
 		{"metric_set",  required_argument,  0, 'm'},
 		{"eval",        required_argument,  0, 'e'},
+		{"data_path",   required_argument,  0, 'd'},
 		{0,0,0,0},
 	};
 
@@ -51,6 +52,7 @@ int main(int argc, char *argv[]) {
 		case 'm': Options["metric_set"] = optarg; break;
 		case 'h': help = 1; break;
 		case 'v': Options["v"] = "3"; break;
+		case 'd': Options["data_path"] = optarg; break;
 		//default: usage();
 		}
 	}

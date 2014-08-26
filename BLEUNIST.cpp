@@ -3,6 +3,7 @@
 #include "Config.hpp"
 #include "NISTXML.hpp"
 #include "NISTSCR.hpp"
+#include "IQXML.hpp"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -85,11 +86,11 @@ pair<BLEUNIST::ReadScores, BLEUNIST::ReadScores> BLEUNIST::computeBLEUNIST(strin
 	cout << "toolBLEUNIST ->" << toolBLEUNIST << endl << endl;
 
 	srand(time(NULL));
-	//double nr = rand() % (Common::NRAND + 1);	//random number [0, Common::NRAND];
+	double nr = rand() % (Common::NRAND + 1);	//random number [0, Common::NRAND];
 	stringstream ssSrc, ssOut, ssRef;
-	ssSrc << Common::DATA_PATH << "/" << Common::TMP << "/" << rand() % (Common::NRAND + 1) << "." << Common::SRCEXT << "." << BLEUNIST::NISTEXT << "." << Common::XMLEXT;
-	ssOut << Common::DATA_PATH << "/" << Common::TMP << "/" << rand() % (Common::NRAND + 1) << "." << Common::SYSEXT << "." << BLEUNIST::NISTEXT << "." << Common::XMLEXT;
-	ssRef << Common::DATA_PATH << "/" << Common::TMP << "/" << rand() % (Common::NRAND + 1) << "." << Common::REFEXT << "." << BLEUNIST::NISTEXT << "." << Common::XMLEXT;
+	ssSrc << Common::DATA_PATH << "/" << Common::TMP << "/" << nr << "." << Common::SRCEXT << "." << BLEUNIST::NISTEXT << "." << Common::XMLEXT;
+	ssOut << Common::DATA_PATH << "/" << Common::TMP << "/" << nr << "." << Common::SYSEXT << "." << BLEUNIST::NISTEXT << "." << Common::XMLEXT;
+	ssRef << Common::DATA_PATH << "/" << Common::TMP << "/" << nr << "." << Common::REFEXT << "." << BLEUNIST::NISTEXT << "." << Common::XMLEXT;
 
 
     boost::filesystem::path srcXML(ssSrc.str());
@@ -128,8 +129,8 @@ pair<BLEUNIST::ReadScores, BLEUNIST::ReadScores> BLEUNIST::computeBLEUNIST(strin
 
 void BLEUNIST::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 	// description _ computes smoothed BLEU-4 score and NIST-5 score (multiple references)
-	map<string, int> M = Config::Hmetrics;
-	vector<string> mBLEUNIST(M.size());
+	//map<string, int> M = Config::Hmetrics;
+	vector<string> mBLEUNIST(BLEUNIST::rBLEUNIST.size());
 
 	int GO , i;
 	GO = i = 0;
@@ -138,7 +139,7 @@ void BLEUNIST::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 	i = 0;
 	while (i < mBLEUNIST.size() and !GO) {
 		string aux = prefix; aux += mBLEUNIST[i];
-		if (M.find(aux) != M.end()) GO = 1;
+		if (Config::Hmetrics.find(aux) != Config::Hmetrics.end()) GO = 1;
 		++i;
 	}
 
@@ -165,13 +166,20 @@ void BLEUNIST::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 	    	BLEUNIST::ReadScores BLEUscores = res.first;
 	    	BLEUNIST::ReadScores NISTscores = res.second;
 
-         	//if (Config::O_STORAGE == 1) IQXML::write_report();
-         	string prefB = prefix + BLEUNIST::BLEUEXT;
-	    	hOQ.save_hash_scores(prefB, TGT, REF, BLEUscores.sys_score, BLEUscores.doc_scores, BLEUscores.seg_scores);
+         	string pref = prefix + BLEUNIST::BLEUEXT;
+	    	if (Config::O_STORAGE == 1) {
+	    		IQXML::write_report(TGT, REF, pref, BLEUscores.sys_score, BLEUscores.doc_scores, BLEUscores.seg_scores);
+         		cout << "IQXML DOCUMENT " << pref << " CREATED" << endl;
+         	}
+         	hOQ.save_hash_scores(pref, TGT, REF, BLEUscores.sys_score, BLEUscores.doc_scores, BLEUscores.seg_scores);
 
-         	//if (Config::O_STORAGE == 1) IQXML::write_report();
-	    	string prefN = prefix + BLEUNIST::NISTEXT;
-	    	hOQ.save_hash_scores(prefN, TGT, REF, NISTscores.sys_score, NISTscores.doc_scores, NISTscores.seg_scores);
+			pref = prefix + BLEUNIST::NISTEXT;
+			if (Config::O_STORAGE == 1) {
+	    		IQXML::write_report(TGT, REF, pref, NISTscores.sys_score, NISTscores.doc_scores, NISTscores.seg_scores);
+         		cout << "IQXML DOCUMENT " << pref << " CREATED" << endl;
+         	}
+	    	hOQ.save_hash_scores(pref, TGT, REF, NISTscores.sys_score, NISTscores.doc_scores, NISTscores.seg_scores);
+
 
 	    	cout << "------------SCORES: BLEUNIST-----------" << endl;
 	    	hOQ.print_scores();
@@ -180,6 +188,5 @@ void BLEUNIST::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 	    }
 
 	}
-
 
 }

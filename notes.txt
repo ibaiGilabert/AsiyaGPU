@@ -67,6 +67,10 @@ REVISAR:
 
 	BLEUNIST.cpp	->	NO fa servir hOQ, es passa el paràmetre només per complir l'herència.
 
+	IQXML.cpp	->	La precissió amb la que s'escriuren els xml's no és la indicada a la llibreria.
+
+	IQXML.cpp	->	En la definició del !DOCTYPE, hi ha el '[]' dins de les "'s.
+
 
 SHORTCUTS
 
@@ -110,9 +114,9 @@ SHORTCUTS
 
 
 TODO LIST
-	-	LOCAL	->	Provar el write_report (IQXML) i de passada el trunk and trim de Common.hpp. Exemples dels reports de la sortida a /scores del cluster (ja fets).
+	-	LOCAL	->
 
-	-	CLUSTER	->	Ara sembla que en local compila pero al cluster no
+	-	CLUSTER	->	Hi ha problemes executan el tool del BLEUNIST.
 
 
 		//Versions canviades a tenir en compte

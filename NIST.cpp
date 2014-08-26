@@ -3,6 +3,7 @@
 #include "Common.hpp"
 #include "Config.hpp"
 #include "NISTXML.hpp"
+#include "IQXML.hpp"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -183,12 +184,12 @@ pair<vector<double>, vector<vector<double> > > NIST::computeNIST(string TGT) {
 	cout << "toolNIST ->" << toolNIST << endl << endl;
 
 	srand(time(NULL));
-	//double nr = rand() % (Common::NRAND + 1);	//random number [0, Common::NRAND];
+	double nr = rand() % (Common::NRAND + 1);	//random number [0, Common::NRAND];
 	stringstream ssRef, ssSrc, ssOut, ssReport;
-	ssRef << Common::DATA_PATH << "/" << Common::TMP << "/" << rand() % (Common::NRAND + 1) << "." << Common::REFEXT << "." << NIST::NISTEXT << "." << Common::SGMLEXT;
-	ssSrc << Common::DATA_PATH << "/" << Common::TMP << "/" << rand() % (Common::NRAND + 1) << "." << Common::SRCEXT << "." << NIST::NISTEXT << "." << Common::SGMLEXT;
-	ssOut << Common::DATA_PATH << "/" << Common::TMP << "/" << rand() % (Common::NRAND + 1) << "." << Common::SYSEXT << "." << NIST::NISTEXT << "." << Common::SGMLEXT;
-	ssReport << Common::DATA_PATH << "/" << Common::TMP << "/" << rand() % (Common::NRAND + 1) << "." << NIST::NISTEXT << "." << Common::REPORTEXT;
+	ssRef << Common::DATA_PATH << "/" << Common::TMP << "/" << nr << "." << Common::REFEXT << "." << NIST::NISTEXT << "." << Common::SGMLEXT;
+	ssSrc << Common::DATA_PATH << "/" << Common::TMP << "/" << nr << "." << Common::SRCEXT << "." << NIST::NISTEXT << "." << Common::SGMLEXT;
+	ssOut << Common::DATA_PATH << "/" << Common::TMP << "/" << nr << "." << Common::SYSEXT << "." << NIST::NISTEXT << "." << Common::SGMLEXT;
+	ssReport << Common::DATA_PATH << "/" << Common::TMP << "/" << nr << "." << NIST::NISTEXT << "." << Common::REPORTEXT;
 
     boost::filesystem::path refNISTsgml(ssRef.str());
     boost::filesystem::path srcNISTsgml(ssSrc.str());
@@ -230,17 +231,17 @@ pair<vector<double>, vector<vector<double> > > NIST::computeNIST(string TGT) {
 void NIST::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
    // description _ computes NIST score (by calling NIST mteval script) -> n = 1..4 (multiple references)
 
-	map<string, int> M = Config::Hmetrics;
-	vector<string> mNIST(M.size());
+	//map<string, int> M = Config::Hmetrics;
+    vector<string> mNIST(NIST::rNIST.size());
 
 	int GO , i;
 	GO = i = 0;
-	for (map<string, int>::const_iterator it = NIST::rNIST.begin(); it != NIST::rNIST.end(); ++it) mNIST[i++] = it->first;
+	for (map<string, int>::const_iterator it = NIST::rNIST.begin(); it != NIST::rNIST.end(); ++it, ++i) mNIST[i] = it->first;
 
 	i = 0;
 	while (i < mNIST.size() and !GO) {
 		string aux = prefix; aux += mNIST[i];
-		if (M.find(aux) != M.end()) { GO = 1; }
+		if (Config::Hmetrics.find(aux) != Config::Hmetrics.end()) { GO = 1; }
 		++i;
 	}
 
@@ -299,82 +300,87 @@ void NIST::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 	    (!exists(reportNISTi4xml_path) and !exists(reportNISTi4xml_ext)) or \
 	    (!exists(reportNISTi5xml_path) and !exists(reportNISTi5xml_ext)) or Config::remake) {
 			//my ($SYS, $SEGS) = NIST::computeMultiNIST($src, $out, $Href, $remakeREPORTS, $config->{CASE}, $tools, $verbose, $hOQ );
-
 	    	pair<vector<double>, vector<vector<double> > > res = computeNIST(TGT);
 
-                /*vector<double> SYS = res.first;
-                vector<vector<double> > SEG = res.second;
-                cout << "--------------------------------NIST::SYS---------------------------------" << endl;
-                for (int i = 0; i < SYS.size(); ++i) {
-                        cout << "\tSYS[" << i << "]: " << SYS[i] << endl;
-                }
-                cout << "--------------------------------NIST::SEG---------------------------------" << endl;
-                for (int i = 0; i < SEG.size(); ++i) {
-                        cout << "\tSEG[" << i << "]" << endl;
-                        for(int j = 0; j < SEG[i].size(); ++j) {
-                                cout << "\t\tSEG[" << i << "][" << j << "]: " << SEG[i][j] << endl;
-                        }
-                        cout << endl;
-                }
-                cout << "--------------------------------------------------------------------------" << endl;*/
-
-
-	    	//Scores::save_hash_scores(string metric_name, string system_name, string refere_name, double sys_score, const vector<double> &doc_scores, const vector<double> &seg_scores) {
-
-			pair<vector<double>, vector<double> > doc_seg =  Core::get_seg_doc_scores(res.second[0], 0, TGT);
-         	//if (Config::O_STORAGE == 1) IQXML::write_report();
          	string prefN = prefix;	prefN += NIST::NISTEXT;	prefN += "-1";
-	    	hOQ.save_hash_scores(prefN, TGT, REF, res.first[0], doc_seg.first, doc_seg.second);
+	    	pair<vector<double>, vector<double> > doc_seg =  Core::get_seg_doc_scores(res.second[0], 0, TGT);
+	    	if (Config::O_STORAGE == 1) {
+	    		IQXML::write_report(TGT, REF, prefN, res.first[0], doc_seg.first, doc_seg.second);
+         		cout << "IQXML DOCUMENT " << prefN << " CREATED" << endl;
+         	}
+         	hOQ.save_hash_scores(prefN, TGT, REF, res.first[0], doc_seg.first, doc_seg.second);
 
-			doc_seg = Core::get_seg_doc_scores(res.second[1], 0, TGT);
-         	//if (Config::O_STORAGE == 1) IQXML::write_report();
 	    	prefN = prefix + NIST::NISTEXT + "-2";
-	    	hOQ.save_hash_scores(prefN, TGT, REF, res.first[1], doc_seg.first, doc_seg.second);
+			doc_seg = Core::get_seg_doc_scores(res.second[1], 0, TGT);
+			if (Config::O_STORAGE == 1) {
+	    		IQXML::write_report(TGT, REF, prefN, res.first[1], doc_seg.first, doc_seg.second);
+         		cout << "IQXML DOCUMENT " << prefN << " CREATED" << endl;
+         	}
+         	hOQ.save_hash_scores(prefN, TGT, REF, res.first[1], doc_seg.first, doc_seg.second);
 
-			doc_seg = Core::get_seg_doc_scores(res.second[2], 0, TGT);
-         	//if (Config::O_STORAGE == 1) IQXML::write_report();
 	    	prefN = prefix + NIST::NISTEXT + "-3";
+			doc_seg = Core::get_seg_doc_scores(res.second[2], 0, TGT);
+         	if (Config::O_STORAGE == 1) {
+	    		IQXML::write_report(TGT, REF, prefN, res.first[2], doc_seg.first, doc_seg.second);
+         		cout << "IQXML DOCUMENT " << prefN << " CREATED" << endl;
+         	}
 	    	hOQ.save_hash_scores(prefN, TGT, REF, res.first[2], doc_seg.first, doc_seg.second);
 
-			doc_seg = Core::get_seg_doc_scores(res.second[3], 0, TGT);
-         	//if (Config::O_STORAGE == 1) IQXML::write_report();
 	    	prefN = prefix + NIST::NISTEXT + "-4";
+			doc_seg = Core::get_seg_doc_scores(res.second[3], 0, TGT);
+         	if (Config::O_STORAGE == 1) {
+	    		IQXML::write_report(TGT, REF, prefN, res.first[3], doc_seg.first, doc_seg.second);
+         		cout << "IQXML DOCUMENT " << prefN << " CREATED" << endl;
+         	}
 	    	hOQ.save_hash_scores(prefN, TGT, REF, res.first[3], doc_seg.first, doc_seg.second);
 
-			doc_seg = Core::get_seg_doc_scores(res.second[4], 0, TGT);
-         	//if (Config::O_STORAGE == 1) IQXML::write_report();
 	    	prefN = prefix + NIST::NISTEXT + "-5";
+			doc_seg = Core::get_seg_doc_scores(res.second[4], 0, TGT);
+         	if (Config::O_STORAGE == 1) {
+	    		IQXML::write_report(TGT, REF, prefN, res.first[4], doc_seg.first, doc_seg.second);
+         		cout << "IQXML DOCUMENT " << prefN << " CREATED" << endl;
+         	}
 	    	hOQ.save_hash_scores(prefN, TGT, REF, res.first[4], doc_seg.first, doc_seg.second);
 
-			doc_seg = Core::get_seg_doc_scores(res.second[5], 0, TGT);
-         	//if (Config::O_STORAGE == 1) IQXML::write_report();
 	    	prefN = prefix + NIST::NISTEXTi + "-2";
+			doc_seg = Core::get_seg_doc_scores(res.second[5], 0, TGT);
+         	if (Config::O_STORAGE == 1) {
+	    		IQXML::write_report(TGT, REF, prefN, res.first[5], doc_seg.first, doc_seg.second);
+         		cout << "IQXML DOCUMENT " << prefN << " CREATED" << endl;
+         	}
 	    	hOQ.save_hash_scores(prefN, TGT, REF, res.first[5], doc_seg.first, doc_seg.second);
 
-	    	doc_seg = Core::get_seg_doc_scores(res.second[6], 0, TGT);
-         	//if (Config::O_STORAGE == 1) IQXML::write_report();
 	    	prefN = prefix + NIST::NISTEXTi + "-3";
+	    	doc_seg = Core::get_seg_doc_scores(res.second[6], 0, TGT);
+         	if (Config::O_STORAGE == 1) {
+	    		IQXML::write_report(TGT, REF, prefN, res.first[6], doc_seg.first, doc_seg.second);
+         		cout << "IQXML DOCUMENT " << prefN << " CREATED" << endl;
+         	}
 	    	hOQ.save_hash_scores(prefN, TGT, REF, res.first[6], doc_seg.first, doc_seg.second);
 
-	    	doc_seg = Core::get_seg_doc_scores(res.second[7], 0, TGT);
-         	//if (Config::O_STORAGE == 1) IQXML::write_report();
 	    	prefN = prefix + NIST::NISTEXTi + "-3";
+	    	doc_seg = Core::get_seg_doc_scores(res.second[7], 0, TGT);
+         	if (Config::O_STORAGE == 1) {
+	    		IQXML::write_report(TGT, REF, prefN, res.first[7], doc_seg.first, doc_seg.second);
+         		cout << "IQXML DOCUMENT " << prefN << " CREATED" << endl;
+         	}
 	    	hOQ.save_hash_scores(prefN, TGT, REF, res.first[7], doc_seg.first, doc_seg.second);
 
-	    	doc_seg = Core::get_seg_doc_scores(res.second[8], 0, TGT);
-         	//if (Config::O_STORAGE == 1) IQXML::write_report();
 	    	prefN = prefix + NIST::NISTEXTi + "-4";
+	    	doc_seg = Core::get_seg_doc_scores(res.second[8], 0, TGT);
+         	if (Config::O_STORAGE == 1) {
+	    		IQXML::write_report(TGT, REF, prefN, res.first[8], doc_seg.first, doc_seg.second);
+         		cout << "IQXML DOCUMENT " << prefN << " CREATED" << endl;
+         	}
 	    	hOQ.save_hash_scores(prefN, TGT, REF, res.first[8], doc_seg.first, doc_seg.second);
 
-	    	doc_seg = Core::get_seg_doc_scores(res.second[9], 0, TGT);
-         	//if (Config::O_STORAGE == 1) IQXML::write_report();
 	    	prefN = prefix + NIST::NISTEXTi + "-5";
+	    	doc_seg = Core::get_seg_doc_scores(res.second[9], 0, TGT);
+         	if (Config::O_STORAGE == 1) {
+	    		IQXML::write_report(TGT, REF, prefN, res.first[9], doc_seg.first, doc_seg.second);
+         		cout << "IQXML DOCUMENT " << prefN << " CREATED" << endl;
+         	}
 	    	hOQ.save_hash_scores(prefN, TGT, REF, res.first[9], doc_seg.first, doc_seg.second);
-
-                /*cout << "-----------------------------------------NIST-SCORES---------------------------------" << endl;
-                hOQ.print_scores();
-                cout << "-------------------------------------------------------------------------------------" << endl;
-                exit(1);*/
 	    }
 
 	}

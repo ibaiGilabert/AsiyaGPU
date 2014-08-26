@@ -193,7 +193,7 @@ const string Common::FS_DEFAULT = FS_NORMAL;
 
 // other constants
 const string Common::EMPTY_ITEM = "***EMPTY***";
-const string Common::DATA_PATH = ".";
+string Common::DATA_PATH = ".";
 const string Common::ALIGN = "alignments";
 const string Common::TMP = "tmp";
 const string Common::REPORTS = "scores";
@@ -287,7 +287,7 @@ vector<int> Common::reorder_scores(map<string, int> &hscores, string TGT, string
 	return scores;
 }*/
 
-double Common::trunk_and_trim_number(double n, int l, int p) {
+/*double Common::trunk_and_trim_number(double n, int l, int p) {
 	// description _ trunks the given number into a float (given length and precision) and trims trailing white spaces.
 	if (n == -1) return 0;
 
@@ -299,7 +299,7 @@ double Common::trunk_and_trim_number(double n, int l, int p) {
 	cout << "->x: |" << atof(buffer) << "|" << endl;
 
 	return atof(buffer);
-}
+}*/
 
 
 

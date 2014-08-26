@@ -149,7 +149,7 @@ public:
 
 	// other constants
 	static const string EMPTY_ITEM;
-	static const string DATA_PATH;
+	static string DATA_PATH;
 	static const string ALIGN;
 	static const string TMP;
 	static const string REPORTS;
@@ -177,7 +177,7 @@ public:
 	static void execute_or_die(string command, string message);
 	static string give_system_name(string file);
 	static string replace_special_characters(string &input);
-	static double trunk_and_trim_number(double n, int l, int p);
+	//static double trunk_and_trim_number(double n, int l, int p);
 
 	//static vector<int> reorder_scores(map<string, int> &hscores, string TGT, string G);
 

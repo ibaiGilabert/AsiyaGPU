@@ -436,6 +436,7 @@ void Config::process_config_file(char* config_file, map<string, string> Options)
         else if (it->first == "data_path") {
                 boost::regex re("\\/\\s*$");//, boost::regex::perl|boost::regex::icase);
                 it->second = boost::regex_replace(it->second, re, "");
+                Common::DATA_PATH = it->second;
         }
     }
     cout << "METRICS = " << METRICS << endl;
