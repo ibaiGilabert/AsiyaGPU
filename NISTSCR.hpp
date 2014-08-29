@@ -10,12 +10,12 @@ using namespace std;
 class NISTSCR {
 private:
 
-	static int negate_or_not(int n, int do_neg);
-	static pair<string, int> get_score(const vector<string> &l, string G, int do_neg);
+	static double negate_or_not(double n, int do_neg);
+	static pair<string, double> get_score(const vector<string> &l, string G, int do_neg);
 
 public:
 
-	static map<string, int> read_scr_file(string file, string G, int do_neg);
+	static map<string, double> read_scr_file(string file, string G, int do_neg);
 };
 
 #endif

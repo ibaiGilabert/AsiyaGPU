@@ -47,7 +47,7 @@ vector<double> BLEUNIST::read_scores_G(string basename, string G, string TGT) {
 	string file = basename + "-" + G + ".scr";
 
 	//read scr file
-	map<string, int> hscores = NISTSCR::read_scr_file(file, G, 0);
+	map<string, double> hscores = NISTSCR::read_scr_file(file, G, 0);
 
 	//delete scr file
 	string sys_aux = "rm -f "; sys_aux += file.c_str();
@@ -58,7 +58,7 @@ vector<double> BLEUNIST::read_scores_G(string basename, string G, string TGT) {
 
 	vector<double> scores;
 	//for (map<string, int>::const_iterator it = hscores.begin(), int i = 0; it != hscores.end(); ++it, ++i) scores[i] = *it;
-	for (map<string, int>::const_iterator it = hscores.begin(); it != hscores.end(); ++it) scores.push_back(it->second);
+	for (map<string, double>::const_iterator it = hscores.begin(); it != hscores.end(); ++it) scores.push_back(it->second);
 
 	return scores;
 }
@@ -97,16 +97,15 @@ pair<BLEUNIST::ReadScores, BLEUNIST::ReadScores> BLEUNIST::computeBLEUNIST(strin
     boost::filesystem::path outXML(ssOut.str());
     boost::filesystem::path refXML(ssRef.str());
 
-	if (!exists(srcXML) or Config::remake) NISTXML::SGML_f_create_mteval_doc(Config::src, srcXML.string(), 0);
-	if (!exists(outXML) or Config::remake) NISTXML::SGML_f_create_mteval_doc(Config::Hsystems[TGT], outXML.string(), 1);
-	if (!exists(refXML) or Config::remake) NISTXML::SGML_f_create_mteval_multidoc(refXML.string(), 2);
+    if (!exists(srcXML) or Config::remake) NISTXML::f_create_mteval_doc(Config::src, srcXML.string(), TGT, Common::CASE_CS, 0);
+    if (!exists(outXML) or Config::remake) NISTXML::f_create_mteval_doc(Config::Hsystems[TGT], outXML.string(), TGT, Common::CASE_CS,  1);
+    if (!exists(refXML) or Config::remake) NISTXML::f_create_mteval_multidoc(refXML.string(), Common::CASE_CS, 2);
 
     stringstream sc;
     sc << "cd " << Common::DATA_PATH << "; " << toolBLEUNIST << " -s " << ssSrc.str() << " -t " << ssOut.str() << " -r " << ssRef.str() << " >/dev/null 2>/dev/null";
 
     string ms = "[ERROR] problems running BLEU_NIST...";
 	Common::execute_or_die(sc.str(), ms);
-
 
 	if (exists(refXML)) {
 		string sysaux = "rm -f "; sysaux += ssRef.str();

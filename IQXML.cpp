@@ -51,7 +51,7 @@ void save_xml(string report_xml, string TGT, string REF, string METRIC, double s
     string doc_type = app_name + ".dtd []"; //"!DOCTYPE " + IQXML::ROOT_ELEMENT + " \"" + app_name +".dtd\" []";
     xmlDtdPtr dtd = xmlCreateIntSubset(doc, BAD_CAST IQXML::ROOT_ELEMENT.c_str(), NULL, BAD_CAST doc_type.c_str());
 
-
+/*
     xmlNewProp(root_node, BAD_CAST "hyp",       BAD_CAST    TGT.c_str());
     xmlNewProp(root_node, BAD_CAST "metric",    BAD_CAST    METRIC.c_str());
 
@@ -67,7 +67,10 @@ void save_xml(string report_xml, string TGT, string REF, string METRIC, double s
     double x = sys_score;
     sprintf(buffer, "%f", x);
     xmlNewProp(root_node, BAD_CAST "score",     (const xmlChar *) buffer);
+*/
 
+    double x;
+    char buffer[50];
     xmlNodePtr doc_node = xmlNewChild(root_node, NULL, BAD_CAST "DOC", NULL);
 
     while (i < idx.size()) {
@@ -120,6 +123,22 @@ void save_xml(string report_xml, string TGT, string REF, string METRIC, double s
         sprintf(buffer, "%f", x);
         xmlNewProp(doc_node, BAD_CAST "score",      (const xmlChar *) buffer);
     }
+
+    xmlNewProp(root_node, BAD_CAST "hyp",       BAD_CAST    TGT.c_str());
+    xmlNewProp(root_node, BAD_CAST "metric",    BAD_CAST    METRIC.c_str());
+
+    //char buffer[50];
+    sprintf(buffer, "%d", n_docs);
+    xmlNewProp(root_node, BAD_CAST "n_docs",    (const xmlChar *) buffer);
+
+    sprintf(buffer, "%d", seg_scores.size());
+    xmlNewProp(root_node, BAD_CAST "n_segments",(const xmlChar *) buffer);
+    xmlNewProp(root_node, BAD_CAST "ref",       BAD_CAST    REF.c_str());
+
+    //double x = Common::trunk_and_trim_number(sys_score, IQXML::FLOAT_LENGTH, IQXML::FLOAT_PRECISION);
+    x = sys_score;
+    sprintf(buffer, "%f", x);
+    xmlNewProp(root_node, BAD_CAST "score",     (const xmlChar *) buffer);
 
     xmlSaveFormatFileEnc(report_xml.c_str(), doc, "UTF-8", 1);
     xmlFreeDoc(doc);

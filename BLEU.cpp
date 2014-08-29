@@ -361,7 +361,6 @@ void BLEU::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
          		cout << "IQXML DOCUMENT " << prefB << " CREATED" << endl;
          	}
 	    	hOQ.save_hash_scores(prefB, TGT, REF, res.first[7], doc_seg.first, doc_seg.second);
-
                 /*cout << "-----------------------------------------BLEU-SCORES---------------------------------" << endl;
                 hOQ.print_scores();
                 cout << "-------------------------------------------------------------------------------------" << endl;

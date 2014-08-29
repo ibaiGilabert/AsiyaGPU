@@ -9,6 +9,7 @@
 
 #include <boost/regex.hpp>
 #include <boost/filesystem.hpp>
+#include <boost/algorithm/string.hpp>
 
 #include <libxml/parser.h>
 #include <libxml/tree.h>
@@ -76,10 +77,13 @@ void SGML_f_create_create_doc(string input, string output, int type, string sysi
             if (Config::verbose > 1) printf("reading <%s\n>", input.c_str());
 
             if (!exists(p)) {
+                double nr = rand() % (Common::NRAND + 1);
                 string input2 = Common::replace_special_characters(input);
                 stringstream rIn, rIn2, st;
-                rIn << Common::DATA_PATH << "/" << Common::TMP << "/" << Common::give_system_name(input) << "." << rand() % (Common::NRAND + 1);
-                rIn2 << Common::DATA_PATH << "/" << Common::TMP << "/" << Common::give_system_name(input2) << "." << rand() % (Common::NRAND + 1);
+
+                rIn << Common::DATA_PATH << "/" << Common::TMP << "/" << Common::give_system_name(input) << "." << nr;
+                rIn2 << Common::DATA_PATH << "/" << Common::TMP << "/" << Common::give_system_name(input2) << "." << nr;
+
                 randomInput = rIn.str();
                 randomInput2 = rIn2.str();
 
@@ -105,7 +109,7 @@ void SGML_f_create_create_doc(string input, string output, int type, string sysi
 
             ifstream file(input_file.c_str());
             if (file) {
-                cout << "OPENED : " << input_file << endl;
+                //cout << "OPENED : " << input_file << endl;
                 while (getline(file, str)) {
                     boost::regex re("\\s+$");
                     string line = boost::regex_replace(str, re, "");
@@ -133,7 +137,7 @@ void NISTXML::SGML_f_create_mteval_doc(string input, string output, int type) {
         case 1: set = "tstset"; sysid = "dummysysTST"; break;
         case 2: set = "refset"; sysid = "dummysysREF"; break;
     }
-    cout << "--> type: " << type << " | set: " << set << " | sysid: " << sysid << endl;
+    //cout << "--> type: " << type << " | set: " << set << " | sysid: " << sysid << endl;
 
     // Creates a new document, a node and a set it as a root node
     xmlDocPtr doc = xmlNewDoc(BAD_CAST "1.0");
@@ -158,7 +162,6 @@ void NISTXML::SGML_f_create_mteval_doc(string input, string output, int type) {
 void NISTXML::SGML_f_create_mteval_multidoc(string output, int type) {
     // description _ creation of a NIST SGML evaluation document from a "sentence-per-line" format corpus
     //              (multi-document)
-
     if (Config::verbose > 1) {
         map<string, string>::const_iterator it = Config::Hrefs.begin();
         fprintf(stderr, "OPENING [%s", it->first.c_str());
@@ -199,3 +202,260 @@ void NISTXML::SGML_f_create_mteval_multidoc(string output, int type) {
     xmlCleanupParser();
 }
 
+
+
+
+
+void f_create_create_doc(string input, string output, string TGT, string cas, int type) {
+    string set, id_label;
+    vector<vector<string> > idx;
+    switch(type) {
+        case 0: set = "srcset"; id_label = "srcid"; idx = Config::IDX["source"]; break;
+        case 1: set = "tstset"; id_label = "sysid"; idx = Config::IDX[TGT]; break;
+        case 2: set = "refset"; id_label = "refid"; idx = Config::IDX[TGT]; break;
+    }
+
+    string id = idx[1][2];
+    //string input = it->second;
+    string input_gz = input + Common::GZEXT;
+
+    boost::filesystem::path p (input);
+    boost::filesystem::path p_gz (input_gz);
+
+    string randomInput, randomInput2;
+
+    if (exists(p) or exists(p_gz)) {
+
+        if (Config::verbose > 1) printf("reading <%s\n>", input.c_str());
+
+        if (!exists(p)) {
+            double nr = rand() % (Common::NRAND + 1);
+            string input2 = Common::replace_special_characters(input);
+            stringstream rIn, rIn2, st;
+            rIn << Common::DATA_PATH << "/" << Common::TMP << "/" << Common::give_system_name(input) << "." << nr;
+            rIn2 << Common::DATA_PATH << "/" << Common::TMP << "/" << Common::give_system_name(input2) << "." << nr;
+            randomInput = rIn.str();
+            randomInput2 = rIn2.str();
+
+            st << Common::GUNZIP << " -c " << input2 << "." << Common::GZEXT << " > " << randomInput2;
+            string command = st.str();
+
+            system(command.c_str());
+        }
+
+
+        // Creates a new document, a node and a set it as a root node
+        xmlDocPtr doc = xmlNewDoc(BAD_CAST "1.0");
+        xmlNodePtr root_node = xmlNewNode(NULL, BAD_CAST "mteval");
+        xmlDocSetRootElement(doc, root_node);
+
+        // STORE DOCUMENT
+        root_node = xmlNewChild(root_node, NULL, BAD_CAST set.c_str(), NULL);
+        xmlNewProp(root_node, BAD_CAST id_label.c_str(), BAD_CAST id.c_str());
+        xmlNewProp(root_node, BAD_CAST "setid", BAD_CAST idx[0][0].c_str());
+        xmlNewProp(root_node, BAD_CAST "srclang", BAD_CAST idx[0][1].c_str());
+        xmlNewProp(root_node, BAD_CAST "trglang", BAD_CAST idx[0][2].c_str());
+
+
+        int nSEGMENTS = 1;
+
+        // DOCUMENTS
+        string str, input_file, docid;
+
+        if (exists(p)) input_file = input;
+        else input_file = randomInput;
+
+        ifstream file(input_file.c_str());
+        if (file) {
+            //cout << "OPENED : " << input_file << endl;
+            xmlNodePtr doc_node = xmlNewChild(root_node, NULL, BAD_CAST "doc", NULL);
+
+            while (getline(file, str)) {
+
+                if (idx[nSEGMENTS][0] != docid) {   //NEW DOCUMENT
+                    if (nSEGMENTS > 1) {
+                        xmlNodePtr doc_node = xmlNewChild(root_node, NULL, BAD_CAST "doc", NULL);
+                        xmlNewProp(doc_node, BAD_CAST "docid", BAD_CAST docid.c_str());
+                        xmlNewProp(doc_node, BAD_CAST "genre", BAD_CAST idx[nSEGMENTS-1][1].c_str());
+                        xmlNewProp(doc_node, BAD_CAST  id_label.c_str(), BAD_CAST id.c_str());
+                        if (type == 2) xmlNewProp(doc_node, BAD_CAST "sysid", BAD_CAST id.c_str());
+                    }
+                    docid = idx[nSEGMENTS][0];
+                }
+                boost::regex re("\\s+$");
+                string line = boost::regex_replace(str, re, "");
+                if (cas == Common::CASE_CI) boost::to_lower(line);
+                if (line == "") line = Common::EMPTY_ITEM;
+
+                xmlNodePtr seg_node = xmlNewChild(doc_node, NULL, BAD_CAST "seg", BAD_CAST line.c_str());
+                //char buffer[50];
+                //sprintf(buffer, "%d", nSEGMENTS);
+                //xmlNewProp(seg_node, BAD_CAST "id", (const xmlChar *) buffer);
+                xmlNewProp(seg_node, BAD_CAST "id", BAD_CAST idx[nSEGMENTS][3].c_str());
+                ++nSEGMENTS;
+            }
+            //LAST DOCUMENT
+            xmlNewProp(doc_node, BAD_CAST "docid", BAD_CAST docid.c_str());
+            xmlNewProp(doc_node, BAD_CAST "genre", BAD_CAST idx[nSEGMENTS-1][1].c_str());
+            xmlNewProp(doc_node, BAD_CAST  id_label.c_str(), BAD_CAST id.c_str());
+            if (type == 2) xmlNewProp(doc_node, BAD_CAST "sysid", BAD_CAST id.c_str());
+
+            file.close();
+        } else { fprintf(stderr, "couldn't open file: %s\n", input_file.c_str()); exit(1); }
+
+        xmlSaveFormatFileEnc(output.c_str(), doc, "UTF-8", 1);
+        xmlFreeDoc(doc);
+        xmlCleanupParser();
+    }
+}
+
+void NISTXML::f_create_mteval_doc(string input, string output, string TGT, string cas, int type) {
+    // description _ creation of a NIST XML evaluation document from a "sentence-per-line" format corpus
+    //               (conforming ftp://jaguar.ncsl.nist.gov/mt/resources/mteval-xml-v1.5.dtd)
+    if (Config::verbose > 1) fprintf(stderr, "OPENING <%s> for NIST xml-parsing [type = %s]...\n", input.c_str(), (type == 0)? "SRC" : (type == 1)? "TST" : "REF");
+
+    srand(time(NULL));
+    f_create_create_doc(input, output, TGT, cas, type);
+}
+
+void NISTXML::f_create_mteval_multidoc(string output, string cas, int type) {
+    // description _ creation of a NIST XML evaluation document from a "sentence-per-line" format corpus
+    //               (conforming ftp://jaguar.ncsl.nist.gov/mt/resources/mteval-xml-v1.5.dtd)
+    //               (multi-document)
+    if (Config::verbose > 1) {
+        map<string, string>::const_iterator it = Config::Hrefs.begin();
+        fprintf(stderr, "OPENING [%s", it->first.c_str());
+        ++it;
+        while (it != Config::Hrefs.end()) {
+            fprintf(stderr, " %s", it->first.c_str());
+            ++it;
+        }
+        fprintf(stderr, "] for NIST* xml-parsing...\n");
+    }
+
+    srand(time(NULL));
+    for (map<string, string>::const_iterator it = Config::Hrefs.begin(); it != Config::Hrefs.end(); ++it) {
+        f_create_create_doc(it->second, output, it->first, cas, type);
+    }
+}
+
+/*void NISTXML::f_create_mteval_multidoc(string output, string cas, int type) {
+    // description _ creation of a NIST XML evaluation document from a "sentence-per-line" format corpus
+    //               (conforming ftp://jaguar.ncsl.nist.gov/mt/resources/mteval-xml-v1.5.dtd)
+    //               (multi-document)
+    if (Config::verbose > 1) {
+        map<string, string>::const_iterator it = Config::Hrefs.begin();
+        fprintf(stderr, "OPENING [%s", it->first.c_str());
+        ++it;
+        while (it != Config::Hrefs.end()) {
+            fprintf(stderr, " %s", it->first.c_str());
+            ++it;
+        }
+        fprintf(stderr, "] for NIST* xml-parsing...\n");
+    }
+
+    srand(time(NULL));
+    for (map<string, string>::const_iterator it = Config::Hrefs.begin(); it != Config::Hrefs.end(); ++it) {
+
+        string set, id_label;
+        vector<vector<string> > idx;
+        switch(type) {
+            case 0: set = "srcset"; id_label = "srcid"; idx = Config::IDX["source"]; break;
+            case 1: set = "tstset"; id_label = "sysid"; idx = Config::IDX[it->first]; break;
+            case 2: set = "refset"; id_label = "refid"; idx = Config::IDX[it->first]; break;
+        }
+
+        string id = idx[1][2];
+        string input = it->second;
+        string input_gz = input + Common::GZEXT;
+
+        boost::filesystem::path p (input);
+        boost::filesystem::path p_gz (input_gz);
+
+        string randomInput, randomInput2;
+
+        if (exists(p) or exists(p_gz)) {
+
+            if (Config::verbose > 1) printf("reading <%s\n>", input.c_str());
+
+            if (!exists(p)) {
+                double nr = rand() % (Common::NRAND + 1);
+                string input2 = Common::replace_special_characters(input);
+                stringstream rIn, rIn2, st;
+                rIn << Common::DATA_PATH << "/" << Common::TMP << "/" << Common::give_system_name(input) << "." << nr;
+                rIn2 << Common::DATA_PATH << "/" << Common::TMP << "/" << Common::give_system_name(input2) << "." << nr;
+                randomInput = rIn.str();
+                randomInput2 = rIn2.str();
+
+                st << Common::GUNZIP << " -c " << input2 << "." << Common::GZEXT << " > " << randomInput2;
+                string command = st.str();
+
+                system(command.c_str());
+            }
+
+
+            // Creates a new document, a node and a set it as a root node
+            xmlDocPtr doc = xmlNewDoc(BAD_CAST "1.0");
+            xmlNodePtr root_node = xmlNewNode(NULL, BAD_CAST "mteval");
+            xmlDocSetRootElement(doc, root_node);
+
+            // STORE DOCUMENT
+            root_node = xmlNewChild(root_node, NULL, BAD_CAST set.c_str(), NULL);
+            xmlNewProp(root_node, BAD_CAST id_label.c_str(), BAD_CAST id.c_str());
+            xmlNewProp(root_node, BAD_CAST "setid", BAD_CAST idx[0][0].c_str());
+            xmlNewProp(root_node, BAD_CAST "srclang", BAD_CAST idx[0][1].c_str());
+            xmlNewProp(root_node, BAD_CAST "trglang", BAD_CAST idx[0][2].c_str());
+
+
+            int nSEGMENTS = 1;
+
+            // DOCUMENTS
+            string str, input_file, docid;
+
+            if (exists(p)) input_file = input;
+            else input_file = randomInput;
+
+            ifstream file(input_file.c_str());
+            if (file) {
+                //cout << "OPENED : " << input_file << endl;
+                xmlNodePtr doc_node = xmlNewChild(root_node, NULL, BAD_CAST "doc", NULL);
+
+                while (getline(file, str)) {
+
+                    if (idx[nSEGMENTS][0] != docid) {   //NEW DOCUMENT
+                        if (nSEGMENTS > 1) {
+                            xmlNodePtr doc_node = xmlNewChild(root_node, NULL, BAD_CAST "doc", NULL);
+                            xmlNewProp(doc_node, BAD_CAST "docid", BAD_CAST docid.c_str());
+                            xmlNewProp(doc_node, BAD_CAST "genre", BAD_CAST idx[nSEGMENTS-1][1].c_str());
+                            xmlNewProp(doc_node, BAD_CAST  id_label.c_str(), BAD_CAST id.c_str());
+                            xmlNewProp(doc_node, BAD_CAST "sysid", BAD_CAST id.c_str());
+                        }
+                        docid = idx[nSEGMENTS][0];
+                    }
+                    boost::regex re("\\s+$");
+                    string line = boost::regex_replace(str, re, "");
+                    if (cas == Common::CASE_CI) boost::to_lower(line);
+                    if (line == "") line = Common::EMPTY_ITEM;
+
+                    xmlNodePtr seg_node = xmlNewChild(doc_node, NULL, BAD_CAST "seg", BAD_CAST line.c_str());
+                    //char buffer[50];
+                    //sprintf(buffer, "%d", nSEGMENTS);
+                    //xmlNewProp(seg_node, BAD_CAST "id", (const xmlChar *) buffer);
+                    xmlNewProp(seg_node, BAD_CAST "id", BAD_CAST idx[nSEGMENTS][3].c_str());
+                    ++nSEGMENTS;
+                }
+                //LAST DOCUMENT
+                xmlNewProp(doc_node, BAD_CAST "docid", BAD_CAST docid.c_str());
+                xmlNewProp(doc_node, BAD_CAST "genre", BAD_CAST idx[nSEGMENTS-1][1].c_str());
+                xmlNewProp(doc_node, BAD_CAST  id_label.c_str(), BAD_CAST id.c_str());
+                xmlNewProp(doc_node, BAD_CAST "sysid", BAD_CAST id.c_str());
+
+                file.close();
+            } else { fprintf(stderr, "couldn't open file: %s\n", input_file.c_str()); exit(1); }
+
+            xmlSaveFormatFileEnc(output.c_str(), doc, "UTF-8", 1);
+            xmlFreeDoc(doc);
+            xmlCleanupParser();
+        }
+    }
+}*/
