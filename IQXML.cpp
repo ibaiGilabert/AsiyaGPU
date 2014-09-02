@@ -15,8 +15,7 @@ const int IQXML::FLOAT_PRECISION = 8;
 const string IQXML::ROOT_ELEMENT = "REPORT";
 
 
-void save_xml(string report_xml, string TGT, string REF, string METRIC, double sys_score, const vector<double> &doc_scores, const vector<double> &seg_scores) {
-
+void save_xml(string report_xml, string TGT, string REF, string METRIC, const MetricScore &m) {
     vector<vector<string> > idx = Config::IDX[TGT];
 
     /*    cout << "-----------------idx-------------------" << endl;
@@ -78,7 +77,7 @@ void save_xml(string report_xml, string TGT, string REF, string METRIC, double s
 
             if (DOC != "-1") {
                 //x = Common::trunk_and_trim_number(doc_scores[n_docs - 1], IQXML::FLOAT_LENGTH, IQXML::FLOAT_PRECISION);
-                x = doc_scores[n_docs-1];
+                x = m.doc_scores[n_docs-1];
                 xmlNodePtr doc_node = xmlNewChild(root_node, NULL, BAD_CAST "DOC", NULL);
                 xmlNewProp(doc_node, BAD_CAST "id",         BAD_CAST document_id.c_str());
 
@@ -98,7 +97,7 @@ void save_xml(string report_xml, string TGT, string REF, string METRIC, double s
 
         // CREATE A SEGMENT
         //x = Common::trunk_and_trim_number(seg_scores[i - 1], IQXML::FLOAT_LENGTH, IQXML::FLOAT_PRECISION);
-        x = seg_scores[i-1];
+        x = m.seg_scores[i-1];
         sprintf(buffer, "%f", x);
         xmlNodePtr seg_node = xmlNewChild(doc_node, NULL, BAD_CAST "S", (const xmlChar *) buffer);
         sprintf(buffer, "%d", i);
@@ -110,7 +109,7 @@ void save_xml(string report_xml, string TGT, string REF, string METRIC, double s
     // PASTE LAST DOC (if any)
     if (DOC != "-1") {
         //x = Common::trunk_and_trim_number(doc_scores[n_docs - 1], IQXML::FLOAT_LENGTH, IQXML::FLOAT_PRECISION);
-        x = doc_scores[n_docs-1];
+        x = m.doc_scores[n_docs-1];
         //doc_node = xmlNewChild(root_node, NULL, BAD_CAST "DOC", NULL);
         xmlNewProp(doc_node, BAD_CAST "id",         BAD_CAST document_id.c_str());
 
@@ -131,12 +130,12 @@ void save_xml(string report_xml, string TGT, string REF, string METRIC, double s
     sprintf(buffer, "%d", n_docs);
     xmlNewProp(root_node, BAD_CAST "n_docs",    (const xmlChar *) buffer);
 
-    sprintf(buffer, "%d", seg_scores.size());
+    sprintf(buffer, "%d", (int)m.seg_scores.size());
     xmlNewProp(root_node, BAD_CAST "n_segments",(const xmlChar *) buffer);
     xmlNewProp(root_node, BAD_CAST "ref",       BAD_CAST    REF.c_str());
 
     //double x = Common::trunk_and_trim_number(sys_score, IQXML::FLOAT_LENGTH, IQXML::FLOAT_PRECISION);
-    x = sys_score;
+    x = m.sys_score;
     sprintf(buffer, "%f", x);
     xmlNewProp(root_node, BAD_CAST "score",     (const xmlChar *) buffer);
 
@@ -146,7 +145,15 @@ void save_xml(string report_xml, string TGT, string REF, string METRIC, double s
 }
 
 
-void IQXML::write_report(string TGT, string REF, string METRIC, double sys_score, const vector<double> &doc_scores, const vector<double> &seg_scores){
+void IQXML::write_report(string TGT, string REF, string METRIC, double sys_score, const vector<double> &doc_scores, const vector<double> &seg_scores) {
+    MetricScore m;
+    m.sys_score = sys_score;
+    m.doc_scores = doc_scores;
+    m.seg_scores = seg_scores;
+    write_report(TGT, REF, METRIC, m);
+}
+
+void IQXML::write_report(string TGT, string REF, string METRIC, const MetricScore &m){
     // description _ writes evaluation scores onto a given XML report file
     //stringstream r_xml;
     string report_xml = Common::DATA_PATH+"/"+Common::REPORTS+"/"+TGT +"/"+REF+"/"+METRIC+"."+Common::XMLEXT;
@@ -174,7 +181,8 @@ void IQXML::write_report(string TGT, string REF, string METRIC, double sys_score
         system(s_aux.c_str());
     }
 
-    save_xml(report_xml, TGT, REF, METRIC, sys_score, doc_scores, seg_scores);
+    //save_xml(report_xml, TGT, REF, METRIC, sys_score, doc_scores, seg_scores);
+    save_xml(report_xml, TGT, REF, METRIC, m);
 
     Common::replace_special_characters(report_xml);
 

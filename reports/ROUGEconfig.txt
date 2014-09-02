@@ -1,0 +1,6 @@
+/home/usuaris/gilabert/asiya/gpu/sample/tmp/ROUGE.3758.95475864201.out.1 /home/usuaris/gilabert/asiya/gpu/sample/tmp/ROUGE.5517.413132792
+58.ref.1
+/home/usuaris/gilabert/asiya/gpu/sample/tmp/ROUGE.3758.95475864201.out.2 /home/usuaris/gilabert/asiya/gpu/sample/tmp/ROUGE.5517.413132792
+58.ref.2
+/home/usuaris/gilabert/asiya/gpu/sample/tmp/ROUGE.3758.95475864201.out.3 /home/usuaris/gilabert/asiya/gpu/sample/tmp/ROUGE.5517.413132792
+58.ref.3

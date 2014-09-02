@@ -14,6 +14,27 @@
 #include <libxml/parser.h>
 #include <libxml/tree.h>
 
+
+/*NISTXML::read_file(string file) {
+    // description _ reads a NIST XML file and writes an equivalent RAW file and the correspondence between them (IDX)
+    //               (conforming ftp://jaguar.ncsl.nist.gov/mt/resources/mteval-xml-v1.5.dtd)
+    if (Config::verbose > 1) fprintf(stderr, "reading NIST XML <%s>\n", file.c_str());
+
+    string p_gz = file + "." + Common::GZEXT;
+    boost::filesystem::path p (file);
+    boost::filesystem::path p_gz (input_gz);
+
+    if (exists(p) or exists(p_gz)) {
+        if (!exists(p) and exists(p_gz)) {
+            string aux = Common::GUNZIP+" "+file+"."+Common::GZEXT;
+            system(aux.c_str());
+        }
+        //repair_file
+
+    }
+
+}*/
+
 vector<vector<string> > NISTXML::write_fake_idx_file(string file, string IDX, int verbose) {
     vector<vector <string> > lIDX(0, vector<string>());
 
@@ -65,11 +86,11 @@ vector<vector<string> > NISTXML::write_fake_idx_file(string file, string IDX, in
     return lIDX;
 }
 
-void SGML_f_create_create_doc(string input, string output, int type, string sysid, xmlDocPtr &doc, xmlNodePtr &root_node) {
+void SGML_f_create_create_doc(string input, string output, string sysid, xmlDocPtr &doc, xmlNodePtr &root_node) {
         string randomInput, randomInput2;
 
         //if exists input....
-        string input_gz = input + Common::GZEXT;
+        string input_gz = input + "." + Common::GZEXT;
         boost::filesystem::path p (input);
         boost::filesystem::path p_gz (input_gz);
         if (exists(p) or exists(p_gz)) {
@@ -152,7 +173,7 @@ void NISTXML::SGML_f_create_mteval_doc(string input, string output, int type) {
     srand(time(NULL));
     //string randomInput, randomInput2;
 
-    SGML_f_create_create_doc(input, output, type, sysid, doc, root_node);
+    SGML_f_create_create_doc(input, output, sysid, doc, root_node);
 
     xmlSaveFormatFileEnc(output.c_str(), doc, "UTF-8", 1);
     xmlFreeDoc(doc);
@@ -195,7 +216,7 @@ void NISTXML::SGML_f_create_mteval_multidoc(string output, int type) {
     //string randomInput, randomInput2;
 
     for (map<string, string>::const_iterator it = Config::Hrefs.begin(); it != Config::Hrefs.end(); ++it) {
-        SGML_f_create_create_doc(it->second, output, type, it->first, doc, root_node);
+        SGML_f_create_create_doc(it->second, output, it->first, doc, root_node);
     }
     xmlSaveFormatFileEnc(output.c_str(), doc, "UTF-8", 1);
     xmlFreeDoc(doc);
@@ -203,6 +224,21 @@ void NISTXML::SGML_f_create_mteval_multidoc(string output, int type) {
 }
 
 
+void NISTXML::SGML_GTM_f_create_mteval_doc(string input, string output) {
+    // description _ creation of a NIST SGML evaluation document from a "sentence-per-line" format corpus
+    if (Config::verbose > 1) fprintf(stderr, "OPENING <%s> for GTM xml-parsing...\n", input.c_str());
+
+    xmlDocPtr doc = xmlNewDoc(BAD_CAST "1.0");
+    xmlNodePtr root_node;
+    xmlDocSetRootElement(doc, root_node);
+
+    srand(time(NULL));
+    SGML_f_create_create_doc(input, output, "dummysys", doc, root_node);
+
+    xmlSaveFormatFileEnc(output.c_str(), doc, "UTF-8", 1);
+    xmlFreeDoc(doc);
+    xmlCleanupParser();
+}
 
 
 
@@ -217,7 +253,7 @@ void f_create_create_doc(string input, string output, string TGT, string cas, in
 
     string id = idx[1][2];
     //string input = it->second;
-    string input_gz = input + Common::GZEXT;
+    string input_gz = input + "." + Common::GZEXT;
 
     boost::filesystem::path p (input);
     boost::filesystem::path p_gz (input_gz);
@@ -367,7 +403,7 @@ void NISTXML::f_create_mteval_multidoc(string output, string cas, int type) {
 
         string id = idx[1][2];
         string input = it->second;
-        string input_gz = input + Common::GZEXT;
+        string input_gz = input + "." + Common::GZEXT;
 
         boost::filesystem::path p (input);
         boost::filesystem::path p_gz (input_gz);

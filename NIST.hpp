@@ -15,8 +15,8 @@ private:
 	pair<vector<double>, vector<vector<double> > > computeNIST(string TGT);
 
 public:
-	NIST() { cout << "######################## CONSTRUCTOR NIST #########################" << endl; }
-	~NIST() { cout << "######################## DESTRUCTOR NIST #########################" << endl; }
+	//NIST() {}
+	//~NIST() {}
 
 	void doMetric(string TGT, string REF, string prefix, Scores &hOQ);
 

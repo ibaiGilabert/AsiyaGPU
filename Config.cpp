@@ -349,7 +349,13 @@ void Config::process_command_line_options(map<string, string> Options, vector<st
     }
 }
 
-void Config::process_nist_file(string file, string type) {}
+void Config::process_nist_file(string file, string type) {
+/*    // description _ read the contents of a NIST xml and generate txt and idx files
+    //               (idx structure is also stored onto memory)
+    NISTXML::read_file(file);
+    for() {}
+*/
+}
 
 void Config::process_raw_file(string file, string type) {
     // description _ read the contents of a RAW plain text file (one sentence per line) and generate fake idx files

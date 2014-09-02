@@ -42,3 +42,8 @@ print "\n\nfinal output: $output\n";
 $base_name = "/home/usuaris/gilabert/asiya/gpu/sample/tmp/9179.63435714231.out.BLEU.sgml";
 print "name: $base_name\n";
 print "base_name: ".basename("$base_name.23")."\n";
+
+$auxOUT = ".";
+if ( ($auxOUT eq "") or ($auxOUT =~ /^[\?\!\.]$/) ) {
+	print "\nOUT!\n";
+}

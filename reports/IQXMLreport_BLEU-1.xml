@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<!DOCTYPE REPORT SYSTEM "asiya.dtd" []>
+<REPORT hyp="apertium.txt" metric="BLEU-1" n_docs="1" n_segments="3" ref="ref.txt" score="0.72000000">
+  <DOC id="UNKNOWN_DOC" n="1" n_segments="3" score="0.70900000">
+    <S n="1">0.65000000</S>
+    <S n="2">0.76470000</S>
+    <S n="3">0.71230000</S>
+  </DOC>
+</REPORT>

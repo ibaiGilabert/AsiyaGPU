@@ -3,20 +3,20 @@
 
 #include "Scores.hpp"
 
-#include <iostream>
+#include <vector>
 #include <string>
 
 class SingleMetric {
-private:
+protected:
 
 public:
-	SingleMetric() {  cout << "######################## CONSTRUCTOR SingleMetric #########################" << endl; }
-	virtual ~SingleMetric() { cout << "######################## DESTRUCTOR SingleMetric #########################" << endl; }
+	SingleMetric() {}
+	virtual ~SingleMetric() {}
 
-	//virtual ~SingleMetric() {}
-	//SingleMetric() { std::cout << "Constructor de SingleMetric" << endl; }
+	static Score read_scores(string basename, string TGT);
+	static vector<double> read_scores_G(string basename, string G, string TGT);
+
 	virtual void doMetric(string TGT, string REF, string prefix, Scores &hOQ) = 0;
-
 };
 
 #endif

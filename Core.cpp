@@ -102,7 +102,9 @@ void Core::doMultiMetrics(string HYP, const set<string> &Lref, Scores &hOQ) {
 	pNIST->doMetric(HYP, REF, "", hOQ);
 	pBLEUNIST->doMetric(HYP, REF, "", hOQ);
 
-	/*BLEU bleu;
+	delete pBLEU, pNIST, pBLEUNIST;
+/*
+	BLEU bleu;
 	NIST nist;
 	BLEUNIST bleunist;
 
@@ -112,7 +114,6 @@ void Core::doMultiMetrics(string HYP, const set<string> &Lref, Scores &hOQ) {
 	nist.doMetric(HYP, REF, "", hOQ);
 	cout << "hola bleunist" << endl;
 	bleunist.doMetric(HYP, REF, "", hOQ);*/
-	delete pBLEU, pNIST, pBLEUNIST;
 
 	if (Config::verbose == 1) fprintf(stderr, "]\n");
 }

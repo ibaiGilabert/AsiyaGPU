@@ -2,7 +2,6 @@
 #include "Common.hpp"
 #include "Config.hpp"
 #include "NISTXML.hpp"
-#include "NISTSCR.hpp"
 #include "IQXML.hpp"
 
 #include <stdio.h>
@@ -41,40 +40,9 @@ map<string, int> BLEUNIST::create_rNIST() {
 const map<string, int> BLEUNIST::rNIST = create_rNIST();
 
 
-vector<double> BLEUNIST::read_scores_G(string basename, string G, string TGT) {
-	// description _ reads MetricsMaTr format scr file for a given metric and a given granularity
 
-	string file = basename + "-" + G + ".scr";
 
-	//read scr file
-	map<string, double> hscores = NISTSCR::read_scr_file(file, G, 0);
-
-	//delete scr file
-	string sys_aux = "rm -f "; sys_aux += file.c_str();
-	system (sys_aux.c_str());
-
-		/*Crec que no cal, al ser un map ja esta reordenat
-		vector<int> arscores = Common::reorder_scores(hscores, TGT, G);*/
-
-	vector<double> scores;
-	//for (map<string, int>::const_iterator it = hscores.begin(), int i = 0; it != hscores.end(); ++it, ++i) scores[i] = *it;
-	for (map<string, double>::const_iterator it = hscores.begin(); it != hscores.end(); ++it) scores.push_back(it->second);
-
-	return scores;
-}
-
-BLEUNIST::ReadScores BLEUNIST::read_scores(string basename, string TGT) {
-	// description _ read system, document and segment scores (from the corresponding Metrics_MaTR-like format files)
-	BLEUNIST::ReadScores read_scores;
-
-	read_scores.sys_score = read_scores_G(basename, Common::G_SYS, TGT)[0];
-	read_scores.doc_scores = read_scores_G(basename, Common::G_DOC, TGT);
-	read_scores.seg_scores = read_scores_G(basename, Common::G_SEG, TGT);
-
-	return read_scores;
-}
-
-pair<BLEUNIST::ReadScores, BLEUNIST::ReadScores> BLEUNIST::computeBLEUNIST(string TGT) {
+pair<MetricScore, MetricScore> BLEUNIST::computeBLEUNIST(string TGT) {
 	// description _ computes smoothed BLEU-4 score and NIST-5 score (by calling NIST mteval script) (multiple references)
 	stringstream tBLEUNIST;
 
@@ -120,8 +88,8 @@ pair<BLEUNIST::ReadScores, BLEUNIST::ReadScores> BLEUNIST::computeBLEUNIST(strin
 		system (sysaux.c_str());
 	}
 
-	ReadScores BLEU_scores = read_scores(Common::DATA_PATH + "/BLEU", TGT);
-	ReadScores NIST_scores = read_scores(Common::DATA_PATH + "/NIST", TGT);
+	MetricScore BLEU_scores = Scores::read_scores(Common::DATA_PATH + "/BLEU", TGT);
+	MetricScore NIST_scores = Scores::read_scores(Common::DATA_PATH + "/NIST", TGT);
 
 	return make_pair(BLEU_scores, NIST_scores);
 }
@@ -161,23 +129,25 @@ void BLEUNIST::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 	    if ( (!exists(reportBLEUxml_path) and !exists(reportBLEUxml_ext)) or \
 	    (!exists(reportNISTxml_path) and !exists(reportNISTxml_ext)) or Config::remake) {
             // BLEUNIST::computeMultiBLEUNIST( $src, $out, $Href, $TGT, $config->{IDX}, $remakeREPORTS, $config->{CASE}, $tools, $verbose);
-	    	pair<ReadScores, ReadScores> res = computeBLEUNIST(TGT);
-	    	BLEUNIST::ReadScores BLEUscores = res.first;
-	    	BLEUNIST::ReadScores NISTscores = res.second;
+	    	pair<MetricScore, MetricScore> res = computeBLEUNIST(TGT);
+	    	MetricScore BLEUscores = res.first;
+	    	MetricScore NISTscores = res.second;
 
          	string pref = prefix + BLEUNIST::BLEUEXT;
 	    	if (Config::O_STORAGE == 1) {
 	    		IQXML::write_report(TGT, REF, pref, BLEUscores.sys_score, BLEUscores.doc_scores, BLEUscores.seg_scores);
          		cout << "IQXML DOCUMENT " << pref << " CREATED" << endl;
          	}
-         	hOQ.save_hash_scores(pref, TGT, REF, BLEUscores.sys_score, BLEUscores.doc_scores, BLEUscores.seg_scores);
+         	//hOQ.save_hash_scores(pref, TGT, REF, BLEUscores.sys_score, BLEUscores.doc_scores, BLEUscores.seg_scores);
+         	hOQ.save_hash_scores(pref, TGT, REF, BLEUscores);
 
 			pref = prefix + BLEUNIST::NISTEXT;
 			if (Config::O_STORAGE == 1) {
 	    		IQXML::write_report(TGT, REF, pref, NISTscores.sys_score, NISTscores.doc_scores, NISTscores.seg_scores);
          		cout << "IQXML DOCUMENT " << pref << " CREATED" << endl;
          	}
-	    	hOQ.save_hash_scores(pref, TGT, REF, NISTscores.sys_score, NISTscores.doc_scores, NISTscores.seg_scores);
+	    	//hOQ.save_hash_scores(pref, TGT, REF, NISTscores.sys_score, NISTscores.doc_scores, NISTscores.seg_scores);
+	    	hOQ.save_hash_scores(pref, TGT, REF, NISTscores);
 
 
 	    	cout << "------------SCORES: BLEUNIST-----------" << endl;

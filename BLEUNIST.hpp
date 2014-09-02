@@ -2,28 +2,24 @@
 #define BLEUNIST_HPP
 
 #include "SingleMetric.hpp"
+//#include "Scores.hpp"
 
 #include <vector>
 
 class BLEUNIST : public SingleMetric {
 private:
-	struct ReadScores {
-		double sys_score;
-		vector<double> doc_scores, seg_scores;
-	};
-
 	static map<string, int> create_rBLEUNIST();
 	static map<string, int> create_rBLEU();
 	static map<string, int> create_rNIST();
 
-	ReadScores read_scores(string basename, string TGT);
-	vector<double> read_scores_G(string basename, string G, string TGT);
+	//Score read_scores(string basename, string TGT);
+	//vector<double> read_scores_G(string basename, string G, string TGT);
 
-	pair<ReadScores, ReadScores> computeBLEUNIST(string TGT);
+	pair<MetricScore, MetricScore> computeBLEUNIST(string TGT);
 
 public:
-	BLEUNIST() { cout << "######################## CONSTRUCTOR BLEUNIST #########################" << endl; }
-	~BLEUNIST() { cout << "######################## DESTRUCTOR BLEUNIST #########################" << endl; }
+	BLEUNIST() {}
+	~BLEUNIST() {}
 
 	void doMetric(string TGT, string REF, string prefix, Scores &hOQ);
 

@@ -71,6 +71,7 @@ REVISAR:
 
 	IQXML.cpp	->	En la definició del !DOCTYPE, hi ha el '[]' dins de les "'s.
 
+	NISTXML		->	falta el repair_file a la funcio read_file (llegir nist).
 
 SHORTCUTS
 
@@ -103,6 +104,14 @@ SHORTCUTS
 		std::vector<std::string> strs;
 		boost::split(strs, "string to split", boost::is_any_of("\t "));
 
+		//ALTRA ALTERNATIVA (amb istringstream)
+
+    	std::string s = "Hello How Are You Today Man";
+	    std::vector<std::string> v;
+	    std::istringstream buf(s);
+	    for(std::string token; getline(buf, token, ' '); )
+	        v.push_back(token);
+
 	-->	MATCH DE CARACTERS ESPECIALS	(joc de proves a sandbox/boost_replace.cc)
 	    re = ("\\*");   report_xml = boost::regex_replace(report_xml, re, "\\\\*");
 	    re = (";");     report_xml = boost::regex_replace(report_xml, re, "\\\\;");
@@ -112,13 +121,34 @@ SHORTCUTS
 	    re = ("\\)");   report_xml = boost::regex_replace(report_xml, re, "\\\\)");
 	    re = ("\\?");   report_xml = boost::regex_replace(report_xml, re, "\\\\?");
 
+--> DELETE SPACE PADING
+        boost::regex re("\\s*$");//, boost::regex::perl|boost::regex::icase);
+        boost::regex re2("^\\s*");//, boost::regex::perl|boost::regex::icase);
+
+        type = boost::regex_replace(type, re, "");
+        data = boost::regex_replace(data, re2, "");
 
 TODO LIST
-	-	LOCAL	->
 
-	-	CLUSTER	->	Hi ha problemes executan el tool del BLEUNIST.
+	-	LOCAL	->
+				->	Completar el NGRAM.
+
+	-	CLUSTER	->	Veure com funciona l'expressio regular del computeMultiROUGE (testejar amb regular_exp.pl).
+				->	Comprovar de nou el done-list amb les noves modificacions de les metriques.
+				->	Provar el METEOR.
+				->	Provar el ROUGE.
+				->	Provar el GTM	(nova versio de NISTXML amb SGML_GTM_create_doc)
 
 
 		//Versions canviades a tenir en compte
 
 			Core.cpp.old	->	get_seg_doc_scores està inflat a xivatos.
+
+DONE LIST
+
+	->	BLEU, NIST, BLEUNIST;	resultats escirts correctament.
+
+
+QUESTIONS
+
+	->	Demanar exemples de tipus input=nist en format NISTXML files. (provar el read_file, repair_file, etc)
