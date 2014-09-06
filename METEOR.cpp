@@ -109,7 +109,7 @@ MetricScore METEOR::computeMETEOR(string TGT, string variant) {
 	Common::execute_or_die(sc, ms);
 
 	string basename = Common::DATA_PATH+"/"+Common::TMP+"/"+sysid;
-	MetricScore res = Scores::read_scores(basename, TGT);
+	MetricScore res = Scores::read_scores(basename, TGT, 0);
 
 	if (exists(outMTRsgml_path)) {
 		string sysaux = "rm -f "+outMTRsgml;

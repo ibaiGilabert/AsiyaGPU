@@ -22,8 +22,8 @@ public:
 	oMap sys, seg, doc, all;
 
 	//Read
-	static MetricScore read_scores(string basename, string TGT);
-	static vector<double> read_scores_G(string basename, string G, string TGT);
+	static MetricScore read_scores(string basename, string TGT, int do_neg);
+	static vector<double> read_scores_G(string basename, string G, string TGT, int do_neg);
 
 	//Save
 	void save_hash_scores(string metric_name, string system_name, string refere_name, const MetricScore &scores);

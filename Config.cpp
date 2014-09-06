@@ -135,6 +135,10 @@ void Config::printMapString(const map<string, string> &m) {
     cout << "---------------------" << endl;
 }
 
+/*void Config::use_default_metrics() {
+    // description _ change the configuration to use the default metric set
+    if (Metrics::r)
+}*/
 
 void Config::Dumper() {
     cout << "\tverbose -> " << Config::verbose << endl;
@@ -693,6 +697,10 @@ void Config::validate_configuration() {
             exit(1);
         }
     }
+    /*if (!Config::Hmetrics.empty()) {
+        //metric_set = Metrics::load_metric_set();
+        //if ()
+    } else use_default_metrics;*/
 
 }
 

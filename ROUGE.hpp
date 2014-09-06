@@ -16,6 +16,9 @@ private:
 	pair<vector<double>, vector<vector<double> > > computeROUGE(string TGT, int stemming);
 
 public:
+	ROUGE() {}
+	~ROUGE() {}
+
 	void doMetric(string TGT, string REF, string prefix, int stemming, Scores &hOQ);
 
 	static const string ROUGEXT, TROUGE, CFGEXT;

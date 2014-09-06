@@ -88,8 +88,8 @@ pair<MetricScore, MetricScore> BLEUNIST::computeBLEUNIST(string TGT) {
 		system (sysaux.c_str());
 	}
 
-	MetricScore BLEU_scores = Scores::read_scores(Common::DATA_PATH + "/BLEU", TGT);
-	MetricScore NIST_scores = Scores::read_scores(Common::DATA_PATH + "/NIST", TGT);
+	MetricScore BLEU_scores = Scores::read_scores(Common::DATA_PATH + "/BLEU", TGT, 0);
+	MetricScore NIST_scores = Scores::read_scores(Common::DATA_PATH + "/NIST", TGT, 0);
 
 	return make_pair(BLEU_scores, NIST_scores);
 }

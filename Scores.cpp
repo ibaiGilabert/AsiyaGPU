@@ -5,13 +5,13 @@
 #include <iostream>
 #include <stdlib.h>
 
-vector<double> Scores::read_scores_G(string basename, string G, string TGT) {
+vector<double> Scores::read_scores_G(string basename, string G, string TGT, int do_neg) {
 	// description _ reads MetricsMaTr format scr file for a given metric and a given granularity
 
 	string file = basename + "-" + G + ".scr";
 
 	//read scr file
-	map<string, double> hscores = NISTSCR::read_scr_file(file, G, 0);
+	map<string, double> hscores = NISTSCR::read_scr_file(file, G, do_neg); //0);
 
 	//delete scr file
 	string sys_aux = "rm -f " + file;
@@ -22,18 +22,23 @@ vector<double> Scores::read_scores_G(string basename, string G, string TGT) {
 
 	vector<double> scores;
 	//for (map<string, int>::const_iterator it = hscores.begin(), int i = 0; it != hscores.end(); ++it, ++i) scores[i] = *it;
+
 	for (map<string, double>::const_iterator it = hscores.begin(); it != hscores.end(); ++it) scores.push_back(it->second);
+
+	if (!do_neg) {		//compute abs for those non do_neg metrics
+		for (int i = 0; i < scores.size(); ++i) scores[i] = abs(scores[i]);
+	}
 
 	return scores;
 }
 
-MetricScore Scores::read_scores(string basename, string TGT) {
+MetricScore Scores::read_scores(string basename, string TGT, int do_neg) {
 	// description _ read system, document and segment scores (from the corresponding Metrics_MaTR-like format files)
 	MetricScore read_scores;
 
-	read_scores.sys_score = read_scores_G(basename, Common::G_SYS, TGT)[0];
-	read_scores.doc_scores = read_scores_G(basename, Common::G_DOC, TGT);
-	read_scores.seg_scores = read_scores_G(basename, Common::G_SEG, TGT);
+	read_scores.sys_score = read_scores_G(basename, Common::G_SYS, TGT, do_neg)[0];
+	read_scores.doc_scores = read_scores_G(basename, Common::G_DOC, TGT, do_neg);
+	read_scores.seg_scores = read_scores_G(basename, Common::G_SEG, TGT, do_neg);
 
 	return read_scores;
 }

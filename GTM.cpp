@@ -19,7 +19,7 @@
 
 
 const string GTM::GTMEXT = "GTM";
-const string GTM::TGTM = "GTM-1.4";	// version 1.4
+const string GTM::TGTM = "gtm-1.4";	// version 1.4
 
 map<string, int> GTM::create_rGTM() {
 	map<string, int> rGTM;

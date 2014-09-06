@@ -16,7 +16,9 @@ public:
 	static Score read_scores(string basename, string TGT);
 	static vector<double> read_scores_G(string basename, string G, string TGT);
 
-	virtual void doMetric(string TGT, string REF, string prefix, Scores &hOQ) = 0;
+	virtual void doMetric(string TGT, string REF, string prefix, Scores &hOQ) {}
+	virtual void doMetric(string TGT, string REF, string prefix, int stemming, Scores &hOQ) {}	//DR i ROUGE
+
 };
 
 #endif

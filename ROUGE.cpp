@@ -42,7 +42,6 @@ vector<double> ROUGE::read_rouge(string reportROUGE) {
 	boost::regex re("^X ROUGE-[SLW1-4][^ ]* Average_F.*");
 
     string str;
-    vector<string> laux;
     map<string, double> hROUGE;
 
     ifstream file(reportROUGE.c_str());
@@ -55,7 +54,8 @@ vector<double> ROUGE::read_rouge(string reportROUGE) {
 	            string s = results[0];
 	            cout << "line: |" << s << "|" << endl;
 
-	            istringstream iss(s);
+			    vector<string> laux;
+			    istringstream iss(s);
 			    for(std::string token; getline(iss, token, ' '); ) laux.push_back(token);
 
 				hROUGE[laux[1]] = atof(laux[3].c_str());

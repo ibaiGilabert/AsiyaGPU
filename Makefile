@@ -6,7 +6,7 @@ LDFLAGS	= -lboost_system -lboost_filesystem -lboost_regex -lgomp -lxml2
 
 all: Asiya
 
-Asiya: Asiya.o Config.o Common.o Core.o Scores.o BLEU.o NIST.o BLEUNIST.o GTM.o METEOR.o ROUGE.o NISTXML.o NISTSCR.o IQXML.o
+Asiya: Asiya.o Config.o Common.o Core.o Scores.o BLEU.o NIST.o BLEUNIST.o GTM.o METEOR.o ROUGE.o TER.o NISTXML.o NISTSCR.o IQXML.o
 	g++ -o Asiya Asiya.o Config.o Common.o Core.o Scores.o BLEU.o NIST.o BLEUNIST.o GTM.o METEOR.o ROUGE.o NISTXML.o NISTSCR.o IQXML.o $(LDFLAGS) $(CFLAGS)
 
 Asiya.o: Asiya.cpp
@@ -41,6 +41,9 @@ METEOR.o: METEOR.hpp METEOR.cpp
 
 ROUGE.o: ROUGE.hpp ROUGE.cpp
 	g++ -c ROUGE.cpp $(CFLAGS)
+
+TER.o: TER.hpp TER.cpp
+	g++ -c TER.cpp
 
 NISTXML.o: NISTXML.hpp NISTXML.cpp
 	g++ -c NISTXML.cpp $(CFLAGS)

@@ -246,46 +246,34 @@ string Common::replace_special_characters(string &input) {
     re = ("\\?");   input = boost::regex_replace(input, re, "\\\\?");
     return input;
 }
+
+double Common::safe_division(double numerator, double denominator) {
+	// description _ if denominator is different from 0 returns regular division; otherwise returns default value (0 if not specified)
+	double default_value = -999999;
+	return denominator == 0 ? default_value : numerator/denominator;
+}
+
 /*
-vector<int> Common::reorder_scores(map<string, int> &hscores, string TGT, string G) {
-	// description _ converts a hash of scores into an ordered array according to the IDX file
-	vector<vector<string> > bIDX = IDX[TGT];
+sub safe_division {
+    #description _ if denominator is different from 0 returns regular division; otherwise returns default value (0 if not specified)
+    #param1  _ numerator
+    #param2  _ denominator
+    #param3  _ default value
+    #@return _ safe division
 
-	vector<string> order_keys;	//(bIDX.size() - 1);
-	if (!IDX.empty()) {
-		if (G == Common::G_SEG) {
-			for (count = 1; count < bIDX.size(); ++count) {
-				vector<string> idx = bIDX[count];
-				string k = "sys::" + idx[2] + "::doc::" + idx[0] + "::seg::" + idx[3];
-				order_keys.push_back(k);	//order_keys[count] = k;
-			}
-		}
-		else if (G == Common::G_DOC) {
-			for (count = 1; count < bIDX.size(); ++count) {
-				vector<string> idx = bIDX[count];
-				string k = "sys::" + idx[2] + "::doc::" + idx[0];
-				order_keys.push_back(k);
-			}
-		}
-		else if (G == Common::G_SYS) {
-			for (count = 1; count < bIDX.size(); ++count) {
-				vector<string> idx = bIDX[count];
-				string k = "sys::" + idx[2];
-				order_keys.push_back(k);
-			}
-		}
-	}
-	else {
-		for (map<string, int>::const_iterator it = hscores.begin(); it != hscores.end(); ++it) order_keys.push_back(it->first);
-	}
+    my $numerator = shift;
+    my $denominator = shift;
+    my $default = shift;
 
-	vector<int> scores;
-	for (int i = 0; i < order_keys.size(); ++i) {
-		scores.push_back(hscores[k]);
-	}
+    if (!defined($default)) { $default = 0; }
 
-	return scores;
+    if (!defined($denominator)) { $denominator = 0; }
+
+    if ($denominator == 0) { return $default; }
+
+    return $numerator / $denominator;
 }*/
+
 
 /*double Common::trunk_and_trim_number(double n, int l, int p) {
 	// description _ trunks the given number into a float (given length and precision) and trims trailing white spaces.

@@ -47,3 +47,18 @@ $auxOUT = ".";
 if ( ($auxOUT eq "") or ($auxOUT =~ /^[\?\!\.]$/) ) {
 	print "\nOUT!\n";
 }
+
+my $pwd = readpipe("pwd");
+chomp($pwd);
+
+$pwd = $pwd.".out";
+print "pwd: |$pwd|\n";
+$pwd =~ m/\.\//;
+print "1: |$1|\n";
+print "2: |$2|\n";
+
+print "pwd: |$pwd|\n";
+if ( $outRND =~ m/\.\// ) {
+  $outRND =~ s/\.\///;
+  $outRND = "$pwd/$outRND";
+}

@@ -4,6 +4,9 @@
 #include "BLEU.hpp"
 #include "NIST.hpp"
 #include "BLEUNIST.hpp"
+#include "METEOR.hpp"
+#include "ROUGE.hpp"
+#include "GTM.hpp"
 
 #include <omp.h>
 #include <stdio.h>
@@ -97,12 +100,18 @@ void Core::doMultiMetrics(string HYP, const set<string> &Lref, Scores &hOQ) {
 	SingleMetric *pBLEU = new BLEU;
 	SingleMetric *pNIST = new NIST;
 	SingleMetric *pBLEUNIST = new BLEUNIST;
+	SingleMetric *pMETEOR = new METEOR;
+	SingleMetric *pROUGE = new ROUGE;
+	SingleMetric *pGTM = new GTM;
 
 	pBLEU->doMetric(HYP, REF, "", hOQ);
 	pNIST->doMetric(HYP, REF, "", hOQ);
 	pBLEUNIST->doMetric(HYP, REF, "", hOQ);
+	pMETEOR->doMetric(HYP, REF, "", hOQ);
+	pROUGE->doMetric(HYP, REF, "", 1, hOQ);
+	pGTM->doMetric(HYP, REF, "", hOQ);
 
-	delete pBLEU, pNIST, pBLEUNIST;
+	delete pBLEU, pNIST, pBLEUNIST, pMETEOR, pROUGE, pGTM;
 /*
 	BLEU bleu;
 	NIST nist;

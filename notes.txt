@@ -73,6 +73,11 @@ REVISAR:
 
 	NISTXML		->	falta el repair_file a la funcio read_file (llegir nist).
 
+	Common.cpp	->	safe_division incomplet (sense default)
+
+	GENERAL		->	El seed del rand s'hauria de declarar una UNICA vegada a metrics, i no a cada mètrica.
+
+
 SHORTCUTS
 
 	-->IF file exists
@@ -88,6 +93,10 @@ SHORTCUTS
 	    else if (is_directory(p))      // is p a directory?
    		   cout << p << " is a directory\n";
 
+   	-->CURRENT PATH
+
+   		boost::filesystem::path path( boost::filesystem::current_path() );
+		std::cout << "Current path is : " << path << std::endl;
 
 	-->SPLIT string
 
@@ -130,25 +139,40 @@ SHORTCUTS
 
 TODO LIST
 
-	-	LOCAL	->
+	-	LOCAL
+				->	Completar l'ESA (test de expressions regulars a regular_exp.pl)
 				->	Completar el NGRAM.
+				->	Completar el CE.
 
-	-	CLUSTER	->	Veure com funciona l'expressio regular del computeMultiROUGE (testejar amb regular_exp.pl).
+	-	CLUSTER
 				->	Comprovar de nou el done-list amb les noves modificacions de les metriques.
+
 				->	Provar el METEOR.
-				->	Provar el ROUGE.
 				->	Provar el GTM	(nova versio de NISTXML amb SGML_GTM_create_doc)
+
+		// Notes al provar execucions al cluster.
+			Canviar el path del tools a Config.cpp
+			Canviar el data_path del fitxer d'entrada Asiya.config al directori actual (pwd).
 
 
 		//Versions canviades a tenir en compte
-
 			Core.cpp.old	->	get_seg_doc_scores està inflat a xivatos.
 
 DONE LIST
 
-	->	BLEU, NIST, BLEUNIST;	resultats escirts correctament.
+	->	BLEU, NIST, BLEUNIST, ROUGE;	resultats escirts correctament.
 
 
 QUESTIONS
 
 	->	Demanar exemples de tipus input=nist en format NISTXML files. (provar el read_file, repair_file, etc)
+	->	Es Necessita alguna tool especial per executar el METEOR/ESA que no hi ha el metric_set a Asiya.config
+	->	Al executar el gtm-1.4 tinc aquests problemes
+
+		$java -Dfile.encoding=UTF-8 -jar /home/soft/asiya/tools/gtm-1.4/gtm.jar +s +d
+
+			Picked up _JAVA_OPTIONS: -Xmx2048M
+			Could not create the Java virtual machine.
+			[ERROR] problems running GTM...
+
+		En una execució interactiva amb qlogin no puc crear la màquina virtual de java.
