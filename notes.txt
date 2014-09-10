@@ -28,6 +28,7 @@ DEBUGGING
 	$gdb Asiya
 	>run (entrada)
 
+
 XML PARSER
 
 	Install:
@@ -48,6 +49,7 @@ AXIOMES:
 	undef de perl és equivalent a -1
 
 	extract xml.gz	->	$gunzip file
+
 
 REVISAR:
 
@@ -147,12 +149,13 @@ TODO LIST
 	-	CLUSTER
 				->	Comprovar de nou el done-list amb les noves modificacions de les metriques.
 
-				->	Provar el METEOR.
+				->	Provar els METEOR/ESA (Asiya.config).
 				->	Provar el GTM	(nova versio de NISTXML amb SGML_GTM_create_doc)
+				->	Provar el TER
 
-		// Notes al provar execucions al cluster.
-			Canviar el path del tools a Config.cpp
-			Canviar el data_path del fitxer d'entrada Asiya.config al directori actual (pwd).
+		NOTES: (execucions al cluster)
+				->	Canviar el path del tools a Config.cpp
+				->	Canviar el data_path del fitxer d'entrada Asiya.config al directori actual (pwd).
 
 
 		//Versions canviades a tenir en compte
@@ -176,3 +179,12 @@ QUESTIONS
 			[ERROR] problems running GTM...
 
 		En una execució interactiva amb qlogin no puc crear la màquina virtual de java.
+
+	->	Al executar el TER tinc problemes (crec que els mateixos que el gtm)
+
+		Picked up _JAVA_OPTIONS: -Xmx2048M
+		Error occurred during initialization of VM
+		Could not reserve enough space for object heap
+		Could not create the Java virtual machine.
+		[ERROR] problems running TERp...
+		java -Dfile.encoding=UTF-8 -jar  -Xmx1024M  /home/soft/asiya/tools/terp.v1/dist/lib/terp.jar    -n /home/usuaris/gilabert/PROVA_TER/AsiyaGPU/tmp/2624. -o nist -r /home/usuaris/gilabert/PROVA_TER/AsiyaGPU/tmp/2624.ref.TER.xml -h /home/usuaris/gilabert/PROVA_TER/AsiyaGPU/tmp/2624.out.TER.xml /home/soft/asiya/tools/terp.v1/data/ter.param

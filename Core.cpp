@@ -7,6 +7,7 @@
 #include "METEOR.hpp"
 #include "ROUGE.hpp"
 #include "GTM.hpp"
+#include "TER.hpp"
 
 #include <omp.h>
 #include <stdio.h>
@@ -103,6 +104,7 @@ void Core::doMultiMetrics(string HYP, const set<string> &Lref, Scores &hOQ) {
 	SingleMetric *pMETEOR = new METEOR;
 	SingleMetric *pROUGE = new ROUGE;
 	SingleMetric *pGTM = new GTM;
+	SingleMetric *pTER = new TER;
 
 	pBLEU->doMetric(HYP, REF, "", hOQ);
 	pNIST->doMetric(HYP, REF, "", hOQ);
@@ -110,8 +112,9 @@ void Core::doMultiMetrics(string HYP, const set<string> &Lref, Scores &hOQ) {
 	pMETEOR->doMetric(HYP, REF, "", hOQ);
 	pROUGE->doMetric(HYP, REF, "", 1, hOQ);
 	pGTM->doMetric(HYP, REF, "", hOQ);
+	pTER->doMetric(HYP, REF, "", hOQ);
 
-	delete pBLEU, pNIST, pBLEUNIST, pMETEOR, pROUGE, pGTM;
+	delete pBLEU, pNIST, pBLEUNIST, pMETEOR, pROUGE, pGTM, pTER;
 /*
 	BLEU bleu;
 	NIST nist;

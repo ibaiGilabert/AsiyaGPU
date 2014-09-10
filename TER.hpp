@@ -13,15 +13,14 @@ private:
 	MetricScore computeTER(string TGT, string variant, int do_neg);
 
 public:
-	TER() {}
-	~TER() {}
+	//TER() {}
+	//~TER() {}
 
 	void doMetric(string TGT, string REF, string prefix, Scores &hOQ);
 
 	static const string TEREXT,	TTERp;
 	static const map<string, int> rTER;
 };
-
 
 
 #endif

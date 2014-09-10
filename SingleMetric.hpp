@@ -10,8 +10,8 @@ class SingleMetric {
 protected:
 
 public:
-	SingleMetric() {}
-	virtual ~SingleMetric() {}
+	//SingleMetric() {}
+	//virtual ~SingleMetric() {}
 
 	static Score read_scores(string basename, string TGT);
 	static vector<double> read_scores_G(string basename, string G, string TGT);

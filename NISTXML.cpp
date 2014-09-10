@@ -349,7 +349,14 @@ void NISTXML::f_create_mteval_doc(string input, string output, string TGT, strin
     // description _ creation of a NIST XML evaluation document from a "sentence-per-line" format corpus
     //               (conforming ftp://jaguar.ncsl.nist.gov/mt/resources/mteval-xml-v1.5.dtd)
     if (Config::verbose > 1) fprintf(stderr, "OPENING <%s> for NIST xml-parsing [type = %s]...\n", input.c_str(), (type == 0)? "SRC" : (type == 1)? "TST" : "REF");
-
+    /*
+        cout << "NISTXML::f_create_mteval_doc(" << endl;
+        cout << "\tinput: " << input << endl;
+        cout << "\toutput: " << output << endl;
+        cout << "\tTGT: " << TGT << endl;
+        cout << "\tcas: " << cas << endl;
+        cout << "\ttype: " << type << endl << ")" << endl;
+    */
     srand(time(NULL));
     f_create_create_doc(input, output, TGT, cas, type);
 }
@@ -368,7 +375,12 @@ void NISTXML::f_create_mteval_multidoc(string output, string cas, int type) {
         }
         fprintf(stderr, "] for NIST* xml-parsing...\n");
     }
-
+    /*
+        cout << "NISTXML::f_create_mteval_multidoc(" << endl;
+        cout << "\toutput: " << output << endl;
+        cout << "\tcas: " << cas << endl;
+        cout << "\ttype: " << type << endl << ")" << endl;
+    */
     srand(time(NULL));
     for (map<string, string>::const_iterator it = Config::Hrefs.begin(); it != Config::Hrefs.end(); ++it) {
         f_create_create_doc(it->second, output, it->first, cas, type);
