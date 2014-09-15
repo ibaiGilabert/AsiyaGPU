@@ -2,7 +2,7 @@ IDIR = /usr/include/libxml2
 
 CC		= g++
 CFLAGS = -I$(IDIR)
-LDFLAGS	= -lboost_system -lboost_filesystem -lboost_regex -lgomp -lxml2
+LDFLAGS	= -lboost_system -lboost_filesystem -lboost_regex -lxml2
 
 all: Asiya
 

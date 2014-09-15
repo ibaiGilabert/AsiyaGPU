@@ -9,7 +9,7 @@
 #include "GTM.hpp"
 #include "TER.hpp"
 
-#include <omp.h>
+//#include <omp.h>
 #include <stdio.h>
 #include <iostream>
 /*
@@ -170,7 +170,7 @@ double Core::do_scores() {
 		if (Config::verbose) fprintf(stderr, "[METRICS] computing 'system vs. reference' scores (one vs. all)...\n");
 
 		for (set<string>::const_iterator it = Config::systems.begin(); it != Config::systems.end(); ++it) {	//systems Vs. references
-			double time1 = omp_get_wtime();
+double time1 = 0;//omp_get_wtime();
 //doMultiMetrics($config, $sys, $config->{Hsystems}->{$sys}, $config->{references}, $config->{Hrefs}, $hOQ);
 			cout << "MultiMetric o ke ase?" << endl;
 			doMultiMetrics(*it, Config::references, hOQ);
@@ -190,7 +190,7 @@ double Core::do_scores() {
 			}
 			// --- end tsearch insertion
 
-			double time2 = omp_get_wtime();
+double time2 = 0; //omp_get_wtime();
 			double t = time2 - time1;	//= Common::get_raw_Benchmark;
 			TIME += t;
 			cout << "time1: " << time1 << endl;
@@ -207,12 +207,12 @@ double Core::do_scores() {
 		if (Config::verbose) fprintf(stderr, "[METRICS] computing 'reference vs. reference' scores (pairwise)...\n");
 
 		for (set<string>::const_iterator it = Config::references.begin(); it != Config::references.end(); ++it) {	//references Vs. references
-			double time1 = omp_get_wtime();
+double time1 = 0; //omp_get_wtime();
 			for (set<string>::const_iterator itr = Config::references.begin(); itr != Config::references.end(); ++itr) {	//references Vs. references
 				if (*it != *itr) doMultiMetrics(*it, set<string> (itr, itr), hOQ);
 //doMultiMetrics($config, $ref1, $config->{Hrefs}->{$ref1}, [$ref2], $config->{Hrefs}, $hOQ); }
 			}
-			double time2 = omp_get_wtime();
+double time2 = 0; //omp_get_wtime();
 			double t = time2 - time1;	//Common::get_raw_Benchmark;
 			TIME += t;
 			if (Config::do_time) fprintf(stderr, "t(%s) = %f\n", it->c_str(), t);
@@ -228,7 +228,7 @@ double Core::do_scores() {
 		if (Config::verbose) fprintf(stderr, "[METRICS] computing 'reference vs. reference' scores (one vs. all)...\n");
 
 		for (set<string>::const_iterator it = Config::references.begin(); it != Config::references.end(); ++it) {	//references Vs. all other references
-			double time1 = omp_get_wtime();
+double time1 = 0; //omp_get_wtime();
 			set<string> all_other_refs;
 			for (set<string>::const_iterator itr = Config::references.begin(); itr != Config::references.end(); ++itr) {
 				if (*it != *itr) all_other_refs.insert(*itr);
@@ -255,7 +255,7 @@ double Core::do_scores() {
 			if (Config::tsearch == 1) {}
 			// -- end tsearch insertion
 
-			double time2 = omp_get_wtime();
+double time2 = 0;	//omp_get_wtime();
 			double t = time2 - time1;	//Common::get_raw_Benchmark;
 			TIME += t;
 			if (Config::do_time) fprintf(stderr, "t(%s) = %f\n", it->c_str(), t);

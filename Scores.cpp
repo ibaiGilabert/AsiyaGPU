@@ -4,6 +4,7 @@
 
 #include <iostream>
 #include <stdlib.h>
+#include <math.h>
 
 vector<double> Scores::read_scores_G(string basename, string G, string TGT, int do_neg) {
 	// description _ reads MetricsMaTr format scr file for a given metric and a given granularity
@@ -26,7 +27,7 @@ vector<double> Scores::read_scores_G(string basename, string G, string TGT, int 
 	for (map<string, double>::const_iterator it = hscores.begin(); it != hscores.end(); ++it) scores.push_back(it->second);
 
 	if (!do_neg) {		//compute abs for those non do_neg metrics
-		for (int i = 0; i < scores.size(); ++i) scores[i] = abs(scores[i]);
+		for (int i = 0; i < scores.size(); ++i) scores[i] = fabs(scores[i]);
 	}
 
 	return scores;

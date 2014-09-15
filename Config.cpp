@@ -454,7 +454,7 @@ void Config::process_config_file(char* config_file, map<string, string> Options)
     cout << "REFERENCES = " << REFERENCES << endl;
 
     // string TOOLS = Config::PATH;
-    string TOOLS = "/home/ibai/Escriptori/AsiyaGPU"; //"/home/soft/asiya/tools";
+    string TOOLS = "/Users/ibaigilabert/AsiyaGPU"; //"/home/soft/asiya/tools";
     boost::regex re2("/+");
     TOOLS = boost::regex_replace(TOOLS, re2, "/");
 

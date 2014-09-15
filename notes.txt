@@ -139,10 +139,12 @@ SHORTCUTS
         type = boost::regex_replace(type, re, "");
         data = boost::regex_replace(data, re2, "");
 
+-->	#include<omp.h> requires -lgomp
+
 TODO LIST
 
 	-	LOCAL
-				->	Completar l'ESA (test de expressions regulars a regular_exp.pl)
+				->	Completar l'ESA (test de expressions regulars a regular_exp.pl)	(verificar els tipus de computeMultiESA)
 				->	Completar el NGRAM.
 				->	Completar el CE.
 
@@ -152,6 +154,7 @@ TODO LIST
 				->	Provar els METEOR/ESA (Asiya.config).
 				->	Provar el GTM	(nova versio de NISTXML amb SGML_GTM_create_doc)
 				->	Provar el TER
+				->	Provar el WER
 
 		NOTES: (execucions al cluster)
 				->	Canviar el path del tools a Config.cpp

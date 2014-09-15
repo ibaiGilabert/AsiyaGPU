@@ -89,7 +89,7 @@ map<string, map<string, int> > ESA::create_rLANG() {
 const map<string, int> ESA::rLANG = create_rLANG;
 
 
-ESA::ESA_f_create_doc(string input, string output) {
+void ESA::ESA_f_create_doc(string input, string output) {
 	// description _ creation of a RAW evaluation document
 	if (Config::verbose > 1) fprintf(stderr, "OPENING <%s> for ESA parsing...\n", input.c_str());
 
@@ -100,7 +100,26 @@ ESA::ESA_f_create_doc(string input, string output) {
     	ifstream input_file(input.c_str());
     }
 }
-ESA::computeESA(string TGT, string ref) {
+
+vector<double> ESA::read_esa_segments(string report) {
+	// description _ read ESA value from report file (for all segments)
+    vector<double> aESA;
+
+    string str;
+    ifstream file(report.c_str());
+    if (file) {
+		getline(file, str);    // remove the header	
+	    while (getline(file, str)) {
+	    	aESA.push_back(str);
+	    }
+	    file.close();
+	} else { fprintf(stderr, "couldn't open file: report\n", report.c_str()); exit(1); }
+
+	return aESA;
+}
+
+vector<double> ESA::computeESA(string metric, string out, string ref) {
+
 	string outRND = Config::Hsystems[TGT]+"."+ESA::ESAEXT+"."+Config::CASE;;
 	string refRND = ref+"."+ESA::ESAEXT+"."+Config::CASE;
 
@@ -115,14 +134,36 @@ ESA::computeESA(string TGT, string ref) {
 
 	boost::filesystem::path path( boost::filesystem::current_path() );
 
+	string pwd = path.str();
+
 	bost::regex re("")
     boost::match_results<string::const_iterator> results;
 	if (boost::regex_match(str, results, re)) {
 		s
 	}
 
-}
+	string mem_options = ESA::TESA_mem[metric];
+	string toolESA = ESA::TESA_java[metric]+" -Dfile.encoding=UTF-8 "+mem_options+" -jar "+Config::tools+"/"+ESA::TESA[metric];
+    
+	stringstream sc;
+    sc<<"cd "<<Config::tools<<"/"<<ESA::TESAdir<<"; "<<toolESA<<" -w "<<Config::tools<<"/"<<ESA::TESAindex[metric]<<" -i "<<outRND<<" -j "<<refRND<<" -o "<<reportESA<<" 2>"<<reportESA<<".err; cd "<<pwd<<";";
+    cout << "cmd: |" << sc.str() << "|" << endl;
 
+    string ms = "[ERROR] problems running ESA...";
+	Common::execute_or_die(sc.str(), ms);}
+
+	vector<double> SEG = read_esa_segments(reportESA);
+
+	string sysaux;
+	sysaux = "rm -f "+refRND;				system(sysaux.c_str());
+	sysaux = "gzip "+refRND+".esarep.obj";	system(sysaux.c_str());
+	sysaux = "rm -f "+outRND;				system(sysaux.c_str());
+	sysaux = "gzip "+outRND+".esarep.obj";	system(sysaux.c_str());
+	sysaux = "rm -f "+reportESA;			system(sysaux.c_str());
+	sysaux = "rm -f "+reportESA+".err";		system(sysaux.c_str());
+
+	return SEG;
+}
 
 
             boost::match_results<string::const_iterator> results;
@@ -146,15 +187,34 @@ ESA::computeESA(string TGT, string ref) {
 
 
 
-pair<vector<double>, vector<vector<double> > > ESA::computeMultiESA(string TGT) {
+pair<double, vector<double> > ESA::computeMultiESA(string metric, string out) {
 	// description _ computes ESA score (multiple references)
+    vector<double> maxSEGS;
     for (map<string, string>::const_iterator it = Config::Hrefs.begin(); it != Config::Hrefs.end(); ++it) {
-    	computeESA(TGT, it->second);
-
+    	vector<double> hSEGS = computeESA(metric, out, it->second);
+    	int i = 0;
+    	while (i < hSEGS.size()) {
+    		if (maxSEGS.find(i) != maxSEGS.end()) {
+    			if (hSEGS[i] > maxSEGS[i]) maxSEGS[i] = hSEGS[i];
+    		}
+    		else  maxSEGS[i] = hSEGS[i];
+    		++i;
+    	}
 	}
+
+	int max_sys, N;
+	max_sys = N = 0;
+	for(int j = 0; j < maxSEGS.size(); ++j) {
+		max_sys += maxSEGS[j];
+		++N;
+	}
+
+	max_sys = Common::safe_division(max_sys, N);
+
+	return make_pair(max_sys, maxSEGS)
 }
 
-void ESA::doMetric(string TGT, string REF, string prefix, int stemming, Scores &hOQ) {
+void ESA::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 	// description _ computes ESA score (multiple references)
 	vector<string> mESA(ESA::rESA.size());
 
@@ -172,13 +232,21 @@ void ESA::doMetric(string TGT, string REF, string prefix, int stemming, Scores &
 		cout << "GO! ESA GO!" << endl;
 		if (Config::verbose == 1) fprintf(stderr, "%s...\n", ESA::ESAXT.c_str());
 		for (i = 0; i < mESA.size() and !GO; ++i) {
+
 			ss << Common::DATA_PATH << "/" << Common::REPORTS << "/" << TGT << "/" << REF << "/" << prefix << mESA[i] << "." << Common::XMLEXT;
 			string reportESAxml = ss.string();
 		    boost::filesystem::path reportESAxml_path(reportESAxml);
 	   		boost::filesystem::path reportESAxml_gz(reportESAxml + "." + Common::GZEXT);
 
 	   		if ( (!exists(reportESAxml_path) and !exists(reportESAxml_gz)) or Config::remake) {
-	    		pair<vector<double>, vector<vector<double> > > res = computeMultiESA(TGT);
+	    		pair<double, vector<double> > res = computeMultiESA(mESA[i], Config::Hsystems[TGT]);
+				pair<vector<double>, vector<double> > doc_seg =  Core::get_seg_doc_scores(res.second, 0, TGT);
+				string pref = prefix + mESA[i];
+		    	if (Config::O_STORAGE == 1) {
+		    		IQXML::write_report(TGT, REF, pref, res.first, doc_seg.first, doc_seg.second);
+	         		cout << "IQXML DOCUMENT " << prefB << " CREATED" << endl;
+	         	}
+	         	hOQ.save_hash_scores(pref, TGT, REF, res.first, doc_seg.first, doc_seg.second);
 	   		}
 		}
 	}

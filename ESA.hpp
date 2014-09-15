@@ -15,16 +15,18 @@ private:
 	static map<string, string> create_TESA_mem();
 	static map<string, string> create_TESAindex();
 
-	vector<double> read_ESA(string reportESA);
-	vector<vector<double> > read_ESA_segments(string reportESA);
+	void ESA_f_create_doc(string input, string output);
 
-	pair<vector<double>, vector<vector<double> > > computeESA(string TGT, int stemming);
+	vector<double> read_esa_segments(string report);
+	vector<double> computeESA(string metric, string out, string ref);
+
+	pair<double, vector<double> > computeMultiESA(string metric, string out);
 
 public:
 	ESA() {}
 	~ESA() {}
 
-	void doMetric(string TGT, string REF, string prefix, int stemming, Scores &hOQ);
+	void doMetric(string TGT, string REF, string prefix, Scores &hOQ);
 
 	static const string ESAXT, TESAdir, EMPTY_ITEM;
 	static const map<string, int> rESA, rLANG;
