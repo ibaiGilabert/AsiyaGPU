@@ -1,0 +1,55 @@
+IDIR = /usr/include/libxml2
+
+CC		= g++
+CFLAGS = -I$(IDIR)
+LDFLAGS	= -lboost_system -lboost_filesystem -lboost_regex -lxml2
+
+all: Asiya
+
+Asiya: Asiya.o Config.o Common.o Core.o Scores.o BLEU.o NIST.o BLEUNIST.o GTM.o METEOR.o ROUGE.o TER.o NISTXML.o IQXML.o
+	g++ -o ../sample/Asiya Asiya.o Config.o Common.o Core.o Scores.o BLEU.o NIST.o BLEUNIST.o GTM.o METEOR.o ROUGE.o TER.o NISTXML.o IQXML.o $(LDFLAGS) $(CFLAGS)
+
+Asiya.o: Asiya.cpp
+	g++ -c Asiya.cpp $(CFLAGS)
+
+Config.o: Config.hpp Config.cpp
+	g++ -c Config.cpp $(CFLAGS)
+
+Common.o: Common.hpp Common.cpp
+	g++ -c Common.cpp
+
+Core.o: include/Core.hpp Scoring/Core.cpp
+	g++ -c Scoring/Core.cpp $(CFLAGS)
+
+Scores.o: include/Scores.hpp Scoring/Scores.cpp
+	g++ -c Scoring/Scores.cpp
+
+BLEU.o: include/BLEU.hpp Scoring/BLEU.cpp
+	g++ -c Scoring/BLEU.cpp $(CFLAGS)
+
+NIST.o: include/NIST.hpp Scoring/NIST.cpp
+	g++ -c Scoring/NIST.cpp $(CFLAGS)
+
+BLEUNIST.o: include/BLEUNIST.hpp Scoring/BLEUNIST.cpp
+	g++ -c Scoring/BLEUNIST.cpp $(CFLAGS)
+
+GTM.o: include/GTM.hpp Scoring/GTM.cpp
+	g++ -c Scoring/GTM.cpp $(CFLAGS)
+
+METEOR.o: include/METEOR.hpp Scoring/METEOR.cpp
+	g++ -c Scoring/METEOR.cpp $(CFLAGS)
+
+ROUGE.o: include/ROUGE.hpp Scoring/ROUGE.cpp
+	g++ -c Scoring/ROUGE.cpp $(CFLAGS)
+
+TER.o: include/TER.hpp Scoring/TER.cpp
+	g++ -c Scoring/TER.cpp
+
+NISTXML.o: include/NISTXML.hpp InOut/NISTXML.cpp
+	g++ -c InOut/NISTXML.cpp $(CFLAGS)
+
+IQXML.o: include/IQXML.hpp InOut/IQXML.cpp
+	g++ -c InOut/IQXML.cpp $(CFLAGS)
+
+clean:
+	rm *.o Asiya
