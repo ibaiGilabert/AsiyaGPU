@@ -84,6 +84,26 @@ map<string, double> NISTXML::read_scr_file(string file, string G, int do_neg) {
     return scores;
 }
 
+
+
+map<string, > NISTXML::read_file(string file) {
+    // description _ reads a NIST XML file and writes an equivalent RAW file and the correspondence between them (IDX)
+    //               (conforming ftp://jaguar.ncsl.nist.gov/mt/resources/mteval-xml-v1.5.dtd)
+    if (Config::verbose > 1) fprintf(stderr, "reading NIST XML <%s>\n", file.c_str());
+
+    boost::filesystem::path p (file);
+    string file_gz = file + "." + Common::GZEXT;
+    boost::filesystem::path p_gz (file_gz);
+
+    if (exists(p) or exists(p_gz)) {
+        if (!exists(p) and exists(p_gz)) {
+            string sysaux = Common::GUNZIP + " " + file_gz;
+            system(sysaux);
+        }
+
+    } else { fprintf(stderr, "[ERROR] unavailable file <%s>\n", file.c_str()); exit(1); }
+}
+
 vector<vector<string> > NISTXML::write_fake_idx_file(string file, string IDX, int verbose) {
     vector<vector <string> > lIDX(0, vector<string>());
 

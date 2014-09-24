@@ -52,4 +52,4 @@ IQXML.o: include/IQXML.hpp InOut/IQXML.cpp
 	g++ -c InOut/IQXML.cpp $(CFLAGS)
 
 clean:
-	rm *.o Asiya
+	rm *.o ../sample/Asiya

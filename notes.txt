@@ -77,7 +77,11 @@ REVISAR:
 
 	Common.cpp	->	safe_division incomplet (sense default)
 
+	Config.cpp	->	Si el format d'entrada és nist, més val que estigui ben formatad perquè nosaltres no "reparem" fitxers.
+
 	GENERAL		->	El seed del rand s'hauria de declarar una UNICA vegada a metrics, i no a cada mètrica.
+
+	NISTXML.cpp	->	El FileInfo wc SERVEIX¿?
 
 
 SHORTCUTS
@@ -99,6 +103,12 @@ SHORTCUTS
 
    		boost::filesystem::path path( boost::filesystem::current_path() );
 		std::cout << "Current path is : " << path << std::endl;
+
+	-->DIRNAME
+		#include <libgen.h>
+		dirname(char*)
+
+		//equivalent to $dir = dirname($XML);
 
 	-->SPLIT string
 
@@ -141,9 +151,11 @@ SHORTCUTS
 
 -->	#include<omp.h> requires -lgomp
 
+
 TODO LIST
 
 	-	LOCAL
+				->	Ara que el parser de lectura funciona (read_xml_free.cpp) integrar-ho a NISTXML.cpp i provar-ho.
 				->	Completar l'ESA (test de expressions regulars a regular_exp.pl)	(verificar els tipus de computeMultiESA)
 				->	Completar el NGRAM.
 				->	Completar el CE.
@@ -171,8 +183,6 @@ DONE LIST
 
 QUESTIONS
 
-	->	Demanar exemples de tipus input=nist en format NISTXML files. (provar el read_file, repair_file, etc)
-	->	Es Necessita alguna tool especial per executar el METEOR/ESA que no hi ha el metric_set a Asiya.config
 	->	Al executar el gtm-1.4 tinc aquests problemes
 
 		$java -Dfile.encoding=UTF-8 -jar /home/soft/asiya/tools/gtm-1.4/gtm.jar +s +d

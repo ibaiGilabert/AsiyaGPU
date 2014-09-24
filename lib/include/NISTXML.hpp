@@ -16,9 +16,11 @@ private:
 public:
 	//static read_file(string file);
 
-	//read
+	//read scores
 	static map<string, double> read_scr_file(string file, string G, int do_neg);
 
+	//read input
+	static map<string,> read_file(string file);
 
 	//write
 	static vector<vector<string> > write_fake_idx_file(string file, string IDX, int verbose);
