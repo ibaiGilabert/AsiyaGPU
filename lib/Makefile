@@ -22,7 +22,7 @@ Core.o: include/Core.hpp Scoring/Core.cpp
 	g++ -c Scoring/Core.cpp $(CFLAGS)
 
 Scores.o: include/Scores.hpp Scoring/Scores.cpp
-	g++ -c Scoring/Scores.cpp
+	g++ -c Scoring/Scores.cpp $(CFLAGS)
 
 BLEU.o: include/BLEU.hpp Scoring/BLEU.cpp
 	g++ -c Scoring/BLEU.cpp $(CFLAGS)
@@ -43,7 +43,7 @@ ROUGE.o: include/ROUGE.hpp Scoring/ROUGE.cpp
 	g++ -c Scoring/ROUGE.cpp $(CFLAGS)
 
 TER.o: include/TER.hpp Scoring/TER.cpp
-	g++ -c Scoring/TER.cpp
+	g++ -c Scoring/TER.cpp $(CFLAGS)
 
 NISTXML.o: include/NISTXML.hpp InOut/NISTXML.cpp
 	g++ -c InOut/NISTXML.cpp $(CFLAGS)

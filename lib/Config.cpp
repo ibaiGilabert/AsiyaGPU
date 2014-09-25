@@ -356,27 +356,40 @@ void Config::process_command_line_options(map<string, string> Options, vector<st
 void Config::process_nist_file(string file, string type) {
     // description _ read the contents of a NIST xml and generate txt and idx files
     //              (idx structure is also stored onto memory)
-    contents = NISTXML::read_file(file);
-    for ()
+    map<string, FileInfo> contents = NISTXML::read_file(file.c_str());
+    for(map<string, FileInfo>::const_iterator it = contents.begin(); it != contents.end(); ++it) {
+        if (type == "source" or type == "src") {
+            Config::src = it->second.txt;
+            Config::IDX["source"] = it->second.idx;
+            Config::wc["source"] = it->second.wc;
+        }
+        else if (type == "reference" or type == "ref") {
+            if (Config::Hrefs.find(it->first) != Config::Hrefs.end()) {
+                fprintf(stderr, "[ERROR] reference name '%s' duplicated!!\n", it->first.c_str()); exit(1);
+            }
+            Config::Hrefs[it->first] = it->second.txt;
+            Config::IDX[it->first] = it->second.idx;
+            Config::wc[it->first] = it->second.wc;
+        }
+        else if (type == "system" or type == "sys") {
+            if (Config::Hsystems.find(it->first) != Config::Hsystems.end()) {
+                fprintf(stderr, "[ERROR] system name '%s' duplicated!!\n", it->first.c_str()); exit(1);
+            }
+            Config::Hsystems[it->first] = it->second.txt;
+            Config::IDX[it->first] = it->second.idx;
+            Config::wc[it->first] = it->second.wc;
+        }
+        else { fprintf(stderr, "[ERROR] unknown file type <%s>!!\n", type.c_str()); exit(1); }
+    }
 }
 
 void Config::process_raw_file(string file, string type) {
     // description _ read the contents of a RAW plain text file (one sentence per line) and generate fake idx files
     //               (idx structure is also stored onto memory)
-    // param1  _ configuration structure
-    // param2  _ input file
-    // param3  _ file type (source|references|systems)
+    string IDX = file + "." + Common::IDXEXT;
+    string tokfile = file + "." + Common::TOKEXT;
 
-    stringstream ss;
-    ss << file << "." << Common::IDXEXT;
-    string IDX = ss.str();
-
-    vector<vector<string> > rIDX = NISTXML::write_fake_idx_file(file, IDX, Config::verbose);
-
-    ss.str("");
-    ss << file << "." << Common::TOKEXT;
-    string tokfile = ss.str();
-
+    vector<vector<string> > rIDX = NISTXML::write_fake_idx_file(file, IDX);
 
     //cout << "process_raw_file: file : '" << file << "' type: '" << type << "'" << endl;
 
@@ -391,11 +404,10 @@ void Config::process_raw_file(string file, string type) {
         string R = Common::give_system_name(file);
         cout << "\tR: '" << R << "'" << endl;
         Config::IDX[R] = rIDX;
-        map<string, string>::const_iterator it = Config::Hrefs.find(R);
-        if (it != Config::Hrefs.end()) { fprintf(stderr, "[ERROR] reference name '%s' duplicated!\n", R.c_str()); exit(1); }
-        /*pair<map<string, vector<vector<string> > >::iterator, bool> res = Config::IDX.insert(make_pair(R, rIDX));
-        if (!res.second) { fprintf(stderr, "[ERROR] system name '%s' duplicated!\n", R); exit(1); }*/
 
+        if (Config::Hrefs.find(R) != Config::Hrefs.end()) {
+            fprintf(stderr, "[ERROR] reference name '%s' duplicated!\n", R.c_str()); exit(1);
+        }
         Config::wc[R] = rIDX.size()-1;
         Config::Hrefs[R] = tokfile;
         lang = Config::LANG;
@@ -403,8 +415,9 @@ void Config::process_raw_file(string file, string type) {
     else if (type == "system" or type =="sys") {
         string S = Common::give_system_name(file);
         Config::IDX[S] = rIDX;
-        map<string, string>::const_iterator it = Config::Hsystems.find(S);
-        if (it != Config::Hsystems.end()) { fprintf(stderr, "[ERROR] system name '%s' duplicated!\n", S.c_str()); exit(1); }
+        if (Config::Hsystems.find(S) != Config::Hsystems.end()) {
+            fprintf(stderr, "[ERROR] system name '%s' duplicated!\n", S.c_str()); exit(1);
+        }
         Config::wc[S] = rIDX.size()-1;
         Config::Hsystems[S] = tokfile;
         lang = Config::LANG;

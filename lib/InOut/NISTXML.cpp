@@ -4,6 +4,8 @@
 
 #include <fstream>
 #include <sstream>
+
+#include <libgen.h>
 #include <stdlib.h>
 #include <time.h>
 
@@ -11,29 +13,6 @@
 #include <boost/filesystem.hpp>
 #include <boost/algorithm/string.hpp>
 
-#include <libxml/parser.h>
-#include <libxml/tree.h>
-
-
-/*NISTXML::read_file(string file) {
-    // description _ reads a NIST XML file and writes an equivalent RAW file and the correspondence between them (IDX)
-    //               (conforming ftp://jaguar.ncsl.nist.gov/mt/resources/mteval-xml-v1.5.dtd)
-    if (Config::verbose > 1) fprintf(stderr, "reading NIST XML <%s>\n", file.c_str());
-
-    string p_gz = file + "." + Common::GZEXT;
-    boost::filesystem::path p (file);
-    boost::filesystem::path p_gz (input_gz);
-
-    if (exists(p) or exists(p_gz)) {
-        if (!exists(p) and exists(p_gz)) {
-            string aux = Common::GUNZIP+" "+file+"."+Common::GZEXT;
-            system(aux.c_str());
-        }
-        //repair_file
-
-    }
-
-}*/
 
 double NISTXML::negate_or_not(double n, int do_neg) {
     // description _ negates the given arithmetic value iff do_neg is true, otherwise returns the value as is
@@ -84,30 +63,114 @@ map<string, double> NISTXML::read_scr_file(string file, string G, int do_neg) {
     return scores;
 }
 
+void NISTXML::process_xml(xmlNodePtr a_node, ofstream &out_txt, ofstream &out_idx, map<string, FileInfo> &m, string id, string docid, string genre) {
+    xmlNodePtr cur_node = NULL;
+    for (cur_node = a_node; cur_node; cur_node = cur_node->next) {
+        if ((!xmlStrcmp(cur_node->name, (const xmlChar *)"doc"))) {
+            docid = string( (char*)xmlGetProp(cur_node, (const xmlChar*)"docid") );
+            genre = string( (char*)xmlGetProp(cur_node, (const xmlChar*)"genre") );
+        }
+        else if ((!xmlStrcmp(cur_node->name, (const xmlChar *)"seg"))) {
+            char* segid = (char*)xmlGetProp(cur_node, (const xmlChar*)"id");
+            out_idx << docid << " " << genre << " " << id << " " << segid << endl;
+            out_txt << cur_node->children->content << endl;
 
+            vector<string> lidx(4);
+            lidx[0] = docid;    lidx[1] = genre;    lidx[2] = id; lidx[3] = segid;
+            m[id].idx.push_back(lidx);
+        }
+        process_xml(cur_node->children, out_txt, out_idx, m, id, docid, genre);
+    }
+}
 
-map<string, > NISTXML::read_file(string file) {
+map<string, FileInfo> NISTXML::read_file(const char* file) {
     // description _ reads a NIST XML file and writes an equivalent RAW file and the correspondence between them (IDX)
     //               (conforming ftp://jaguar.ncsl.nist.gov/mt/resources/mteval-xml-v1.5.dtd)
-    if (Config::verbose > 1) fprintf(stderr, "reading NIST XML <%s>\n", file.c_str());
+    if (Config::verbose > 1) fprintf(stderr, "reading NIST XML <%s>\n", file);
+
+    map<string, FileInfo> m;
 
     boost::filesystem::path p (file);
-    string file_gz = file + "." + Common::GZEXT;
+    string file_gz = string(file) + "." + Common::GZEXT;
     boost::filesystem::path p_gz (file_gz);
 
     if (exists(p) or exists(p_gz)) {
         if (!exists(p) and exists(p_gz)) {
             string sysaux = Common::GUNZIP + " " + file_gz;
-            system(sysaux);
+            system(sysaux.c_str());
         }
 
-    } else { fprintf(stderr, "[ERROR] unavailable file <%s>\n", file.c_str()); exit(1); }
+        xmlDocPtr doc = xmlReadFile(file, NULL, 0);
+        if (doc == NULL) { fprintf(stderr, "[ERROR] Failed to parse %s\n", file); exit(1); }
+
+        xmlNodePtr root_node = xmlDocGetRootElement(doc);
+        string type = string( (char*)root_node->children->next->name );
+
+        string dir = dirname((char*)file);
+
+        //cout << "type: |" << type << "|" << endl;
+        //cout << "dir: |" << dirname << "|" << endl;
+
+        ofstream out_txt, out_idx;
+        if (type == "srcset") {
+            //cout << "OPEN file as <" << type << "> type" << endl;
+            string basename = dir + "/" + "source";
+            string name_txt = basename + ".txt"; //Common::SOURCEID; + ".txt";
+            string name_idx = basename + ".idx";
+            out_txt.open(name_txt.c_str());
+            out_idx.open(name_idx.c_str());
+
+            string setid = string( (char*)xmlGetProp(root_node->children->next, (const xmlChar*)"setid") );
+            string srclang = string( (char*)xmlGetProp(root_node->children->next, (const xmlChar*)"srclang") );
+            out_idx << setid << " " << srclang << " " << "***EMPTY***" << endl;
+            vector<string> lidx_headline(3);
+            lidx_headline[0] = setid;   lidx_headline[1] = srclang; lidx_headline[2] = "***EMPTY***";   //Common::EMPTY_ITEM;
+            m["source"].idx.push_back(lidx_headline);
+
+            process_xml(root_node, out_txt, out_idx, m, "source", "", "");
+            m["source"].txt = name_txt;
+            m["source"].wc = m["source"].idx.size() - 1;
+
+            cout << "wc: " << m["source"].wc << endl;
+        }
+        else if (type == "refset" or type == "tstset") {
+            string id;
+            if (type == "refset") id = string( (char*)xmlGetProp(root_node->children->next, (const xmlChar*)"refid") );
+            else id = string( (char*)xmlGetProp(root_node->children->next, (const xmlChar*)"sysid") );
+
+            string basename = dir + "/";
+            string name_txt = basename + id + ".txt";
+            string name_idx = basename + id + ".idx";
+            out_txt.open(name_txt.c_str());
+            out_idx.open(name_idx.c_str());
+
+            string setid = string( (char*)xmlGetProp(root_node->children->next, (const xmlChar*)"setid") );
+            string srclang = string( (char*)xmlGetProp(root_node->children->next, (const xmlChar*)"srclang") );
+            string trglang = string( (char*)xmlGetProp(root_node->children->next, (const xmlChar*)"trglang") );
+            out_idx << setid << " " << srclang << " " << trglang << endl;
+            vector<string> lidx_headline(3);
+            lidx_headline[0] = setid;   lidx_headline[1] = srclang; lidx_headline[2] = trglang;
+            m[id].idx.push_back(lidx_headline);
+
+            process_xml(root_node, out_txt, out_idx, m, id, "", "");
+            m[id].txt = name_txt;
+            m[id].wc = m[id].idx.size() - 1;
+
+            cout << "wc: " << m[id].wc << endl;
+        }
+        out_idx.close();
+        out_txt.close();
+        xmlFreeDoc(doc);
+
+    } else { fprintf(stderr, "[ERROR] unavailable file <%s>\n", file); exit(1); }
+
+    return m;
 }
 
-vector<vector<string> > NISTXML::write_fake_idx_file(string file, string IDX, int verbose) {
+vector<vector<string> > NISTXML::write_fake_idx_file(string file, string IDX) {
     vector<vector <string> > lIDX(0, vector<string>());
 
-	if (verbose) fprintf(stderr, "reading raw file <%s>\n", file.c_str());
+	if (Config::verbose) fprintf(stderr, "reading raw file <%s>\n", file.c_str());
 	string system_name = Common::give_system_name(file);
     ofstream f_idx(system_name.c_str());
     if (f_idx) {

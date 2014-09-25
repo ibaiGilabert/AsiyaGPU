@@ -5,9 +5,18 @@
 #include <vector>
 #include <map>
 
+#include <libxml/parser.h>
+#include <libxml/tree.h>
+
 using namespace std;
 
-class NISTXML {
+struct FileInfo {
+	vector<vector<string> > idx;    //vector de linies. Linia -> vector de paraules
+    string txt;
+    int wc;
+};
+
+class NISTXML /*: public TESTBED*/ {
 private:
 	//void SGML_f_create_create_doc(string input, string output, int type, string sysid, xmlDocPtr &doc, xmlNodePtr &root_node);
 
@@ -20,10 +29,11 @@ public:
 	static map<string, double> read_scr_file(string file, string G, int do_neg);
 
 	//read input
-	static map<string,> read_file(string file);
+	static void process_xml(xmlNodePtr a_node, ofstream &out_txt, ofstream &out_idx, map<string, FileInfo> &m, string id, string docid, string genre);
+	static map<string, FileInfo> read_file(const char* file);
 
 	//write
-	static vector<vector<string> > write_fake_idx_file(string file, string IDX, int verbose);
+	static vector<vector<string> > write_fake_idx_file(string file, string IDX);
 
 	static void SGML_f_create_mteval_doc(string input, string output, int type);
 	static void SGML_f_create_mteval_multidoc(string output, int type);

@@ -142,14 +142,14 @@ SHORTCUTS
 	    re = ("\\)");   report_xml = boost::regex_replace(report_xml, re, "\\\\)");
 	    re = ("\\?");   report_xml = boost::regex_replace(report_xml, re, "\\\\?");
 
---> DELETE SPACE PADING
-        boost::regex re("\\s*$");//, boost::regex::perl|boost::regex::icase);
-        boost::regex re2("^\\s*");//, boost::regex::perl|boost::regex::icase);
+	--> DELETE SPACE PADING
+	        boost::regex re("\\s*$");//, boost::regex::perl|boost::regex::icase);
+	        boost::regex re2("^\\s*");//, boost::regex::perl|boost::regex::icase);
 
-        type = boost::regex_replace(type, re, "");
-        data = boost::regex_replace(data, re2, "");
+	        type = boost::regex_replace(type, re, "");
+	        data = boost::regex_replace(data, re2, "");
 
--->	#include<omp.h> requires -lgomp
+	-->	#include<omp.h> requires -lgomp
 
 
 TODO LIST

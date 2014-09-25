@@ -68,7 +68,7 @@ void process_xml(xmlNodePtr a_node, ofstream &out_txt, ofstream &out_idx, map<st
     }
 }
 
-map<string, FileInfo> example1Func(char *filename) {
+map<string, FileInfo> example1Func(const char *filename) {
     map<string, FileInfo> m;
 
     xmlDocPtr doc = xmlReadFile(filename, NULL, 0);
@@ -77,7 +77,7 @@ map<string, FileInfo> example1Func(char *filename) {
     xmlNodePtr root_node = xmlDocGetRootElement(doc);
     string type = string( (char*)root_node->children->next->name );
 
-    string dir = dirname(filename);
+    string dir = dirname((char*)filename);
 
     //cout << "type: |" << type << "|" << endl;
     //cout << "dir: |" << dirname << "|" << endl;
@@ -158,6 +158,7 @@ int main(int argc, char **argv) {
             cout << "]" << endl;
         }
         cout << "\ttxt: " << it->second.txt << endl;
+        cout << "\twc: " << it->second.wc << endl;
     }
     cout << "---------------------" << endl;
 
