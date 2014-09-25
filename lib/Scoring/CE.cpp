@@ -205,7 +205,7 @@ pair<vector<double>, vector<vector<double> > > CE::computeCE(string TGT, int ste
 
 	string str;
 	map<string, double> hRAND;
-	for (map<string, string>::const_iterator it = Config::Hrefs.begin(); it != Config::Hrefs.end(); ++it) {
+	for (map<string, string>::const_iterator it = TESTBED::Hrefs.begin(); it != TESTBED::Hrefs.end(); ++it) {
 		string ref = it->second;
 
 		int j = 1;
@@ -247,7 +247,7 @@ pair<vector<double>, vector<vector<double> > > CE::computeCE(string TGT, int ste
 	double random = rand() % (Common::NRAND + 1);
 
 	ofstream cfg_file(configCE.c_str());
-	ifstream out_file(Config::Hsystems[TGT].c_str());
+	ifstream out_file(TESTBED::Hsystems[TGT].c_str());
 
     while (getline(out_file, str)) {
 		stringstream ssOut_i;
@@ -256,7 +256,7 @@ pair<vector<double>, vector<vector<double> > > CE::computeCE(string TGT, int ste
 		string out_i = ssOut_i.str();
 
 		vector<string> cfgline;
-		for (map<string, string>::const_iterator it = Config::Hrefs.begin(); it != Config::Hrefs.end(); ++it) {
+		for (map<string, string>::const_iterator it = TESTBED::Hrefs.begin(); it != TESTBED::Hrefs.end(); ++it) {
 			stringstream ssRef_i;
 			ssRef_i << Common::DATA_PATH << "/" << Common::TMP << "/" << CE::CEEXT << "." << hRAND[it->first] << "." << Common::REFEXT << "." << i;
 
@@ -320,7 +320,7 @@ pair<vector<double>, vector<vector<double> > > CE::computeCE(string TGT, int ste
 		++j;
 	}
 
-	for (map<string, string>::const_iterator it = Config::Hrefs.begin(); it != Config::Hrefs.end(); ++it) {
+	for (map<string, string>::const_iterator it = TESTBED::Hrefs.begin(); it != TESTBED::Hrefs.end(); ++it) {
 		string ref = it->second;
 		int j = 1;
 		while (j < 1) {

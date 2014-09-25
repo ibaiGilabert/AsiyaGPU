@@ -3,7 +3,6 @@
 #include <sstream>
 
 #include <boost/regex.hpp>
-#include <boost/filesystem.hpp>
 
 //FILE EXTENSIONS
 const string Common::SGMLEXT = "sgml";
@@ -222,29 +221,8 @@ void Common::execute_or_die(string command, string message) {
     boost::regex re("\\R");
     command = boost::regex_replace(command, re, "");
     if (system(command.c_str())) {
-    	fprintf(stderr, "%s\n%s\n", message.c_str(), command.c_str());
-    	exit(1);
+    	fprintf(stderr, "%s\n%s\n", message.c_str(), command.c_str()); exit(1);
     }
-}
-
-string Common::give_system_name(string file) {
-	// description _ get system name from filename
-
-	boost::filesystem::path pathname (file);
-	return pathname.filename().string();
-}
-
-string Common::replace_special_characters(string &input) {
-   // description _ replaces conflictive characters inside a given string (~filename)
-	boost::regex re;
-    re = ("\\*");   input = boost::regex_replace(input, re, "\\\\*");
-    re = (";");     input = boost::regex_replace(input, re, "\\\\;");
-    re = ("`");     input = boost::regex_replace(input, re, "\\\\`");
-    re = ("'");     input = boost::regex_replace(input, re, "\\\\'");
-    re = ("\\(");   input = boost::regex_replace(input, re, "\\\\(");
-    re = ("\\)");   input = boost::regex_replace(input, re, "\\\\)");
-    re = ("\\?");   input = boost::regex_replace(input, re, "\\\\?");
-    return input;
 }
 
 double Common::safe_division(double numerator, double denominator) {

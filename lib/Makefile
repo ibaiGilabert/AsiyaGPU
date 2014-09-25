@@ -2,12 +2,12 @@ IDIR = /usr/include/libxml2
 
 CC		= g++
 CFLAGS = -I$(IDIR)
-LDFLAGS	= -lboost_system -lboost_filesystem -lboost_regex -lxml2
+LDFLAGS	= -lboost_system -lboost_filesystem -lboost_regex -lxml2 -lgomp
 
 all: Asiya
 
-Asiya: Asiya.o Config.o Common.o Core.o Scores.o BLEU.o NIST.o BLEUNIST.o GTM.o METEOR.o ROUGE.o TER.o NISTXML.o IQXML.o
-	g++ -o ../sample/Asiya Asiya.o Config.o Common.o Core.o Scores.o BLEU.o NIST.o BLEUNIST.o GTM.o METEOR.o ROUGE.o TER.o NISTXML.o IQXML.o $(LDFLAGS) $(CFLAGS)
+Asiya: Asiya.o Config.o Common.o Core.o Scores.o BLEU.o NIST.o BLEUNIST.o GTM.o METEOR.o ROUGE.o TER.o TESTBED.o NISTXML.o RAW.o IQXML.o
+	g++ -o ../sample/Asiya Asiya.o Config.o Common.o Core.o Scores.o BLEU.o NIST.o BLEUNIST.o GTM.o METEOR.o ROUGE.o TER.o TESTBED.o NISTXML.o RAW.o IQXML.o $(LDFLAGS) $(CFLAGS)
 
 Asiya.o: Asiya.cpp
 	g++ -c Asiya.cpp $(CFLAGS)
@@ -45,8 +45,14 @@ ROUGE.o: include/ROUGE.hpp Scoring/ROUGE.cpp
 TER.o: include/TER.hpp Scoring/TER.cpp
 	g++ -c Scoring/TER.cpp $(CFLAGS)
 
+TESTBED.o: include/TESTBED.hpp InOut/TESTBED.cpp
+	g++ -c InOut/TESTBED.cpp $(CFLAGS)
+
 NISTXML.o: include/NISTXML.hpp InOut/NISTXML.cpp
 	g++ -c InOut/NISTXML.cpp $(CFLAGS)
+
+RAW.o: include/RAW.hpp InOut/RAW.cpp
+	g++ -c InOut/RAW.cpp $(CFLAGS)
 
 IQXML.o: include/IQXML.hpp InOut/IQXML.cpp
 	g++ -c InOut/IQXML.cpp $(CFLAGS)

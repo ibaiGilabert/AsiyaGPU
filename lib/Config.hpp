@@ -3,6 +3,7 @@
 
 #include "Common.hpp"
 #include "include/NISTXML.hpp"
+#include "include/RAW.hpp"
 
 #include <string>
 #include <vector>
@@ -19,10 +20,6 @@ private:
 	//Print attributes
 	static void Dumper();
 
-	//Process configuration file
-	void process_nist_file(string file, string type);
-	void process_raw_file(string file, string type);
-
 	void validate_configuration();
 
 
@@ -31,13 +28,12 @@ private:
 	void process_command_line_options(map<string, string> options, vector<string> metaeval_options, vector<string> optimize_options);
 
 public:
-	static map<string, string> Hrefs, 		Hsystems;
-	static map<string, int> 	Hmetrics, 	wc, 	eval_schemes,	metaeval_schemes,	optimize_schemes,	metaeval_criteria,	optimize_criteria;
+	static map<string, int> 	Hmetrics, 	/*wc,*/ 	eval_schemes,	metaeval_schemes,	optimize_schemes,	metaeval_criteria,	optimize_criteria;
 	static vector<string> 		COMBO;	//metrics,	systems,		references;
-	static map<string, vector<vector<string> > > 	IDX;
+	//static map<string, vector<vector<string> > > 	IDX;
 	static set<string> metrics,	systems,	references;
 
-	static string IQ_config, learn_scheme, ci, SORT, LANG, CASE, G, I ,O, SRCCASE, SRCLANG, src, tools, model, parser, SRCparser;
+	static string IQ_config, learn_scheme, ci, SORT, LANG, CASE, G, I ,O, SRCCASE, SRCLANG,/* src,*/ tools, model, parser, SRCparser;
 
 	static int do_metric_names,do_system_names,do_reference_names, do_refs, do_time;
 	static int O_STORAGE, verbose, debug, tsearch;

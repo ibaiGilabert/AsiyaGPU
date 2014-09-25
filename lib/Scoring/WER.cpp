@@ -89,11 +89,11 @@ pair<double, vector<double> > WER::computeWER(string TGT, int do_neg) {
 	string toolWER = "perl "+Config::tools+"/"+WER::TWER;
 
 	if (Config::verbose) fprintf(stderr, "building %s...\n", reportWER.c_str());
-	WER_f_create_doc(Config::Hsystems[TGT], outRND);
+	WER_f_create_doc(TESTBED::Hsystems[TGT], outRND);
 
 	double maxSYS = -999999;
 	vector<double> maxSEGscores;
-    for (map<string, string>::const_iterator it = Config::Hrefs.begin(); it != Config::Hrefs.end(); ++it) {
+    for (map<string, string>::const_iterator it = TESTBED::Hrefs.begin(); it != TESTBED::Hrefs.end(); ++it) {
     	string ref = it->second;
     	stringstream ssRef;
 		ssRef << Common::DATA_PATH << "/" << Common::TMP << "/" << rand() % (Common::NRAND + 1) << "." << WER::WEREXT << "." << Common::REFEXT;

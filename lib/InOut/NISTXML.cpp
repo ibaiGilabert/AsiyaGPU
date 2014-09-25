@@ -167,56 +167,38 @@ map<string, FileInfo> NISTXML::read_file(const char* file) {
     return m;
 }
 
-vector<vector<string> > NISTXML::write_fake_idx_file(string file, string IDX) {
-    vector<vector <string> > lIDX(0, vector<string>());
 
-	if (Config::verbose) fprintf(stderr, "reading raw file <%s>\n", file.c_str());
-	string system_name = Common::give_system_name(file);
-    ofstream f_idx(system_name.c_str());
-    if (f_idx) {
-        stringstream ss;
-        ss << Common::UNKNOWN_SET << " " << Common::UNKNOWN_LANG << " " << Common::UNKNOWN_LANG;
-        string fake_header = ss.str();
-
-        f_idx << fake_header << endl;
-
-        vector<string> l_header;
-
-        boost::regex reeq(" ");
-        boost::sregex_token_iterator j;
-        for(boost::sregex_token_iterator i(fake_header.begin(), fake_header.end(), reeq, -1); i != j; ++i) {
-            l_header.push_back(*i);
+void NISTXML::process_nist_file(string file, string type) {
+    // description _ read the contents of a NIST xml and generate txt and idx files
+    //              (idx structure is also stored onto memory)
+    cout << "----------NIST INPUT FILES----------" << endl;
+    map<string, FileInfo> contents = NISTXML::read_file(file.c_str());
+    for(map<string, FileInfo>::const_iterator it = contents.begin(); it != contents.end(); ++it) {
+        if (type == "source" or type == "src") {
+            TESTBED::src = it->second.txt;
+            TESTBED::IDX["source"] = it->second.idx;
+            TESTBED::wc["source"] = it->second.wc;
         }
-        lIDX.push_back(l_header);
-
-        ifstream f_raw(file.c_str());
-        if (f_raw) {
-            string line;
-            int i = 1;
-
-            while (getline(f_raw, line)) {
-                stringstream sf;
-                sf << Common::UNKNOWN_DOC << " " << Common::UNKNOWN_GENRE << " " << system_name << " " << i;
-                string fake_line = sf.str();
-
-                vector<string> l;
-
-                boost::sregex_token_iterator jj;
-                for(boost::sregex_token_iterator ii(fake_line.begin(), fake_line.end(), reeq, -1); ii != jj; ++ii) {
-                    l.push_back(*ii);
-                }
-                lIDX.push_back(l);
-                f_idx << fake_line << endl;
-                i++;
+        else if (type == "reference" or type == "ref") {
+            if (TESTBED::Hrefs.find(it->first) != TESTBED::Hrefs.end()) {
+                fprintf(stderr, "[ERROR] reference name '%s' duplicated!!\n", it->first.c_str()); exit(1);
             }
-            f_raw.close();
-        } else { fprintf(stderr, "couldn't open input file: %s\n", file.c_str());   exit(1); }
-
-        f_idx.close();
-    } else { fprintf(stderr, "couldn't open output IDX file: %s\n", system_name.c_str());	exit(1); }
-
-    return lIDX;
+            TESTBED::Hrefs[it->first] = it->second.txt;
+            TESTBED::IDX[it->first] = it->second.idx;
+            TESTBED::wc[it->first] = it->second.wc;
+        }
+        else if (type == "system" or type == "sys") {
+            if (TESTBED::Hsystems.find(it->first) != TESTBED::Hsystems.end()) {
+                fprintf(stderr, "[ERROR] system name '%s' duplicated!!\n", it->first.c_str()); exit(1);
+            }
+            TESTBED::Hsystems[it->first] = it->second.txt;
+            TESTBED::IDX[it->first] = it->second.idx;
+            TESTBED::wc[it->first] = it->second.wc;
+        }
+        else { fprintf(stderr, "[ERROR] unknown file type <%s>!!\n", type.c_str()); exit(1); }
+    }
 }
+
 
 void SGML_f_create_create_doc(string input, string output, string sysid, xmlDocPtr &doc, xmlNodePtr &root_node) {
         string randomInput, randomInput2;
@@ -231,11 +213,11 @@ void SGML_f_create_create_doc(string input, string output, string sysid, xmlDocP
 
             if (!exists(p)) {
                 double nr = rand() % (Common::NRAND + 1);
-                string input2 = Common::replace_special_characters(input);
+                string input2 = TESTBED::replace_special_characters(input);
                 stringstream rIn, rIn2, st;
 
-                rIn << Common::DATA_PATH << "/" << Common::TMP << "/" << Common::give_system_name(input) << "." << nr;
-                rIn2 << Common::DATA_PATH << "/" << Common::TMP << "/" << Common::give_system_name(input2) << "." << nr;
+                rIn << Common::DATA_PATH << "/" << Common::TMP << "/" << TESTBED::give_system_name(input) << "." << nr;
+                rIn2 << Common::DATA_PATH << "/" << Common::TMP << "/" << TESTBED::give_system_name(input2) << "." << nr;
 
                 randomInput = rIn.str();
                 randomInput2 = rIn2.str();
@@ -316,10 +298,10 @@ void NISTXML::SGML_f_create_mteval_multidoc(string output, int type) {
     // description _ creation of a NIST SGML evaluation document from a "sentence-per-line" format corpus
     //              (multi-document)
     if (Config::verbose > 1) {
-        map<string, string>::const_iterator it = Config::Hrefs.begin();
+        map<string, string>::const_iterator it = TESTBED::Hrefs.begin();
         fprintf(stderr, "OPENING [%s", it->first.c_str());
         ++it;
-        while (it != Config::Hrefs.end()) {
+        while (it != TESTBED::Hrefs.end()) {
             fprintf(stderr, " %s", it->first.c_str());
             ++it;
         }
@@ -347,7 +329,7 @@ void NISTXML::SGML_f_create_mteval_multidoc(string output, int type) {
     srand(time(NULL));
     //string randomInput, randomInput2;
 
-    for (map<string, string>::const_iterator it = Config::Hrefs.begin(); it != Config::Hrefs.end(); ++it) {
+    for (map<string, string>::const_iterator it = TESTBED::Hrefs.begin(); it != TESTBED::Hrefs.end(); ++it) {
         SGML_f_create_create_doc(it->second, output, it->first, doc, root_node);
     }
     xmlSaveFormatFileEnc(output.c_str(), doc, "UTF-8", 1);
@@ -378,9 +360,9 @@ void f_create_create_doc(string input, string output, string TGT, string cas, in
     string set, id_label;
     vector<vector<string> > idx;
     switch(type) {
-        case 0: set = "srcset"; id_label = "srcid"; idx = Config::IDX["source"]; break;
-        case 1: set = "tstset"; id_label = "sysid"; idx = Config::IDX[TGT]; break;
-        case 2: set = "refset"; id_label = "refid"; idx = Config::IDX[TGT]; break;
+        case 0: set = "srcset"; id_label = "srcid"; idx = TESTBED::IDX["source"]; break;
+        case 1: set = "tstset"; id_label = "sysid"; idx = TESTBED::IDX[TGT]; break;
+        case 2: set = "refset"; id_label = "refid"; idx = TESTBED::IDX[TGT]; break;
     }
 
     string id = idx[1][2];
@@ -398,10 +380,10 @@ void f_create_create_doc(string input, string output, string TGT, string cas, in
 
         if (!exists(p)) {
             double nr = rand() % (Common::NRAND + 1);
-            string input2 = Common::replace_special_characters(input);
+            string input2 = TESTBED::replace_special_characters(input);
             stringstream rIn, rIn2, st;
-            rIn << Common::DATA_PATH << "/" << Common::TMP << "/" << Common::give_system_name(input) << "." << nr;
-            rIn2 << Common::DATA_PATH << "/" << Common::TMP << "/" << Common::give_system_name(input2) << "." << nr;
+            rIn << Common::DATA_PATH << "/" << Common::TMP << "/" << TESTBED::give_system_name(input) << "." << nr;
+            rIn2 << Common::DATA_PATH << "/" << Common::TMP << "/" << TESTBED::give_system_name(input2) << "." << nr;
             randomInput = rIn.str();
             randomInput2 = rIn2.str();
 
@@ -498,10 +480,10 @@ void NISTXML::f_create_mteval_multidoc(string output, string cas, int type) {
     //               (conforming ftp://jaguar.ncsl.nist.gov/mt/resources/mteval-xml-v1.5.dtd)
     //               (multi-document)
     if (Config::verbose > 1) {
-        map<string, string>::const_iterator it = Config::Hrefs.begin();
+        map<string, string>::const_iterator it = TESTBED::Hrefs.begin();
         fprintf(stderr, "OPENING [%s", it->first.c_str());
         ++it;
-        while (it != Config::Hrefs.end()) {
+        while (it != TESTBED::Hrefs.end()) {
             fprintf(stderr, " %s", it->first.c_str());
             ++it;
         }
@@ -514,7 +496,7 @@ void NISTXML::f_create_mteval_multidoc(string output, string cas, int type) {
         cout << "\ttype: " << type << endl << ")" << endl;
     */
     srand(time(NULL));
-    for (map<string, string>::const_iterator it = Config::Hrefs.begin(); it != Config::Hrefs.end(); ++it) {
+    for (map<string, string>::const_iterator it = TESTBED::Hrefs.begin(); it != TESTBED::Hrefs.end(); ++it) {
         f_create_create_doc(it->second, output, it->first, cas, type);
     }
 }

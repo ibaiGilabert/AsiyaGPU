@@ -184,8 +184,8 @@ pair<vector<double>, vector<vector<double> > > BLEU::computeBLEU(string TGT) {
     boost::filesystem::path reportBLEUsgml(ssReport.str());
 
 	if (!exists(refBLEUsgml) or Config::remake) NISTXML::SGML_f_create_mteval_multidoc(refBLEUsgml.string(), 2);
-	if (!exists(srcBLEUsgml) or Config::remake) NISTXML::SGML_f_create_mteval_doc(Config::src, srcBLEUsgml.string(), 0);
-	if (!exists(outBLEUsgml) or Config::remake) NISTXML::SGML_f_create_mteval_doc(Config::Hsystems[TGT], outBLEUsgml.string(), 1);
+	if (!exists(srcBLEUsgml) or Config::remake) NISTXML::SGML_f_create_mteval_doc(TESTBED::src, srcBLEUsgml.string(), 0);
+	if (!exists(outBLEUsgml) or Config::remake) NISTXML::SGML_f_create_mteval_doc(TESTBED::Hsystems[TGT], outBLEUsgml.string(), 1);
 
 	if (Config::verbose > 1) fprintf(stderr, "building %s\n", reportBLEUsgml.string().c_str());
 
@@ -302,7 +302,7 @@ void BLEU::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 	    	//Scores::save_hash_scores(string metric_name, string system_name, string refere_name, double sys_score, const vector<double> &doc_scores, const vector<double> &seg_scores) {
 
          	string prefB = prefix;	prefB += BLEU::BLEUEXT;	prefB += "-1";
-			pair<vector<double>, vector<double> > doc_seg =  Core::get_seg_doc_scores(res.second[0], 0, TGT);
+			pair<vector<double>, vector<double> > doc_seg =  TESTBED::get_seg_doc_scores(res.second[0], 0, TGT);
 	    	if (Config::O_STORAGE == 1) {
 	    		IQXML::write_report(TGT, REF, prefB, res.first[0], doc_seg.first, doc_seg.second);
          		cout << "IQXML DOCUMENT " << prefB << " CREATED" << endl;
@@ -310,7 +310,7 @@ void BLEU::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
          	hOQ.save_hash_scores(prefB, TGT, REF, res.first[0], doc_seg.first, doc_seg.second);
 
 			prefB = prefix + BLEU::BLEUEXT + "-2";
-			doc_seg = Core::get_seg_doc_scores(res.second[1], 0, TGT);
+			doc_seg = TESTBED::get_seg_doc_scores(res.second[1], 0, TGT);
          	if (Config::O_STORAGE == 1) {
 	    		IQXML::write_report(TGT, REF, prefB, res.first[1], doc_seg.first, doc_seg.second);
          		cout << "IQXML DOCUMENT " << prefB << " CREATED" << endl;
@@ -318,7 +318,7 @@ void BLEU::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 	    	hOQ.save_hash_scores(prefB, TGT, REF, res.first[1], doc_seg.first, doc_seg.second);
 
 	    	prefB = prefix + BLEU::BLEUEXT + "-3";
-			doc_seg = Core::get_seg_doc_scores(res.second[2], 0, TGT);
+			doc_seg = TESTBED::get_seg_doc_scores(res.second[2], 0, TGT);
          	if (Config::O_STORAGE == 1) {
 	    		IQXML::write_report(TGT, REF, prefB, res.first[2], doc_seg.first, doc_seg.second);
          		cout << "IQXML DOCUMENT " << prefB << " CREATED" << endl;
@@ -326,7 +326,7 @@ void BLEU::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
          	hOQ.save_hash_scores(prefB, TGT, REF, res.first[2], doc_seg.first, doc_seg.second);
 
 	    	prefB = prefix + BLEU::BLEUEXT + "-4";
-			doc_seg = Core::get_seg_doc_scores(res.second[3], 0, TGT);
+			doc_seg = TESTBED::get_seg_doc_scores(res.second[3], 0, TGT);
          	if (Config::O_STORAGE == 1) {
 	    		IQXML::write_report(TGT, REF, prefB, res.first[3], doc_seg.first, doc_seg.second);
          		cout << "IQXML DOCUMENT " << prefB << " CREATED" << endl;
@@ -334,7 +334,7 @@ void BLEU::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 	    	hOQ.save_hash_scores(prefB, TGT, REF, res.first[3], doc_seg.first, doc_seg.second);
 
 			prefB = prefix + BLEU::BLEUEXTi + "-2";
-			doc_seg = Core::get_seg_doc_scores(res.second[5], 0, TGT);
+			doc_seg = TESTBED::get_seg_doc_scores(res.second[5], 0, TGT);
          	if (Config::O_STORAGE == 1) {
 	    		IQXML::write_report(TGT, REF, prefB, res.first[5], doc_seg.first, doc_seg.second);
          		cout << "IQXML DOCUMENT " << prefB << " CREATED" << endl;
@@ -342,7 +342,7 @@ void BLEU::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
          	hOQ.save_hash_scores(prefB, TGT, REF, res.first[5], doc_seg.first, doc_seg.second);
 
 	    	prefB = prefix + BLEU::BLEUEXTi + "-3";
-	    	doc_seg = Core::get_seg_doc_scores(res.second[6], 0, TGT);
+	    	doc_seg = TESTBED::get_seg_doc_scores(res.second[6], 0, TGT);
          	if (Config::O_STORAGE == 1) {
 	    		IQXML::write_report(TGT, REF, prefB, res.first[6], doc_seg.first, doc_seg.second);
          		cout << "IQXML DOCUMENT " << prefB << " CREATED" << endl;
@@ -350,7 +350,7 @@ void BLEU::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 	    	hOQ.save_hash_scores(prefB, TGT, REF, res.first[6], doc_seg.first, doc_seg.second);
 
 	    	prefB = prefix + BLEU::BLEUEXTi + "-4";
-	    	doc_seg = Core::get_seg_doc_scores(res.second[7], 0, TGT);
+	    	doc_seg = TESTBED::get_seg_doc_scores(res.second[7], 0, TGT);
 	    	if (Config::O_STORAGE == 1) {
 	    		IQXML::write_report(TGT, REF, prefB, res.first[7], doc_seg.first, doc_seg.second);
          		cout << "IQXML DOCUMENT " << prefB << " CREATED" << endl;

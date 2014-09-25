@@ -25,8 +25,6 @@ public:
 	//Compute scores
 	double do_scores();
 
-	static pair<vector<double>, vector<double> > get_seg_doc_scores(const vector<double> &scores, int DO_doc, string TGT);
-
 	//Printing
 	void do_metric_names();
 	void do_system_names();

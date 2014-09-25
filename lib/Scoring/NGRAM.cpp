@@ -147,7 +147,7 @@ NGRAM::computeNGRAM(string opt, string ref, string TGT) {
 	string refRND= ssRef.str();
 	string reportNGRAM = ssReport.str();
 
-	NGRAM_f_create_doc(Config::Hsystems[TGT], outRND);
+	NGRAM_f_create_doc(TESTBED::Hsystems[TGT], outRND);
 	NGRAM_f_create_doc(ref, refRND);
 
 	if (verbose > 1) fprintf(stderr, "building %s...\n", reportNGRAM.c_str());
@@ -158,7 +158,7 @@ NGRAM::computeNGRAM(string opt, string ref, string TGT) {
 //my ($SYS,$SEGS) = NGRAM::computeMultiNGRAM($NGRAM::NGRAMSRC, $out, $Href, $src, $config->{CASE}, $srcL, $trgL, $tools, $verbose, 1 );
 pair<vector<double>, vector<vector<double> > > NGRAM::computeMultiNGRAM(string opt, string TGT) {
 	if (opt == NGRAM::NGRAMREF) {
-    	for (map<string, string>::const_iterator it = Config::Hrefs.begin(); it != Config::Hrefs.end(); ++it) {
+    	for (map<string, string>::const_iterator it = TESTBED::Hrefs.begin(); it != TESTBED::Hrefs.end(); ++it) {
     		computeNGRAM(NGRAM::NGRAMREF, it->second, TGT);
     	}
 	}

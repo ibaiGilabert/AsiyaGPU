@@ -1,4 +1,6 @@
 #include "Config.hpp"
+#include "include/TESTBED.hpp"
+
 #include <sstream>
 #include <fstream>
 
@@ -40,18 +42,15 @@
 
     char* Config::PATH;*/
 
-
-    map<string, string>                      Config::Hrefs,         Config::Hsystems;
-    map<string, int>                         Config::Hmetrics,      Config::wc;
-    map<string, int>                         Config::eval_schemes,  Config::metaeval_schemes,     Config::optimize_schemes,     Config::metaeval_criteria,  Config::optimize_criteria;
-    map<string, vector<vector<string> > >    Config::IDX;
-    set<string>                              Config::metrics,       Config::systems,    Config::references;
-    vector<string>                           Config::COMBO;  //metrics,  systems,        references;
+    map<string, int>            Config::Hmetrics,           Config::eval_schemes,       Config::metaeval_schemes;
+    map<string, int>            Config::optimize_schemes,   Config::metaeval_criteria,  Config::optimize_criteria;
+    set<string>                 Config::metrics,            Config::systems,            Config::references;
+    vector<string>              Config::COMBO;  //metrics,  systems,        references;
 
     string Config::IQ_config,   Config::learn_scheme,   Config::ci;
     string Config::SORT,        Config::LANG,           Config::CASE;
     string Config::G,           Config::I,              Config::O;
-    string Config::SRCCASE,     Config::SRCLANG,        Config::src;
+    string Config::SRCCASE,     Config::SRCLANG;
     string Config::tools,       Config::model;
     string Config::parser,      Config::SRCparser;
 
@@ -164,7 +163,7 @@ void Config::Dumper() {
     }
     cout << "\tn_resamplings -> " << Config::n_resamplings << endl;
     cout << "\tdo_metric_names -> " << Config::do_metric_names << endl;
-    cout << "\tsrc -> " << Config::src << endl;
+    //cout << "\tsrc -> " << Config::src << endl;
     cout << "\ttools -> " << Config::tools << endl;
     cout << "\tCASE -> " << Config::CASE << endl;
     cout << "\tfloat_precision -> " << Config::float_precision << endl;
@@ -174,9 +173,9 @@ void Config::Dumper() {
     cout << "\tI -> " << Config::I << endl;
     cout << "\tG -> " << Config::G << endl;
     cout << "\tHrefs -> " << endl;
-    for (map<string, string>::const_iterator it = Config::Hrefs.begin(); it != Config::Hrefs.end(); ++it) {
+    /*for (map<string, string>::const_iterator it = Config::Hrefs.begin(); it != Config::Hrefs.end(); ++it) {
         cout << "\t\t" << it->first << " -> " << it->second << endl;
-    }
+    }*/
     cout << "\talignments -> " << Config::alignments << endl;
     cout << "\tTEX_table_count -> " << Config::TEX_table_count << endl;
     //cout << segments
@@ -186,7 +185,7 @@ void Config::Dumper() {
     for (set<string>::const_iterator it = Config::references.begin(); it != Config::references.end(); ++it) {
         cout << "\t\t" << *it << endl;
     }
-    cout << "\tIDX -> " << endl;
+    /*cout << "\tIDX -> " << endl;
     for (map<string, vector<vector<string> > >::const_iterator it = Config::IDX.begin(); it != Config::IDX.end(); ++it) {
         vector<vector<string> > aux = it->second;
         cout << "\t\t" << it->first << " -> [" << endl;
@@ -198,16 +197,16 @@ void Config::Dumper() {
             cout << endl;
         }
         cout << "\t\t]" << endl;
-    }
+    }*/
     cout << "\tO_STORAGE -> " << Config::O_STORAGE << endl;
     cout << "\tmetrics-> (" << Config::metrics.size() << ")" << endl;
     for (set<string>::const_iterator it = Config::metrics.begin(); it != Config::metrics.end(); ++it) {
         cout << "\t\t" << *it << endl;
     }
-    cout << "\twc-> (" << Config::Hmetrics.size() << ")" << endl;
+    /*cout << "\twc-> (" << Config::Hmetrics.size() << ")" << endl;
     for (map<string, int>::const_iterator it = Config::wc.begin(); it != Config::wc.end(); ++it) {
         cout << "\t\t" << it->first << " -> " << it->second << endl;
-    }
+    }*/
     cout << "\teval_schemes-> (" << Config::Hmetrics.size() << ")" << endl;
     for (map<string, int>::const_iterator it = Config::eval_schemes.begin(); it != Config::eval_schemes.end(); ++it) {
         cout << "\t\t" << it->first << " -> " << it->second << endl;
@@ -219,9 +218,9 @@ void Config::Dumper() {
     cout << "\tdo_refs -> " << Config::do_refs << endl;
     cout << "\tSRCLANG -> " << Config::SRCLANG << endl;
     cout << "\tHsystems -> " << endl;
-    for (map<string, string>::const_iterator it = Config::Hsystems.begin(); it != Config::Hsystems.end(); ++it) {
+    /*for (map<string, string>::const_iterator it = Config::Hsystems.begin(); it != Config::Hsystems.end(); ++it) {
         cout << "\t\t" << it->first << " -> " << it->second << endl;
-    }
+    }*/
 }
 
 void Config::process_command_line_options(map<string, string> Options, vector<string> metaeval_options, vector<string> optimize_options) {
@@ -353,87 +352,7 @@ void Config::process_command_line_options(map<string, string> Options, vector<st
     }
 }
 
-void Config::process_nist_file(string file, string type) {
-    // description _ read the contents of a NIST xml and generate txt and idx files
-    //              (idx structure is also stored onto memory)
-    cout << "----------NIST INPUT FILES----------" << endl;
-    map<string, FileInfo> contents = NISTXML::read_file(file.c_str());
-    for(map<string, FileInfo>::const_iterator it = contents.begin(); it != contents.end(); ++it) {
-        if (type == "source" or type == "src") {
-            Config::src = it->second.txt;
-            Config::IDX["source"] = it->second.idx;
-            Config::wc["source"] = it->second.wc;
-        }
-        else if (type == "reference" or type == "ref") {
-            if (Config::Hrefs.find(it->first) != Config::Hrefs.end()) {
-                fprintf(stderr, "[ERROR] reference name '%s' duplicated!!\n", it->first.c_str()); exit(1);
-            }
-            Config::Hrefs[it->first] = it->second.txt;
-            Config::IDX[it->first] = it->second.idx;
-            Config::wc[it->first] = it->second.wc;
-        }
-        else if (type == "system" or type == "sys") {
-            if (Config::Hsystems.find(it->first) != Config::Hsystems.end()) {
-                fprintf(stderr, "[ERROR] system name '%s' duplicated!!\n", it->first.c_str()); exit(1);
-            }
-            Config::Hsystems[it->first] = it->second.txt;
-            Config::IDX[it->first] = it->second.idx;
-            Config::wc[it->first] = it->second.wc;
-        }
-        else { fprintf(stderr, "[ERROR] unknown file type <%s>!!\n", type.c_str()); exit(1); }
-    }
-}
 
-void Config::process_raw_file(string file, string type) {
-    // description _ read the contents of a RAW plain text file (one sentence per line) and generate fake idx files
-    //               (idx structure is also stored onto memory)
-    cout << "----------NIST RAW FILES----------" << endl;
-
-    string IDX = file + "." + Common::IDXEXT;
-    string tokfile = file + "." + Common::TOKEXT;
-    string lang;
-
-    vector<vector<string> > rIDX = NISTXML::write_fake_idx_file(file, IDX);
-    if (type == "source" or type == "src") {
-        Config::src = tokfile;
-        Config::IDX["source"] = rIDX;
-        Config::wc["source"] = rIDX.size() - 1;
-        lang = Config::SRCLANG;
-    }
-    else if (type == "reference" or type == "ref") {
-        string R = Common::give_system_name(file);
-        cout << "\tR: '" << R << "'" << endl;
-        Config::IDX[R] = rIDX;
-
-        if (Config::Hrefs.find(R) != Config::Hrefs.end()) {
-            fprintf(stderr, "[ERROR] reference name '%s' duplicated!\n", R.c_str()); exit(1);
-        }
-        Config::wc[R] = rIDX.size()-1;
-        Config::Hrefs[R] = tokfile;
-        lang = Config::LANG;
-    }
-    else if (type == "system" or type =="sys") {
-        string S = Common::give_system_name(file);
-        Config::IDX[S] = rIDX;
-        if (Config::Hsystems.find(S) != Config::Hsystems.end()) {
-            fprintf(stderr, "[ERROR] system name '%s' duplicated!\n", S.c_str()); exit(1);
-        }
-        Config::wc[S] = rIDX.size()-1;
-        Config::Hsystems[S] = tokfile;
-        lang = Config::LANG;
-    }
-    else { fprintf(stderr, "[ERROR] unkown file type <%s>!!\n", type.c_str()); exit(1); }
-
-    stringstream sc, ms;
-    sc << "cp -f "<< file << " " << tokfile;
-    ms << "[ERROR] could not copy " << file << " into " << tokfile;
-
-    Common::execute_or_die(sc.str(), ms.str());
-
-    /*if(Config::tokenize) {
-        string l = lang;
-    }*/
-}
 
 void Config::process_config_file(char* config_file, map<string, string> Options) {
     string IQ_config(config_file);
@@ -472,8 +391,7 @@ void Config::process_config_file(char* config_file, map<string, string> Options)
     boost::filesystem::path p (TOOLS);   // p reads clearer than argv[1] in the following code
 
     if (!is_directory(p)) {
-        fprintf(stderr, "[%s] directory <%s> does not exist!\n", Common::appNAME.c_str(), TOOLS.c_str());
-        exit(1);
+        fprintf(stderr, "[%s] directory <%s> does not exist!\n", Common::appNAME.c_str(), TOOLS.c_str());exit(1);
     }
 
     Config::tools = TOOLS;
@@ -532,8 +450,14 @@ void Config::process_config_file(char* config_file, map<string, string> Options)
                 boost::to_lower(data);
 
                 if (type == "input") {
-                    if (data == Common::I_NIST) Config::I = Common::I_NIST;
-                    else Config::I = Common::I_RAW;
+                    if (data == Common::I_NIST) {
+                        cout << "[INPUT DATA] NIST" << endl;
+                        Config::I = Common::I_NIST;
+                    }
+                    else {
+                        cout << "[INPUT DATA] RAW" << endl;
+                        Config::I = Common::I_RAW;
+                    }
                 }
             }
         }
@@ -558,58 +482,55 @@ void Config::process_config_file(char* config_file, map<string, string> Options)
                 boost::regex reeq("=");
                 boost::sregex_token_iterator i(s.begin(), s.end(), reeq, -1);
 
-                string type, data;
+                string type, file;
                 type = *i++;
-                data = *i;
+                file = *i;
 
                 boost::regex re("\\s*$"); //, boost::regex::perl|boost::regex::icase);
                 type = boost::regex_replace(type, re, "");
                 boost::regex re2("^\\s*"); //, boost::regex::perl|boost::regex::icase);
-                data = boost::regex_replace(data, re2, "");
+                file = boost::regex_replace(file, re2, "");
 
-                pair<string, string> entry(type, data);
+                pair<string, string> entry(type, file);
 
+                string file_cs = file;
                 boost::to_lower(type);
-                boost::to_lower(data);
+                boost::to_lower(file_cs);
 
                 if (type == "source" or type == "src" or type == "reference" or type == "ref" or type == "system" or type == "sys") {
 
                     //string file = entry.first;
 
-                    if (Config::I == Common::I_NIST) process_nist_file(data, type);
-                    else process_raw_file(data, type);
+                    if (Config::I == Common::I_NIST) NISTXML::process_nist_file(file, type);
+                    else RAW::process_raw_file(file, type);
                 }
                 else if (type == "srclang") {
-                    if (Common::rLANGS.find(data) != Common::rLANGS.end()) {
-                        Config::SRCLANG = data; //boost::to_lower(entry.first);
-                    } else {
-                        fprintf(stderr,"[ERROR] UNSUPPORTED SOURCE LANGUAGE ('.%s.')!!\n", data.c_str());
+                    if (Common::rLANGS.find(file_cs) != Common::rLANGS.end()) {
+                        Config::SRCLANG = file_cs; //boost::to_lower(entry.first);
                     }
+                    else { fprintf(stderr,"[ERROR] UNSUPPORTED SOURCE LANGUAGE ('.%s.')!!\n", file_cs.c_str()); }
 
                     cout << "# srclang readed #" << endl;
                 }
                 else if (type == "lang" or type == "trglang") {
-                    if (Common::rLANGS.find(data) != Common::rLANGS.end()) {
-                        Config::LANG = data; //boost::to_lower(entry.first);
-                    } else {
-                        fprintf(stderr,"[ERROR] UNSUPPORTED TARGET LANGUAGE ('.%s.')!!\n", data.c_str());
+                    if (Common::rLANGS.find(file_cs) != Common::rLANGS.end()) {
+                        Config::LANG = file_cs; //boost::to_lower(entry.first);
                     }
+                    else { fprintf(stderr,"[ERROR] UNSUPPORTED TARGET LANGUAGE ('.%s.')!!\n", file_cs.c_str()); }
 
                     cout << "# lang or trglang readed #" << endl;
                 }
                 else if (type == "srccase") {
-                    if (data == Common::CASE_CI) {
+                    if (file_cs == Common::CASE_CI)
                         Config::SRCCASE = Common::CASE_CI;
-                    } else {
+                    else
                         Config::SRCCASE = Common::CASE_CS;
-                    }
                 }
                 else if (type == "trgcase" or type == "case") {
-                    if (data == Common::CASE_CI) {
+                    if (file_cs == Common::CASE_CI)
                         Config::CASE = Common::CASE_CI;
-                    } else {
+                    else
                         Config::CASE = Common::CASE_CS;
-                    }
 
                     cout << "# case or trgcase readed #" << endl;
                 }
@@ -683,24 +604,24 @@ void Config::validate_configuration() {
     }
     if (!Config::references.empty()) {
         for (set<string>::const_iterator it = Config::references.begin(); it != Config::references.end(); ++it) {
-            if (Config::Hrefs.find(*it) == Config::Hrefs.end()) {
+            if (TESTBED::Hrefs.find(*it) == TESTBED::Hrefs.end()) {
                 fprintf(stderr, "[ERROR] reference '%s' not in test suite!!\n", it->c_str());
                 exit(1);
             }
         }
     } else {
-        for (map<string, string>::const_iterator it = Config::Hrefs.begin(); it != Config::Hrefs.end(); ++it) Config::references.insert(it->first);
+        for (map<string, string>::const_iterator it = TESTBED::Hrefs.begin(); it != TESTBED::Hrefs.end(); ++it) Config::references.insert(it->first);
     }
 
     if (!Config::systems.empty()) {
         for (set<string>::const_iterator it = Config::systems.begin(); it != Config::systems.end(); ++it) {
-            if (Config::Hsystems.find(*it) == Config::Hsystems.end()) {
+            if (TESTBED::Hsystems.find(*it) == TESTBED::Hsystems.end()) {
                 fprintf(stderr, "[ERROR] system '%s' not in test suite!!\n", it->c_str());
                 exit(1);
             }
         }
     } else {
-        for (map<string, string>::const_iterator it = Config::Hsystems.begin(); it != Config::Hsystems.end(); ++it) Config::systems.insert(it->first);
+        for (map<string, string>::const_iterator it = TESTBED::Hsystems.begin(); it != TESTBED::Hsystems.end(); ++it) Config::systems.insert(it->first);
         if (Config::systems.empty()) {
             fprintf(stderr, "[ERROR] set of systems undefined!!\n");
             exit(1);

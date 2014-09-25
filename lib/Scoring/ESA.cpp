@@ -115,10 +115,10 @@ vector<double> ESA::read_esa_segments(string reportESA) {
 
 vector<double> ESA::computeESA(string metric, string out, string ref) {
 
-	string outRND = Config::Hsystems[TGT]+"."+ESA::ESAEXT+"."+Config::CASE;;
+	string outRND = TESTBED::Hsystems[TGT]+"."+ESA::ESAEXT+"."+Config::CASE;;
 	string refRND = ref+"."+ESA::ESAEXT+"."+Config::CASE;
 
-	ESA_f_create_doc(Config::Hsystems[TGT], outRND);
+	ESA_f_create_doc(TESTBED::Hsystems[TGT], outRND);
 	ESA_f_create_doc(ref, refRND);
 
 	stringstream ssReport;
@@ -185,7 +185,7 @@ vector<double> ESA::computeESA(string metric, string out, string ref) {
 pair<double, vector<double> > ESA::computeMultiESA(string metric, string out) {
 	// description _ computes ESA score (multiple references)
     vector<double> maxSEGS;
-    for (map<string, string>::const_iterator it = Config::Hrefs.begin(); it != Config::Hrefs.end(); ++it) {
+    for (map<string, string>::const_iterator it = TESTBED::Hrefs.begin(); it != TESTBED::Hrefs.end(); ++it) {
     	vector<double> hSEGS = computeESA(metric, out, it->second);
     	int i = 0;
     	while (i < hSEGS.size()) {
@@ -234,7 +234,7 @@ void ESA::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 	   		boost::filesystem::path reportESAxml_gz(reportESAxml + "." + Common::GZEXT);
 
 	   		if ( (!exists(reportESAxml_path) and !exists(reportESAxml_gz)) or Config::remake) {
-	    		pair<double, vector<double> > res = computeMultiESA(mESA[i], Config::Hsystems[TGT]);
+	    		pair<double, vector<double> > res = computeMultiESA(mESA[i], TESTBED::Hsystems[TGT]);
 				pair<vector<double>, vector<double> > doc_seg =  Core::get_seg_doc_scores(res.second, 0, TGT);
 				string pref = prefix + mESA[i];
 		    	if (Config::O_STORAGE == 1) {

@@ -72,7 +72,7 @@ MetricScore METEOR::computeMETEOR(string TGT, string variant) {
 	srand(time(NULL));
 	double nr = rand() % (Common::NRAND + 1);	//random number [0, Common::NRAND];
 
-	string sysid = Config::IDX[TGT][1][2];
+	string sysid = TESTBED::IDX[TGT][1][2];
 
 
 	stringstream ssOut, ssRef;
@@ -85,7 +85,7 @@ MetricScore METEOR::computeMETEOR(string TGT, string variant) {
     boost::filesystem::path outMTRsgml_path(outMTRsgml);
     boost::filesystem::path refMTRsgml_path(refMTRsgml);
 
-	if (!exists(outMTRsgml_path) or Config::remake) NISTXML::f_create_mteval_doc(Config::src, outMTRsgml, TGT, Config::CASE, 1);
+	if (!exists(outMTRsgml_path) or Config::remake) NISTXML::f_create_mteval_doc(TESTBED::src, outMTRsgml, TGT, Config::CASE, 1);
     if (!exists(refMTRsgml_path) or Config::remake) NISTXML::f_create_mteval_multidoc(refMTRsgml, Config::CASE, 2);
 
     string modules;

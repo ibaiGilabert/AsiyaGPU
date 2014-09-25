@@ -2,9 +2,9 @@
 #define SINGLEMETRIC_HPP
 
 #include "Scores.hpp"
-#include "Core.hpp"
 #include "../Common.hpp"
 #include "../Config.hpp"
+#include "TESTBED.hpp"
 #include "NISTXML.hpp"
 #include "IQXML.hpp"
 

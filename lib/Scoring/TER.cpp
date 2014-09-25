@@ -29,7 +29,7 @@ MetricScore TER::computeTER(string TGT, string variant, int do_neg) {
 	srand(time(NULL));
 	double nr = rand() % (Common::NRAND + 1);	//random number [0, Common::NRAND];
 
-	string sysid = Config::IDX[TGT][1][2];
+	string sysid = TESTBED::IDX[TGT][1][2];
 
 	stringstream ssOut, ssRef;
 	ssOut << Common::DATA_PATH << "/" << Common::TMP << "/" << nr << "." << Common::SYSEXT << "." << TER::TEREXT << "." << Common::XMLEXT;
@@ -39,7 +39,7 @@ MetricScore TER::computeTER(string TGT, string variant, int do_neg) {
     boost::filesystem::path refNISTxml(ssRef.str());
 
     if (!exists(outNISTxml) or Config::remake)
-    	NISTXML::f_create_mteval_doc(Config::Hsystems[TGT], ssOut.str(), TGT, Common::CASE_CS, 1);
+    	NISTXML::f_create_mteval_doc(TESTBED::Hsystems[TGT], ssOut.str(), TGT, Common::CASE_CS, 1);
     if (!exists(refNISTxml) or Config::remake)
     	NISTXML::f_create_mteval_multidoc(ssRef.str(), Common::CASE_CS, 2);
 

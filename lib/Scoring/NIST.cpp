@@ -192,8 +192,8 @@ pair<vector<double>, vector<vector<double> > > NIST::computeNIST(string TGT) {
     boost::filesystem::path reportNISTsgml(ssReport.str());
 
 	if (!exists(refNISTsgml) or Config::remake) NISTXML::SGML_f_create_mteval_multidoc(refNISTsgml.string(), 2);
-	if (!exists(srcNISTsgml) or Config::remake) NISTXML::SGML_f_create_mteval_doc(Config::src, srcNISTsgml.string(), 0);
-	if (!exists(outNISTsgml) or Config::remake) NISTXML::SGML_f_create_mteval_doc(Config::Hsystems[TGT], outNISTsgml.string(), 1);
+	if (!exists(srcNISTsgml) or Config::remake) NISTXML::SGML_f_create_mteval_doc(TESTBED::src, srcNISTsgml.string(), 0);
+	if (!exists(outNISTsgml) or Config::remake) NISTXML::SGML_f_create_mteval_doc(TESTBED::Hsystems[TGT], outNISTsgml.string(), 1);
 
 	if (Config::verbose > 1) fprintf(stderr, "building %s\n", reportNISTsgml.string().c_str());
 
@@ -298,7 +298,7 @@ void NIST::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 	    	pair<vector<double>, vector<vector<double> > > res = computeNIST(TGT);
 
          	string prefN = prefix;	prefN += NIST::NISTEXT;	prefN += "-1";
-	    	pair<vector<double>, vector<double> > doc_seg =  Core::get_seg_doc_scores(res.second[0], 0, TGT);
+	    	pair<vector<double>, vector<double> > doc_seg =  TESTBED::get_seg_doc_scores(res.second[0], 0, TGT);
 	    	if (Config::O_STORAGE == 1) {
 	    		IQXML::write_report(TGT, REF, prefN, res.first[0], doc_seg.first, doc_seg.second);
          		cout << "IQXML DOCUMENT " << prefN << " CREATED" << endl;
@@ -306,7 +306,7 @@ void NIST::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
          	hOQ.save_hash_scores(prefN, TGT, REF, res.first[0], doc_seg.first, doc_seg.second);
 
 	    	prefN = prefix + NIST::NISTEXT + "-2";
-			doc_seg = Core::get_seg_doc_scores(res.second[1], 0, TGT);
+			doc_seg = TESTBED::get_seg_doc_scores(res.second[1], 0, TGT);
 			if (Config::O_STORAGE == 1) {
 	    		IQXML::write_report(TGT, REF, prefN, res.first[1], doc_seg.first, doc_seg.second);
          		cout << "IQXML DOCUMENT " << prefN << " CREATED" << endl;
@@ -314,7 +314,7 @@ void NIST::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
          	hOQ.save_hash_scores(prefN, TGT, REF, res.first[1], doc_seg.first, doc_seg.second);
 
 	    	prefN = prefix + NIST::NISTEXT + "-3";
-			doc_seg = Core::get_seg_doc_scores(res.second[2], 0, TGT);
+			doc_seg = TESTBED::get_seg_doc_scores(res.second[2], 0, TGT);
          	if (Config::O_STORAGE == 1) {
 	    		IQXML::write_report(TGT, REF, prefN, res.first[2], doc_seg.first, doc_seg.second);
          		cout << "IQXML DOCUMENT " << prefN << " CREATED" << endl;
@@ -322,7 +322,7 @@ void NIST::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 	    	hOQ.save_hash_scores(prefN, TGT, REF, res.first[2], doc_seg.first, doc_seg.second);
 
 	    	prefN = prefix + NIST::NISTEXT + "-4";
-			doc_seg = Core::get_seg_doc_scores(res.second[3], 0, TGT);
+			doc_seg = TESTBED::get_seg_doc_scores(res.second[3], 0, TGT);
          	if (Config::O_STORAGE == 1) {
 	    		IQXML::write_report(TGT, REF, prefN, res.first[3], doc_seg.first, doc_seg.second);
          		cout << "IQXML DOCUMENT " << prefN << " CREATED" << endl;
@@ -330,7 +330,7 @@ void NIST::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 	    	hOQ.save_hash_scores(prefN, TGT, REF, res.first[3], doc_seg.first, doc_seg.second);
 
 	    	prefN = prefix + NIST::NISTEXT + "-5";
-			doc_seg = Core::get_seg_doc_scores(res.second[4], 0, TGT);
+			doc_seg = TESTBED::get_seg_doc_scores(res.second[4], 0, TGT);
          	if (Config::O_STORAGE == 1) {
 	    		IQXML::write_report(TGT, REF, prefN, res.first[4], doc_seg.first, doc_seg.second);
          		cout << "IQXML DOCUMENT " << prefN << " CREATED" << endl;
@@ -338,7 +338,7 @@ void NIST::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 	    	hOQ.save_hash_scores(prefN, TGT, REF, res.first[4], doc_seg.first, doc_seg.second);
 
 	    	prefN = prefix + NIST::NISTEXTi + "-2";
-			doc_seg = Core::get_seg_doc_scores(res.second[5], 0, TGT);
+			doc_seg = TESTBED::get_seg_doc_scores(res.second[5], 0, TGT);
          	if (Config::O_STORAGE == 1) {
 	    		IQXML::write_report(TGT, REF, prefN, res.first[5], doc_seg.first, doc_seg.second);
          		cout << "IQXML DOCUMENT " << prefN << " CREATED" << endl;
@@ -346,7 +346,7 @@ void NIST::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 	    	hOQ.save_hash_scores(prefN, TGT, REF, res.first[5], doc_seg.first, doc_seg.second);
 
 	    	prefN = prefix + NIST::NISTEXTi + "-3";
-	    	doc_seg = Core::get_seg_doc_scores(res.second[6], 0, TGT);
+	    	doc_seg = TESTBED::get_seg_doc_scores(res.second[6], 0, TGT);
          	if (Config::O_STORAGE == 1) {
 	    		IQXML::write_report(TGT, REF, prefN, res.first[6], doc_seg.first, doc_seg.second);
          		cout << "IQXML DOCUMENT " << prefN << " CREATED" << endl;
@@ -354,7 +354,7 @@ void NIST::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 	    	hOQ.save_hash_scores(prefN, TGT, REF, res.first[6], doc_seg.first, doc_seg.second);
 
 	    	prefN = prefix + NIST::NISTEXTi + "-3";
-	    	doc_seg = Core::get_seg_doc_scores(res.second[7], 0, TGT);
+	    	doc_seg = TESTBED::get_seg_doc_scores(res.second[7], 0, TGT);
          	if (Config::O_STORAGE == 1) {
 	    		IQXML::write_report(TGT, REF, prefN, res.first[7], doc_seg.first, doc_seg.second);
          		cout << "IQXML DOCUMENT " << prefN << " CREATED" << endl;
@@ -362,7 +362,7 @@ void NIST::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 	    	hOQ.save_hash_scores(prefN, TGT, REF, res.first[7], doc_seg.first, doc_seg.second);
 
 	    	prefN = prefix + NIST::NISTEXTi + "-4";
-	    	doc_seg = Core::get_seg_doc_scores(res.second[8], 0, TGT);
+	    	doc_seg = TESTBED::get_seg_doc_scores(res.second[8], 0, TGT);
          	if (Config::O_STORAGE == 1) {
 	    		IQXML::write_report(TGT, REF, prefN, res.first[8], doc_seg.first, doc_seg.second);
          		cout << "IQXML DOCUMENT " << prefN << " CREATED" << endl;
@@ -370,7 +370,7 @@ void NIST::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 	    	hOQ.save_hash_scores(prefN, TGT, REF, res.first[8], doc_seg.first, doc_seg.second);
 
 	    	prefN = prefix + NIST::NISTEXTi + "-5";
-	    	doc_seg = Core::get_seg_doc_scores(res.second[9], 0, TGT);
+	    	doc_seg = TESTBED::get_seg_doc_scores(res.second[9], 0, TGT);
          	if (Config::O_STORAGE == 1) {
 	    		IQXML::write_report(TGT, REF, prefN, res.first[9], doc_seg.first, doc_seg.second);
          		cout << "IQXML DOCUMENT " << prefN << " CREATED" << endl;

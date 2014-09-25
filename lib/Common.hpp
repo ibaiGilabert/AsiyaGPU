@@ -175,8 +175,6 @@ public:
 	static const string LeM;
 
 	static void execute_or_die(string command, string message);
-	static string give_system_name(string file);
-	static string replace_special_characters(string &input);
 	static double safe_division(double numerator, double denominator);
 
 	//static double trunk_and_trim_number(double n, int l, int p);

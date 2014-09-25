@@ -1,3 +1,5 @@
+#include "../Config.hpp"
+#include "../include/TESTBED.hpp"
 #include "../include/Core.hpp"
 #include "../include/Scores.hpp"
 #include "../include/BLEU.hpp"
@@ -7,9 +9,8 @@
 #include "../include/ROUGE.hpp"
 #include "../include/GTM.hpp"
 #include "../include/TER.hpp"
-#include "../Config.hpp"
 
-//#include <omp.h>
+#include <omp.h>
 #include <stdio.h>
 #include <iostream>
 /*
@@ -86,7 +87,7 @@ void Core::doMultiMetrics(string HYP, const set<string> &Lref, Scores &hOQ) {
 
    //Lref is already sorted (set's wonders)
 
-	string HYP_file = Config::Hsystems[HYP];
+	string HYP_file = TESTBED::Hsystems[HYP];
 
 	set<string>::const_iterator it = Lref.begin();
 	string REF = *it;	++it;
@@ -170,7 +171,7 @@ double Core::do_scores() {
 		if (Config::verbose) fprintf(stderr, "[METRICS] computing 'system vs. reference' scores (one vs. all)...\n");
 
 		for (set<string>::const_iterator it = Config::systems.begin(); it != Config::systems.end(); ++it) {	//systems Vs. references
-double time1 = 0;//omp_get_wtime();
+			double time1 = omp_get_wtime();
 //doMultiMetrics($config, $sys, $config->{Hsystems}->{$sys}, $config->{references}, $config->{Hrefs}, $hOQ);
 			cout << "MultiMetric o ke ase?" << endl;
 			doMultiMetrics(*it, Config::references, hOQ);
@@ -190,7 +191,7 @@ double time1 = 0;//omp_get_wtime();
 			}
 			// --- end tsearch insertion
 
-double time2 = 0; //omp_get_wtime();
+			double time2 = omp_get_wtime();
 			double t = time2 - time1;	//= Common::get_raw_Benchmark;
 			TIME += t;
 			cout << "time1: " << time1 << endl;
@@ -207,12 +208,12 @@ double time2 = 0; //omp_get_wtime();
 		if (Config::verbose) fprintf(stderr, "[METRICS] computing 'reference vs. reference' scores (pairwise)...\n");
 
 		for (set<string>::const_iterator it = Config::references.begin(); it != Config::references.end(); ++it) {	//references Vs. references
-double time1 = 0; //omp_get_wtime();
+			double time1 = omp_get_wtime();
 			for (set<string>::const_iterator itr = Config::references.begin(); itr != Config::references.end(); ++itr) {	//references Vs. references
-				if (*it != *itr) doMultiMetrics(*it, set<string> (itr, itr), hOQ);
-//doMultiMetrics($config, $ref1, $config->{Hrefs}->{$ref1}, [$ref2], $config->{Hrefs}, $hOQ); }
+				if (*it != *itr)
+					doMultiMetrics(*it, set<string> (itr, itr), hOQ);
 			}
-double time2 = 0; //omp_get_wtime();
+			double time2 = omp_get_wtime();
 			double t = time2 - time1;	//Common::get_raw_Benchmark;
 			TIME += t;
 			if (Config::do_time) fprintf(stderr, "t(%s) = %f\n", it->c_str(), t);
@@ -228,14 +229,13 @@ double time2 = 0; //omp_get_wtime();
 		if (Config::verbose) fprintf(stderr, "[METRICS] computing 'reference vs. reference' scores (one vs. all)...\n");
 
 		for (set<string>::const_iterator it = Config::references.begin(); it != Config::references.end(); ++it) {	//references Vs. all other references
-double time1 = 0; //omp_get_wtime();
+			double time1 = omp_get_wtime();
 			set<string> all_other_refs;
 			for (set<string>::const_iterator itr = Config::references.begin(); itr != Config::references.end(); ++itr) {
 				if (*it != *itr) all_other_refs.insert(*itr);
 			}
 			if (all_other_refs.size() > 1) {
 				doMultiMetrics(*it, all_other_refs, hOQ);
-//doMultiMetrics($config, $ref1, $config->{Hrefs}->{$ref1}, \@all_other_refs, $config->{Hrefs}, $hOQ);
 
 				if (Config::metaeval_criteria.find(Common::C_KING) != Config::metaeval_criteria.end() or \
 					Config::optimize_criteria.find(Common::C_KING) != Config::optimize_criteria.end() or \
@@ -244,18 +244,12 @@ double time1 = 0; //omp_get_wtime();
 
 					for (set<string>::const_iterator it = Config::systems.begin(); it != Config::systems.end(); ++it) {	//systems Vs. all other references
 						doMultiMetrics(*it, all_other_refs, hOQ);
-//doMultiMetrics($config, $sys, $config->{Hsystems}->{$sys}, \@all_other_refs, $config->{Hrefs}, $hOQ);
-
 					}
 				}
 			}
 			else Config::do_refs = 0;
 
-			// --- tsearch insertion
-			if (Config::tsearch == 1) {}
-			// -- end tsearch insertion
-
-double time2 = 0;	//omp_get_wtime();
+			double time2 = omp_get_wtime();
 			double t = time2 - time1;	//Common::get_raw_Benchmark;
 			TIME += t;
 			if (Config::do_time) fprintf(stderr, "t(%s) = %f\n", it->c_str(), t);
@@ -278,48 +272,4 @@ double time2 = 0;	//omp_get_wtime();
 	}
 
 	return TIME;
-}
-
-pair<vector<double>, vector<double> > Core::get_seg_doc_scores(const vector<double> &scores, int DO_doc, string TGT) {
-    // description _ returns segment and document scores, given an index structure which
-    //               contains information on the number of segments per document
-
-	vector<vector<string> > idx = Config::IDX[TGT];
-	vector<double> D_scores, S_scores;
-	string docid = "";
-	double sum = -1;
-	int n, n_doc;
-	n = n_doc = 0;
-
-	int i = 1;
-	while(i < idx.size()) {
-		if (DO_doc) {	//doc-level scores
-			if (idx[i][0] != docid)	{	//NEW DOCUMENT
-				D_scores.push_back(scores[n_doc]);
-				docid = idx[i][0];
-				++n_doc;
-			}
-			S_scores.push_back(scores[n_doc-1]);
-		}
-		else {	//segment-level scores
-			if (idx[i][0] != docid)	{	//NEW DOCUMENT
-				if (sum != -1) D_scores.push_back(sum/n);
-				docid = idx[i][0];
-				sum = n = 0;
-			}
-			double x = 0;
-			if (scores[i-1] != -1) x = scores[i-1];
-			S_scores.push_back(x);
-			sum += x;
-			++n;
-		}
-		++i;
-	}
-
-	// last document (only if segment-level scores)
-	if (!DO_doc) {
-		if (sum != -1) D_scores.push_back(sum/n);
-	}
-
-	return make_pair(D_scores, S_scores);
 }

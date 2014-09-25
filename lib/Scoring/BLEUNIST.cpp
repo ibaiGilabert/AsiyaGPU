@@ -61,8 +61,8 @@ pair<MetricScore, MetricScore> BLEUNIST::computeBLEUNIST(string TGT) {
     boost::filesystem::path outXML(ssOut.str());
     boost::filesystem::path refXML(ssRef.str());
 
-    if (!exists(srcXML) or Config::remake) NISTXML::f_create_mteval_doc(Config::src, srcXML.string(), TGT, Common::CASE_CS, 0);
-    if (!exists(outXML) or Config::remake) NISTXML::f_create_mteval_doc(Config::Hsystems[TGT], outXML.string(), TGT, Common::CASE_CS,  1);
+    if (!exists(srcXML) or Config::remake) NISTXML::f_create_mteval_doc(TESTBED::src, srcXML.string(), TGT, Common::CASE_CS, 0);
+    if (!exists(outXML) or Config::remake) NISTXML::f_create_mteval_doc(TESTBED::Hsystems[TGT], outXML.string(), TGT, Common::CASE_CS,  1);
     if (!exists(refXML) or Config::remake) NISTXML::f_create_mteval_multidoc(refXML.string(), Common::CASE_CS, 2);
 
     stringstream sc;

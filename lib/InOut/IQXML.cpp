@@ -16,7 +16,7 @@ const string IQXML::ROOT_ELEMENT = "REPORT";
 
 
 void save_xml(string report_xml, string TGT, string REF, string METRIC, const MetricScore &m) {
-    vector<vector<string> > idx = Config::IDX[TGT];
+    vector<vector<string> > idx = TESTBED::IDX[TGT];
 
     /*    cout << "-----------------idx-------------------" << endl;
         for (int i = 0; i < idx.size(); ++i) {
@@ -184,7 +184,7 @@ void IQXML::write_report(string TGT, string REF, string METRIC, const MetricScor
     //save_xml(report_xml, TGT, REF, METRIC, sys_score, doc_scores, seg_scores);
     save_xml(report_xml, TGT, REF, METRIC, m);
 
-    Common::replace_special_characters(report_xml);
+    TESTBED::replace_special_characters(report_xml);
 
     string command = Common::GZIP + " " + report_xml;
     string error = "Couldn't " + Common::GZIP + " " + report_xml;
