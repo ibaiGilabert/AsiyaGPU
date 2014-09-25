@@ -356,6 +356,7 @@ void Config::process_command_line_options(map<string, string> Options, vector<st
 void Config::process_nist_file(string file, string type) {
     // description _ read the contents of a NIST xml and generate txt and idx files
     //              (idx structure is also stored onto memory)
+    cout << "----------NIST INPUT FILES----------" << endl;
     map<string, FileInfo> contents = NISTXML::read_file(file.c_str());
     for(map<string, FileInfo>::const_iterator it = contents.begin(); it != contents.end(); ++it) {
         if (type == "source" or type == "src") {
@@ -386,14 +387,13 @@ void Config::process_nist_file(string file, string type) {
 void Config::process_raw_file(string file, string type) {
     // description _ read the contents of a RAW plain text file (one sentence per line) and generate fake idx files
     //               (idx structure is also stored onto memory)
+    cout << "----------NIST RAW FILES----------" << endl;
+
     string IDX = file + "." + Common::IDXEXT;
     string tokfile = file + "." + Common::TOKEXT;
+    string lang;
 
     vector<vector<string> > rIDX = NISTXML::write_fake_idx_file(file, IDX);
-
-    //cout << "process_raw_file: file : '" << file << "' type: '" << type << "'" << endl;
-
-    string lang;
     if (type == "source" or type == "src") {
         Config::src = tokfile;
         Config::IDX["source"] = rIDX;
@@ -430,10 +430,9 @@ void Config::process_raw_file(string file, string type) {
 
     Common::execute_or_die(sc.str(), ms.str());
 
-    if(Config::tokenize) {
+    /*if(Config::tokenize) {
         string l = lang;
-        //if w
-    }
+    }*/
 }
 
 void Config::process_config_file(char* config_file, map<string, string> Options) {
@@ -483,9 +482,7 @@ void Config::process_config_file(char* config_file, map<string, string> Options)
     p = path_aux;
 
     if (!is_directory(p)) {
-        stringstream ss;
-        ss << "mkdir " << Common::DATA_PATH << "/" << Common::TMP;
-        string s = ss.str();
+        string s = "mkdir " + Common::DATA_PATH + "/" + Common::TMP;
         system(s.c_str());
     } //TEMPORARY DIRECTORY
 
