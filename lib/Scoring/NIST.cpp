@@ -19,23 +19,22 @@ const string NIST::TNIST = "mteval-kit";
 
 map<string, int> NIST::create_rNIST() {
 	map<string, int> rNIST;
-	string aux;
-	aux = NIST::NISTEXT + "-1";		rNIST[aux] = 1;
-	aux = NIST::NISTEXT + "-2";		rNIST[aux] = 1;
-	aux = NIST::NISTEXT + "-3";		rNIST[aux] = 1;
-	aux = NIST::NISTEXT + "-4";		rNIST[aux] = 1;
-	aux = NIST::NISTEXT + "-5";		rNIST[aux] = 1;
-	aux = NIST::NISTEXTi + "-2";		rNIST[aux] = 1;
-	aux = NIST::NISTEXTi + "-3";		rNIST[aux] = 1;
-	aux = NIST::NISTEXTi + "-4";		rNIST[aux] = 1;
-	aux = NIST::NISTEXTi + "-5";		rNIST[aux] = 1;
+	rNIST[NIST::NISTEXT] = 1;
+	rNIST[NIST::NISTEXT + "-1"] = 1;
+	rNIST[NIST::NISTEXT + "-2"] = 1;
+	rNIST[NIST::NISTEXT + "-3"] = 1;
+	rNIST[NIST::NISTEXT + "-4"] = 1;
+	rNIST[NIST::NISTEXT + "-5"] = 1;
+	rNIST[NIST::NISTEXTi + "-2"] = 1;
+	rNIST[NIST::NISTEXTi + "-3"] = 1;
+	rNIST[NIST::NISTEXTi + "-4"] = 1;
+	rNIST[NIST::NISTEXTi + "-5"] = 1;
 	return rNIST;
 }
 const map<string, int> NIST::rNIST = create_rNIST();
 
 vector<double> NIST::read_nist(string reportNIST) {
 	// description _ read NIST value from report file
-
     boost::regex re("^ +NIST:.*");
 
     string str;
@@ -87,7 +86,6 @@ vector<double> NIST::read_nist(string reportNIST) {
 
 vector<vector<double> > NIST::read_nist_segments(string reportNIST) {
 	// description _ read NIST-5 value from report file (for all segments)
-
     boost::regex re1("^ +NIST score using.*");
     boost::regex re2("^ +cumulative-NIST score using.*");
     boost::regex re3("^ +individual-NIST score using.*");
@@ -155,23 +153,22 @@ vector<vector<double> > NIST::read_nist_segments(string reportNIST) {
 
 	} else { fprintf(stderr, "couldn't open file: reportNIST.txt\n"); exit(1); }
 
-		cout << "--------------------SEG-----------------" << endl;
+		/*cout << "--------------------SEG-----------------" << endl;
 		for (int i = 0; i < SEG.size(); ++i) {
 			for (int j = 0; j < SEG[i].size(); ++j) {
 				cout << "SEG[" << i << "," << j << "]: " << SEG[i][j] << "\t";
 			}
 			cout << endl;
-		}
+		}*/
 
 	return SEG;
 }
 
 pair<vector<double>, vector<vector<double> > > NIST::computeNIST(string TGT) {
 	// description _ computes NIST score (by calling NIST mteval script) -> n = 1..4 (multiple references)
-
 	stringstream tNIST;
 
-	tNIST << "perl " << Config::tools << "/" << NIST::TNIST << "/" << "mteval-v13a.pl -n -d 2 ";
+	tNIST << "perl " << Config::tools << "/" << NIST::TNIST << "/mteval-v13a.pl -n -d 2 ";
 
 	if (Config::CASE == Common::CASE_CS) tNIST << "-c "; //toolBLEU += "-c ";
 	string toolNIST = tNIST.str();
@@ -223,26 +220,69 @@ pair<vector<double>, vector<vector<double> > > NIST::computeNIST(string TGT) {
 }
 
 
+MetricScore NIST::computeNISTN(string TGT) {
+	// description _ computes smoothed and NIST-5 score (by calling NIST mteval script) (multiple references)
+	stringstream tNISTN;
+
+	tNISTN << "perl " << Config::tools << "/" << NIST::TNIST << "/mteval-v13a.pl -d 2 -n --metricsMATR ";
+
+	if (Config::CASE == Common::CASE_CS) tNISTN << "-c ";
+	string toolNISTN = tNISTN.str();
+
+	cout << "toolNISTN ->" << toolNISTN << endl << endl;
+
+	double nr = rand() % (Common::NRAND + 1);	//random number [0, Common::NRAND];
+	stringstream ssSrc, ssOut, ssRef;
+	ssSrc << Common::DATA_PATH << "/" << Common::TMP << "/" << nr << "." << Common::SRCEXT << ".NIST." << Common::XMLEXT;
+	ssOut << Common::DATA_PATH << "/" << Common::TMP << "/" << nr << "." << Common::SYSEXT << ".NIST." << Common::XMLEXT;
+	ssRef << Common::DATA_PATH << "/" << Common::TMP << "/" << nr << "." << Common::REFEXT << ".NIST." << Common::XMLEXT;
+
+    boost::filesystem::path srcXML(ssSrc.str());
+    boost::filesystem::path outXML(ssOut.str());
+    boost::filesystem::path refXML(ssRef.str());
+
+    if (!exists(srcXML) or Config::remake) NISTXML::f_create_mteval_doc(TESTBED::src, srcXML.string(), TGT, Common::CASE_CS, 0);
+    if (!exists(outXML) or Config::remake) NISTXML::f_create_mteval_doc(TESTBED::Hsystems[TGT], outXML.string(), TGT, Common::CASE_CS,  1);
+    if (!exists(refXML) or Config::remake) NISTXML::f_create_mteval_multidoc(refXML.string(), Common::CASE_CS, 2);
+
+    stringstream sc;
+    sc << "cd " << Common::DATA_PATH << "; " << toolNISTN << " -s " << ssSrc.str() << " -t " << ssOut.str() << " -r " << ssRef.str() << " >/dev/null 2>/dev/null";
+
+    string ms = "[ERROR] problems running BLEU_NIST...";
+	Common::execute_or_die(sc.str(), ms);
+
+	if (exists(refXML)) {
+		string sysaux = "rm -f "; sysaux += ssRef.str();
+		system (sysaux.c_str());
+	}
+	if (exists(outXML)) {
+		string sysaux = "rm -f "; sysaux += ssOut.str();
+		system (sysaux.c_str());
+	}
+	if (exists(srcXML)) {
+		string sysaux = "rm -f "; sysaux += ssSrc.str();
+		system (sysaux.c_str());
+	}
+	MetricScore NIST_scores = Scores::read_scores(Common::DATA_PATH + "/NIST", TGT, 0);
+
+	return NIST_scores;
+}
 void NIST::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
    // description _ computes NIST score (by calling NIST mteval script) -> n = 1..4 (multiple references)
-
-	//map<string, int> M = Config::Hmetrics;
     vector<string> mNIST(NIST::rNIST.size());
 
 	int GO , i;
 	GO = i = 0;
 	for (map<string, int>::const_iterator it = NIST::rNIST.begin(); it != NIST::rNIST.end(); ++it, ++i) mNIST[i] = it->first;
 
-	i = 0;
-	while (i < mNIST.size() and !GO) {
-		string aux = prefix; aux += mNIST[i];
-		if (Config::Hmetrics.find(aux) != Config::Hmetrics.end()) { GO = 1; }
-		++i;
+	for (i = 0; i < mNIST.size() and !GO; ++i) {
+		string aux = prefix + mNIST[i];
+		if (Config::Hmetrics.find(aux) != Config::Hmetrics.end()) GO = 1;
 	}
 
 	if (GO) {
 		if (Config::verbose == 1) fprintf(stderr, "%s\n", NIST::NISTEXT.c_str());
-		stringstream ss1, ss2, ss3, ss4, ss5, ss2i, ss3i, ss4i, ss5i;
+		stringstream ss1, ss2, ss3, ss4, ss5, ss2i, ss3i, ss4i, ss5i, ssN;
 		ss1 << Common::DATA_PATH << "/" << Common::REPORTS << "/" << TGT << "/" << REF << prefix << NIST::NISTEXT << "-1." << Common::XMLEXT;
 		ss2 << Common::DATA_PATH << "/" << Common::REPORTS << "/" << TGT << "/" << REF << prefix << NIST::NISTEXT << "-2." << Common::XMLEXT;
 		ss3 << Common::DATA_PATH << "/" << Common::REPORTS << "/" << TGT << "/" << REF << prefix << NIST::NISTEXT << "-3." << Common::XMLEXT;
@@ -252,6 +292,7 @@ void NIST::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 		ss3i << Common::DATA_PATH << "/" << Common::REPORTS << "/" << TGT << "/" << REF << prefix << NIST::NISTEXTi << "-3." << Common::XMLEXT;
 		ss4i << Common::DATA_PATH << "/" << Common::REPORTS << "/" << TGT << "/" << REF << prefix << NIST::NISTEXTi << "-4." << Common::XMLEXT;
 		ss5i << Common::DATA_PATH << "/" << Common::REPORTS << "/" << TGT << "/" << REF << prefix << NIST::NISTEXTi << "-5." << Common::XMLEXT;
+		ssN << Common::DATA_PATH << "/" << Common::REPORTS << "/" << TGT << "/" << REF << prefix << NIST::NISTEXT << "." << Common::XMLEXT;
 
 		string reportNIST1xml = ss1.str();
 		string reportNIST2xml = ss2.str();
@@ -262,6 +303,7 @@ void NIST::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 		string reportNISTi3xml = ss3i.str();
 		string reportNISTi4xml = ss4i.str();
 		string reportNISTi5xml = ss5i.str();
+		string reportNISTNxml = ssN.str();
 
 	    boost::filesystem::path reportNIST1xml_path(reportNIST1xml);
 		boost::filesystem::path reportNIST2xml_path(reportNIST2xml);
@@ -272,17 +314,18 @@ void NIST::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 	    boost::filesystem::path reportNISTi3xml_path(reportNISTi3xml);
 	    boost::filesystem::path reportNISTi4xml_path(reportNISTi4xml);
 	    boost::filesystem::path reportNISTi5xml_path(reportNISTi5xml);
+	    boost::filesystem::path reportNISTNxml_path(reportNISTNxml);
 
 		boost::filesystem::path reportNIST1xml_ext(reportNIST1xml + "." + Common::GZEXT);
 	    boost::filesystem::path reportNIST2xml_ext(reportNIST2xml + "." + Common::GZEXT);
 	    boost::filesystem::path reportNIST3xml_ext(reportNIST3xml + "." + Common::GZEXT);
 	    boost::filesystem::path reportNIST4xml_ext(reportNIST4xml + "." + Common::GZEXT);
 	    boost::filesystem::path reportNIST5xml_ext(reportNIST5xml + "." + Common::GZEXT);
-
 	    boost::filesystem::path reportNISTi2xml_ext(reportNISTi2xml + "." + Common::GZEXT);
 	    boost::filesystem::path reportNISTi3xml_ext(reportNISTi3xml + "." + Common::GZEXT);
 	    boost::filesystem::path reportNISTi4xml_ext(reportNISTi4xml + "." + Common::GZEXT);
 		boost::filesystem::path reportNISTi5xml_ext(reportNISTi5xml + "." + Common::GZEXT);
+	    boost::filesystem::path reportNISTNxml_ext(reportNISTNxml + "." + Common::GZEXT);
 
 
 	    if ( (!exists(reportNIST1xml_path) and !exists(reportNIST1xml_ext)) or \
@@ -293,7 +336,8 @@ void NIST::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 	    (!exists(reportNISTi2xml_path) and !exists(reportNISTi2xml_ext)) or \
 	    (!exists(reportNISTi3xml_path) and !exists(reportNISTi3xml_ext)) or \
 	    (!exists(reportNISTi4xml_path) and !exists(reportNISTi4xml_ext)) or \
-	    (!exists(reportNISTi5xml_path) and !exists(reportNISTi5xml_ext)) or Config::remake) {
+	    (!exists(reportNISTi5xml_path) and !exists(reportNISTi5xml_ext)) or \
+	    (!exists(reportNISTNxml_path) and !exists(reportNISTNxml_ext)) or Config::remake) {
 			//my ($SYS, $SEGS) = NIST::computeMultiNIST($src, $out, $Href, $remakeREPORTS, $config->{CASE}, $tools, $verbose, $hOQ );
 	    	pair<vector<double>, vector<vector<double> > > res = computeNIST(TGT);
 
@@ -376,6 +420,14 @@ void NIST::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
          		cout << "IQXML DOCUMENT " << prefN << " CREATED" << endl;
          	}
 	    	hOQ.save_hash_scores(prefN, TGT, REF, res.first[9], doc_seg.first, doc_seg.second);
+
+	    	MetricScore m = computeNISTN(TGT);
+
+	    	if (Config::O_STORAGE == 1) {
+	    		IQXML::write_report(TGT, REF, NIST::NISTEXT, m);
+         		cout << "IQXML DOCUMENT " << NIST::NISTEXT << " CREATED" << endl;
+         	}
+         	hOQ.save_hash_scores(NIST::NISTEXT, TGT, REF, m);
 	    }
 
 	}

@@ -343,7 +343,7 @@ void NISTXML::SGML_GTM_f_create_mteval_doc(string input, string output) {
     if (Config::verbose > 1) fprintf(stderr, "OPENING <%s> for GTM xml-parsing...\n", input.c_str());
 
     xmlDocPtr doc = xmlNewDoc(BAD_CAST "1.0");
-    xmlNodePtr root_node;
+    xmlNodePtr root_node = NULL;
     xmlDocSetRootElement(doc, root_node);
 
     srand(time(NULL));
@@ -424,11 +424,12 @@ void f_create_create_doc(string input, string output, string TGT, string cas, in
 
                 if (idx[nSEGMENTS][0] != docid) {   //NEW DOCUMENT
                     if (nSEGMENTS > 1) {
-                        xmlNodePtr doc_node = xmlNewChild(root_node, NULL, BAD_CAST "doc", NULL);
                         xmlNewProp(doc_node, BAD_CAST "docid", BAD_CAST docid.c_str());
                         xmlNewProp(doc_node, BAD_CAST "genre", BAD_CAST idx[nSEGMENTS-1][1].c_str());
                         xmlNewProp(doc_node, BAD_CAST  id_label.c_str(), BAD_CAST id.c_str());
                         if (type == 2) xmlNewProp(doc_node, BAD_CAST "sysid", BAD_CAST id.c_str());
+
+                        doc_node = xmlNewChild(root_node, NULL, BAD_CAST "doc", NULL);
                     }
                     docid = idx[nSEGMENTS][0];
                 }

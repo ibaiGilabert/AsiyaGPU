@@ -155,7 +155,6 @@ SHORTCUTS
 TODO LIST
 
 	-	LOCAL
-				->	Ara que el parser de lectura funciona (read_xml_free.cpp) integrar-ho a NISTXML.cpp i provar-ho.
 				->	Completar l'ESA (test de expressions regulars a regular_exp.pl)	(verificar els tipus de computeMultiESA)
 				->	Completar el NGRAM.
 				->	Completar el CE.

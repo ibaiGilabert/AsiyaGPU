@@ -19,14 +19,14 @@ const string BLEU::TBLEU = "mteval-kit";
 
 map<string, int> BLEU::create_rBLEU() {
 	map<string, int> rBLEU;
-	string aux;
-	aux = BLEU::BLEUEXT + "-1";		rBLEU[aux] = 1;
-	aux = BLEU::BLEUEXT + "-2";		rBLEU[aux] = 1;
-	aux = BLEU::BLEUEXT + "-3";		rBLEU[aux] = 1;
-	aux = BLEU::BLEUEXT + "-4";		rBLEU[aux] = 1;
-	aux = BLEU::BLEUEXTi + "-2";		rBLEU[aux] = 1;
-	aux = BLEU::BLEUEXTi + "-3";		rBLEU[aux] = 1;
-	aux = BLEU::BLEUEXTi + "-4";		rBLEU[aux] = 1;
+	rBLEU[BLEU::BLEUEXT] = 1;
+	rBLEU[BLEU::BLEUEXT + "-1"] = 1;
+	rBLEU[BLEU::BLEUEXT + "-2"] = 1;
+	rBLEU[BLEU::BLEUEXT + "-3"] = 1;
+	rBLEU[BLEU::BLEUEXT + "-4"] = 1;
+	rBLEU[BLEU::BLEUEXTi + "-2"] = 1;
+	rBLEU[BLEU::BLEUEXTi + "-3"] = 1;
+	rBLEU[BLEU::BLEUEXTi + "-4"] = 1;
 	return rBLEU;
 }
 const map<string, int> BLEU::rBLEU = create_rBLEU();
@@ -45,14 +45,14 @@ vector<double> BLEU::read_bleu(string reportBLEU) {
 	    while (getline(file, str)) {
 	    	boost::match_results<string::const_iterator> results;
 	        if (boost::regex_match(str, results, re)) {
-	            cout << "\t That was a kind of line" << endl;
+	            //cout << "\t That was a kind of line" << endl;
 	            string s = results[0];
-	            cout << "line: |" << s << "|" << endl;
+	            //cout << "line: |" << s << "|" << endl;
 
 				boost::regex re2("^\\s+BLEU:\\s+");	//, boost::regex::perl|boost::regex::icase);
 				s = boost::regex_replace(s, re2, "");
 
-				cout << "\tline1: " << s << endl;
+				//cout << "\tline1: " << s << endl;
 
 	            istringstream iss(s);
 				double value;
@@ -101,9 +101,9 @@ vector<vector<double> > BLEU::read_bleu_segments(string reportBLEU) {
 	    	boost::match_results<string::const_iterator> results;
 
 	        if (boost::regex_match(str, results, re1)) {
-	            cout << "\t That was a kind of line" << endl;
+	            //cout << "\t That was a kind of line" << endl;
 	            string s = results[0];
-	            cout << "line: |" << s << "|" << endl;
+	            //cout << "line: |" << s << "|" << endl;
 
 				vector<string> strs;
 				boost::split(strs, s, boost::is_any_of("\t "));
@@ -114,9 +114,9 @@ vector<vector<double> > BLEU::read_bleu_segments(string reportBLEU) {
 	   			//for (int i = 0; i < strs.size(); ++i) cout << "strs[" << i << "]: " << strs[i] << endl;
 			}
 			else if (boost::regex_match(str, results, re2)) {
-	            cout << "\t That was a kind of line" << endl;
+	            //cout << "\t That was a kind of line" << endl;
 	            string s = results[0];
-	            cout << "line: |" << s << "|" << endl;
+	            //cout << "line: |" << s << "|" << endl;
 
 				vector<string> strs;
 				boost::split(strs, s, boost::is_any_of("\t "));
@@ -127,9 +127,9 @@ vector<vector<double> > BLEU::read_bleu_segments(string reportBLEU) {
 	   			//for (int i = 0; i < strs.size(); ++i) cout << "strs[" << i << "]: " << strs[i] << endl;
 			}
 			else if (boost::regex_match(str, results, re3)) {
-	            cout << "\t That was a kind of line" << endl;
+	            //cout << "\t That was a kind of line" << endl;
 	            string s = results[0];
-	            cout << "line: |" << s << "|" << endl;
+	            //cout << "line: |" << s << "|" << endl;
 
 				vector<string> strs;
 	            boost::split(strs, s, boost::is_any_of("\t "));
@@ -146,13 +146,13 @@ vector<vector<double> > BLEU::read_bleu_segments(string reportBLEU) {
 
 	} else { fprintf(stderr, "couldn't open file: reportBLEU.txt\n"); exit(1); }
 
-		cout << "--------------------SEG-----------------" << endl;
+		/*cout << "--------------------SEG-----------------" << endl;
 		for (int i = 0; i < SEG.size(); ++i) {
 			for (int j = 0; j < SEG[i].size(); ++j) {
 				cout << "SEG[" << i << "," << j << "]: " << SEG[i][j] << "\t";
 			}
 			cout << endl;
-		}
+		}*/
 
 	return SEG;
 }
@@ -160,19 +160,16 @@ vector<vector<double> > BLEU::read_bleu_segments(string reportBLEU) {
 
 pair<vector<double>, vector<vector<double> > > BLEU::computeBLEU(string TGT) {
 	stringstream tBLEU;
-
-	cout << "Config::tools ->" << Config::tools << endl << endl;
-
 	tBLEU << "perl " << Config::tools << "/" << BLEU::TBLEU << "/" << "mteval-v13a.pl -b -d 2 ";
 
 	if (Config::CASE == Common::CASE_CS) tBLEU << "-c "; //toolBLEU += "-c ";
 	string toolBLEU = tBLEU.str();
-
 	cout << "toolBLEU ->" << toolBLEU << endl << endl;
 
 	srand(time(NULL));
 	double nr = rand() % (Common::NRAND + 1);	//random number [0, Common::NRAND];
 	stringstream ssRef, ssSrc, ssOut, ssReport;
+
 	ssRef << Common::DATA_PATH << "/" << Common::TMP << "/" << nr << "." << Common::REFEXT << "." << BLEU::BLEUEXT << "." << Common::SGMLEXT;
 	ssSrc << Common::DATA_PATH << "/" << Common::TMP << "/" << nr << "." << Common::SRCEXT << "." << BLEU::BLEUEXT << "." << Common::SGMLEXT;
 	ssOut << Common::DATA_PATH << "/" << Common::TMP << "/" << nr << "." << Common::SYSEXT << "." << BLEU::BLEUEXT << "." << Common::SGMLEXT;
@@ -189,10 +186,10 @@ pair<vector<double>, vector<vector<double> > > BLEU::computeBLEU(string TGT) {
 
 	if (Config::verbose > 1) fprintf(stderr, "building %s\n", reportBLEUsgml.string().c_str());
 
-    stringstream sc;// = tBLEU;
+    stringstream sc;
     sc << toolBLEU << " -s " << ssSrc.str() << " -t " << ssOut.str() << " -r " << ssRef.str() << " > " << ssReport.str();
-
     string ms = "[ERROR] problems running BLEU...";
+
 	Common::execute_or_die(sc.str(), ms);
 
 	if (exists(srcBLEUsgml)) {
@@ -214,6 +211,53 @@ pair<vector<double>, vector<vector<double> > > BLEU::computeBLEU(string TGT) {
 	return make_pair(SYS, SEG);
 }
 
+MetricScore BLEU::computeBLEUN(string TGT) {
+	// description _ computes smoothed BLEU-4 score (by calling NIST mteval script) (multiple references)
+	stringstream tBLEUN;
+	tBLEUN << "perl " << Config::tools << "/" << BLEU::TBLEU << "/mteval-v13a.pl -b --metricsMATR -d 2 ";
+
+	if (Config::CASE == Common::CASE_CS) tBLEUN << "-c ";
+	string toolBLEUN = tBLEUN.str();
+
+	cout << "toolBLEUN ->" << toolBLEUN << endl << endl;
+
+	double nr = rand() % (Common::NRAND + 1);	//random number [0, Common::NRAND];
+	stringstream ssSrc, ssOut, ssRef;
+	ssSrc << Common::DATA_PATH << "/" << Common::TMP << "/" << nr << "." << Common::SRCEXT << ".NIST." << Common::XMLEXT;
+	ssOut << Common::DATA_PATH << "/" << Common::TMP << "/" << nr << "." << Common::SYSEXT << ".NIST." << Common::XMLEXT;
+	ssRef << Common::DATA_PATH << "/" << Common::TMP << "/" << nr << "." << Common::REFEXT << ".NIST." << Common::XMLEXT;
+
+
+    boost::filesystem::path srcXML(ssSrc.str());
+    boost::filesystem::path outXML(ssOut.str());
+    boost::filesystem::path refXML(ssRef.str());
+
+    if (!exists(srcXML) or Config::remake) NISTXML::f_create_mteval_doc(TESTBED::src, srcXML.string(), TGT, Common::CASE_CS, 0);
+    if (!exists(outXML) or Config::remake) NISTXML::f_create_mteval_doc(TESTBED::Hsystems[TGT], outXML.string(), TGT, Common::CASE_CS,  1);
+    if (!exists(refXML) or Config::remake) NISTXML::f_create_mteval_multidoc(refXML.string(), Common::CASE_CS, 2);
+
+    stringstream sc;
+    sc << "cd " << Common::DATA_PATH << "; " << toolBLEUN << " -s " << ssSrc.str() << " -t " << ssOut.str() << " -r " << ssRef.str() << " >/dev/null 2>/dev/null";
+
+    string ms = "[ERROR] problems running BLEU_NIST...";
+	Common::execute_or_die(sc.str(), ms);
+
+	if (exists(refXML)) {
+		string sysaux = "rm -f "; sysaux += ssRef.str();
+		system (sysaux.c_str());
+	}
+	if (exists(outXML)) {
+		string sysaux = "rm -f "; sysaux += ssOut.str();
+		system (sysaux.c_str());
+	}
+	if (exists(srcXML)) {
+		string sysaux = "rm -f "; sysaux += ssSrc.str();
+		system (sysaux.c_str());
+	}
+	MetricScore BLEU_scores = Scores::read_scores(Common::DATA_PATH + "/BLEU", TGT, 0);
+
+	return BLEU_scores;
+}
 
 void BLEU::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
    // description _ computes BLEU score (by calling NIST mteval script) -> n = 1..4 (multiple references)
@@ -228,18 +272,16 @@ void BLEU::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 		mBLEU[i] = it->first;
 	}
 
-	i = 0;
-	while (i < mBLEU.size() and !GO) {
-		string aux = prefix; aux += mBLEU[i];
+	for (i = 0; i < mBLEU.size() and !GO; ++i) {
+		string aux = prefix + mBLEU[i];
 		if (Config::Hmetrics.find(aux) != Config::Hmetrics.end()) { GO = 1; }
-		++i;
 	}
 
 	cout << "BLEU ei!" << endl;
 	if (GO) {
 		cout << "GO! BLEU GO!" << endl;
 		if (Config::verbose == 1) fprintf(stderr, "%s\n", BLEU::BLEUEXT.c_str());
-		stringstream ss1, ss2, ss3, ss4, ss2i, ss3i, ss4i;
+		stringstream ss1, ss2, ss3, ss4, ss2i, ss3i, ss4i, ssB;
 		ss1 << Common::DATA_PATH << "/" << Common::REPORTS << "/" << TGT << "/" << REF << prefix << BLEU::BLEUEXT << "-1." << Common::XMLEXT;
 		ss2 << Common::DATA_PATH << "/" << Common::REPORTS << "/" << TGT << "/" << REF << prefix << BLEU::BLEUEXT << "-2." << Common::XMLEXT;
 		ss3 << Common::DATA_PATH << "/" << Common::REPORTS << "/" << TGT << "/" << REF << prefix << BLEU::BLEUEXT << "-3." << Common::XMLEXT;
@@ -247,6 +289,7 @@ void BLEU::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 		ss2i << Common::DATA_PATH << "/" << Common::REPORTS << "/" << TGT << "/" << REF << prefix << BLEU::BLEUEXTi << "-2." << Common::XMLEXT;
 		ss3i << Common::DATA_PATH << "/" << Common::REPORTS << "/" << TGT << "/" << REF << prefix << BLEU::BLEUEXTi << "-3." << Common::XMLEXT;
 		ss4i << Common::DATA_PATH << "/" << Common::REPORTS << "/" << TGT << "/" << REF << prefix << BLEU::BLEUEXTi << "-4." << Common::XMLEXT;
+		ssB << Common::DATA_PATH << "/" << Common::REPORTS << "/" << TGT << "/" << REF << prefix << BLEU::BLEUEXT << "." << Common::XMLEXT;
 
 		string reportBLEU1xml = ss1.str();
 		string reportBLEU2xml = ss2.str();
@@ -255,6 +298,7 @@ void BLEU::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 		string reportBLEUi2xml = ss2i.str();
 		string reportBLEUi3xml = ss3i.str();
 		string reportBLEUi4xml = ss4i.str();
+		string reportBLEUNxml = ssB.str();
 
 	    boost::filesystem::path reportBLEU1xml_path(reportBLEU1xml);
 		boost::filesystem::path reportBLEU2xml_path(reportBLEU2xml);
@@ -263,6 +307,7 @@ void BLEU::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 	    boost::filesystem::path reportBLEUi2xml_path(reportBLEUi2xml);
 	    boost::filesystem::path reportBLEUi3xml_path(reportBLEUi3xml);
 	    boost::filesystem::path reportBLEUi4xml_path(reportBLEUi4xml);
+	    boost::filesystem::path reportBLEUNxml_path(reportBLEUNxml);
 		boost::filesystem::path reportBLEU1xml_ext(reportBLEU1xml + "." + Common::GZEXT);
 	    boost::filesystem::path reportBLEU2xml_ext(reportBLEU2xml + "." + Common::GZEXT);
 	    boost::filesystem::path reportBLEU3xml_ext(reportBLEU3xml + "." + Common::GZEXT);
@@ -270,7 +315,7 @@ void BLEU::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 	    boost::filesystem::path reportBLEUi2xml_ext(reportBLEUi2xml + "." + Common::GZEXT);
 	    boost::filesystem::path reportBLEUi3xml_ext(reportBLEUi3xml + "." + Common::GZEXT);
 	    boost::filesystem::path reportBLEUi4xml_ext(reportBLEUi4xml + "." + Common::GZEXT);
-
+	    boost::filesystem::path reportBLEUNxml_ext(reportBLEUNxml + "." + Common::GZEXT);
 
 	    if ( (!exists(reportBLEU1xml_path) and !exists(reportBLEU1xml_ext)) or \
 	    (!exists(reportBLEU2xml_path) and !exists(reportBLEU2xml_ext)) or \
@@ -278,7 +323,8 @@ void BLEU::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 	    (!exists(reportBLEU4xml_path) and !exists(reportBLEU4xml_ext)) or \
 	    (!exists(reportBLEUi2xml_path) and !exists(reportBLEUi2xml_ext)) or \
 	    (!exists(reportBLEUi3xml_path) and !exists(reportBLEUi3xml_ext)) or \
-	    (!exists(reportBLEUi4xml_path) and !exists(reportBLEUi4xml_ext)) or Config::remake) {
+	    (!exists(reportBLEUi4xml_path) and !exists(reportBLEUi4xml_ext)) or \
+	    (!exists(reportBLEUNxml_path) and !exists(reportBLEUNxml_ext)) or Config::remake) {
 	     	//my ($SYS, $SEGS) = BLEU::computeMultiBLEU($src, $out, $Href, $remakeREPORTS, $config->{CASE}, $tools, $verbose);
 	    	pair<vector<double>, vector<vector<double> > > res = computeBLEU(TGT);
 
@@ -303,15 +349,17 @@ void BLEU::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 
          	string prefB = prefix;	prefB += BLEU::BLEUEXT;	prefB += "-1";
 			pair<vector<double>, vector<double> > doc_seg =  TESTBED::get_seg_doc_scores(res.second[0], 0, TGT);
-            /*cout << "res.second[0]: [";
-            for(int i = 0; i < res.second[0].size(); ++i) cout << res.second[0][i] << ",";
-            cout << endl << "; TGT: " << TGT << endl;
-            cout << "---doc_seg.first: [";
-            for(int i = 0; i < doc_seg.first.size(); ++i) cout << doc_seg.first[i] << ",";
-            cout << "]" << endl;
-            cout << "---doc_seg.second: [";
-            for(int i = 0; i < doc_seg.second.size(); ++i) cout << doc_seg.second[i] << ",";
-            cout << "]" << endl;*/
+
+	            cout << "res.second[0]: [";
+	            for(int i = 0; i < res.second[0].size(); ++i) cout << res.second[0][i] << ",";
+	            cout << endl << "; TGT: " << TGT << endl;
+	            cout << "---doc_seg.first: [";
+	            for(int i = 0; i < doc_seg.first.size(); ++i) cout << doc_seg.first[i] << ",";
+	            cout << "]" << endl;
+	            cout << "---doc_seg.second: [";
+	            for(int i = 0; i < doc_seg.second.size(); ++i) cout << doc_seg.second[i] << ",";
+	            cout << "]" << endl;
+
 	    	if (Config::O_STORAGE == 1) {
 	    		IQXML::write_report(TGT, REF, prefB, res.first[0], doc_seg.first, doc_seg.second);
          		cout << "IQXML DOCUMENT " << prefB << " CREATED" << endl;
@@ -365,6 +413,16 @@ void BLEU::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
          		cout << "IQXML DOCUMENT " << prefB << " CREATED" << endl;
          	}
 	    	hOQ.save_hash_scores(prefB, TGT, REF, res.first[7], doc_seg.first, doc_seg.second);
+
+
+	    	MetricScore m = computeBLEUN(TGT);
+
+	    	if (Config::O_STORAGE == 1) {
+	    		IQXML::write_report(TGT, REF, BLEU::BLEUEXT, m);
+         		cout << "IQXML DOCUMENT " << BLEU::BLEUEXT << " CREATED" << endl;
+         	}
+         	hOQ.save_hash_scores(BLEU::BLEUEXT, TGT, REF, m);
+
                 /*cout << "-----------------------------------------BLEU-SCORES---------------------------------" << endl;
                 hOQ.print_scores();
                 cout << "-------------------------------------------------------------------------------------" << endl;

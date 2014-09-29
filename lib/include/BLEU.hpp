@@ -13,11 +13,9 @@ private:
 	vector<vector<double> > read_bleu_segments(string reportBLEU);
 
 	pair<vector<double>, vector<vector<double> > > computeBLEU(string TGT);
+	MetricScore computeBLEUN(string TGT);
 
 public:
-	//BLEU() { cout << "######################## CONSTRUCTOR BLEU #########################" << endl; }
-	//~BLEU() { cout << "######################## DESTRUCTOR BLEU #########################" << endl; }
-
 	void doMetric(string TGT, string REF, string prefix, Scores &hOQ);
 
 	static const string BLEUEXT,	BLEUEXTi,	TBLEU;

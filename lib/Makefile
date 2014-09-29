@@ -6,8 +6,8 @@ LDFLAGS	= -lboost_system -lboost_filesystem -lboost_regex -lxml2 -lgomp
 
 all: Asiya
 
-Asiya: Asiya.o Config.o Common.o Core.o Scores.o BLEU.o NIST.o BLEUNIST.o GTM.o METEOR.o ROUGE.o TER.o TESTBED.o NISTXML.o RAW.o IQXML.o
-	g++ -o ../sample/Asiya Asiya.o Config.o Common.o Core.o Scores.o BLEU.o NIST.o BLEUNIST.o GTM.o METEOR.o ROUGE.o TER.o TESTBED.o NISTXML.o RAW.o IQXML.o $(LDFLAGS) $(CFLAGS)
+Asiya: Asiya.o Config.o Common.o Core.o Scores.o BLEU.o NIST.o GTM.o METEOR.o ROUGE.o TER.o TESTBED.o NISTXML.o RAW.o IQXML.o
+	g++ -o ../sample/Asiya Asiya.o Config.o Common.o Core.o Scores.o BLEU.o NIST.o GTM.o METEOR.o ROUGE.o TER.o TESTBED.o NISTXML.o RAW.o IQXML.o $(LDFLAGS) $(CFLAGS)
 
 Asiya.o: Asiya.cpp
 	g++ -c Asiya.cpp $(CFLAGS)
@@ -29,9 +29,6 @@ BLEU.o: include/BLEU.hpp Scoring/BLEU.cpp
 
 NIST.o: include/NIST.hpp Scoring/NIST.cpp
 	g++ -c Scoring/NIST.cpp $(CFLAGS)
-
-BLEUNIST.o: include/BLEUNIST.hpp Scoring/BLEUNIST.cpp
-	g++ -c Scoring/BLEUNIST.cpp $(CFLAGS)
 
 GTM.o: include/GTM.hpp Scoring/GTM.cpp
 	g++ -c Scoring/GTM.cpp $(CFLAGS)

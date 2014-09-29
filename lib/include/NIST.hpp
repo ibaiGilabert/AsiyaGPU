@@ -13,11 +13,9 @@ private:
 	vector<vector<double> > read_nist_segments(string reportNIST);
 
 	pair<vector<double>, vector<vector<double> > > computeNIST(string TGT);
+	MetricScore computeNISTN(string TGT);
 
 public:
-	//NIST() {}
-	//~NIST() {}
-
 	void doMetric(string TGT, string REF, string prefix, Scores &hOQ);
 
 	static const string NISTEXT,	NISTEXTi,	TNIST;

@@ -4,7 +4,7 @@
 #include "../include/Scores.hpp"
 #include "../include/BLEU.hpp"
 #include "../include/NIST.hpp"
-#include "../include/BLEUNIST.hpp"
+//#include "../include/BLEUNIST.hpp"
 #include "../include/METEOR.hpp"
 #include "../include/ROUGE.hpp"
 #include "../include/GTM.hpp"
@@ -101,7 +101,7 @@ void Core::doMultiMetrics(string HYP, const set<string> &Lref, Scores &hOQ) {
 
 	SingleMetric *pBLEU = new BLEU;
 	SingleMetric *pNIST = new NIST;
-	SingleMetric *pBLEUNIST = new BLEUNIST;
+	//SingleMetric *pBLEUNIST = new BLEUNIST;
 	SingleMetric *pMETEOR = new METEOR;
 	SingleMetric *pROUGE = new ROUGE;
 	SingleMetric *pGTM = new GTM;
@@ -109,13 +109,13 @@ void Core::doMultiMetrics(string HYP, const set<string> &Lref, Scores &hOQ) {
 
 	pBLEU->doMetric(HYP, REF, "", hOQ);
 	pNIST->doMetric(HYP, REF, "", hOQ);
-	pBLEUNIST->doMetric(HYP, REF, "", hOQ);
+	//pBLEUNIST->doMetric(HYP, REF, "", hOQ);
 	pMETEOR->doMetric(HYP, REF, "", hOQ);
 	pROUGE->doMetric(HYP, REF, "", 1, hOQ);
 	pGTM->doMetric(HYP, REF, "", hOQ);
 	pTER->doMetric(HYP, REF, "", hOQ);
 
-	delete pBLEU, pNIST, pBLEUNIST, pMETEOR, pROUGE, pGTM, pTER;
+	delete pBLEU, pNIST, pMETEOR, pROUGE, pGTM, pTER;
 /*
 	BLEU bleu;
 	NIST nist;
