@@ -1,6 +1,6 @@
 #!/bin/bash
 
-DATAPATH=/home/usuaris/gilabert/AsiyaGPU
+DATAPATH=/home/usuaris/gilabert/AsiyaGPU/sample
 
 die () {
     echo >&2 "$@"

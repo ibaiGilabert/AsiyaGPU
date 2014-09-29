@@ -173,9 +173,6 @@ TODO LIST
 				->	Canviar el data_path del fitxer d'entrada Asiya.config al directori actual (pwd).
 
 
-		//Versions canviades a tenir en compte
-			Core.cpp.old	->	get_seg_doc_scores està inflat a xivatos.
-
 DONE LIST
 
 	->	BLEU, NIST, BLEUNIST, ROUGE;	resultats escirts correctament.

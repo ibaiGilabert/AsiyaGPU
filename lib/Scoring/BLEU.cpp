@@ -303,6 +303,15 @@ void BLEU::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 
          	string prefB = prefix;	prefB += BLEU::BLEUEXT;	prefB += "-1";
 			pair<vector<double>, vector<double> > doc_seg =  TESTBED::get_seg_doc_scores(res.second[0], 0, TGT);
+            /*cout << "res.second[0]: [";
+            for(int i = 0; i < res.second[0].size(); ++i) cout << res.second[0][i] << ",";
+            cout << endl << "; TGT: " << TGT << endl;
+            cout << "---doc_seg.first: [";
+            for(int i = 0; i < doc_seg.first.size(); ++i) cout << doc_seg.first[i] << ",";
+            cout << "]" << endl;
+            cout << "---doc_seg.second: [";
+            for(int i = 0; i < doc_seg.second.size(); ++i) cout << doc_seg.second[i] << ",";
+            cout << "]" << endl;*/
 	    	if (Config::O_STORAGE == 1) {
 	    		IQXML::write_report(TGT, REF, prefB, res.first[0], doc_seg.first, doc_seg.second);
          		cout << "IQXML DOCUMENT " << prefB << " CREATED" << endl;

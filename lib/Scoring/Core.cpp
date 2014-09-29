@@ -96,8 +96,8 @@ void Core::doMultiMetrics(string HYP, const set<string> &Lref, Scores &hOQ) {
 		++it;
 	}
 
-	if (Config::verbose > 1) fprintf(stderr, "computing similarities [$HYP]...\n");
-	else if (Config::verbose == 1) fprintf(stderr, "$HYP - $REF [");
+	if (Config::verbose > 1) fprintf(stderr, "computing similarities [%s]...\n", HYP.c_str());
+	else if (Config::verbose == 1) fprintf(stderr, "%s - %s [", HYP.c_str(), REF.c_str());
 
 	SingleMetric *pBLEU = new BLEU;
 	SingleMetric *pNIST = new NIST;

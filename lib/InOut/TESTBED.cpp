@@ -18,6 +18,12 @@ pair<vector<double>, vector<double> > TESTBED::get_seg_doc_scores(const vector<d
 	double sum = -1;
 	int n_doc = 0;
 	int n = 0;
+    /*cout << "IDX[" << TGT << "]: " << endl;
+    for (int i = 0; i < idx.size(); ++i) {
+            cout << "\ti: " << i << ": [";
+            for(int j = 0; j < idx[i].size(); ++j) cout << idx[i][j] << ", ";
+            cout << "]" << endl;
+    }*/
 	for (int i = 1; i < idx.size(); ++i) {
 		if (DO_doc) {	//doc-level scores
 			if (idx[i][0] != docid)	{	//NEW DOCUMENT

@@ -78,7 +78,6 @@ void save_xml(string report_xml, string TGT, string REF, string METRIC, const Me
             if (DOC != "-1") {
                 //x = Common::trunk_and_trim_number(doc_scores[n_docs - 1], IQXML::FLOAT_LENGTH, IQXML::FLOAT_PRECISION);
                 x = m.doc_scores[n_docs-1];
-                xmlNodePtr doc_node = xmlNewChild(root_node, NULL, BAD_CAST "DOC", NULL);
                 xmlNewProp(doc_node, BAD_CAST "id",         BAD_CAST document_id.c_str());
 
                 sprintf(buffer, "%d", n_docs);
@@ -89,6 +88,8 @@ void save_xml(string report_xml, string TGT, string REF, string METRIC, const Me
 
                 sprintf(buffer, "%f", x);
                 xmlNewProp(doc_node, BAD_CAST "score",      (const xmlChar *) buffer);
+
+                doc_node = xmlNewChild(root_node, NULL, BAD_CAST "DOC", NULL);
             }
             DOC = document_id = idx[i][0];
             n_docs++;
@@ -181,7 +182,6 @@ void IQXML::write_report(string TGT, string REF, string METRIC, const MetricScor
         system(s_aux.c_str());
     }
 
-    //save_xml(report_xml, TGT, REF, METRIC, sys_score, doc_scores, seg_scores);
     save_xml(report_xml, TGT, REF, METRIC, m);
 
     TESTBED::replace_special_characters(report_xml);
