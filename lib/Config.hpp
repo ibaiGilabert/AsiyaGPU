@@ -2,8 +2,8 @@
 #define CONFIG_HPP
 
 #include "Common.hpp"
-#include "include/NISTXML.hpp"
-#include "include/RAW.hpp"
+#include "include/TB_NIST.hpp"
+#include "include/TB_RAW.hpp"
 
 #include <string>
 #include <vector>

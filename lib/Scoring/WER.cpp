@@ -170,8 +170,9 @@ void WER::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 	   		if ( (!exists(reportWERxml_path) and !exists(reportWERxml_gz)) or Config::remake) {
 	    		pair<double, vector<double> > res = computeWER(TGT, 0);
 				pair<vector<double>, vector<double> > doc_seg =  Core::get_seg_doc_scores(res.second, 0, TGT);
+				SC_ASIYA sc_asiya;
 				if (Config::O_STORAGE == 1) {
-		    		IQXML::write_report(TGT, REF, "WER", res.first, doc_seg.first, doc_seg.second);
+		    		sc_asiya.write_report(TGT, REF, "WER", res.first, doc_seg.first, doc_seg.second);
 	         		cout << "IQXML DOCUMENT WER CREATED" << endl;
 	         	}
 	         	hOQ.save_hash_scores("WER", TGT, REF, res.first, doc_seg.first, doc_seg.second);

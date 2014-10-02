@@ -1,5 +1,5 @@
 #include "../include/Scores.hpp"
-#include "../include/NISTXML.hpp"
+#include "../include/SC_FORMAT.hpp"
 #include "../Common.hpp"
 
 #include <iostream>
@@ -12,7 +12,8 @@ vector<double> Scores::read_scores_G(string basename, string G, string TGT, int 
 	string file = basename + "-" + G + ".scr";
 
 	//read scr file
-	map<string, double> hscores = NISTXML::read_scr_file(file, G, do_neg); //0);
+	SC_FORMAT sc_format;
+	map<string, double> hscores = sc_format.read_scores_file(file, G, do_neg); //0);
 
 	//delete scr file
 	string sys_aux = "rm -f " + file;

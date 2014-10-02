@@ -6,8 +6,8 @@ LDFLAGS	= -lboost_system -lboost_filesystem -lboost_regex -lxml2 -lgomp
 
 all: Asiya
 
-Asiya: Asiya.o Config.o Common.o Core.o Scores.o BLEU.o NIST.o GTM.o METEOR.o ROUGE.o TER.o TESTBED.o NISTXML.o RAW.o IQXML.o
-	g++ -o ../sample/Asiya Asiya.o Config.o Common.o Core.o Scores.o BLEU.o NIST.o GTM.o METEOR.o ROUGE.o TER.o TESTBED.o NISTXML.o RAW.o IQXML.o $(LDFLAGS) $(CFLAGS)
+Asiya: Asiya.o Config.o Common.o Core.o Scores.o BLEU.o NIST.o GTM.o METEOR.o ROUGE.o TER.o TESTBED.o TB_FORMAT.o TB_NIST.o TB_RAW.o SC_ASIYA.o SC_NIST.o
+	g++ -o ../sample/Asiya Asiya.o Config.o Common.o Core.o Scores.o BLEU.o NIST.o GTM.o METEOR.o ROUGE.o TER.o TESTBED.o TB_FORMAT.o TB_NIST.o TB_RAW.o SC_ASIYA.o SC_NIST.o $(LDFLAGS) $(CFLAGS)
 
 Asiya.o: Asiya.cpp
 	g++ -c Asiya.cpp $(CFLAGS)
@@ -45,14 +45,20 @@ TER.o: include/TER.hpp Scoring/TER.cpp
 TESTBED.o: include/TESTBED.hpp InOut/TESTBED.cpp
 	g++ -c InOut/TESTBED.cpp $(CFLAGS)
 
-NISTXML.o: include/NISTXML.hpp InOut/NISTXML.cpp
-	g++ -c InOut/NISTXML.cpp $(CFLAGS)
+TB_FORMAT.o: include/TB_FORMAT.hpp InOut/TB_FORMAT.cpp
+	g++ -c InOut/TB_FORMAT.cpp $(CFLAGS)
 
-RAW.o: include/RAW.hpp InOut/RAW.cpp
-	g++ -c InOut/RAW.cpp $(CFLAGS)
+TB_NIST.o: include/TB_NIST.hpp InOut/TB_NIST.cpp
+	g++ -c InOut/TB_NIST.cpp $(CFLAGS)
 
-IQXML.o: include/IQXML.hpp InOut/IQXML.cpp
-	g++ -c InOut/IQXML.cpp $(CFLAGS)
+TB_RAW.o: include/TB_RAW.hpp InOut/TB_RAW.cpp
+	g++ -c InOut/TB_RAW.cpp $(CFLAGS)
+
+SC_ASIYA.o: include/SC_ASIYA.hpp InOut/SC_ASIYA.cpp
+	g++ -c InOut/SC_ASIYA.cpp $(CFLAGS)
+
+SC_NIST.o: include/SC_NIST.hpp InOut/SC_NIST.cpp
+	g++ -c InOut/SC_NIST.cpp $(CFLAGS)
 
 clean:
 	rm *.o ../sample/Asiya

@@ -85,8 +85,8 @@ MetricScore METEOR::computeMETEOR(string TGT, string variant) {
     boost::filesystem::path outMTRsgml_path(outMTRsgml);
     boost::filesystem::path refMTRsgml_path(refMTRsgml);
 
-	if (!exists(outMTRsgml_path) or Config::remake) NISTXML::f_create_mteval_doc(TESTBED::src, outMTRsgml, TGT, Config::CASE, 1);
-    if (!exists(refMTRsgml_path) or Config::remake) NISTXML::f_create_mteval_multidoc(refMTRsgml, Config::CASE, 2);
+	if (!exists(outMTRsgml_path) or Config::remake) TB_NIST::f_create_mteval_doc(TESTBED::src, outMTRsgml, TGT, Config::CASE, 1);
+    if (!exists(refMTRsgml_path) or Config::remake) TB_NIST::f_create_mteval_multidoc(refMTRsgml, Config::CASE, 2);
 
     string modules;
     if (variant == "exact") modules = "exact";
@@ -169,10 +169,12 @@ void METEOR::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 		bool m_sy = Config::Hmetrics.find(mtr_sy) != Config::Hmetrics.end();
 		bool m_pa = Config::Hmetrics.find(mtr_pa) != Config::Hmetrics.end();
 
+		SC_ASIYA sc_asiya;
+
 	    if ( ((!exists(reportMTRexactXML_path) and !exists(reportMTRexactXML_ext)) or Config::remake) and m_ex) {	//exact
 			MetricScore res = computeMETEOR(TGT, "exact");
 	    	if (Config::O_STORAGE == 1) {
-	    		IQXML::write_report(TGT, REF, mtr_ex, res);
+	    		sc_asiya.write_report(TGT, REF, mtr_ex, res);
          		cout << "IQXML DOCUMENT " << mtr_ex << " CREATED" << endl;
          	}
          	hOQ.save_hash_scores(mtr_ex, TGT, REF, res);
@@ -181,7 +183,7 @@ void METEOR::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 			if (METEOR::rLANG_STM.find(Config::LANG) != METEOR::rLANG_STM.end()) {
 				MetricScore res = computeMETEOR(TGT, "stem");
 		    	if (Config::O_STORAGE == 1) {
-		    		IQXML::write_report(TGT, REF, mtr_st, res);
+		    		sc_asiya.write_report(TGT, REF, mtr_st, res);
 	         		cout << "IQXML DOCUMENT " << mtr_st << " CREATED" << endl;
 	         	}
 	         	hOQ.save_hash_scores(mtr_st, TGT, REF, res);
@@ -193,7 +195,7 @@ void METEOR::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 			if (METEOR::rLANG_SYN.find(Config::LANG) != METEOR::rLANG_SYN.end()) {
 				MetricScore res = computeMETEOR(TGT, "syn");
 		    	if (Config::O_STORAGE == 1) {
-		    		IQXML::write_report(TGT, REF, mtr_sy, res);
+		    		sc_asiya.write_report(TGT, REF, mtr_sy, res);
 	         		cout << "IQXML DOCUMENT " << mtr_sy << " CREATED" << endl;
 	         	}
 	         	hOQ.save_hash_scores(mtr_sy, TGT, REF, res);
@@ -204,7 +206,7 @@ void METEOR::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 			if (METEOR::rLANG_PARA.find(Config::LANG) != METEOR::rLANG_PARA.end()) {
 				MetricScore res = computeMETEOR(TGT, "para");
 		    	if (Config::O_STORAGE == 1) {
-		    		IQXML::write_report(TGT, REF, mtr_pa, res);
+		    		sc_asiya.write_report(TGT, REF, mtr_pa, res);
 	         		cout << "IQXML DOCUMENT " << mtr_pa << " CREATED" << endl;
 	         	}
 	         	hOQ.save_hash_scores(mtr_pa, TGT, REF, res);

@@ -348,8 +348,11 @@ void ROUGE::doMetric(string TGT, string REF, string prefix, int stemming, Scores
 
          	string prefR = prefix + ROUGE::ROUGEXT + "-1";
 			pair<vector<double>, vector<double> > doc_seg =  TESTBED::get_seg_doc_scores(res.second[0], 0, TGT);
+
+			SC_ASIYA sc_asiya;
+
 	    	if (Config::O_STORAGE == 1) {
-	    		IQXML::write_report(TGT, REF, prefR, res.first[0], doc_seg.first, doc_seg.second);
+	    		sc_asiya.write_report(TGT, REF, prefR, res.first[0], doc_seg.first, doc_seg.second);
          		cout << "IQXML DOCUMENT " << prefR << " CREATED" << endl;
          	}
          	hOQ.save_hash_scores(prefR, TGT, REF, res.first[0], doc_seg.first, doc_seg.second);
@@ -357,7 +360,7 @@ void ROUGE::doMetric(string TGT, string REF, string prefix, int stemming, Scores
 			prefR = prefix + ROUGE::ROUGEXT + "-2";
 			doc_seg = TESTBED::get_seg_doc_scores(res.second[1], 0, TGT);
          	if (Config::O_STORAGE == 1) {
-	    		IQXML::write_report(TGT, REF, prefR, res.first[1], doc_seg.first, doc_seg.second);
+	    		sc_asiya.write_report(TGT, REF, prefR, res.first[1], doc_seg.first, doc_seg.second);
          		cout << "IQXML DOCUMENT " << prefR << " CREATED" << endl;
          	}
 	    	hOQ.save_hash_scores(prefR, TGT, REF, res.first[1], doc_seg.first, doc_seg.second);
@@ -365,7 +368,7 @@ void ROUGE::doMetric(string TGT, string REF, string prefix, int stemming, Scores
 	    	prefR = prefix + ROUGE::ROUGEXT + "-3";
 			doc_seg = TESTBED::get_seg_doc_scores(res.second[2], 0, TGT);
          	if (Config::O_STORAGE == 1) {
-	    		IQXML::write_report(TGT, REF, prefR, res.first[2], doc_seg.first, doc_seg.second);
+	    		sc_asiya.write_report(TGT, REF, prefR, res.first[2], doc_seg.first, doc_seg.second);
          		cout << "IQXML DOCUMENT " << prefR << " CREATED" << endl;
          	}
          	hOQ.save_hash_scores(prefR, TGT, REF, res.first[2], doc_seg.first, doc_seg.second);
@@ -373,7 +376,7 @@ void ROUGE::doMetric(string TGT, string REF, string prefix, int stemming, Scores
 	    	prefR = prefix + ROUGE::ROUGEXT + "-4";
 			doc_seg = TESTBED::get_seg_doc_scores(res.second[3], 0, TGT);
          	if (Config::O_STORAGE == 1) {
-	    		IQXML::write_report(TGT, REF, prefR, res.first[3], doc_seg.first, doc_seg.second);
+	    		sc_asiya.write_report(TGT, REF, prefR, res.first[3], doc_seg.first, doc_seg.second);
          		cout << "IQXML DOCUMENT " << prefR << " CREATED" << endl;
          	}
 	    	hOQ.save_hash_scores(prefR, TGT, REF, res.first[3], doc_seg.first, doc_seg.second);
@@ -381,7 +384,7 @@ void ROUGE::doMetric(string TGT, string REF, string prefix, int stemming, Scores
 	    	prefR = prefix + ROUGE::ROUGEXT + "-L";
 			doc_seg = TESTBED::get_seg_doc_scores(res.second[4], 0, TGT);
          	if (Config::O_STORAGE == 1) {
-	    		IQXML::write_report(TGT, REF, prefR, res.first[4], doc_seg.first, doc_seg.second);
+	    		sc_asiya.write_report(TGT, REF, prefR, res.first[4], doc_seg.first, doc_seg.second);
          		cout << "IQXML DOCUMENT " << prefR << " CREATED" << endl;
          	}
 	    	hOQ.save_hash_scores(prefR, TGT, REF, res.first[4], doc_seg.first, doc_seg.second);
@@ -389,7 +392,7 @@ void ROUGE::doMetric(string TGT, string REF, string prefix, int stemming, Scores
 			prefR = prefix + ROUGE::ROUGEXT + "-S*";
 			doc_seg = TESTBED::get_seg_doc_scores(res.second[5], 0, TGT);
          	if (Config::O_STORAGE == 1) {
-	    		IQXML::write_report(TGT, REF, prefR, res.first[5], doc_seg.first, doc_seg.second);
+	    		sc_asiya.write_report(TGT, REF, prefR, res.first[5], doc_seg.first, doc_seg.second);
          		cout << "IQXML DOCUMENT " << prefR << " CREATED" << endl;
          	}
          	hOQ.save_hash_scores(prefR, TGT, REF, res.first[5], doc_seg.first, doc_seg.second);
@@ -397,7 +400,7 @@ void ROUGE::doMetric(string TGT, string REF, string prefix, int stemming, Scores
 	    	prefR = prefix + ROUGE::ROUGEXT + "-SU*";
 	    	doc_seg = TESTBED::get_seg_doc_scores(res.second[6], 0, TGT);
          	if (Config::O_STORAGE == 1) {
-	    		IQXML::write_report(TGT, REF, prefR, res.first[6], doc_seg.first, doc_seg.second);
+	    		sc_asiya.write_report(TGT, REF, prefR, res.first[6], doc_seg.first, doc_seg.second);
          		cout << "IQXML DOCUMENT " << prefR << " CREATED" << endl;
          	}
 	    	hOQ.save_hash_scores(prefR, TGT, REF, res.first[6], doc_seg.first, doc_seg.second);
@@ -405,7 +408,7 @@ void ROUGE::doMetric(string TGT, string REF, string prefix, int stemming, Scores
 	    	prefR = prefix + ROUGE::ROUGEXT + "-W";
 	    	doc_seg = TESTBED::get_seg_doc_scores(res.second[7], 0, TGT);
 	    	if (Config::O_STORAGE == 1) {
-	    		IQXML::write_report(TGT, REF, prefR, res.first[7], doc_seg.first, doc_seg.second);
+	    		sc_asiya.write_report(TGT, REF, prefR, res.first[7], doc_seg.first, doc_seg.second);
          		cout << "IQXML DOCUMENT " << prefR << " CREATED" << endl;
          	}
 	    	hOQ.save_hash_scores(prefR, TGT, REF, res.first[7], doc_seg.first, doc_seg.second);

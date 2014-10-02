@@ -7,18 +7,11 @@
 
 using namespace std;
 
-struct FileInfo {
-	vector<vector<string> > idx;    //vector de linies. Linia -> vector de paraules
-    string txt;
-    int wc;
-};
 
 class TESTBED {
 protected:
 
-
 public:
-
 	static pair<vector<double>, vector<double> > get_seg_doc_scores(const vector<double> &scores, int DO_doc, string TGT);
 
 	static string give_system_name(string file);

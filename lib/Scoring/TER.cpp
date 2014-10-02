@@ -39,9 +39,9 @@ MetricScore TER::computeTER(string TGT, string variant, int do_neg) {
     boost::filesystem::path refNISTxml(ssRef.str());
 
     if (!exists(outNISTxml) or Config::remake)
-    	NISTXML::f_create_mteval_doc(TESTBED::Hsystems[TGT], ssOut.str(), TGT, Common::CASE_CS, 1);
+    	TB_NIST::f_create_mteval_doc(TESTBED::Hsystems[TGT], ssOut.str(), TGT, Common::CASE_CS, 1);
     if (!exists(refNISTxml) or Config::remake)
-    	NISTXML::f_create_mteval_multidoc(ssRef.str(), Common::CASE_CS, 2);
+    	TB_NIST::f_create_mteval_multidoc(ssRef.str(), Common::CASE_CS, 2);
 
     string mem_options = " -Xmx1024M ";	//cluster executions, write minimum 1G
     string phrase_db, stop_words, wn_dict, param, caseopt;
@@ -118,8 +118,9 @@ void TER::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 	    if ( ((!exists(reportTERreport_path) and !exists(reportTERreport_gz)) or Config::remake) and Config::Hmetrics[ter_base]) {
 	     	MetricScore res = computeTER(TGT, TER::TEREXT+"base", 1);
 
+	     	SC_ASIYA sc_asiya;
 	    	if (Config::O_STORAGE == 1) {
-	    		IQXML::write_report(TGT, REF, ter_base, res);
+	    		sc_asiya.write_report(TGT, REF, ter_base, res);
          		cout << "IQXML DOCUMENT " << ter_base << " CREATED" << endl;
          	}
          	hOQ.save_hash_scores(ter_base, TGT, REF, res);

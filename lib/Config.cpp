@@ -500,9 +500,8 @@ void Config::process_config_file(char* config_file, map<string, string> Options)
                 if (type == "source" or type == "src" or type == "reference" or type == "ref" or type == "system" or type == "sys") {
 
                     //string file = entry.first;
-
-                    if (Config::I == Common::I_NIST) NISTXML::process_nist_file(file, type);
-                    else RAW::process_raw_file(file, type);
+                    if (Config::I == Common::I_NIST) TB_NIST::process_nist_file(file, type);
+                    else TB_RAW::process_raw_file(file, type);
                 }
                 else if (type == "srclang") {
                     if (Common::rLANGS.find(file_cs) != Common::rLANGS.end()) {

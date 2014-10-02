@@ -5,8 +5,10 @@
 #include "../Common.hpp"
 #include "../Config.hpp"
 #include "TESTBED.hpp"
-#include "NISTXML.hpp"
-#include "IQXML.hpp"
+//#include "NISTXML.hpp"
+//#include "IQXML.hpp"
+#include "TB_NIST.hpp"
+#include "SC_ASIYA.hpp"
 
 #include <vector>
 #include <string>
