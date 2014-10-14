@@ -169,8 +169,8 @@ void SGML_f_create_create_doc(string input, string output, string sysid, xmlDocP
                 string input2 = TESTBED::replace_special_characters(input);
                 stringstream rIn, rIn2, st;
 
-                rIn << Common::DATA_PATH << "/" << Common::TMP << "/" << TB_FORMAT::give_system_name(input) << "." << nr;
-                rIn2 << Common::DATA_PATH << "/" << Common::TMP << "/" << TB_FORMAT::give_system_name(input2) << "." << nr;
+                rIn << Common::DATA_PATH << "/" << Common::TMP << "/" << TESTBED::give_system_name(input) << "." << nr;
+                rIn2 << Common::DATA_PATH << "/" << Common::TMP << "/" << TESTBED::give_system_name(input2) << "." << nr;
 
                 randomInput = rIn.str();
                 randomInput2 = rIn2.str();
@@ -335,8 +335,8 @@ void f_create_create_doc(string input, string output, string TGT, string cas, in
             double nr = rand() % (Common::NRAND + 1);
             string input2 = TESTBED::replace_special_characters(input);
             stringstream rIn, rIn2, st;
-            rIn << Common::DATA_PATH << "/" << Common::TMP << "/" << TB_FORMAT::give_system_name(input) << "." << nr;
-            rIn2 << Common::DATA_PATH << "/" << Common::TMP << "/" << TB_FORMAT::give_system_name(input2) << "." << nr;
+            rIn << Common::DATA_PATH << "/" << Common::TMP << "/" << TESTBED::give_system_name(input) << "." << nr;
+            rIn2 << Common::DATA_PATH << "/" << Common::TMP << "/" << TESTBED::give_system_name(input2) << "." << nr;
             randomInput = rIn.str();
             randomInput2 = rIn2.str();
 

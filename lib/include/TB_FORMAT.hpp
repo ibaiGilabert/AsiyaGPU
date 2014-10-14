@@ -18,7 +18,7 @@ class TB_FORMAT {
 protected:
 
 public:
-	static string give_system_name(string file);	//PROTECTED btw...
+	//static string give_system_name(string file);	//PROTECTED btw...
 
 };
 

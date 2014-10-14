@@ -1,7 +1,7 @@
 #include "../include/TESTBED.hpp"
 
 #include <boost/regex.hpp>
-//#include <boost/filesystem.hpp>
+#include <boost/filesystem.hpp>
 
 map<string, vector<vector<string> > > TESTBED::IDX;
 map<string, string> TESTBED::Hrefs, TESTBED::Hsystems;
@@ -52,6 +52,12 @@ pair<vector<double>, vector<double> > TESTBED::get_seg_doc_scores(const vector<d
 	}
 
 	return make_pair(D_scores, S_scores);
+}
+
+string TESTBED::give_system_name(string file) {
+    // description _ get system name from filename
+    boost::filesystem::path pathname (file);
+    return pathname.filename().string();
 }
 
 string TESTBED::replace_special_characters(string &input) {

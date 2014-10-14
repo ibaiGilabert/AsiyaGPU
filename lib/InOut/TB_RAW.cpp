@@ -16,7 +16,7 @@ vector<vector<string> > TB_RAW::write_fake_idx_file(string file, string IDX) {
 
 	if (Config::verbose) fprintf(stderr, "reading raw file <%s>\n", file.c_str());
 
-	string system_name = TB_FORMAT::give_system_name(file);
+	string system_name = TESTBED::give_system_name(file);
     ofstream f_idx(system_name.c_str());
     if (f_idx) {
         string fake_header = Common::UNKNOWN_SET + " " + Common::UNKNOWN_LANG + " " + Common::UNKNOWN_LANG;
@@ -78,7 +78,7 @@ void TB_RAW::process_raw_file(string file, string type) {
         lang = Config::SRCLANG;
     }
     else if (type == "reference" or type == "ref") {
-        string R = TB_FORMAT::give_system_name(file);
+        string R = TESTBED::give_system_name(file);
         cout << "\tR: '" << R << "'" << endl;
         TESTBED::IDX[R] = rIDX;
 
@@ -90,7 +90,7 @@ void TB_RAW::process_raw_file(string file, string type) {
         lang = Config::LANG;
     }
     else if (type == "system" or type =="sys") {
-        string S = TB_FORMAT::give_system_name(file);
+        string S = TESTBED::give_system_name(file);
         TESTBED::IDX[S] = rIDX;
         if (TESTBED::Hsystems.find(S) != TESTBED::Hsystems.end()) {
             fprintf(stderr, "[ERROR] system name '%s' duplicated!\n", S.c_str()); exit(1);

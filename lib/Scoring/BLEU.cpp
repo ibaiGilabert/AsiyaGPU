@@ -239,7 +239,7 @@ MetricScore BLEU::computeBLEUN(string TGT) {
     stringstream sc;
     sc << "cd " << Common::DATA_PATH << "; " << toolBLEUN << " -s " << ssSrc.str() << " -t " << ssOut.str() << " -r " << ssRef.str() << " >/dev/null 2>/dev/null";
 
-    string ms = "[ERROR] problems running BLEU_NIST...";
+    string ms = "[ERROR] problems running BLEUN...";
 	Common::execute_or_die(sc.str(), ms);
 
 	if (exists(refXML)) {
