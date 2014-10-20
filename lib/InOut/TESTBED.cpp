@@ -54,6 +54,29 @@ pair<vector<double>, vector<double> > TESTBED::get_seg_doc_scores(const vector<d
 	return make_pair(D_scores, S_scores);
 }
 
+int TESTBED::get_setid_length(string sys) {
+	// description _ returns the length of the set id of the given idx
+	return TESTBED::IDX[sys].size();
+}
+
+int TESTBED::get_max_docid_length(string sys) {
+	// description _ returns the length of the longest document id in the given idx
+	int max = 0;
+	for(int i = 1; i < TESTBED::IDX[sys].size(); ++i) {
+		if (TESTBED::IDX[sys][i][0].size() > max) max = TESTBED::IDX[sys][i][0].size();
+	}
+	return max;
+}
+
+int TESTBED::get_max_segid_length(string sys) {
+	// description _ returns the length of the longest segment id in the given idx
+	int max = 0;
+	for(int i = 1; i < TESTBED::IDX[sys].size(); ++i) {
+		if (TESTBED::IDX[sys][i][3].size() > max) max = TESTBED::IDX[sys][i][3].size();
+	}
+	return max;
+}
+
 string TESTBED::give_system_name(string file) {
     // description _ get system name from filename
     boost::filesystem::path pathname (file);

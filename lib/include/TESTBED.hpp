@@ -11,11 +11,16 @@ using namespace std;
 class TESTBED {
 protected:
 
-public:
-	static pair<vector<double>, vector<double> > get_seg_doc_scores(const vector<double> &scores, int DO_doc, string TGT);
 
+public:
 	static string give_system_name(string file);
 	static string replace_special_characters(string &input);
+
+	static int get_setid_length(string sys);
+	static int get_max_docid_length(string sys);
+	static int get_max_segid_length(string sys);
+
+	static pair<vector<double>, vector<double> > get_seg_doc_scores(const vector<double> &scores, int DO_doc, string TGT);
 
 	static map<string, string> Hrefs, Hsystems;
 	static map<string, vector<vector<string> > > IDX;

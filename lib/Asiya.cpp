@@ -22,9 +22,14 @@ void usage() {
 
 void process_configuration() {
 	Core CORE;
+	Scores hOQ;
 	cout << "LET'S DO SOME STUFF SCORES!!!" << endl;
-	CORE.do_scores();
+	CORE.do_scores(hOQ);
 	cout << "[FINISHED]" << endl;
+	//CORE.do_combination_metrics();
+	cout << "LET'S PRINT DA FINAL REPORT!!!" << endl;
+	CORE.do_print(hOQ);
+	cout << "[END] ASIYA" << endl;
 }
 
 int main(int argc, char *argv[]) {

@@ -45,7 +45,7 @@
     map<string, int>            Config::Hmetrics,           Config::eval_schemes,       Config::metaeval_schemes;
     map<string, int>            Config::optimize_schemes,   Config::metaeval_criteria,  Config::optimize_criteria;
     set<string>                 Config::metrics,            Config::systems,            Config::references;
-    vector<string>              Config::COMBO;  //metrics,  systems,        references;
+    //vector<string>              Config::COMBO;  //metrics,  systems,        references;
 
     string Config::IQ_config,   Config::learn_scheme,   Config::ci;
     string Config::SORT,        Config::LANG,           Config::CASE;
@@ -55,7 +55,7 @@
     string Config::parser,      Config::SRCparser;
 
     int Config::do_metric_names,    Config::do_system_names,    Config::do_reference_names, Config::do_refs,        Config::do_time;
-    int Config::min_dist,           Config::setid_length,       Config::segid_length,       Config::docid_length;
+    int Config::min_dist,           Config::setid_length,       Config::sysid_length,       Config::segid_length,   Config::docid_length;
     int Config::TEX,                Config::TEX_table_count,    Config::TEX_font_size,      Config::alignments;
     int Config::float_precision,    Config::float_length,       Config::n_epochs,           Config::n_resamplings;
     int Config::O_STORAGE,          Config::verbose,            Config::debug,              Config::tsearch;
@@ -631,6 +631,33 @@ void Config::validate_configuration() {
         //if ()
     } else use_default_metrics;*/
 
+    int max_system_name_length = 0;
+    for(set<string>::const_iterator it = Config::systems.begin(); it != Config::systems.end(); ++it) {
+        if (it->size() > max_system_name_length) max_system_name_length = it->size();
+    }
+    for(set<string>::const_iterator it = Config::references.begin(); it != Config::references.end(); ++it) {
+        if (it->size() > max_system_name_length) max_system_name_length = it->size();
+    }
+    Config::sysid_length = max_system_name_length;
+    if (Config::sysid_length < Common::MIN_ID_LENGTH) Config::sysid_length = Common::MIN_ID_LENGTH;
+
+    Config::setid_length = TESTBED::get_setid_length(*Config::systems.begin());
+    if (Config::setid_length < Common::MIN_ID_LENGTH) Config::setid_length = Common::MIN_ID_LENGTH;
+
+    Config::docid_length = TESTBED::get_max_docid_length(*Config::systems.begin());
+    if (Config::docid_length < Common::MIN_ID_LENGTH) Config::docid_length = Common::MIN_ID_LENGTH;
+
+    Config::segid_length = TESTBED::get_max_segid_length(*Config::systems.begin());
+    if (Config::segid_length < Common::MIN_ID_LENGTH) Config::segid_length = Common::MIN_ID_LENGTH;
+
+    cout << "-------" << endl;
+    cout << "\tsysid: " << Config::sysid_length << endl;
+    cout << "\tsetid: " << Config::setid_length << endl;
+    cout << "\tdocid: " << Config::docid_length << endl;
+    cout << "\tsegid: " << Config::segid_length << endl;
+    cout << "-------" << endl;
+
+    //check the length of the files
 }
 
 

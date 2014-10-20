@@ -1,7 +1,6 @@
 #include "../Config.hpp"
 #include "../include/TESTBED.hpp"
 #include "../include/Core.hpp"
-#include "../include/Scores.hpp"
 #include "../include/BLEU.hpp"
 #include "../include/NIST.hpp"
 //#include "../include/BLEUNIST.hpp"
@@ -9,6 +8,7 @@
 #include "../include/ROUGE.hpp"
 #include "../include/GTM.hpp"
 #include "../include/TER.hpp"
+#include "../include/SC_RAW.hpp"
 
 #include <omp.h>
 #include <stdio.h>
@@ -139,13 +139,13 @@ void Core::find_max_scores(const Scores &hOQ) {
 
 }
 
-double Core::do_scores() {
+double Core::do_scores(Scores &hOQ) {
    //description _ launches metric computation for all given systems
     //param2  _ hash of scores
     //@return _ overall benchmark time (in secs)
 
 	//map<string, double> hOQ;
-	Scores hOQ;
+	//Scores hOQ;
 
     Config::parser = "";
     Config::SRCparser = "";
@@ -272,4 +272,27 @@ double Core::do_scores() {
 	}
 
 	return TIME;
+}
+
+void Core::do_print(Scores &hOQ) {
+	// description _ Print metric scores in the given format
+	if (Config::eval_schemes[Common::S_SINGLE] or Config::eval_schemes[Common::S_ULC] or Config::eval_schemes[Common::S_QUEEN]) {
+		//if (Config::O_DEFAULT)
+
+	}
+	string format = Common::O_DEFAULT;
+	cout << "O_DEFAULT: " << format << endl;
+	cout << "config->{O}: " << Config::O << endl;
+
+	if (Config::O != Common::O_DEFAULT) format == Config::O;
+	SC_RAW sc_raw;
+	sc_raw.print_scores_MMATRIX(hOQ);
+
+	/*if (Config::O != Common::O_NONE) {
+		if (Config::verbose) fprintf(stderr, "Printing evaluation report...\n");
+		if (format == Common::O_NIST) sc_raw.print_scores_NIST(hOQ);
+		else if (format == Common::O_MMATRIX) sc_raw.print_scores_MMATRIX(hOQ);
+		else if (format == Common::O_SMATRIX) sc_raw.print_scores_SMATRIX(hOQ);
+		else { fprintf(stderr, "[ERROR] unknown output format <%s>\n", format.c_str()); exit(1); }
+	}*/
 }

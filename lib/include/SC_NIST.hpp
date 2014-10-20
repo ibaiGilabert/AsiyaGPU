@@ -18,6 +18,9 @@ public:
 	//read scores
 	map<string, double> read_scores_file(string file, string G, int do_neg);
 
+	//print scores
+	//void print_scores();
+
 };
 
 #endif

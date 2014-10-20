@@ -29,7 +29,7 @@ private:
 
 public:
 	static map<string, int> 	Hmetrics, 	/*wc,*/ 	eval_schemes,	metaeval_schemes,	optimize_schemes,	metaeval_criteria,	optimize_criteria;
-	static vector<string> 		COMBO;	//metrics,	systems,		references;
+	//static vector<string> 		COMBO;	//metrics,	systems,		references;
 	//static map<string, vector<vector<string> > > 	IDX;
 	static set<string> metrics,	systems,	references;
 
@@ -37,7 +37,7 @@ public:
 
 	static int do_metric_names,do_system_names,do_reference_names, do_refs, do_time;
 	static int O_STORAGE, verbose, debug, tsearch;
-	static int min_dist, setid_length, segid_length, docid_length;
+	static int min_dist, setid_length, sysid_length, segid_length, docid_length;
 	static int TEX, TEX_table_count, TEX_font_size;
 	static int alignments, n_epochs, n_resamplings;
 	static int float_precision, float_length;

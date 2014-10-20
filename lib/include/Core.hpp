@@ -23,7 +23,10 @@ private:
 
 public:
 	//Compute scores
-	double do_scores();
+	double do_scores(Scores &hOQ);
+
+	//Print Final Report
+	void do_print(Scores &hOQ);
 
 	//Printing
 	void do_metric_names();

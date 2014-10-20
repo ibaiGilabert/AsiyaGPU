@@ -6,8 +6,8 @@ LDFLAGS	= -lboost_system -lboost_filesystem -lboost_regex -lxml2 -lgomp
 
 all: Asiya
 
-Asiya: Asiya.o Config.o Common.o Core.o Scores.o BLEU.o NIST.o GTM.o METEOR.o ROUGE.o TER.o TESTBED.o TB_FORMAT.o TB_NIST.o TB_RAW.o SC_ASIYA.o SC_NIST.o
-	g++ -o ../sample/Asiya Asiya.o Config.o Common.o Core.o Scores.o BLEU.o NIST.o GTM.o METEOR.o ROUGE.o TER.o TESTBED.o TB_FORMAT.o TB_NIST.o TB_RAW.o SC_ASIYA.o SC_NIST.o $(LDFLAGS) $(CFLAGS)
+Asiya: Asiya.o Config.o Common.o Core.o Scores.o BLEU.o NIST.o GTM.o METEOR.o ROUGE.o TER.o TESTBED.o TB_FORMAT.o TB_NIST.o TB_RAW.o SC_ASIYA.o SC_NIST.o SC_RAW.o
+	g++ -o ../sample/Asiya Asiya.o Config.o Common.o Core.o Scores.o BLEU.o NIST.o GTM.o METEOR.o ROUGE.o TER.o TESTBED.o TB_FORMAT.o TB_NIST.o TB_RAW.o SC_ASIYA.o SC_NIST.o SC_RAW.o $(LDFLAGS) $(CFLAGS)
 
 Asiya.o: Asiya.cpp
 	g++ -c Asiya.cpp $(CFLAGS)
@@ -60,5 +60,7 @@ SC_ASIYA.o: include/SC_ASIYA.hpp InOut/SC_ASIYA.cpp
 SC_NIST.o: include/SC_NIST.hpp InOut/SC_NIST.cpp
 	g++ -c InOut/SC_NIST.cpp $(CFLAGS)
 
+SC_RAW.o: include/SC_RAW.hpp InOut/SC_RAW.cpp
+	g++ -c InOut/SC_RAW.cpp $(CFLAGS)
 clean:
 	rm *.o ../sample/Asiya
