@@ -13,6 +13,24 @@
 #include <omp.h>
 #include <stdio.h>
 #include <iostream>
+
+
+vector<string> Core::get_sorted_metrics() {
+	vector<string> sorted_metrics;
+
+	set<string> st = Config::metrics;
+	if (Config::eval_schemes[Common::S_SINGLE]) {
+		sorted_metrics = vector<string>(st.begin(), st.end());
+
+			//sorted_metrics = vector<string>(Config::metrics.begin(), Config::metrics().end());
+		//if (Config::SORT == Common::SORT_NAME) //already sorted (set)
+	}
+//if (Config::eval_schemes[Common::S_ULC]) sorted_metrics.push_back(ULC::ULC_NAME);
+//if (Config::eval_schemes[Common::S_QUEEN]) sorted_metrics.push_back(QARLA::QUEEN);
+
+	return sorted_metrics;
+}
+
 /*
    my %HREF;
    my @sorted_refs = sort @{$Lref};
@@ -285,8 +303,10 @@ void Core::do_print(Scores &hOQ) {
 	cout << "config->{O}: " << Config::O << endl;
 
 	if (Config::O != Common::O_DEFAULT) format == Config::O;
+	vector<string> sorted_metrics = get_sorted_metrics();
+
 	SC_RAW sc_raw;
-	sc_raw.print_scores_MMATRIX(hOQ);
+	sc_raw.print_scores_MMATRIX(hOQ, sorted_metrics);
 
 	/*if (Config::O != Common::O_NONE) {
 		if (Config::verbose) fprintf(stderr, "Printing evaluation report...\n");

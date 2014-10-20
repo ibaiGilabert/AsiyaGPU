@@ -181,10 +181,6 @@ public:
 
 	//static vector<int> reorder_scores(map<string, int> &hscores, string TGT, string G);
 
-	//Printing
-	static void print_hline(char c, int l);
-	static void print_hline_stderr(char c, int l);
-
 };
 
 

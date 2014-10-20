@@ -6,7 +6,11 @@
 using namespace std;
 
 class SC_FORMAT {
-private:
+protected:
+	//Printing
+	void print_hline(char c, int l);
+	void print_hline_stderr(char c, int l);
+	string trunk_string(string s, int l);
 
 public:
 	//read scores
