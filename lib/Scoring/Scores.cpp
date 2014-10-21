@@ -45,6 +45,22 @@ MetricScore Scores::read_scores(string basename, string TGT, int do_neg) {
 	return read_scores;
 }
 
+oMap Scores::get_sys_scores() const {
+	return sys;
+}
+
+oMap Scores::get_doc_scores(int doc_id) const {
+	return doc[doc_id];
+}
+
+oMap Scores::get_seg_scores(int seg_id) const {
+	return seg[seg_id];
+}
+
+int Scores::get_doc_scores_size() const {
+	return doc.size();
+}
+
 
 void Scores::save_hash_scores(string metric_name, string system_name, string refere_name, double sys_score, const vector<double> &doc_scores, const vector<double> &seg_scores) {
 	MetricScore m;
@@ -58,32 +74,42 @@ void Scores::save_hash_scores(string metric_name, string system_name, string ref
 	// description _ saves as a hash of scores
 
 	// system-level
-	sys[metric_name][system_name] = vector<Score>(1, Score(refere_name, scores.sys_score));
+	sys[metric_name][system_name][refere_name] = scores.sys_score;
 
 	//document-level
-	//for (int i = 0; i < doc_scores.size(); ++i) {
-		//doc[metric_name][system_name] = Score(refere_name, doc_scores[i]);
-	//}
-
-	//document-level
-	vector<Score> aux_doc(scores.doc_scores.size());
 	for (int i = 0; i < scores.doc_scores.size(); ++i) {
-		aux_doc[i] = Score(refere_name, scores.doc_scores[i]);
+		doc[i][metric_name][system_name][refere_name] = scores.doc_scores[i];
 	}
-	doc[metric_name][system_name] = aux_doc;
 
 	//segment-level
-	vector<Score> aux_seg(scores.seg_scores.size());
 	for (int i = 0; i < scores.seg_scores.size(); ++i) {
-		aux_seg[i] = Score(refere_name, scores.seg_scores[i]);
+		seg[i][metric_name][system_name][refere_name] = scores.seg_scores[i];
 	}
-	seg[metric_name][system_name] = aux_seg;
 
-	all[metric_name][system_name] = vector<Score>(1, Score(refere_name, -1));
+	all[metric_name][system_name][refere_name] = -1;
+
+	// system-level
+//sys[metric_name][system_name] = vector<Score>(1, Score(refere_name, scores.sys_score));
+
+	//document-level
+/*vector<Score> aux_doc(scores.doc_scores.size());
+for (int i = 0; i < scores.doc_scores.size(); ++i) {
+	aux_doc[i] = Score(refere_name, scores.doc_scores[i]);
+}
+doc[metric_name][system_name] = aux_doc;*/
+
+	//segment-level
+/*vector<Score> aux_seg(scores.seg_scores.size());
+for (int i = 0; i < scores.seg_scores.size(); ++i) {
+	aux_seg[i] = Score(refere_name, scores.seg_scores[i]);
+}
+seg[metric_name][system_name] = aux_seg;*/
+
+//all[metric_name][system_name] = vector<Score>(1, Score(refere_name, -1));
 }
 
 void Scores::print_scores() {
-	cout << "\tsys : " << endl;
+	/*cout << "\tsys : " << endl;
 	for (oMap::const_iterator i = sys.begin(); i != sys.end(); ++i) {
 		cout << "\t\t" << i->first << " -> " << endl;
 		iMap metric_name = i->second;
@@ -126,5 +152,5 @@ void Scores::print_scores() {
 			cout << "\t\t\t}" << endl;
 		}
 		cout << "\t\t}" << endl;
-	}
+	}*/
 }

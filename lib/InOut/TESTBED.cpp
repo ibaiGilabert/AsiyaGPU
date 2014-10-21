@@ -9,6 +9,17 @@ map<string, string> TESTBED::Hrefs, TESTBED::Hsystems;
 map<string, int> TESTBED::wc;
 string TESTBED::src;
 
+void TESTBED::get_docid_list(string sys, vector<string> &ldoc_ids) {
+    // description _ returns the list of document ids in the idx, in order of appearance
+	string docid;
+	for (int i = 1; i < TESTBED::IDX[sys].size(); ++i) {
+		if (TESTBED::IDX[sys][i][0] != docid) {
+			docid = TESTBED::IDX[sys][i][0];
+			ldoc_ids.push_back(docid);
+		}
+	}
+}
+
 pair<vector<double>, vector<double> > TESTBED::get_seg_doc_scores(const vector<double> &scores, int DO_doc, string TGT) {
     // description _ returns segment and document scores, given an index structure which
     //               contains information on the number of segments per document

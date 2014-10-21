@@ -9,12 +9,14 @@ using namespace std;
 
 
 class TESTBED {
-protected:
+private:
 
 
 public:
 	static string give_system_name(string file);
 	static string replace_special_characters(string &input);
+
+	static void get_docid_list(string sys, vector<string> &ldoc_ids);
 
 	static int get_setid_length(string sys);
 	static int get_max_docid_length(string sys);

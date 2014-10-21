@@ -33,3 +33,6 @@ string SC_FORMAT::trunk_string(string s, int l) {
     x << setw(l) << s;
     return x.str();
 }
+/*double SC_FORMAT::trunk_number(int n, int l, int p) {
+    // description _ trunks the given number into a float (given length and precision)
+}*/

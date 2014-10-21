@@ -6,8 +6,12 @@
 #include <map>
 using namespace std;
 
-typedef pair<string, double> Score;
-typedef map<string, vector<Score> > iMap;
+/*typedef pair<string, double> Score;
+typedef map<string, vector<Score> > iMap;*/
+
+
+typedef map<string, double> sMap;
+typedef map<string, sMap> iMap;
 typedef map<string, iMap> oMap;
 
 struct MetricScore {
@@ -19,11 +23,19 @@ class Scores {
 private:
 
 public:
-	oMap sys, seg, doc, all;
+	oMap sys, all;
+	vector<oMap> seg, doc;
 
 	//Read
 	static MetricScore read_scores(string basename, string TGT, int do_neg);
 	static vector<double> read_scores_G(string basename, string G, string TGT, int do_neg);
+
+	//Get
+	oMap get_sys_scores() const;
+	oMap get_doc_scores(int doc_id) const;
+	oMap get_seg_scores(int seg_id) const;
+
+	int get_doc_scores_size() const;
 
 	//Save
 	void save_hash_scores(string metric_name, string system_name, string refere_name, const MetricScore &scores);
@@ -31,6 +43,7 @@ public:
 
 	//Print
 	void print_scores();
+	void print_sys_scores();
 };
 
 #endif
