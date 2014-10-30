@@ -85,6 +85,8 @@ REVISAR:
 
 	SC_RAW		->	Els prints_scores no contenen la part TEX.
 
+	TESTBED		->	El get_num_docs assumeix que tots els sistemes tenen els mateixos documents assignats.
+
 SHORTCUTS
 
 	-->IF file exists
@@ -156,16 +158,11 @@ SHORTCUTS
 TODO LIST
 
 	-	LOCAL
-				->	Els xMaps estan aixi aixi. S'ha de canviar l'estructura de dades.
-
 				->	Completar l'ESA (test de expressions regulars a regular_exp.pl)	(verificar els tipus de computeMultiESA)
 				->	Completar el NGRAM.
 				->	Completar el CE.
 
 	-	CLUSTER
-				->	La versio C++ guarda la mateixa referencia moltes vegades per cada metrica/sistema.
-					Executa PROVA_MMATRIX/AsiyaGPU/sample i mira la sortida
-					Comparar amb la versio perl. (estava printant pel print_system_scores_MMATRIX) a sample/samples-nist
 
 				->	Comprovar de nou el done-list amb les noves modificacions de les metriques.
 				->	Provar els METEOR/ESA (Asiya.config).

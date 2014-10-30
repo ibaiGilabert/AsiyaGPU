@@ -1,6 +1,13 @@
-#!/bin/bash
+#$ -S /bin/bash
+#$ -V
+#$ -cwd
+#$ -m eas
+#$ -M gilabert@cs.upc.edu
+#$ -l h_vmem=4G
 
-DATAPATH=/home/usuaris/gilabert/AsiyaGPU/sample
+bash
+
+DATAPATH=/home/usuaris/gilabert/PROVA_MMATRIX/AsiyaGPU/sample
 
 die () {
     echo >&2 "$@"
@@ -11,4 +18,6 @@ die () {
 
 i=$1
 
-./Asiya Asiya.config -v -eval single -metric_set metrics_$i -data_path $DATAPATH
+cd /home/usuaris/gilabert/PROVA_MMATRIX/AsiyaGPU/sample
+
+./Asiya Asiya.config -v -eval single -metric_set metrics_$i -data_path $DATAPATH > $i.report
