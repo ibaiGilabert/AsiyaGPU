@@ -1,10 +1,22 @@
 #include "../include/Scores.hpp"
 #include "../include/SC_NIST.hpp"
+#include "../include/TESTBED.hpp"
 #include "../Common.hpp"
 
 #include <iostream>
 #include <stdlib.h>
 #include <math.h>
+
+/*Scores::Scores(int n_doc, int n_seg) {
+	doc = vector<oMap>(n_doc);
+	seg = vector<oMap>(n_seg);
+}*/
+Scores::Scores() {
+	doc = vector<oMap>(TESTBED::get_num_docs());
+	seg = vector<oMap>(TESTBED::get_num_segs());
+}
+
+Scores::~Scores() {}
 
 vector<double> Scores::read_scores_G(string basename, string G, string TGT, int do_neg) {
 	// description _ reads MetricsMaTr format scr file for a given metric and a given granularity
@@ -61,6 +73,9 @@ int Scores::get_doc_scores_size() const {
 	return doc.size();
 }
 
+int Scores::get_seg_scores_size() const {
+	return seg.size();
+}
 
 void Scores::save_hash_scores(string metric_name, string system_name, string refere_name, double sys_score, const vector<double> &doc_scores, const vector<double> &seg_scores) {
 	MetricScore m;

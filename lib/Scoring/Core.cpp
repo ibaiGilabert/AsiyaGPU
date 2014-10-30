@@ -176,8 +176,8 @@ double Core::do_scores(Scores &hOQ) {
     double TIME = 0;
 
     // --- end creation of tsearch
-    cout << "do_scores -> eval_schemes <- " << endl;
-    Config::printMapInt(Config::eval_schemes);
+    //cout << "do_scores -> eval_schemes <- " << endl;
+    //Config::printMapInt(Config::eval_schemes);
 
 	if (Config::eval_schemes.find(Common::S_SINGLE) != Config::eval_schemes.end() or \
 		Config::metaeval_schemes.find(Common::S_SINGLE) != Config::metaeval_schemes.end() or \
@@ -191,7 +191,6 @@ double Core::do_scores(Scores &hOQ) {
 		for (set<string>::const_iterator it = Config::systems.begin(); it != Config::systems.end(); ++it) {	//systems Vs. references
 			double time1 = omp_get_wtime();
 //doMultiMetrics($config, $sys, $config->{Hsystems}->{$sys}, $config->{references}, $config->{Hrefs}, $hOQ);
-			cout << "MultiMetric o ke ase?" << endl;
 			doMultiMetrics(*it, Config::references, hOQ);
 
 			if (Config::eval_schemes.find(Common::S_QUEEN) != Config::eval_schemes.end() or \
@@ -212,9 +211,9 @@ double Core::do_scores(Scores &hOQ) {
 			double time2 = omp_get_wtime();
 			double t = time2 - time1;	//= Common::get_raw_Benchmark;
 			TIME += t;
-			cout << "time1: " << time1 << endl;
-			cout << "time2: " << time2 << endl;
-			cout << "time: " << t << endl;
+			fprintf(stderr, "time1: %f\n", time1);
+			fprintf(stderr, "time2: %f\n", time2);
+			fprintf(stderr, "time: %f\n", t);
 			if (Config::do_time) fprintf(stderr, "t(%s) = %f\n", it->c_str(), t);
 		}
 	}
@@ -299,8 +298,8 @@ void Core::do_print(Scores &hOQ) {
 
 	}
 	string format = Common::O_DEFAULT;
-	cout << "O_DEFAULT: " << format << endl;
-	cout << "config->{O}: " << Config::O << endl;
+	//cout << "O_DEFAULT: " << format << endl;
+	//cout << "config->{O}: " << Config::O << endl;
 
 	if (Config::O != Common::O_DEFAULT) format == Config::O;
 	vector<string> sorted_metrics = get_sorted_metrics();

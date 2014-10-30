@@ -10,14 +10,12 @@ using namespace std;
 
 class SC_ASIYA : SC_FORMAT {
 private:
+	void save_xml(string report_xml, string TGT, string REF, string METRIC, const MetricScore &m);
 
 public:
 	void write_report(string TGT, string REF, string METRIC, const MetricScore &m);
 	void write_report(string TGT, string REF, string METRIC, double sys_score, const vector<double> &doc_scores, const vector<double> &seg_scores);
 
-	static const int FLOAT_LENGTH;
-	static const int FLOAT_PRECISION;
-	static const string ROOT_ELEMENT;
 };
 
 #endif

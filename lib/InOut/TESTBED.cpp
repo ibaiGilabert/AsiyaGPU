@@ -20,6 +20,24 @@ void TESTBED::get_docid_list(string sys, vector<string> &ldoc_ids) {
 	}
 }
 
+int TESTBED::get_num_docs() {
+	// description _ returns the number of documents
+	int ndocs = 0;
+	string docid;
+	for (int i = 1; i < TESTBED::IDX.begin()->second.size(); ++i) {
+		if (TESTBED::IDX.begin()->second[i][0] != docid) {
+			docid = TESTBED::IDX.begin()->second[i][0];
+			++ndocs;
+		}
+	}
+	return ndocs;
+}
+
+int TESTBED::get_num_segs() {
+	// description _ returns the number of segments in the given idx
+	return TESTBED::IDX.begin()->second.size()-1;
+}
+
 pair<vector<double>, vector<double> > TESTBED::get_seg_doc_scores(const vector<double> &scores, int DO_doc, string TGT) {
     // description _ returns segment and document scores, given an index structure which
     //               contains information on the number of segments per document
@@ -67,7 +85,7 @@ pair<vector<double>, vector<double> > TESTBED::get_seg_doc_scores(const vector<d
 
 int TESTBED::get_setid_length(string sys) {
 	// description _ returns the length of the set id of the given idx
-	return TESTBED::IDX[sys].size();
+	return TESTBED::IDX[sys][0][0].size();
 }
 
 int TESTBED::get_max_docid_length(string sys) {
@@ -106,3 +124,31 @@ string TESTBED::replace_special_characters(string &input) {
     re = ("\\?");   input = boost::regex_replace(input, re, "\\\\?");
     return input;
 }
+
+void TESTBED::print_idx() {
+	for (map<string, vector<vector<string> > >::const_iterator it = TESTBED::IDX.begin(); it != TESTBED::IDX.end(); ++it) {
+		cout << "\t" << it->first << " -> " << endl;
+		vector<vector<string> > matrix = it->second;
+		for (int i = 0; i < matrix.size(); ++i) {
+			cout << "\t\t[ ";
+			for (int j = 0; j < matrix[i].size(); ++j) {
+				cout << matrix[i][j] << " ";
+			}
+			cout << "]" << endl;
+		}
+	}
+}
+
+void TESTBED::do_metric_names() {
+	// description _ print metric names
+	/*Config::SRCLANG, Config::LANG;
+
+	Common::print_hline('-', Common::HLINE_LENGTH);
+	cout << "METRIC NAMES" << endl;
+	Common::print_hline('-', Common::HLINE_LENGTH);
+
+	cout << ""
+	JA HO FARE...*/
+}
+void TESTBED::do_system_names() {}
+void TESTBED::do_reference_names() {}

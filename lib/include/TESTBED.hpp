@@ -18,9 +18,18 @@ public:
 
 	static void get_docid_list(string sys, vector<string> &ldoc_ids);
 
+	static int get_num_docs();
+	static int get_num_segs();
+
 	static int get_setid_length(string sys);
 	static int get_max_docid_length(string sys);
 	static int get_max_segid_length(string sys);
+
+	static void print_idx();
+
+	static void do_metric_names();
+	static void do_system_names();
+	static void do_reference_names();
 
 	static pair<vector<double>, vector<double> > get_seg_doc_scores(const vector<double> &scores, int DO_doc, string TGT);
 

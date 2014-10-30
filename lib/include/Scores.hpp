@@ -26,6 +26,11 @@ public:
 	oMap sys, all;
 	vector<oMap> seg, doc;
 
+	//Constructor/Destructor
+	//Scores(int n_doc, int n_seg);
+	Scores();
+	~Scores();
+
 	//Read
 	static MetricScore read_scores(string basename, string TGT, int do_neg);
 	static vector<double> read_scores_G(string basename, string G, string TGT, int do_neg);
@@ -36,6 +41,7 @@ public:
 	oMap get_seg_scores(int seg_id) const;
 
 	int get_doc_scores_size() const;
+	int get_seg_scores_size() const;
 
 	//Save
 	void save_hash_scores(string metric_name, string system_name, string refere_name, const MetricScore &scores);

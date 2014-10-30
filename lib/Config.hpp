@@ -64,8 +64,8 @@ public:
 	void use_ULCh_metrics();*/
 
 	//Print methods
-	static void printMapInt(const map<string, int> &m);
-	static void printMapString(const map<string, string> &m);
+	/*static void printMapInt(const map<string, int> &m);
+	static void printMapString(const map<string, string> &m);*/
 
 	//Process
 	void read_configuration_options(char* config_file, map<string, string >options, vector<string> metaeval_options, vector<string> optimize_options);

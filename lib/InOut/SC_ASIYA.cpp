@@ -10,12 +10,8 @@
 #include <libxml/parser.h>
 #include <libxml/tree.h>
 
-const int SC_ASIYA::FLOAT_LENGTH = 10;
-const int SC_ASIYA::FLOAT_PRECISION = 8;
-const string SC_ASIYA::ROOT_ELEMENT = "REPORT";
 
-
-void save_xml(string report_xml, string TGT, string REF, string METRIC, const MetricScore &m) {
+void SC_ASIYA::save_xml(string report_xml, string TGT, string REF, string METRIC, const MetricScore &m) {
     vector<vector<string> > idx = TESTBED::IDX[TGT];
 
     /*    cout << "-----------------idx-------------------" << endl;
@@ -48,7 +44,7 @@ void save_xml(string report_xml, string TGT, string REF, string METRIC, const Me
     string app_name = Common::appNAME;
     boost::to_lower(app_name);
     string doc_type = app_name + ".dtd []"; //"!DOCTYPE " + SC_ASIYA::ROOT_ELEMENT + " \"" + app_name +".dtd\" []";
-    xmlDtdPtr dtd = xmlCreateIntSubset(doc, BAD_CAST SC_ASIYA::ROOT_ELEMENT.c_str(), NULL, BAD_CAST doc_type.c_str());
+    xmlDtdPtr dtd = xmlCreateIntSubset(doc, BAD_CAST SC_FORMAT::ROOT_ELEMENT.c_str(), NULL, BAD_CAST doc_type.c_str());
 
 /*
     xmlNewProp(root_node, BAD_CAST "hyp",       BAD_CAST    TGT.c_str());
@@ -68,7 +64,7 @@ void save_xml(string report_xml, string TGT, string REF, string METRIC, const Me
     xmlNewProp(root_node, BAD_CAST "score",     (const xmlChar *) buffer);
 */
 
-    double x;
+    //double x;
     char buffer[50];
     xmlNodePtr doc_node = xmlNewChild(root_node, NULL, BAD_CAST "DOC", NULL);
 
@@ -77,7 +73,7 @@ void save_xml(string report_xml, string TGT, string REF, string METRIC, const Me
 
             if (DOC != "-1") {
                 //x = Common::trunk_and_trim_number(doc_scores[n_docs - 1], SC_ASIYA::FLOAT_LENGTH, SC_ASIYA::FLOAT_PRECISION);
-                x = m.doc_scores[n_docs-1];
+                //x = m.doc_scores[n_docs-1];
                 xmlNewProp(doc_node, BAD_CAST "id",         BAD_CAST document_id.c_str());
 
                 sprintf(buffer, "%d", n_docs);
@@ -86,8 +82,9 @@ void save_xml(string report_xml, string TGT, string REF, string METRIC, const Me
                 sprintf(buffer, "%d", n_doc_segs);
                 xmlNewProp(doc_node, BAD_CAST "n_segments", (const xmlChar *) buffer);
 
-                sprintf(buffer, "%f", x);
-                xmlNewProp(doc_node, BAD_CAST "score",      (const xmlChar *) buffer);
+                //sprintf(buffer, "%.%df", x);
+                //trunk_and_trim_number(m.doc_scores[n_docs-1]);
+                xmlNewProp(doc_node, BAD_CAST "score",      (const xmlChar *) trunk_and_trim_number(m.doc_scores[n_docs-1]).c_str());
 
                 doc_node = xmlNewChild(root_node, NULL, BAD_CAST "DOC", NULL);
             }
@@ -98,9 +95,9 @@ void save_xml(string report_xml, string TGT, string REF, string METRIC, const Me
 
         // CREATE A SEGMENT
         //x = Common::trunk_and_trim_number(seg_scores[i - 1], SC_ASIYA::FLOAT_LENGTH, SC_ASIYA::FLOAT_PRECISION);
-        x = m.seg_scores[i-1];
-        sprintf(buffer, "%f", x);
-        xmlNodePtr seg_node = xmlNewChild(doc_node, NULL, BAD_CAST "S", (const xmlChar *) buffer);
+        //x = m.seg_scores[i-1];
+        //sprintf(buffer, "%f", x);
+        xmlNodePtr seg_node = xmlNewChild(doc_node, NULL, BAD_CAST "S", (const xmlChar *) trunk_and_trim_number(m.seg_scores[i-1]).c_str());
         sprintf(buffer, "%d", i);
         xmlNewProp(seg_node, BAD_CAST "n", (const xmlChar *) buffer);
         n_doc_segs++;
@@ -110,7 +107,7 @@ void save_xml(string report_xml, string TGT, string REF, string METRIC, const Me
     // PASTE LAST DOC (if any)
     if (DOC != "-1") {
         //x = Common::trunk_and_trim_number(doc_scores[n_docs - 1], SC_ASIYA::FLOAT_LENGTH, SC_ASIYA::FLOAT_PRECISION);
-        x = m.doc_scores[n_docs-1];
+        //x = m.doc_scores[n_docs-1];
         //doc_node = xmlNewChild(root_node, NULL, BAD_CAST "DOC", NULL);
         xmlNewProp(doc_node, BAD_CAST "id",         BAD_CAST document_id.c_str());
 
@@ -120,8 +117,8 @@ void save_xml(string report_xml, string TGT, string REF, string METRIC, const Me
         sprintf(buffer, "%d", n_doc_segs);
         xmlNewProp(doc_node, BAD_CAST "n_segments", (const xmlChar *) buffer);
 
-        sprintf(buffer, "%f", x);
-        xmlNewProp(doc_node, BAD_CAST "score",      (const xmlChar *) buffer);
+        //sprintf(buffer, "%f", x);
+        xmlNewProp(doc_node, BAD_CAST "score",      (const xmlChar *) trunk_and_trim_number(m.doc_scores[n_docs-1]).c_str());
     }
 
     xmlNewProp(root_node, BAD_CAST "hyp",       BAD_CAST    TGT.c_str());
@@ -136,9 +133,9 @@ void save_xml(string report_xml, string TGT, string REF, string METRIC, const Me
     xmlNewProp(root_node, BAD_CAST "ref",       BAD_CAST    REF.c_str());
 
     //double x = Common::trunk_and_trim_number(sys_score, SC_ASIYA::FLOAT_LENGTH, SC_ASIYA::FLOAT_PRECISION);
-    x = m.sys_score;
-    sprintf(buffer, "%f", x);
-    xmlNewProp(root_node, BAD_CAST "score",     (const xmlChar *) buffer);
+    //x = m.sys_score;
+    //sprintf(buffer, "%f", x);
+    xmlNewProp(root_node, BAD_CAST "score",     (const xmlChar *) trunk_and_trim_number(m.sys_score).c_str());
 
     xmlSaveFormatFileEnc(report_xml.c_str(), doc, "UTF-8", 1);
     xmlFreeDoc(doc);

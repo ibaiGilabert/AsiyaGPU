@@ -34,7 +34,6 @@ const map<string, int> BLEU::rBLEU = create_rBLEU();
 
 vector<double> BLEU::read_bleu(string reportBLEU) {
 	// description _ read BLEU value from report file
-
     boost::regex re("^ +BLEU:.*");
 
     string str;
@@ -66,20 +65,18 @@ vector<double> BLEU::read_bleu(string reportBLEU) {
 	    }
         file.close();
     } else { fprintf(stderr, "couldn't open file: %s\n", reportBLEU.c_str()); exit(1); }
-
-	    for (int i = 0; i < 4; ++i) cout << "lbleu[" << i << "]: " << lbleu[i] << endl;
-	    for (int i = 0; i < 4; ++i) cout << "lbleui[" << i << "]: " << lbleui[i] << endl;
+	    //for (int i = 0; i < 4; ++i) cout << "lbleu[" << i << "]: " << lbleu[i] << endl;
+	    //for (int i = 0; i < 4; ++i) cout << "lbleui[" << i << "]: " << lbleui[i] << endl;
 
     vector<double> l(0);
     l.insert(l.begin(), lbleu.begin(), lbleu.end());
-	    cout << "l after first insertion: ";
+	    /*cout << "l after first insertion: ";
 	    for (int i = 0; i < l.size(); ++i) cout << l[i] << ", ";
-	    cout << endl;
-
+	    cout << endl;*/
     l.insert(l.begin() + 4, lbleui.begin(), lbleui.end());
-	    cout << "l after second insertion: ";
+	    /*cout << "l after second insertion: ";
 	    for (int i = 0; i < l.size(); ++i) cout << l[i] << ", ";
-	    cout << endl;
+	    cout << endl;*/
 
 	return l;
 }
@@ -145,7 +142,6 @@ vector<vector<double> > BLEU::read_bleu_segments(string reportBLEU) {
         SEG[4] = lbleu1i;	SEG[5] = lbleu2i;	SEG[6] = lbleu3i;	SEG[7] = lbleu4i;
 
 	} else { fprintf(stderr, "couldn't open file: reportBLEU.txt\n"); exit(1); }
-
 		/*cout << "--------------------SEG-----------------" << endl;
 		for (int i = 0; i < SEG.size(); ++i) {
 			for (int j = 0; j < SEG[i].size(); ++j) {
@@ -164,7 +160,7 @@ pair<vector<double>, vector<vector<double> > > BLEU::computeBLEU(string TGT) {
 
 	if (Config::CASE == Common::CASE_CS) tBLEU << "-c "; //toolBLEU += "-c ";
 	string toolBLEU = tBLEU.str();
-	cout << "toolBLEU ->" << toolBLEU << endl << endl;
+	fprintf(stderr, "toolBLEU -> %s\n", toolBLEU.c_str());
 
 	srand(time(NULL));
 	double nr = rand() % (Common::NRAND + 1);	//random number [0, Common::NRAND];
@@ -219,7 +215,7 @@ MetricScore BLEU::computeBLEUN(string TGT) {
 	if (Config::CASE == Common::CASE_CS) tBLEUN << "-c ";
 	string toolBLEUN = tBLEUN.str();
 
-	cout << "toolBLEUN ->" << toolBLEUN << endl << endl;
+	//fprintf(stderr, "toolBLEUN ->%s\n\n", toolBLEUN.c_str());
 
 	double nr = rand() % (Common::NRAND + 1);	//random number [0, Common::NRAND];
 	stringstream ssSrc, ssOut, ssRef;
@@ -277,9 +273,9 @@ void BLEU::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 		if (Config::Hmetrics.find(aux) != Config::Hmetrics.end()) { GO = 1; }
 	}
 
-	cout << "BLEU ei!" << endl;
+	fprintf(stderr, "BLEU ei!\n");
 	if (GO) {
-		cout << "GO! BLEU GO!" << endl;
+		fprintf(stderr, "GO! BLEU GO!\n");
 		if (Config::verbose == 1) fprintf(stderr, "%s\n", BLEU::BLEUEXT.c_str());
 		stringstream ss1, ss2, ss3, ss4, ss2i, ss3i, ss4i, ssB;
 		ss1 << Common::DATA_PATH << "/" << Common::REPORTS << "/" << TGT << "/" << REF << prefix << BLEU::BLEUEXT << "-1." << Common::XMLEXT;
@@ -351,19 +347,18 @@ void BLEU::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 			pair<vector<double>, vector<double> > doc_seg =  TESTBED::get_seg_doc_scores(res.second[0], 0, TGT);
 			SC_ASIYA sc_asiya;
 
-	            cout << "res.second[0]: [";
-	            for(int i = 0; i < res.second[0].size(); ++i) cout << res.second[0][i] << ",";
-	            cout << endl << "; TGT: " << TGT << endl;
-	            cout << "---doc_seg.first: [";
-	            for(int i = 0; i < doc_seg.first.size(); ++i) cout << doc_seg.first[i] << ",";
-	            cout << "]" << endl;
-	            cout << "---doc_seg.second: [";
-	            for(int i = 0; i < doc_seg.second.size(); ++i) cout << doc_seg.second[i] << ",";
-	            cout << "]" << endl;
+	            /*fprintf(stderr, "res.second[0]: [");
+	            for(int i = 0; i < res.second[0].size(); ++i) fprintf(stderr, "%f,", res.second[0][i]);
+	            fprintf(stderr, "]\n; %s: \n", TGT.c_str());
+	        	fprintf(stderr, "---doc_seg.first: [");
+	            for(int i = 0; i < doc_seg.first.size(); ++i) fprintf(stderr, "%f,", doc_seg.first[i]);
+	            fprintf(stderr, "]\n---doc_seg.second: [");
+	            for(int i = 0; i < doc_seg.second.size(); ++i) fprintf(stderr, "%f,", doc_seg.second[i]);
+	            fprintf(stderr, "]\n");*/
 
 	    	if (Config::O_STORAGE == 1) {
 	    		sc_asiya.write_report(TGT, REF, prefB, res.first[0], doc_seg.first, doc_seg.second);
-         		cout << "IQXML DOCUMENT " << prefB << " CREATED" << endl;
+	    		fprintf(stderr, "SC_ASIYA DOCUMENT %s CREATED\n", prefB.c_str());
          	}
          	hOQ.save_hash_scores(prefB, TGT, REF, res.first[0], doc_seg.first, doc_seg.second);
 
@@ -371,7 +366,7 @@ void BLEU::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 			doc_seg = TESTBED::get_seg_doc_scores(res.second[1], 0, TGT);
          	if (Config::O_STORAGE == 1) {
 	    		sc_asiya.write_report(TGT, REF, prefB, res.first[1], doc_seg.first, doc_seg.second);
-         		cout << "IQXML DOCUMENT " << prefB << " CREATED" << endl;
+         		fprintf(stderr, "SC_ASIYA DOCUMENT %s CREATED\n", prefB.c_str());
          	}
 	    	hOQ.save_hash_scores(prefB, TGT, REF, res.first[1], doc_seg.first, doc_seg.second);
 
@@ -379,7 +374,7 @@ void BLEU::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 			doc_seg = TESTBED::get_seg_doc_scores(res.second[2], 0, TGT);
          	if (Config::O_STORAGE == 1) {
 	    		sc_asiya.write_report(TGT, REF, prefB, res.first[2], doc_seg.first, doc_seg.second);
-         		cout << "IQXML DOCUMENT " << prefB << " CREATED" << endl;
+         		fprintf(stderr, "SC_ASIYA DOCUMENT %s CREATED\n", prefB.c_str());
          	}
          	hOQ.save_hash_scores(prefB, TGT, REF, res.first[2], doc_seg.first, doc_seg.second);
 
@@ -387,7 +382,7 @@ void BLEU::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 			doc_seg = TESTBED::get_seg_doc_scores(res.second[3], 0, TGT);
          	if (Config::O_STORAGE == 1) {
 	    		sc_asiya.write_report(TGT, REF, prefB, res.first[3], doc_seg.first, doc_seg.second);
-         		cout << "IQXML DOCUMENT " << prefB << " CREATED" << endl;
+         		fprintf(stderr, "SC_ASIYA DOCUMENT %s CREATED\n", prefB.c_str());
          	}
 	    	hOQ.save_hash_scores(prefB, TGT, REF, res.first[3], doc_seg.first, doc_seg.second);
 
@@ -395,7 +390,7 @@ void BLEU::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 			doc_seg = TESTBED::get_seg_doc_scores(res.second[5], 0, TGT);
          	if (Config::O_STORAGE == 1) {
 	    		sc_asiya.write_report(TGT, REF, prefB, res.first[5], doc_seg.first, doc_seg.second);
-         		cout << "IQXML DOCUMENT " << prefB << " CREATED" << endl;
+         		fprintf(stderr, "SC_ASIYA DOCUMENT %s CREATED\n", prefB.c_str());
          	}
          	hOQ.save_hash_scores(prefB, TGT, REF, res.first[5], doc_seg.first, doc_seg.second);
 
@@ -403,7 +398,7 @@ void BLEU::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 	    	doc_seg = TESTBED::get_seg_doc_scores(res.second[6], 0, TGT);
          	if (Config::O_STORAGE == 1) {
 	    		sc_asiya.write_report(TGT, REF, prefB, res.first[6], doc_seg.first, doc_seg.second);
-         		cout << "IQXML DOCUMENT " << prefB << " CREATED" << endl;
+         		fprintf(stderr, "SC_ASIYA DOCUMENT %s CREATED\n", prefB.c_str());
          	}
 	    	hOQ.save_hash_scores(prefB, TGT, REF, res.first[6], doc_seg.first, doc_seg.second);
 
@@ -411,7 +406,7 @@ void BLEU::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 	    	doc_seg = TESTBED::get_seg_doc_scores(res.second[7], 0, TGT);
 	    	if (Config::O_STORAGE == 1) {
 	    		sc_asiya.write_report(TGT, REF, prefB, res.first[7], doc_seg.first, doc_seg.second);
-         		cout << "IQXML DOCUMENT " << prefB << " CREATED" << endl;
+         		fprintf(stderr, "SC_ASIYA DOCUMENT %s CREATED\n", prefB.c_str());
          	}
 	    	hOQ.save_hash_scores(prefB, TGT, REF, res.first[7], doc_seg.first, doc_seg.second);
 
@@ -420,7 +415,7 @@ void BLEU::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 
 	    	if (Config::O_STORAGE == 1) {
 	    		sc_asiya.write_report(TGT, REF, BLEU::BLEUEXT, m);
-         		cout << "IQXML DOCUMENT " << BLEU::BLEUEXT << " CREATED" << endl;
+         		fprintf(stderr, "SC_ASIYA DOCUMENT %s CREATED\n", BLEU::BLEUEXT.c_str());
          	}
          	hOQ.save_hash_scores(BLEU::BLEUEXT, TGT, REF, m);
 
@@ -428,7 +423,6 @@ void BLEU::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
                 hOQ.print_scores();
                 cout << "-------------------------------------------------------------------------------------" << endl;
                 exit(1);*/
-
 	    }
 
 	}

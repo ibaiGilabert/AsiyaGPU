@@ -64,7 +64,7 @@ vector<vector<string> > TB_RAW::write_fake_idx_file(string file, string IDX) {
 void TB_RAW::process_raw_file(string file, string type) {
     // description _ read the contents of a RAW plain text file (one sentence per line) and generate fake idx files
     //               (idx structure is also stored onto memory)
-    cout << "----------NIST RAW FILES----------" << endl;
+    //fprintf(stderr, "%s\n", "----------NIST RAW FILES----------");
 
     string IDX = file + "." + Common::IDXEXT;
     string tokfile = file + "." + Common::TOKEXT;
@@ -79,7 +79,7 @@ void TB_RAW::process_raw_file(string file, string type) {
     }
     else if (type == "reference" or type == "ref") {
         string R = TESTBED::give_system_name(file);
-        cout << "\tR: '" << R << "'" << endl;
+        //fprintf(stderr, "\tR: '%s'\n", R.c_str());
         TESTBED::IDX[R] = rIDX;
 
         if (TESTBED::Hrefs.find(R) != TESTBED::Hrefs.end()) {

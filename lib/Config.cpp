@@ -111,14 +111,13 @@ void Config::default_config() {
 
     char* path = getenv("ASIYA_HOME");
     if (path) {
-        cout << "path: " << string(path) << endl;
+        //cout << "path: " << string(path) << endl;
         Config::PATH = path;   //cout << "path: " << path << endl;
-    } else cout << "There's no path." << endl;
-
+    }
     //return CONFIG;
 }
 
-void Config::printMapInt(const map<string, int> &m) {
+/*void Config::printMapInt(const map<string, int> &m) {
     cout << "---------------------" << endl;
     for (map<string, int>::const_iterator it = m.begin(); it != m.end(); ++it) {
         cout << "\t" << it->first << " -> " << it->second << endl;
@@ -132,7 +131,7 @@ void Config::printMapString(const map<string, string> &m) {
         cout << "\t" << it->first << " -> " << it->second << endl;
     }
     cout << "---------------------" << endl;
-}
+}*/
 
 /*void Config::use_default_metrics() {
     // description _ change the configuration to use the default metric set
@@ -241,7 +240,7 @@ void Config::process_command_line_options(map<string, string> Options, vector<st
         boost::sregex_token_iterator i(Options["m"].begin(), Options["m"].end(), reeq, -1);
         boost::sregex_token_iterator j;
         while (i != j) {
-            cout << "Added " << *i << " to metrics (command line options)" << endl;
+            //fprintf(stderr, "Added%s to metrics (command line options)\n", i->c_str());
             Config::metrics.insert(*i);
             Config::Hmetrics[*i] = 1;
             ++i;
@@ -253,7 +252,7 @@ void Config::process_command_line_options(map<string, string> Options, vector<st
         boost::sregex_token_iterator j;
         while (i != j) {
             Config::systems.insert(*i);
-            cout << "Added " << *i << " to systems (command line options)" << endl;
+            //cout << "Added " << *i << " to systems (command line options)" << endl;
             ++i;
         }
     }
@@ -263,7 +262,7 @@ void Config::process_command_line_options(map<string, string> Options, vector<st
         boost::sregex_token_iterator j;
         while (i != j) {
             Config::references.insert(*i);
-            cout << "Added " << *i << " to references (command line options)" << endl;
+            //cout << "Added " << *i << " to references (command line options)" << endl;
             ++i;
         }
     }
@@ -280,7 +279,7 @@ void Config::process_command_line_options(map<string, string> Options, vector<st
             if (Common::eval_schemes.find(aux) != Common::eval_schemes.end()) Config::eval_schemes[aux] = 1;
             else { fprintf(stderr, "[ERROR] unknown evaluation method '%s'\n", aux.c_str()); exit(1); }
 
-            cout << "Added " << *i << " to eval_schemes (command line options)" << endl;
+            //cout << "Added " << *i << " to eval_schemes (command line options)" << endl;
             ++i;
         }
     }
@@ -346,9 +345,10 @@ void Config::process_command_line_options(map<string, string> Options, vector<st
     if (Options.find("train_prop") != Options.end()) Config::train_prop = atof(Options["train_prop"].c_str());
     if (Options.find("model") != Options.end()) Config::model = Options["model"];
     else {
-        stringstream ss;
+        /*stringstream ss;
         ss << Common::DATA_PATH << "/" << Common::MODEL_DEFAULT;
-        Config::model = ss.str();
+        Config::model = ss.str();*/
+        Config::model = Common::DATA_PATH + "/" + Common::MODEL_DEFAULT;
     }
 }
 
@@ -379,9 +379,10 @@ void Config::process_config_file(char* config_file, map<string, string> Options)
                 Common::DATA_PATH = it->second;
         }
     }
-    cout << "METRICS = " << METRICS << endl;
-    cout << "SYSTEMS = " << SYSTEMS << endl;;
-    cout << "REFERENCES = " << REFERENCES << endl;
+
+    fprintf(stderr, "METRICS = %s\n", METRICS.c_str());
+    fprintf(stderr, "SYSTEMS = %s\n", SYSTEMS.c_str());
+    fprintf(stderr, "REFERENCES = %s\n", REFERENCES.c_str());
 
     // string TOOLS = Config::PATH;
     string TOOLS = "/home/soft/asiya/tools";
@@ -508,16 +509,14 @@ void Config::process_config_file(char* config_file, map<string, string> Options)
                         Config::SRCLANG = file_cs; //boost::to_lower(entry.first);
                     }
                     else { fprintf(stderr,"[ERROR] UNSUPPORTED SOURCE LANGUAGE ('.%s.')!!\n", file_cs.c_str()); }
-
-                    cout << "# srclang readed #" << endl;
+                    //fprintf(stderr, "# srclang readed #\n");
                 }
                 else if (type == "lang" or type == "trglang") {
                     if (Common::rLANGS.find(file_cs) != Common::rLANGS.end()) {
                         Config::LANG = file_cs; //boost::to_lower(entry.first);
                     }
                     else { fprintf(stderr,"[ERROR] UNSUPPORTED TARGET LANGUAGE ('.%s.')!!\n", file_cs.c_str()); }
-
-                    cout << "# lang or trglang readed #" << endl;
+                    //fprintf(stderr, "# lang or trglang readed #\n");
                 }
                 else if (type == "srccase") {
                     if (file_cs == Common::CASE_CI)
@@ -531,50 +530,43 @@ void Config::process_config_file(char* config_file, map<string, string> Options)
                     else
                         Config::CASE = Common::CASE_CS;
 
-                    cout << "# case or trgcase readed #" << endl;
+                    //fprintf(stderr, "# case or trgcase readed #\n");
                 }
                 else if (entry.first == METRICS) {
                     boost::regex reeq(" ");     //alternative to splitting: strtok, check it out if you hate boost...
                     boost::sregex_token_iterator i(entry.second.begin(), entry.second.end(), reeq, -1);
                     boost::sregex_token_iterator j;
                     while (i != j) {
-                        cout << "Add " << *i << " to Hmetrics/metrics" << endl;
+                        //cout << "Add " << *i << " to Hmetrics/metrics" << endl;
+                        //fprintf(stderr, "Add %s to Hmetrics/metrics\n", i->c_str());
                         Config::Hmetrics[*i] = 1;
                         Config::metrics.insert(*i);
-                        /*pair<string, int> res = Config::Hmetrics.insert( pair<string,int>(*i,1) );
-                        if (res.second) Config::metrics.push(*i);
-                        else cout << "element " << *i << " already exist in Hmetrics." << endl;*/
                         ++i;
                     }
-
-                    cout << "# metrics " << METRICS << " readed #" << endl;
+                    //fprintf(stderr, "# metrics %s readed #\n", METRICS.c_str());
                 }
                 else if (entry.first == SYSTEMS) {
                     boost::regex reeq(" ");
                     boost::sregex_token_iterator i(entry.second.begin(), entry.second.end(), reeq, -1);
                     boost::sregex_token_iterator j;
                     while (i != j) {
-                        cout << "Add " << *i << " to systems" << endl;
-
+                        //fprintf(stderr, "Add %s to systems\n", i->c_str());
                         Config::systems.insert(*i++);
                     }
-
-                    cout << "# systems " << SYSTEMS << " readed #" << endl;
+                    //fprintf(stderr, "# systems %s readed #\n", SYSTEMS.c_str());
                 }
                 else if (entry.first == REFERENCES) {
                     boost::regex reeq(" ");
                     boost::sregex_token_iterator i(entry.second.begin(), entry.second.end(), reeq, -1);
                     boost::sregex_token_iterator j;
                     while (i != j) {
-                        cout << "Add " << *i << " to references" << endl;
-
+                        //fprintf(stderr, "Add %s to references\n", i->c_str());
                         Config::references.insert(*i++);
                     }
-
-                    cout << "# references " << REFERENCES << " readed #" << endl;
+                    //fprintf(stderr, "# references %s readed #\n", REFERENCES.c_str());
                 }
                 else if (entry.first == SEGMENTS) {
-                    //read_selection();
+                    //map<s> h = (,read_selection(options["t"]));
                 }
             }
         }
@@ -650,12 +642,12 @@ void Config::validate_configuration() {
     Config::segid_length = TESTBED::get_max_segid_length(*Config::systems.begin());
     if (Config::segid_length < Common::MIN_ID_LENGTH) Config::segid_length = Common::MIN_ID_LENGTH;
 
-    cout << "-------" << endl;
+    /*cout << "-------" << endl;
     cout << "\tsysid: " << Config::sysid_length << endl;
     cout << "\tsetid: " << Config::setid_length << endl;
     cout << "\tdocid: " << Config::docid_length << endl;
     cout << "\tsegid: " << Config::segid_length << endl;
-    cout << "-------" << endl;
+    cout << "-------" << endl;*/
 
     //check the length of the files
 }
