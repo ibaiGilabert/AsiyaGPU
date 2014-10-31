@@ -133,11 +133,6 @@ void Config::printMapString(const map<string, string> &m) {
     cout << "---------------------" << endl;
 }*/
 
-/*void Config::use_default_metrics() {
-    // description _ change the configuration to use the default metric set
-    if (Metrics::r)
-}*/
-
 void Config::Dumper() {
     cout << "\tverbose -> " << Config::verbose << endl;
     cout << "\tmin_dist -> " << Config::min_dist << endl;
@@ -184,28 +179,11 @@ void Config::Dumper() {
     for (set<string>::const_iterator it = Config::references.begin(); it != Config::references.end(); ++it) {
         cout << "\t\t" << *it << endl;
     }
-    /*cout << "\tIDX -> " << endl;
-    for (map<string, vector<vector<string> > >::const_iterator it = Config::IDX.begin(); it != Config::IDX.end(); ++it) {
-        vector<vector<string> > aux = it->second;
-        cout << "\t\t" << it->first << " -> [" << endl;
-        for (int i = 0; i < aux.size(); ++i) {
-            cout << "\t\t\t[";
-            for (int j = 0; j < aux[i].size(); ++j) {
-                cout << aux[i][j] << ", ";
-            }
-            cout << endl;
-        }
-        cout << "\t\t]" << endl;
-    }*/
     cout << "\tO_STORAGE -> " << Config::O_STORAGE << endl;
     cout << "\tmetrics-> (" << Config::metrics.size() << ")" << endl;
     for (set<string>::const_iterator it = Config::metrics.begin(); it != Config::metrics.end(); ++it) {
         cout << "\t\t" << *it << endl;
     }
-    /*cout << "\twc-> (" << Config::Hmetrics.size() << ")" << endl;
-    for (map<string, int>::const_iterator it = Config::wc.begin(); it != Config::wc.end(); ++it) {
-        cout << "\t\t" << it->first << " -> " << it->second << endl;
-    }*/
     cout << "\teval_schemes-> (" << Config::Hmetrics.size() << ")" << endl;
     for (map<string, int>::const_iterator it = Config::eval_schemes.begin(); it != Config::eval_schemes.end(); ++it) {
         cout << "\t\t" << it->first << " -> " << it->second << endl;
@@ -216,10 +194,6 @@ void Config::Dumper() {
     cout << "\talfa -> " << Config::alfa << endl;
     cout << "\tdo_refs -> " << Config::do_refs << endl;
     cout << "\tSRCLANG -> " << Config::SRCLANG << endl;
-    cout << "\tHsystems -> " << endl;
-    /*for (map<string, string>::const_iterator it = Config::Hsystems.begin(); it != Config::Hsystems.end(); ++it) {
-        cout << "\t\t" << it->first << " -> " << it->second << endl;
-    }*/
 }
 
 void Config::process_command_line_options(map<string, string> Options, vector<string> metaeval_options, vector<string> optimize_options) {
@@ -344,12 +318,7 @@ void Config::process_command_line_options(map<string, string> Options, vector<st
     if (Options.find("min_dist") != Options.end()) Config::min_dist = atoi(Options["min_dist"].c_str());
     if (Options.find("train_prop") != Options.end()) Config::train_prop = atof(Options["train_prop"].c_str());
     if (Options.find("model") != Options.end()) Config::model = Options["model"];
-    else {
-        /*stringstream ss;
-        ss << Common::DATA_PATH << "/" << Common::MODEL_DEFAULT;
-        Config::model = ss.str();*/
-        Config::model = Common::DATA_PATH + "/" + Common::MODEL_DEFAULT;
-    }
+    else Config::model = Common::DATA_PATH + "/" + Common::MODEL_DEFAULT;
 }
 
 
@@ -392,7 +361,7 @@ void Config::process_config_file(char* config_file, map<string, string> Options)
     boost::filesystem::path p (TOOLS);   // p reads clearer than argv[1] in the following code
 
     if (!is_directory(p)) {
-        fprintf(stderr, "[%s] directory <%s> does not exist!\n", Common::appNAME.c_str(), TOOLS.c_str());exit(1);
+        fprintf(stderr, "[%s] directory <%s> does not exist!\n", Common::appNAME.c_str(), TOOLS.c_str()); exit(1);
     }
 
     Config::tools = TOOLS;
@@ -407,7 +376,7 @@ void Config::process_config_file(char* config_file, map<string, string> Options)
 
     map<string,string>::const_iterator it = Options.find("verbose");
     if (it != Options.end()) {
-        fprintf(stderr, "[%s] READING IQsetup config file <%s>...", Common::appNAME.c_str(), config_file); // IQ_Config::c_str());
+        fprintf(stderr, "[%s] READING ASIYA setup config file <%s>...", Common::appNAME.c_str(), config_file); // IQ_Config::c_str());
     } //TEMPORARY DIRECTORY
 
     p = IQ_config;
@@ -652,30 +621,16 @@ void Config::validate_configuration() {
     //check the length of the files
 }
 
-
-
-//$Asiya_config, \%options, \@metaevaluation_params, \@optimization_params);
-//Config read_configuration_options(char* config_file, map<string, string> options, vector<string> metaeval_options, vector<string> optimize_options) {
 void Config::read_configuration_options(char* config_file, map<string, string> options, vector<string> metaeval_options, vector<string> optimize_options) {
     //description _ process configuration file and command-line options
     //param1  _ configuration file
     //param2  _ command-line options
     //param4  _ command-line optimization options
 
-    //Config CONFIG = process_config_file(config_file, options);
     process_config_file(config_file, options);
     process_command_line_options(options, metaeval_options, optimize_options);
-
-    /*Dumper();
-    cout << "Options readed, dump:" << endl;
-    Config::printMapString(options);*/
     validate_configuration();
 
-    /*process_command_line_options($CONFIG, $options, $metaeval_options, $optimize_options);
-    validate_configuration($CONFIG);
-    print_configuration_options($CONFIG);*/
-
-    //return CONFIG;
 }
 
 void Config::terminate() {

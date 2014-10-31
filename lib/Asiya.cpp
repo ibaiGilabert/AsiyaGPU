@@ -14,11 +14,15 @@
 
 using namespace std;
 
+int v, help, paralel;
 map<string, string> Options;
-int v, help;
 
 void usage() {
 	fprintf(stderr, "Wrong answer\n");
+}
+
+void split_asiya() {
+
 }
 
 void process_configuration() {
@@ -31,11 +35,11 @@ void process_configuration() {
 	TESTBED::do_reference_names();*/
 
     // ============= COMPUTE SCORES (if necessary) =======================================
-	//cout << "LET'S DO SOME STUFF SCORES!!!" << endl;
+	fprintf(stderr, "LET'S DO SOME STUFF SCORES!!!\n");
 	CORE.do_scores(hOQ);
-	//cout << "[FINISHED]" << endl;
+	fprintf(stderr, "[FINISHED]\n");
 	//CORE.do_combination_metrics();
-	//cout << "LET'S PRINT DA FINAL REPORT!!!" << endl;
+	fprintf(stderr, "LET'S PRINT DA FINAL REPORT!!!\n");
 	CORE.do_print(hOQ);
 	fprintf(stderr, "[EMD] ASIYA\n");
 }
@@ -44,51 +48,65 @@ int main(int argc, char *argv[]) {
 
 	const struct option long_opts[] =
 	{
-		{"v",	        no_argument,        0, 'v'},
-		{"help",        no_argument,        0, 'h'},
-		{"metric_set",  required_argument,  0, 'm'},
-		{"eval",        required_argument,  0, 'e'},
-		{"data_path",   required_argument,  0, 'd'},
+		{"paralel",			no_argument,		0, 'p'},
+		{"v",	        	no_argument,        0, 'v'},
+		{"help",        	no_argument,        0, 'h'},
+		{"time",			no_argument,		0, 't'},
+		{"metric_set",  	required_argument,  0, 'm'},
+		{"system_set",		required_argument,	0, 's'},
+		{"reference_set",	required_argument,	0, 'r'},
+		{"granularity",		required_argument,	0, 'g'},
+		{"input",			required_argument,	0, 'i'},
+		{"eval",        	required_argument,  0, 'e'},
+		{"output",			required_argument,	0, 'o'},
+		{"data_path",		required_argument,  0, 'd'},
 		{0,0,0,0},
 	};
 
 	int opt, long_index;
-
-	char* Asiya_config = argv[1];
-	fprintf(stderr, "Config_file: %s\n", Asiya_config);
-	while( (opt = getopt_long_only(argc, argv, "", long_opts, &long_index)) != -1)
-	{
-		switch (opt)
-		{
-		case 'e': Options["eval"] = optarg; break;
-		case 'm': Options["metric_set"] = optarg; break;
-		case 'h': help = 1; break;
-		case 'v': Options["v"] = "3"; break;
-		case 'd': Options["data_path"] = optarg; break;
-		//default: usage();
+	while((opt = getopt_long_only(argc, argv, "", long_opts, &long_index)) != -1) {
+		switch (opt) {
+			case 'p': paralel = 1; break;
+			case 'e': Options["eval"] = optarg; break;
+			case 'm': Options["metric_set"] = optarg; break;
+			case 's': Options["system_set"] = optarg; break;
+			case 'r': Options["reference_set"] = optarg; break;
+			case 'g': Options["granularity"] = optarg; break;
+			case 'i': Options["input"] = optarg; break;
+			case 'h': help = 1; break;
+			case 't': Options["time"] = "1"; break;
+			case 'v': Options["v"] = "3"; break;
+			case 'o': Options["output"] = optarg; break;
+			case 'd': Options["data_path"] = optarg; break;
+			//default: usage();
 		}
 	}
-
-    /*for (map<string,string>::const_iterator it = Options.begin(); it != Options.end(); it++) {
-    	cout << it->first << " -> " << it->second << endl;
-    }*/
-    //if (Options["v"]) cout << "v" << " -> " << v << endl;
-	//if (Options.find("v") == Options.end())
-
 	if (help) usage();
-	/*
-	if ($options{"help"}) { usage2(); }
-	if ($options{"version"}) { die "$Common::appNAME v.$Common::appVERSION\n"; }
 
-	//--- if - metric_names, srclang and trglang, then no need for config file! --#
-	if ($options{"metric_names"} && $options{"srclang"} && $options{"trglang"} ){
-		Metrics::print_metric_names( $options{"srclang"}, $options{"trglang"});
-		exit;
-	}
-	*/
 	// -- check number of argments
 	int narg = 1;
 	if (argc < narg) usage;
+
+	char* Asiya_config = argv[1];
+	fprintf(stderr, "Config_file: %s\n", Asiya_config);
+
+	if (paralel) {
+		split_asiya();
+	}
+	else {
+		Config CONFIG;
+		vector<string> metaeval_options, optimize_options;
+
+		// -- read config file --------------------------------------------------------------------------------
+		CONFIG.read_configuration_options(Asiya_config, Options, metaeval_options, optimize_options);
+
+		// -- process configuration options -------------------------------------------------------------------
+		process_configuration();
+	}
+}
+
+
+
 
 	/*
 	cout << "rLANGS:" << endl;
@@ -120,23 +138,3 @@ int main(int argc, char *argv[]) {
 	for (map<string, int>::const_iterator it = metaeval_criteria.begin(); it != metaeval_criteria.end(); it++) {
 		cout << '\t' << it->first << " -> " << it->second << endl;
 	} cout << endl;*/
-
-	Config CONFIG;
-	vector<string> metaeval_options, optimize_options;
-	// -- read config file --------------------------------------------------------------------------------
-	//Config CONFIG = read_configuration_options(Asiya_config, Options, metaeval_options, optimize_options);
-
-	CONFIG.read_configuration_options(Asiya_config, Options, metaeval_options, optimize_options);
-	/*, metaevaluation_params, optimization_params);*/
-
-	process_configuration();
-
-	// -- process configuration options -------------------------------------------------------------------
-		//process_configuration(CONFIG);
-
-	/*
-		cout << "# Args: " << argc << endl;
-		for (int i = 0; i < argc; ++i) {
-			cout << "\t#" << i << ": " << argv[i] << endl;
-		}*/
-}

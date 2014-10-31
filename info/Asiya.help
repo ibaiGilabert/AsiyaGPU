@@ -1,0 +1,146 @@
+num. arguments: 1
+Args: -help
+
+ Asiya is about to begin.
+
+Usage: 3474197  [options]  <config_file>
+
+Options:
+
+------------------------------------------------------------------------------------------------------------------------
+evaluation options
+------------------------------------------------------------------------------------------------------------------------
+  - eval  <schemes>                  : do evaluation according to the given schemes
+                                       <schemes> is a list 'S1,S2,...,Sn' where Si in {'single', 'ulc', 'queen', 'model'}
+                                         - single -- individual metric scores
+                                         - ulc -- normalized arithmetic mean of metric scores
+                                         - queen -- QUEEN scores
+                                         - model -- learned combination model scores (to be used with '-model <s>' option,
+                                                                                      'models/perceptron.mod' model used by default)
+  - o <format>                       : output format ('mmatrix' by default)
+                                         - 'mmatrix' - score matrix on a metric basis
+                                         - 'smatrix' - score matrix on a system basis
+                                         - 'nist' - NIST/WMT file format report
+  - include_refs                     : include evaluation scores for translation references (disabled by default)
+  - align                            : calculate and use the alignments between src and ref/candidates (disabled by default)
+                                         - '0' - disabled
+                                         - '1' - enabled
+                                         - '2' - both
+  - optimize  <schemes>  <criteria>  : optimize metric combination according to the given combination schemes and meta-evaluation criteria
+                                       <schemes> is a list 'S1,S2,...,Sn' where Si in {'single', 'ulc', 'queen'}
+                                       <criteria> is a list 'C1,C2,...,Cn' where Ci in {'pearson', 'spearman', 'kendall', 'mrankskendall','king', 'orange', 'mrankskendall', 'consistency'}
+                                         - correlation coefficients (to be used together with '-assessments' option)
+                                           - 'pearson' -- compute Pearson correlation coefficients
+                                           - 'spearman' -- compute Spearman correlation coefficients
+                                           - 'kendall' -- compute Kendall correlation coefficients
+                                           - 'mrankskendall' -- compute Kendall correlation coefficients for multiple ranks (e.g. segment ranks)
+                                           - 'consistency' -- compute CONSISTENCY measure
+                                           - 'king' -- compute KING measure
+                                           - 'orange' -- compute ORANGE measure
+
+------------------------------------------------------------------------------------------------------------------------
+meta-evaluation options
+------------------------------------------------------------------------------------------------------------------------
+  - metaeval  <schemes>  <criteria>  : do metaevaluation according to the given schemes and criteria
+                                       <schemes> is a list 'S1,S2,...,Sn' where Si in {'single', 'ulc', 'queen'}
+                                       <criteria> is a list 'C1,C2,...,Cn' where Ci in {'pearson', 'spearman', 'kendall', 'king', 'orange', 'mrankskendall', 'consistency'}
+  - assessments  <file>              : file containing human assessments (NIST CSV format, header + one assessment per line)
+  - ci <method>                      : confidence interval method ('none' by default)
+                                         - 'none' -- None
+                                         - 'fisher' -- Fisher transformation
+                                         - 'bootstrap' -- bootstrap resampling
+                                         - 'xbootstrap' -- exhaustive bootstrap resampling
+                                         - 'paired_bootstrap' -- paired bootstrap resampling
+                                         - 'paired_xbootstrap' -- exhaustive paired bootstrap resampling
+                                       (applies only to correlation coefficients)
+  - alfa  <f>                        : (1 - alfa) statistical significance (alfa is 0.05 by default)
+  - n_resamplings  <i>               : number of bootstrap resamplings (1000 by default)
+
+------------------------------------------------------------------------------------------------------------------------
+learning options
+------------------------------------------------------------------------------------------------------------------------
+  - learn <scheme>                   : do measure combination learning according to the selected scheme
+                                         - perceptron -- perceptron based on-line learning
+  - n_epochs   <i>                   : number of epochs (only applicable under 'perceptron' scheme, 100 by default)
+  - min_dist   <f>                   : minimum distance between human scores (0 by default)
+  - train_prop   <f>                 : proportion of training examples (0.8 by default)
+  - model   <s>                      : model file ---to be created during learning and used during eval ('models/perceptron.mod' by default)
+
+------------------------------------------------------------------------------------------------------------------------
+general options
+------------------------------------------------------------------------------------------------------------------------
+  - metric_set <name>                : set of metrics by set name as declared in the config_file        [predefined metric set used by default]
+  - m <metrics>                      : set of metrics (as a comma-separated list)
+  - system_set <name>                : set of systems by set name as declared in the config_file        [all systems used by default]
+  - s <systems>                      : set of systems (as a comma-separated list)
+  - reference_set <name>             : set of references by set name as declared in the config_file     [all references used by default]
+  - r <references>                   : additional references (as a comma-separated list)
+
+  - system_names                     : displays the names of the systems in the test suite (and terminates)
+  - reference_names                  : displays the names of the references in the test suite (and terminates)
+  - metric_names                     : displays the names of the metrics in the test suit (and terminates)
+                                       combine with -srclang and -trglang to know the list of available metrics
+
+  - srclang <language>               : source translation language ('other' by default)
+  - trglang <language>               : target translation language ('en' by default)
+                                         - 'en' - English
+                                         - 'es' - Spanish
+                                         - 'de' - German
+                                         - 'fr' - French
+                                         - 'cz' - Czech
+                                         - 'ca' - Catalan
+                                         - 'other' - Other
+  - srccase <case>                   : source translation case ('cs' by default)
+  - trgcase <case>                   : target translation case ('cs' by default)
+                                         - 'cs' - case-sensitive
+                                         - 'ci' - case-insensitive
+
+  - i <format>                       : input format ('nist' by default)
+                                         - 'raw' - one-sentence-per-line plain-text format
+                                         - 'nist' - NIST/WMT XML file format (DTD v1.5)
+
+  - no_tok                           : do not tokenize the input
+
+  - sorted  <field>                  : sort tables according to the given field ('none' by default)
+                                         - 'name' - metric or system name
+                                         - 'none' - as typed
+
+  - tex                              : generate LaTeX reports (when applicable)
+  - pdf  <file.pdf>                  : generate pdf  (when applicable)
+  - font_size  <size>                : size in {'huge', 'large', 'normal', 'small', 'tiny'} ('normal' by default)
+
+  - g <granularity>                  : output granularity ('sys' by default)
+                                         - 'sys' - system level
+                                         - 'doc' - document level
+                                         - 'seg' - segment level
+                                         - 'all' - all (system, document and segment)
+  - float_length   <i>               : float length (10 by default)
+  - float_precision   <i>            : float precision (8 by default)
+  - time                             : print metric computation time
+  - v                                : verbosity
+  - d                                : show debug trace
+  - remake                           : remake metric computations
+  - version                          : version number
+  - help                             : this help
+
+------------------------------------------------------------------------------------------------------------------------
+
+Examples:
+
+#1 --> configuration file validity check
+
+       3474197 Asiya.config
+
+#2 --> evaluation at the segment level (both individual scores and their combined ULC)
+
+       3474197 -eval single,ulc -g seg Asiya.config
+
+#3 --> evaluation over a specific set of metrics, systems, and references
+
+       3474197 -eval single -g seg -m GTM-2,METEOR-pa,ROUGE-W,CP-STM-6,DP-Or(*),SR-Or(*),DR-STM-6 -s system01,system04 -r reference01,reference03 Asiya.config
+
+#4 --> meta-evaluation based on Pearson and Spearman correlation coefficients with adequacy assessments at the system level
+       using bootstrap resampling for statistical significance (at a 99%, with 500 random resamplings)
+
+       3474197 -metaeval single pearson,spearman -assessments adequacy.csv -g sys -alfa 0.01 -ci 'bootstrap' -n_resamplings 500 Asiya.config
+

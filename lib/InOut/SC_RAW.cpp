@@ -80,20 +80,30 @@ void SC_RAW::print_system_scores_MMATRIX(string sys, const Scores &hOQ, const ve
     }
 }
 
+string join_set(const set<string> st, char c) {
+    string s;
+    for (set<string>::const_iterator it = st.begin(); it != st.end(); ++it) s += *it + c;
+    s = s.substr(0, s.size()-1);  //remove last 'c' char
+    return s;
+}
+
 void SC_RAW::print_scores_MMATRIX(const Scores &hOQ, const vector<string> &sorted_metrics) {
     // description _ print metric scores in MMATRIX format (on a metric basis)
-    string REF;
-    set<string>::const_iterator it = Config::references.begin();
-    REF = *it;  ++it;
-    while (it != Config::references.end()) {
-        REF += "_" + *it;   ++it;
-    }
+    string REF = join_set(Config::references, '_');
+
     print_MMATRIX_header(sorted_metrics);
 
-    for(set<string>::const_iterator it = Config::systems.begin(); it != Config::systems.end(); ++it) {
+    for(set<string>::const_iterator it = Config::systems.begin(); it != Config::systems.end(); ++it)    // systems
         print_system_scores_MMATRIX(*it, hOQ, sorted_metrics, REF);
-    }
-    if (Config::do_refs) {
 
+    if (Config::do_refs) {
+        for(set<string>::const_iterator it = Config::references.begin(); it != Config::references.end(); ++it) {    // references
+            set<string> all_other_refs(Config::references);
+            all_other_refs.erase(Config::references.find(*it));
+            if (!all_other_refs.empty()) {
+                REF = join_set(all_other_refs, '_');
+                print_system_scores_MMATRIX(*it, hOQ, sorted_metrics, REF);
+            }
+        }
     }
 }
