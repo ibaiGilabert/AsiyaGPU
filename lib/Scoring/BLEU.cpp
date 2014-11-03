@@ -180,7 +180,7 @@ pair<vector<double>, vector<vector<double> > > BLEU::computeBLEU(string TGT) {
 	if (!exists(srcBLEUsgml) or Config::remake) TB_NIST::SGML_f_create_mteval_doc(TESTBED::src, srcBLEUsgml.string(), 0);
 	if (!exists(outBLEUsgml) or Config::remake) TB_NIST::SGML_f_create_mteval_doc(TESTBED::Hsystems[TGT], outBLEUsgml.string(), 1);
 
-	if (Config::verbose > 1) fprintf(stderr, "building %s\n", reportBLEUsgml.string().c_str());
+	if (Config::verbose) fprintf(stderr, "building %s\n", reportBLEUsgml.string().c_str());
 
     stringstream sc;
     sc << toolBLEU << " -s " << ssSrc.str() << " -t " << ssOut.str() << " -r " << ssRef.str() << " > " << ssReport.str();
@@ -276,7 +276,7 @@ void BLEU::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 	fprintf(stderr, "BLEU ei!\n");
 	if (GO) {
 		fprintf(stderr, "GO! BLEU GO!\n");
-		if (Config::verbose == 1) fprintf(stderr, "%s\n", BLEU::BLEUEXT.c_str());
+		if (Config::verbose) fprintf(stderr, "%s\n", BLEU::BLEUEXT.c_str());
 		stringstream ss1, ss2, ss3, ss4, ss2i, ss3i, ss4i, ssB;
 		ss1 << Common::DATA_PATH << "/" << Common::REPORTS << "/" << TGT << "/" << REF << prefix << BLEU::BLEUEXT << "-1." << Common::XMLEXT;
 		ss2 << Common::DATA_PATH << "/" << Common::REPORTS << "/" << TGT << "/" << REF << prefix << BLEU::BLEUEXT << "-2." << Common::XMLEXT;

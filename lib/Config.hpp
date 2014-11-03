@@ -2,8 +2,6 @@
 #define CONFIG_HPP
 
 #include "Common.hpp"
-#include "include/TB_NIST.hpp"
-#include "include/TB_RAW.hpp"
 
 #include <string>
 #include <vector>
@@ -42,6 +40,7 @@ public:
 	static int alignments, n_epochs, n_resamplings;
 	static int float_precision, float_length;
 	static int tokenize, remake;
+	static int num_process;
 	static double train_prop, alfa;
 	//map<,> segments
 	//testbedid

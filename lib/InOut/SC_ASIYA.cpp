@@ -156,7 +156,7 @@ void SC_ASIYA::write_report(string TGT, string REF, string METRIC, const MetricS
     //stringstream r_xml;
     string report_xml = Common::DATA_PATH+"/"+Common::REPORTS+"/"+TGT +"/"+REF+"/"+METRIC+"."+Common::XMLEXT;
 
-    if (Config::verbose > 1) printf("writing XML REPORT <%s>\n", report_xml.c_str());
+    if (Config::verbose > 1) fprintf(stderr, "writing XML REPORT <%s>\n", report_xml.c_str());
 
     string p_aux = Common::DATA_PATH+"/"+Common::REPORTS;
     string p_tgt = Common::DATA_PATH+"/"+Common::REPORTS+"/"+TGT;

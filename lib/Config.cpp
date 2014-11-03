@@ -1,5 +1,7 @@
 #include "Config.hpp"
 #include "include/TESTBED.hpp"
+#include "include/TB_NIST.hpp"
+#include "include/TB_RAW.hpp"
 
 #include <sstream>
 #include <fstream>
@@ -60,6 +62,7 @@
     int Config::float_precision,    Config::float_length,       Config::n_epochs,           Config::n_resamplings;
     int Config::O_STORAGE,          Config::verbose,            Config::debug,              Config::tsearch;
     int Config::tokenize,           Config::remake;
+    int Config::num_process;
 
     double Config::train_prop,      Config::alfa;
     //map<,> segments
@@ -108,6 +111,7 @@ void Config::default_config() {
     Config::min_dist = Common::MIN_DIST_DEFAULT;
     Config::train_prop = Common::TRAINING_PROPORTION_DEFAULT;
     Config::model = Common::MODEL_DEFAULT;
+    Config::num_process = 1;
 
     char* path = getenv("ASIYA_HOME");
     if (path) {
@@ -197,8 +201,11 @@ void Config::Dumper() {
 }
 
 void Config::process_command_line_options(map<string, string> Options, vector<string> metaeval_options, vector<string> optimize_options) {
-    if (Options.find("v") != Options.end()) Config::verbose = atoi(Options["v"].c_str());
-    else Config::verbose = 0;
+    if (Options.find("paralel") != Options.end() and !atoi(Options["paralel"].c_str()))  {
+        fprintf(stderr, "[ERROR] Enter a valid number of processes.\n"); exit(1);
+    } else Config::num_process = atoi(Options["paralel"].c_str());
+    if (Options.find("v") != Options.end()) Config::verbose = atoi(Options["v"].c_str()); // = 1;
+    else Config::verbose = 0;   // no cal ja que el default ja es = 0
     if (Options.find("d") != Options.end()) Config::debug = atoi(Options["d"].c_str());
     else Config::debug = 0;
     if (Options.find("remake") != Options.end()) Config::remake = atoi(Options["remake"].c_str());
@@ -321,14 +328,12 @@ void Config::process_command_line_options(map<string, string> Options, vector<st
     else Config::model = Common::DATA_PATH + "/" + Common::MODEL_DEFAULT;
 }
 
-
-
 void Config::process_config_file(char* config_file, map<string, string> Options) {
     string IQ_config(config_file);
     //my $options = options;
 
     //Config CONFIG = default_config();
-    Config::default_config();
+    //Config::default_config();
 
     string METRICS = "";
     string SYSTEMS = "";
@@ -372,6 +377,13 @@ void Config::process_config_file(char* config_file, map<string, string> Options)
     if (!is_directory(p)) {
         string s = "mkdir " + Common::DATA_PATH + "/" + Common::TMP;
         system(s.c_str());
+        for (int i = 1; i <= Config::num_process; ++i) {
+
+            stringstream ss;
+            ss << s << "/" << i;
+            system(ss.str().c_str());
+        }
+
     } //TEMPORARY DIRECTORY
 
     map<string,string>::const_iterator it = Options.find("verbose");
@@ -421,11 +433,11 @@ void Config::process_config_file(char* config_file, map<string, string> Options)
 
                 if (type == "input") {
                     if (data == Common::I_NIST) {
-                        cout << "[INPUT DATA] NIST" << endl;
+                        fprintf(stderr, "[INPUT DATA NIST]\n");
                         Config::I = Common::I_NIST;
                     }
                     else {
-                        cout << "[INPUT DATA] RAW" << endl;
+                        fprintf(stderr, "[INPUT DATA RAW]\n");
                         Config::I = Common::I_RAW;
                     }
                 }
@@ -470,8 +482,14 @@ void Config::process_config_file(char* config_file, map<string, string> Options)
                 if (type == "source" or type == "src" or type == "reference" or type == "ref" or type == "system" or type == "sys") {
 
                     //string file = entry.first;
-                    if (Config::I == Common::I_NIST) TB_NIST::process_nist_file(file, type);
-                    else TB_RAW::process_raw_file(file, type);
+                    if (Config::I == Common::I_NIST) {
+                        TB_NIST tb_nist;
+                        tb_nist.process_nist_file(file, type);
+                    }
+                    else  {
+                        TB_RAW tb_raw;
+                        tb_raw.process_raw_file(file, type);
+                    }
                 }
                 else if (type == "srclang") {
                     if (Common::rLANGS.find(file_cs) != Common::rLANGS.end()) {
@@ -626,9 +644,10 @@ void Config::read_configuration_options(char* config_file, map<string, string> o
     //param1  _ configuration file
     //param2  _ command-line options
     //param4  _ command-line optimization options
+    Config::default_config();
 
-    process_config_file(config_file, options);
     process_command_line_options(options, metaeval_options, optimize_options);
+    process_config_file(config_file, options);
     validate_configuration();
 
 }

@@ -19,7 +19,7 @@ protected:
 
 public:
 	//static string give_system_name(string file);	//PROTECTED btw...
-
+	virtual void split_file(const char* file, int s) {}
 };
 
 #endif

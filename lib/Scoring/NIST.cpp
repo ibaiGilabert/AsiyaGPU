@@ -192,7 +192,7 @@ pair<vector<double>, vector<vector<double> > > NIST::computeNIST(string TGT) {
 	if (!exists(srcNISTsgml) or Config::remake) TB_NIST::SGML_f_create_mteval_doc(TESTBED::src, srcNISTsgml.string(), 0);
 	if (!exists(outNISTsgml) or Config::remake) TB_NIST::SGML_f_create_mteval_doc(TESTBED::Hsystems[TGT], outNISTsgml.string(), 1);
 
-	if (Config::verbose > 1) fprintf(stderr, "building %s\n", reportNISTsgml.string().c_str());
+	if (Config::verbose) fprintf(stderr, "building %s\n", reportNISTsgml.string().c_str());
 
     stringstream sc;// = tNIST;
     sc << toolNIST << " -s " << ssSrc.str() << " -t " << ssOut.str() << " -r " << ssRef.str() << " > " << ssReport.str();
@@ -281,7 +281,7 @@ void NIST::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 	}
 
 	if (GO) {
-		if (Config::verbose == 1) fprintf(stderr, "%s\n", NIST::NISTEXT.c_str());
+		if (Config::verbose) fprintf(stderr, "%s\n", NIST::NISTEXT.c_str());
 		stringstream ss1, ss2, ss3, ss4, ss5, ss2i, ss3i, ss4i, ss5i, ssN;
 		ss1 << Common::DATA_PATH << "/" << Common::REPORTS << "/" << TGT << "/" << REF << prefix << NIST::NISTEXT << "-1." << Common::XMLEXT;
 		ss2 << Common::DATA_PATH << "/" << Common::REPORTS << "/" << TGT << "/" << REF << prefix << NIST::NISTEXT << "-2." << Common::XMLEXT;

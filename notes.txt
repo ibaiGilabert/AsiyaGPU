@@ -158,6 +158,8 @@ SHORTCUTS
 TODO LIST
 
 	-	LOCAL
+				->	Desde els process_file de TB partir el testbed en k processes.
+
 				->	Completar l'ESA (test de expressions regulars a regular_exp.pl)	(verificar els tipus de computeMultiESA)
 				->	Completar el NGRAM.
 				->	Completar el CE.

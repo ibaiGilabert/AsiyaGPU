@@ -14,15 +14,11 @@
 
 using namespace std;
 
-int v, help, paralel;
+int v, help;
 map<string, string> Options;
 
 void usage() {
 	fprintf(stderr, "Wrong answer\n");
-}
-
-void split_asiya() {
-
 }
 
 void process_configuration() {
@@ -48,7 +44,6 @@ int main(int argc, char *argv[]) {
 
 	const struct option long_opts[] =
 	{
-		{"paralel",			no_argument,		0, 'p'},
 		{"v",	        	no_argument,        0, 'v'},
 		{"help",        	no_argument,        0, 'h'},
 		{"time",			no_argument,		0, 't'},
@@ -60,13 +55,16 @@ int main(int argc, char *argv[]) {
 		{"eval",        	required_argument,  0, 'e'},
 		{"output",			required_argument,	0, 'o'},
 		{"data_path",		required_argument,  0, 'd'},
+		{"paralel",			required_argument,	0, 'p'},
 		{0,0,0,0},
 	};
+	//NO CANVIAR L'ORDRE, PRIMER EL CONFIG
+	char* Asiya_config = argv[1];
+	fprintf(stderr, "Config_file: %s\n", Asiya_config);
 
 	int opt, long_index;
 	while((opt = getopt_long_only(argc, argv, "", long_opts, &long_index)) != -1) {
 		switch (opt) {
-			case 'p': paralel = 1; break;
 			case 'e': Options["eval"] = optarg; break;
 			case 'm': Options["metric_set"] = optarg; break;
 			case 's': Options["system_set"] = optarg; break;
@@ -75,9 +73,10 @@ int main(int argc, char *argv[]) {
 			case 'i': Options["input"] = optarg; break;
 			case 'h': help = 1; break;
 			case 't': Options["time"] = "1"; break;
-			case 'v': Options["v"] = "3"; break;
+			case 'v': Options["v"] = "1"; break;
 			case 'o': Options["output"] = optarg; break;
 			case 'd': Options["data_path"] = optarg; break;
+			case 'p': Options["paralel"] = optarg; break;
 			//default: usage();
 		}
 	}
@@ -87,22 +86,15 @@ int main(int argc, char *argv[]) {
 	int narg = 1;
 	if (argc < narg) usage;
 
-	char* Asiya_config = argv[1];
-	fprintf(stderr, "Config_file: %s\n", Asiya_config);
 
-	if (paralel) {
-		split_asiya();
-	}
-	else {
-		Config CONFIG;
-		vector<string> metaeval_options, optimize_options;
+	Config CONFIG;
+	vector<string> metaeval_options, optimize_options;
 
-		// -- read config file --------------------------------------------------------------------------------
-		CONFIG.read_configuration_options(Asiya_config, Options, metaeval_options, optimize_options);
+	// -- read config file --------------------------------------------------------------------------------
+	CONFIG.read_configuration_options(Asiya_config, Options, metaeval_options, optimize_options);
 
-		// -- process configuration options -------------------------------------------------------------------
-		process_configuration();
-	}
+	// -- process configuration options -------------------------------------------------------------------
+	process_configuration();
 }
 
 

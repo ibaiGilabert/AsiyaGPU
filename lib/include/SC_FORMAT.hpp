@@ -1,6 +1,7 @@
 #ifndef SC_FORMAT_HPP
 #define SC_FORMAT_HPP
 
+#include "TESTBED.hpp"
 #include "Scores.hpp"
 
 using namespace std;

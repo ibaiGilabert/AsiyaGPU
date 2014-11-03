@@ -15,15 +15,20 @@ using namespace std;
 
 class TB_NIST : public TB_FORMAT {
 private:
-	//void SGML_f_create_create_doc(string input, string output, int type, string sysid, xmlDocPtr &doc, xmlNodePtr &root_node);
+	static void SGML_f_create_create_doc(string input, string output, string sysid, xmlDocPtr &doc, xmlNodePtr &root_node);
+	static void f_create_create_doc(string input, string output, string TGT, string cas, int type);
 
 public:
-	//read nist input format
+	// split data files
+	xmlNodePtr split_xml(xmlNodePtr a_node, ofstream &out_txt, ofstream &out_idx, string id, string docid, string genre, int chunk, int seg);
+	void split_file(const char* file, int s);
+
+	// read nist input format
 	static void process_xml(xmlNodePtr a_node, ofstream &out_txt, ofstream &out_idx, map<string, FileInfo> &m, string id, string docid, string genre);
 	static map<string, FileInfo> read_file(const char* file);
-	static void process_nist_file(string file, string type);
+	void process_nist_file(string file, string type);
 
-	//write middle score files
+	// write middle score files
 	static void SGML_f_create_mteval_doc(string input, string output, int type);
 	static void SGML_f_create_mteval_multidoc(string output, int type);
 

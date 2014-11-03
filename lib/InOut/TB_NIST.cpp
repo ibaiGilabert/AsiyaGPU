@@ -39,7 +39,7 @@ void TB_NIST::process_xml(xmlNodePtr a_node, ofstream &out_txt, ofstream &out_id
 map<string, FileInfo> TB_NIST::read_file(const char* file) {
     // description _ reads a NIST XML file and writes an equivalent RAW file and the correspondence between them (IDX)
     //               (conforming ftp://jaguar.ncsl.nist.gov/mt/resources/mteval-xml-v1.5.dtd)
-    if (Config::verbose > 1) fprintf(stderr, "reading NIST XML <%s>\n", file);
+    if (Config::verbose) fprintf(stderr, "reading NIST XML <%s>\n", file);
 
     map<string, FileInfo> m;
 
@@ -120,11 +120,9 @@ map<string, FileInfo> TB_NIST::read_file(const char* file) {
     return m;
 }
 
-
 void TB_NIST::process_nist_file(string file, string type) {
     // description _ read the contents of a NIST xml and generate txt and idx files
     //              (idx structure is also stored onto memory)
-    //sfprintf(stderr, "%s\n", "----------NIST INPUT FILES----------");
     map<string, FileInfo> contents = TB_NIST::read_file(file.c_str());
     for(map<string, FileInfo>::const_iterator it = contents.begin(); it != contents.end(); ++it) {
         if (type == "source" or type == "src") {
@@ -152,8 +150,98 @@ void TB_NIST::process_nist_file(string file, string type) {
     }
 }
 
+xmlNodePtr TB_NIST::split_xml(xmlNodePtr a_node, ofstream &out_txt, ofstream &out_idx, string id, string docid, string genre, int chunk, int seg) {
+    char* segid;
+    xmlNodePtr cur_node = NULL;
+    for (cur_node = a_node; cur_node; cur_node = cur_node->next) {
+        if ((!xmlStrcmp(cur_node->name, (const xmlChar *)"doc"))) {
+            docid = string( (char*)xmlGetProp(cur_node, (const xmlChar*)"docid") );
+            genre = string( (char*)xmlGetProp(cur_node, (const xmlChar*)"genre") );
+        }
+        else if ((!xmlStrcmp(cur_node->name, (const xmlChar *)"seg"))) {
+            segid = (char*)xmlGetProp(cur_node, (const xmlChar*)"id");
+            out_idx << docid << " " << genre << " " << id << " " << segid << endl;
+            out_txt << cur_node->children->content << endl;
+        }
+        if (seg < chunk) split_xml(cur_node->children, out_txt, out_idx, id, docid, genre, chunk, seg + 1);
+        else return cur_node;
+    }
+}
 
-void SGML_f_create_create_doc(string input, string output, string sysid, xmlDocPtr &doc, xmlNodePtr &root_node) {
+void TB_NIST::split_file(const char* file, int s) {
+    // description _ split file into s subfiles
+    string file_gz = string(file) + "." + Common::GZEXT;
+    boost::filesystem::path p (file);
+    boost::filesystem::path p_gz (file_gz);
+
+    if (exists(p) or exists(p_gz)) {
+        if (!exists(p) and exists(p_gz)) {
+            string sysaux = Common::GUNZIP + " " + file_gz;
+            system(sysaux.c_str());
+        }
+        xmlDocPtr doc = xmlReadFile(file, NULL, 0);
+        if (doc == NULL) { fprintf(stderr, "[ERROR] Failed to parse %s\n", file); exit(1); }
+
+        xmlNodePtr root_node = xmlDocGetRootElement(doc);
+        string type = string( (char*)root_node->children->next->name );
+
+        string dir = dirname((char*)file);
+
+        int c_seg;
+        string c_doc;
+        double n_segs = TESTBED::get_num_segs();
+        int n_files = ceil( n_segs/s );
+        int chunk =  floor( n_segs/s );
+
+        for (int c_file = 1; c_file <= n_files; ++c_file) {
+            ofstream out_txt, out_idx;
+            if (type == "srcset") {
+                //cout << "OPEN file as <" << type << "> type" << endl;
+                string basename = dir + "/" + "source";
+                char buffer_txt[128], buffer_idx[128];
+                sprintf(buffer_txt, "%s%s%.3d", basename.c_str(), ".txt.", c_file);
+                sprintf(buffer_idx, "%s%s%.3d", basename.c_str(), ".idx.", c_file);
+                out_txt.open(buffer_txt);
+                out_idx.open(buffer_idx);
+
+                string setid = string( (char*)xmlGetProp(root_node->children->next, (const xmlChar*)"setid") );
+                string srclang = string( (char*)xmlGetProp(root_node->children->next, (const xmlChar*)"srclang") );
+                out_idx << setid << " " << srclang << " " << "***EMPTY***" << endl;
+
+                root_node = split_xml(root_node, out_txt, out_idx, "source", "", "", chunk, 1);
+                //c_doc = cc.first;
+                //c_seg = cc.second;
+            }
+            else if (type == "refset" or type == "tstset") {
+                string id;
+                if (type == "refset") id = string( (char*)xmlGetProp(root_node->children->next, (const xmlChar*)"refid") );
+                else id = string( (char*)xmlGetProp(root_node->children->next, (const xmlChar*)"sysid") );
+
+                string basename = dir + "/";
+                char buffer_txt[128], buffer_idx[128];
+                sprintf(buffer_txt, "%s%s%.3d", basename.c_str(), ".txt.", c_file);
+                sprintf(buffer_idx, "%s%s%.3d", basename.c_str(), ".idx.", c_file);
+                out_txt.open(buffer_txt);
+                out_idx.open(buffer_idx);
+
+                string setid = string( (char*)xmlGetProp(root_node->children->next, (const xmlChar*)"setid") );
+                string srclang = string( (char*)xmlGetProp(root_node->children->next, (const xmlChar*)"srclang") );
+                string trglang = string( (char*)xmlGetProp(root_node->children->next, (const xmlChar*)"trglang") );
+                out_idx << setid << " " << srclang << " " << trglang << endl;
+
+                root_node = split_xml(root_node, out_txt, out_idx, id, "", "", chunk, 1);
+                //c_doc = cc.first;
+                //c_seg = cc.second;
+            }
+            //else { fprintf(stderr, "[ERROR] unknown type xml file (srcset, refset, tstset)...\n", ); exit(1); }
+            out_idx.close();
+            out_txt.close();
+            xmlFreeDoc(doc);
+        }
+    } else { fprintf(stderr, "[ERROR] unavailable file <%s>\n", file); exit(1); }
+}
+
+void TB_NIST::SGML_f_create_create_doc(string input, string output, string sysid, xmlDocPtr &doc, xmlNodePtr &root_node) {
         string randomInput, randomInput2;
 
         //if exists input....
@@ -162,7 +250,7 @@ void SGML_f_create_create_doc(string input, string output, string sysid, xmlDocP
         boost::filesystem::path p_gz (input_gz);
         if (exists(p) or exists(p_gz)) {
 
-            if (Config::verbose > 1) printf("reading <%s\n>", input.c_str());
+            if (Config::verbose) fprintf(stderr, "reading <%s\n>", input.c_str());
 
             if (!exists(p)) {
                 double nr = rand() % (Common::NRAND + 1);
@@ -217,7 +305,7 @@ void SGML_f_create_create_doc(string input, string output, string sysid, xmlDocP
 
 void TB_NIST::SGML_f_create_mteval_doc(string input, string output, int type) {
     // description _ creation of a NIST SGML evaluation document from a "sentence-per-line" format corpus
-    if (Config::verbose > 1) fprintf(stderr, "OPENING <%s> for NIST xml-parsing [type = %s]...\n", input.c_str(), (type == 0)? "SRC" : (type == 1)? "TST" : "REF");
+    if (Config::verbose) fprintf(stderr, "OPENING <%s> for NIST xml-parsing [type = %s]...\n", input.c_str(), (type == 0)? "SRC" : (type == 1)? "TST" : "REF");
 
     string set, sysid;
     switch(type) {
@@ -250,7 +338,7 @@ void TB_NIST::SGML_f_create_mteval_doc(string input, string output, int type) {
 void TB_NIST::SGML_f_create_mteval_multidoc(string output, int type) {
     // description _ creation of a NIST SGML evaluation document from a "sentence-per-line" format corpus
     //              (multi-document)
-    if (Config::verbose > 1) {
+    if (Config::verbose) {
         map<string, string>::const_iterator it = TESTBED::Hrefs.begin();
         fprintf(stderr, "OPENING [%s", it->first.c_str());
         ++it;
@@ -290,10 +378,9 @@ void TB_NIST::SGML_f_create_mteval_multidoc(string output, int type) {
     xmlCleanupParser();
 }
 
-
 void TB_NIST::SGML_GTM_f_create_mteval_doc(string input, string output) {
     // description _ creation of a NIST SGML evaluation document from a "sentence-per-line" format corpus
-    if (Config::verbose > 1) fprintf(stderr, "OPENING <%s> for GTM xml-parsing...\n", input.c_str());
+    if (Config::verbose) fprintf(stderr, "OPENING <%s> for GTM xml-parsing...\n", input.c_str());
 
     xmlDocPtr doc = xmlNewDoc(BAD_CAST "1.0");
     xmlNodePtr root_node = NULL;
@@ -307,9 +394,7 @@ void TB_NIST::SGML_GTM_f_create_mteval_doc(string input, string output) {
     xmlCleanupParser();
 }
 
-
-
-void f_create_create_doc(string input, string output, string TGT, string cas, int type) {
+void TB_NIST::f_create_create_doc(string input, string output, string TGT, string cas, int type) {
     string set, id_label;
     vector<vector<string> > idx;
     switch(type) {
@@ -329,7 +414,7 @@ void f_create_create_doc(string input, string output, string TGT, string cas, in
 
     if (exists(p) or exists(p_gz)) {
 
-        if (Config::verbose > 1) printf("reading <%s\n>", input.c_str());
+        if (Config::verbose) fprintf(stderr, "reading <%s\n>", input.c_str());
 
         if (!exists(p)) {
             double nr = rand() % (Common::NRAND + 1);
@@ -416,7 +501,7 @@ void f_create_create_doc(string input, string output, string TGT, string cas, in
 void TB_NIST::f_create_mteval_doc(string input, string output, string TGT, string cas, int type) {
     // description _ creation of a NIST XML evaluation document from a "sentence-per-line" format corpus
     //               (conforming ftp://jaguar.ncsl.nist.gov/mt/resources/mteval-xml-v1.5.dtd)
-    if (Config::verbose > 1) fprintf(stderr, "OPENING <%s> for NIST xml-parsing [type = %s]...\n", input.c_str(), (type == 0)? "SRC" : (type == 1)? "TST" : "REF");
+    if (Config::verbose) fprintf(stderr, "OPENING <%s> for NIST xml-parsing [type = %s]...\n", input.c_str(), (type == 0)? "SRC" : (type == 1)? "TST" : "REF");
     /*
         cout << "TB_NIST::f_create_mteval_doc(" << endl;
         cout << "\tinput: " << input << endl;
@@ -433,7 +518,7 @@ void TB_NIST::f_create_mteval_multidoc(string output, string cas, int type) {
     // description _ creation of a NIST XML evaluation document from a "sentence-per-line" format corpus
     //               (conforming ftp://jaguar.ncsl.nist.gov/mt/resources/mteval-xml-v1.5.dtd)
     //               (multi-document)
-    if (Config::verbose > 1) {
+    if (Config::verbose) {
         map<string, string>::const_iterator it = TESTBED::Hrefs.begin();
         fprintf(stderr, "OPENING [%s", it->first.c_str());
         ++it;
