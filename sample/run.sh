@@ -18,6 +18,4 @@ die () {
 
 i=$1
 
-cd /home/usuaris/gilabert/PROVA_MMATRIX/AsiyaGPU/sample
-
 ./Asiya Asiya.config -v -eval single -metric_set metrics_$i -data_path $DATAPATH > $i.report

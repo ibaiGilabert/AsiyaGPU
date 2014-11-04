@@ -377,12 +377,11 @@ void Config::process_config_file(char* config_file, map<string, string> Options)
     if (!is_directory(p)) {
         string s = "mkdir " + Common::DATA_PATH + "/" + Common::TMP;
         system(s.c_str());
-        for (int i = 1; i <= Config::num_process; ++i) {
-
+        /*for (int i = 1; i <= Config::num_process; ++i) {
             stringstream ss;
             ss << s << "/" << i;
             system(ss.str().c_str());
-        }
+        }*/
 
     } //TEMPORARY DIRECTORY
 
@@ -484,7 +483,12 @@ void Config::process_config_file(char* config_file, map<string, string> Options)
                     //string file = entry.first;
                     if (Config::I == Common::I_NIST) {
                         TB_NIST tb_nist;
+
                         tb_nist.process_nist_file(file, type);
+                        if (Config::num_process > 1) {
+                            tb_nist.split_file(TESTBED::src.c_str(), Common::TXTEXT.c_str(), Config::num_process);
+                            tb_nist.split_file(TESTBED::src.c_str(), Common::IDXEXT.c_str(), Config::num_process);
+                        }
                     }
                     else  {
                         TB_RAW tb_raw;

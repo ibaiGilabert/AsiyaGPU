@@ -150,7 +150,42 @@ void TB_NIST::process_nist_file(string file, string type) {
     }
 }
 
-xmlNodePtr TB_NIST::split_xml(xmlNodePtr a_node, ofstream &out_txt, ofstream &out_idx, string id, string docid, string genre, int chunk, int seg) {
+void TB_NIST::split_file(const char* file, const char* ext, int s) {
+    // description _ split file into s subfiles
+    boost::filesystem::path p (file);
+    //int c_seg;
+    //int c_doc;
+    int c_file = 1;
+    double n_segs = TESTBED::get_num_segs();
+    //int n_files = ceil( n_segs/s );
+    int chunk =  floor( n_segs/s );
+    //string ext = p.extension().string();
+    ofstream output_file;
+    ifstream input_file(file);
+    if (input_file) {
+        string str;
+        char buffer_txt[128];
+        sprintf(buffer_txt, "%s.%s.%.3d", file, ext, c_file);
+        output_file.open(buffer_txt);
+
+        for (int i = 1; i <= n_segs; ++i) {
+            getline(input_file,str);
+            if (i%chunk <= chunk) {
+                output_file << str << endl;
+            } else {
+                output_file.close();
+                sprintf(buffer_txt, "%s.%s.%.3d", file, ext, ++c_file);
+                output_file.open(buffer_txt);
+            }
+        }
+        output_file.close();
+        input_file.close();
+
+    } else { fprintf(stderr, "couldn't open file: %s\n", file); exit(1); }
+}
+
+
+/*xmlNodePtr TB_NIST::split_xml(xmlNodePtr a_node, ofstream &out_txt, ofstream &out_idx, string id, string docid, string genre, int chunk, int seg) {
     char* segid;
     xmlNodePtr cur_node = NULL;
     for (cur_node = a_node; cur_node; cur_node = cur_node->next) {
@@ -168,8 +203,7 @@ xmlNodePtr TB_NIST::split_xml(xmlNodePtr a_node, ofstream &out_txt, ofstream &ou
     }
 }
 
-void TB_NIST::split_file(const char* file, int s) {
-    // description _ split file into s subfiles
+void TB_NIST::split_file(const char* file, int s) {    // xml
     string file_gz = string(file) + "." + Common::GZEXT;
     boost::filesystem::path p (file);
     boost::filesystem::path p_gz (file_gz);
@@ -184,7 +218,6 @@ void TB_NIST::split_file(const char* file, int s) {
 
         xmlNodePtr root_node = xmlDocGetRootElement(doc);
         string type = string( (char*)root_node->children->next->name );
-
         string dir = dirname((char*)file);
 
         int c_seg;
@@ -239,7 +272,7 @@ void TB_NIST::split_file(const char* file, int s) {
             xmlFreeDoc(doc);
         }
     } else { fprintf(stderr, "[ERROR] unavailable file <%s>\n", file); exit(1); }
-}
+}*/
 
 void TB_NIST::SGML_f_create_create_doc(string input, string output, string sysid, xmlDocPtr &doc, xmlNodePtr &root_node) {
         string randomInput, randomInput2;

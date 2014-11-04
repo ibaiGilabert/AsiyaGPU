@@ -158,7 +158,7 @@ SHORTCUTS
 TODO LIST
 
 	-	LOCAL
-				->	Desde els process_file de TB partir el testbed en k processes.
+				->	La partició ha de ser després del process_file normal. I prenen com a origen els .txt i .idx.
 
 				->	Completar l'ESA (test de expressions regulars a regular_exp.pl)	(verificar els tipus de computeMultiESA)
 				->	Completar el NGRAM.
