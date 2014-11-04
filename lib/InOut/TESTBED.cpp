@@ -122,7 +122,7 @@ string TESTBED::replace_special_characters(string &input) {
     re = ("\\(");   input = boost::regex_replace(input, re, "\\\\(");
     re = ("\\)");   input = boost::regex_replace(input, re, "\\\\)");
     re = ("\\?");   input = boost::regex_replace(input, re, "\\\\?");
-    //return input;
+    return input;
 }
 
 void TESTBED::print_idx() {

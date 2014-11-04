@@ -7,7 +7,7 @@
 
 bash
 
-DATAPATH=/home/usuaris/gilabert/PROVA_MMATRIX/AsiyaGPU/sample
+DATAPATH=/home/usuaris/gilabert/PROVA_SPLIT/AsiyaGPU/sample
 
 die () {
     echo >&2 "$@"
@@ -18,4 +18,4 @@ die () {
 
 i=$1
 
-./Asiya Asiya.config -v -eval single -metric_set metrics_$i -data_path $DATAPATH > $i.report
+./Asiya Asiya.config -p 4 -eval single -metric_set metrics_$i -data_path $DATAPATH > $i.report

@@ -156,7 +156,7 @@ void SC_ASIYA::write_report(string TGT, string REF, string METRIC, const MetricS
     //stringstream r_xml;
     string report_xml = Common::DATA_PATH+"/"+Common::REPORTS+"/"+TGT +"/"+REF+"/"+METRIC+"."+Common::XMLEXT;
 
-    if (Config::verbose > 1) fprintf(stderr, "writing XML REPORT <%s>\n", report_xml.c_str());
+    if (Config::verbose) fprintf(stderr, "writing XML REPORT <%s>\n", report_xml.c_str());
 
     string p_aux = Common::DATA_PATH+"/"+Common::REPORTS;
     string p_tgt = Common::DATA_PATH+"/"+Common::REPORTS+"/"+TGT;
@@ -181,7 +181,7 @@ void SC_ASIYA::write_report(string TGT, string REF, string METRIC, const MetricS
 
     save_xml(report_xml, TGT, REF, METRIC, m);
 
-    TESTBED::replace_special_characters(report_xml);
+    report_xml = TESTBED::replace_special_characters(report_xml);
 
     string command = Common::GZIP + " " + report_xml;
     string error = "Couldn't " + Common::GZIP + " " + report_xml;
