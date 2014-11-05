@@ -486,8 +486,8 @@ void Config::process_config_file(char* config_file, map<string, string> Options)
 
                         tb_nist.process_nist_file(file, type);
                         if (Config::num_process > 1) {
-                            tb_nist.split_file(TESTBED::src.c_str(), Common::TXTEXT.c_str(), Config::num_process);
-                            tb_nist.split_file(TESTBED::src.c_str(), Common::IDXEXT.c_str(), Config::num_process);
+                            fprintf(stderr, "to split <%s>\n", TESTBED::src.c_str());
+                            tb_nist.split_txt_idx(TESTBED::src, Config::num_process);
                         }
                     }
                     else  {

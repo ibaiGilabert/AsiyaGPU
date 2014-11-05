@@ -21,7 +21,8 @@ private:
 public:
 	// split data files
 	//xmlNodePtr split_xml(xmlNodePtr a_node, ofstream &out_txt, ofstream &out_idx, string id, string docid, string genre, int chunk, int seg);
-	void split_file(const char* file, const char* ext, int s);
+    void split_file(const char* file, int s);
+    void split_txt_idx(string file, int s);
 
 	// read nist input format
 	static void process_xml(xmlNodePtr a_node, ofstream &out_txt, ofstream &out_idx, map<string, FileInfo> &m, string id, string docid, string genre);
