@@ -18,8 +18,10 @@ class TB_FORMAT {
 protected:
 
 public:
-	//static string give_system_name(string file);	//PROTECTED btw...
-	virtual void split_file(const char* file, int s) {}
+	// split data files
+	//xmlNodePtr split_xml(xmlNodePtr a_node, ofstream &out_txt, ofstream &out_idx, string id, string docid, string genre, int chunk, int seg);
+    void split_file(const char* file, int s);
+    void split_txt_idx(string file, int s);
 };
 
 #endif

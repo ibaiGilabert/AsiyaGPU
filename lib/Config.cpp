@@ -483,16 +483,19 @@ void Config::process_config_file(char* config_file, map<string, string> Options)
                     //string file = entry.first;
                     if (Config::I == Common::I_NIST) {
                         TB_NIST tb_nist;
-
                         tb_nist.process_nist_file(file, type);
+
                         if (Config::num_process > 1) {
-                            fprintf(stderr, "to split <%s>\n", TESTBED::src.c_str());
+                            //fprintf(stderr, "to split <%s>\n", TESTBED::src.c_str());
                             tb_nist.split_txt_idx(TESTBED::src, Config::num_process);
                         }
                     }
                     else  {
                         TB_RAW tb_raw;
                         tb_raw.process_raw_file(file, type);
+
+                        if (Config::num_process > 1)
+                            tb_raw.split_txt_idx(TESTBED::src, Config::num_process);
                     }
                 }
                 else if (type == "srclang") {
