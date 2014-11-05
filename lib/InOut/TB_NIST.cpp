@@ -151,16 +151,16 @@ void TB_NIST::process_nist_file(string file, string type) {
 }
 
 void TB_NIST::split_file(const char* file, int s) {
+    // split file for s processes
     double n_segs = TESTBED::get_num_segs();
     int chunk = floor(n_segs/s);
-
     int n_files = s + (ceil(n_segs/s) - chunk);
 
-cout << "--------split <" << string(file) << "---------" << endl;
+/*cout << "--------split <" << string(file) << "---------" << endl;
 cout << "num_process: " << s << endl;
 cout << "n_segs: " << n_segs << endl;
 cout << "n_files: " << n_files << " expected" << endl;
-cout << "chunk: " << chunk << endl;
+cout << "chunk: " << chunk << endl;*/
 
     ofstream output_file;
     ifstream input_file(file);
@@ -169,47 +169,41 @@ cout << "chunk: " << chunk << endl;
         char buffer[128];
         int c_file = 1;
         int c_seg = 1;
-        int c_line = 1;
+        //int c_line = 1;
         sprintf(buffer, "%s.%.3d", file, c_file);
         output_file.open(buffer);
 
         while(c_file < n_files) {
             getline(input_file,str);
-                cout << "line[" << c_line << "]: " << str << endl;
+                //cout << "line[" << c_line << "]: " << str << endl;
             if (c_seg > chunk) {
                 ++c_file;
-                        //cout << "to open " << c_file << " next file:\t";
                 c_seg %= chunk;
-                output_file.close();
-                //char c_buffer[128];
                 sprintf(buffer, "%s.%.3d", file, c_file);
-                        //cout << string(c_buffer) << endl;
+                output_file.close();
                 output_file.open(buffer);
             }
-                cout << "\tFILE: " << c_file << "; seg: " << c_seg << endl;
-                output_file << str << endl;
-                ++c_line;
-                ++c_seg;
+                //cout << "\tFILE: " << c_file << "; seg: " << c_seg << endl;
+            output_file << str << endl;
+            //++c_line;
+            ++c_seg;
         }
         output_file.close();
         input_file.close();
 
     } else { fprintf(stderr, "couldn't open file: %s\n", file); exit(1); }
-        cout << "-----------------------------" << endl;
-
+    //cout << "-----------------------------" << endl;
 }
 
 void TB_NIST::split_txt_idx(string file, int s) {
-    // description _ split file into s subfiles
+    // description _ split input file into ".txt" and ".idx" format
     boost::filesystem::path p (file);
-
-    //string file_idx = p.replace_extension(".idx").string();
-        cout << "[SPLIT]: " << file << endl;
-        split_file(file.c_str(), s);
-        cout << "[DONE]" << endl;
-        cout << "[SPLIT]: " << p.replace_extension(".idx") << endl;
-        split_file(p.replace_extension(".idx").c_str(), s);
-        cout << "[DONE]" << endl;
+    //cout << "[SPLIT]: " << file << endl;
+    split_file(file.c_str(), s);
+    //cout << "[DONE]" << endl;
+    //cout << "[SPLIT]: " << p.replace_extension(".idx") << endl;
+    split_file(p.replace_extension(".idx").c_str(), s);
+    //cout << "[DONE]" << endl;
 }
 
 /*xmlNodePtr TB_NIST::split_xml(xmlNodePtr a_node, ofstream &out_txt, ofstream &out_idx, string id, string docid, string genre, int chunk, int seg) {

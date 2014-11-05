@@ -158,14 +158,11 @@ SHORTCUTS
 TODO LIST
 
 	-	LOCAL
-				->	La partició ha de ser després del process_file normal. I prenen com a origen els .txt i .idx.
-
 				->	Completar l'ESA (test de expressions regulars a regular_exp.pl)	(verificar els tipus de computeMultiESA)
 				->	Completar el NGRAM.
 				->	Completar el CE.
 
 	-	CLUSTER
-
 				->	Comprovar de nou el done-list amb les noves modificacions de les metriques.
 				->	Provar els METEOR/ESA (Asiya.config).
 				->	Provar el GTM	(nova versio de NISTXML amb SGML_GTM_create_doc)

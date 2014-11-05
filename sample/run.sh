@@ -7,7 +7,7 @@
 
 bash
 
-DATAPATH=/home/usuaris/gilabert/PROVA_SPLIT/AsiyaGPU/sample
+DATAPATH=/home/usuaris/gilabert/PROVA/AsiyaGPU/sample
 
 die () {
     echo >&2 "$@"
