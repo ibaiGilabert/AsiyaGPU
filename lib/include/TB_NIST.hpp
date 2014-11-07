@@ -20,9 +20,9 @@ private:
 
 public:
 	// read nist input format
-	static void process_xml(xmlNodePtr a_node, ofstream &out_txt, ofstream &out_idx, map<string, FileInfo> &m, string id, string docid, string genre);
-	static map<string, FileInfo> read_file(const char* file);
-	void process_nist_file(string file, string type);
+	static void process_xml(xmlNodePtr a_node, ofstream &out_txt, ofstream &out_idx, pair<string, FileInfo> &m, string id, string docid, string genre);
+	static pair<string, FileInfo> read_file(const char* file);
+	string process_file(string file, string type);
 
 	// write middle score files
 	static void SGML_f_create_mteval_doc(string input, string output, int type);

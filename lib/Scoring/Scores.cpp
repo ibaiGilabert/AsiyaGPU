@@ -4,13 +4,11 @@
 #include "../Common.hpp"
 
 #include <iostream>
+#include <fstream>
 #include <stdlib.h>
 #include <math.h>
 
-/*Scores::Scores(int n_doc, int n_seg) {
-	doc = vector<oMap>(n_doc);
-	seg = vector<oMap>(n_seg);
-}*/
+
 Scores::Scores() {
 	doc = vector<oMap>(TESTBED::get_num_docs());
 	seg = vector<oMap>(TESTBED::get_num_segs());
@@ -77,6 +75,29 @@ int Scores::get_seg_scores_size() const {
 	return seg.size();
 }
 
+bool Scores::exists_sys_score(string METRIC, string TGT, string REF) {
+	return (sys[METRIC][TGT].find(REF) != sys[METRIC][TGT].end());
+}
+
+bool Scores::exists_doc_score(string METRIC, string TGT, string REF) {
+	return (doc[0][METRIC][TGT].find(REF) != doc[0][METRIC][TGT].end());
+}
+
+bool Scores::exists_seg_score(string METRIC, string TGT, string REF) {
+	return (seg[0][METRIC][TGT].find(REF) != seg[0][METRIC][TGT].end());
+}
+
+bool Scores::exists_all_score(string METRIC, string TGT, string REF) {
+	return (all[METRIC][TGT].find(REF) != all[METRIC][TGT].end());
+}
+
+void Scores::set_sys_score(string METRIC, string TGT, string REF, double score) {
+	sys[METRIC][TGT][REF] = score;
+}
+
+void Scores::save_struct_scores(const char* filename) {
+}
+
 void Scores::save_hash_scores(string metric_name, string system_name, string refere_name, double sys_score, const vector<double> &doc_scores, const vector<double> &seg_scores) {
 	MetricScore m;
 	m.sys_score = sys_score;
@@ -123,49 +144,59 @@ seg[metric_name][system_name] = aux_seg;*/
 //all[metric_name][system_name] = vector<Score>(1, Score(refere_name, -1));
 }
 
-void Scores::print_scores() {
-	/*cout << "\tsys : " << endl;
+void Scores::print_sys_scores() const {
+	cout << "----sys scores----" << endl;
 	for (oMap::const_iterator i = sys.begin(); i != sys.end(); ++i) {
-		cout << "\t\t" << i->first << " -> " << endl;
+		cout << "\t" << i->first << " -> " << endl;
 		iMap metric_name = i->second;
 		for (iMap::const_iterator j = metric_name.begin(); j != metric_name.end(); ++j) {
-			cout << "\t\t\t" << j->first << " -> {" << endl;
-			vector<Score> system_name = j->second;
-			for (int k = 0; k < system_name.size(); ++k) {
-				cout << "\t\t\t\t" << system_name[k].first << " => " << system_name[k].second << endl;
+			cout << "\t\t" << j->first << " -> {" << endl;
+			sMap system_name = j->second;
+			for (sMap::const_iterator k = system_name.begin(); k != system_name.end(); ++k) {
+				cout << "\t\t\t" << k->first << " => " << k->second << endl;
 			}
-			cout << "\t\t\t}" << endl;
+			cout << "\t\t}" << endl;
 		}
-		cout << "\t\t}" << endl;
+		cout << "\t}" << endl;
 	}
-	cout << "\t}" << endl;
+	cout << "}" << endl;
+	cout << "------------------" << endl;
+}
 
-	cout << "\tdoc : " << endl;
-	for (oMap::const_iterator i = doc.begin(); i != doc.end(); ++i) {
-		cout << "\t\t" << i->first << " -> " << endl;
+void Scores::print_doc_scores(int n) const {
+	cout << "----doc[" << n << "] scores----" << endl;
+	for (oMap::const_iterator i = doc[n].begin(); i != doc[n].end(); ++i) {
+		cout << "\t" << i->first << " -> " << endl;
 		iMap metric_name = i->second;
 		for (iMap::const_iterator j = metric_name.begin(); j != metric_name.end(); ++j) {
-			cout << "\t\t\t" << j->first << " -> {" << endl;
-			vector<Score> system_name = j->second;
-			for (int k = 0; k < system_name.size(); ++k) {
-				cout << "\t\t\t\t" << system_name[k].first << " => " << system_name[k].second << endl;
+			cout << "\t\t" << j->first << " -> {" << endl;
+			sMap system_name = j->second;
+			for (sMap::const_iterator k = system_name.begin(); k != system_name.end(); ++k) {
+				cout << "\t\t\t" << k->first << " => " << k->second << endl;
 			}
-			cout << "\t\t\t}" << endl;
+			cout << "\t\t}" << endl;
 		}
-		cout << "\t\t}" << endl;
+		cout << "\t}" << endl;
 	}
-	cout << "\tseg : " << endl;
-	for (oMap::const_iterator i = seg.begin(); i != seg.end(); ++i) {
-		cout << "\t\t" << i->first << " -> " << endl;
+	cout << "}" << endl;
+	cout << "---------------------" << endl;
+}
+
+void Scores::print_seg_scores(int n) const {
+	cout << "----seg[" << n << "] scores----" << endl;
+	for (oMap::const_iterator i = seg[n].begin(); i != seg[n].end(); ++i) {
+		cout << "\t" << i->first << " -> " << endl;
 		iMap metric_name = i->second;
 		for (iMap::const_iterator j = metric_name.begin(); j != metric_name.end(); ++j) {
-			cout << "\t\t\t" << j->first << " -> {" << endl;
-			vector<Score> system_name = j->second;
-			for (int k = 0; k < system_name.size(); ++k) {
-				cout << "\t\t\t\t" << system_name[k].first << " => " << system_name[k].second << endl;
+			cout << "\t\t" << j->first << " -> {" << endl;
+			sMap system_name = j->second;
+			for (sMap::const_iterator k = system_name.begin(); k != system_name.end(); ++k) {
+				cout << "\t\t\t" << k->first << " => " << k->second << endl;
 			}
-			cout << "\t\t\t}" << endl;
+			cout << "\t\t}" << endl;
 		}
-		cout << "\t\t}" << endl;
-	}*/
+		cout << "\t}" << endl;
+	}
+	cout << "}" << endl;
+	cout << "---------------------" << endl;
 }

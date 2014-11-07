@@ -22,6 +22,8 @@ public:
 	//xmlNodePtr split_xml(xmlNodePtr a_node, ofstream &out_txt, ofstream &out_idx, string id, string docid, string genre, int chunk, int seg);
     void split_file(const char* file, int s);
     void split_txt_idx(string file, int s);
+
+	string process_file(string file, string type) {}
 };
 
 #endif

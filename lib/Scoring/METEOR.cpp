@@ -139,10 +139,10 @@ void METEOR::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 		cout << "GO! METEOR GO!" << endl;
 		if (Config::verbose == 1) fprintf(stderr, "%s\n", METEOR::MTREXT.c_str());
 		stringstream ss1, ss2, ss3, ss4;
-		ss1 << Common::DATA_PATH << "/" << Common::REPORTS << "/" << TGT << "/" << REF << METEOR::MTREXT << "-ex." << Common::XMLEXT;
-		ss2 << Common::DATA_PATH << "/" << Common::REPORTS << "/" << TGT << "/" << REF << METEOR::MTREXT << "-st." << Common::XMLEXT;
-		ss3 << Common::DATA_PATH << "/" << Common::REPORTS << "/" << TGT << "/" << REF << METEOR::MTREXT << "-sy." << Common::XMLEXT;
-		ss4 << Common::DATA_PATH << "/" << Common::REPORTS << "/" << TGT << "/" << REF << METEOR::MTREXT << "-pa." << Common::XMLEXT;
+		ss1 << Common::DATA_PATH << "/" << Common::REPORTS << "/" << TGT << "/" << REF << "/" << METEOR::MTREXT << "-ex." << Common::XMLEXT;
+		ss2 << Common::DATA_PATH << "/" << Common::REPORTS << "/" << TGT << "/" << REF << "/" << METEOR::MTREXT << "-st." << Common::XMLEXT;
+		ss3 << Common::DATA_PATH << "/" << Common::REPORTS << "/" << TGT << "/" << REF << "/" << METEOR::MTREXT << "-sy." << Common::XMLEXT;
+		ss4 << Common::DATA_PATH << "/" << Common::REPORTS << "/" << TGT << "/" << REF << "/" << METEOR::MTREXT << "-pa." << Common::XMLEXT;
 
 		string reportMTRexactXML = ss1.str();
 		string reportMTRstemXML = ss2.str();

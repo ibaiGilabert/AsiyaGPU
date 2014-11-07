@@ -299,14 +299,14 @@ void ROUGE::doMetric(string TGT, string REF, string prefix, int stemming, Scores
 		cout << "GO! ROUGE GO!" << endl;
 		if (Config::verbose == 1) fprintf(stderr, "%s\n", ROUGE::ROUGEXT.c_str());
 		stringstream ss1, ss2, ss3, ss4, ssL, ssS, ssSU, ssW;
-		ss1 << Common::DATA_PATH << "/" << Common::REPORTS << "/" << TGT << "/" << REF << prefix << ROUGE::ROUGEXT << "-1." << Common::XMLEXT;
-		ss2 << Common::DATA_PATH << "/" << Common::REPORTS << "/" << TGT << "/" << REF << prefix << ROUGE::ROUGEXT << "-2." << Common::XMLEXT;
-		ss3 << Common::DATA_PATH << "/" << Common::REPORTS << "/" << TGT << "/" << REF << prefix << ROUGE::ROUGEXT << "-3." << Common::XMLEXT;
-		ss4 << Common::DATA_PATH << "/" << Common::REPORTS << "/" << TGT << "/" << REF << prefix << ROUGE::ROUGEXT << "-4." << Common::XMLEXT;
-		ssL << Common::DATA_PATH << "/" << Common::REPORTS << "/" << TGT << "/" << REF << prefix << ROUGE::ROUGEXT << "-L." << Common::XMLEXT;
-		ssS << Common::DATA_PATH << "/" << Common::REPORTS << "/" << TGT << "/" << REF << prefix << ROUGE::ROUGEXT << "-S*." << Common::XMLEXT;
-		ssSU << Common::DATA_PATH << "/" << Common::REPORTS << "/" << TGT << "/" << REF << prefix << ROUGE::ROUGEXT << "-SU*." << Common::XMLEXT;
-		ssW << Common::DATA_PATH << "/" << Common::REPORTS << "/" << TGT << "/" << REF << prefix << ROUGE::ROUGEXT << "-W." << Common::XMLEXT;
+		ss1 << Common::DATA_PATH << "/" << Common::REPORTS << "/" << TGT << "/" << REF << "/" << prefix << ROUGE::ROUGEXT << "-1." << Common::XMLEXT;
+		ss2 << Common::DATA_PATH << "/" << Common::REPORTS << "/" << TGT << "/" << REF << "/" << prefix << ROUGE::ROUGEXT << "-2." << Common::XMLEXT;
+		ss3 << Common::DATA_PATH << "/" << Common::REPORTS << "/" << TGT << "/" << REF << "/" << prefix << ROUGE::ROUGEXT << "-3." << Common::XMLEXT;
+		ss4 << Common::DATA_PATH << "/" << Common::REPORTS << "/" << TGT << "/" << REF << "/" << prefix << ROUGE::ROUGEXT << "-4." << Common::XMLEXT;
+		ssL << Common::DATA_PATH << "/" << Common::REPORTS << "/" << TGT << "/" << REF << "/" << prefix << ROUGE::ROUGEXT << "-L." << Common::XMLEXT;
+		ssS << Common::DATA_PATH << "/" << Common::REPORTS << "/" << TGT << "/" << REF << "/" << prefix << ROUGE::ROUGEXT << "-S*." << Common::XMLEXT;
+		ssSU << Common::DATA_PATH << "/" << Common::REPORTS << "/" << TGT << "/" << REF << "/" << prefix << ROUGE::ROUGEXT << "-SU*." << Common::XMLEXT;
+		ssW << Common::DATA_PATH << "/" << Common::REPORTS << "/" << TGT << "/" << REF << "/" << prefix << ROUGE::ROUGEXT << "-W." << Common::XMLEXT;
 
 		string reportROUGE1xml = ss1.str();
 		string reportROUGE2xml = ss2.str();

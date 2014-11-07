@@ -14,6 +14,11 @@ private:
 	static map<string, int> create_notENGSPA();
 	static map<string, string> create_rBIDICT();
 
+	static const string CEEXT;
+	static const map<string, int> rCE, srcENG, trgENG, notENGSPA;
+	static const map<string, string> rBIDICT;
+	static const int BIDICT_MAX_NGRAM_LENGTH;
+
 	vector<double> read_CE(string reportCE);
 	vector<vector<double> > read_CE_segments(string reportCE);
 
@@ -25,10 +30,6 @@ public:
 
 	void doMetric(string TGT, string REF, string prefix, int stemming, Scores &hOQ);
 
-	static const string CEEXT;
-	static const map<string, int> rCE, srcENG, trgENG, notENGSPA;
-	static const map<string, string> rBIDICT;
-	static const int BIDICT_MAX_NGRAM_LENGTH;
 };
 
 

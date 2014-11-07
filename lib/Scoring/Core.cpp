@@ -13,7 +13,12 @@
 #include <omp.h>
 #include <stdio.h>
 #include <iostream>
+#include <fstream>
 
+#include <boost/archive/text_iarchive.hpp>
+#include <boost/archive/text_oarchive.hpp>
+//#include <boost/serialization/string.hpp>
+//#include <boost/serialization/map.hpp>
 
 vector<string> Core::get_sorted_metrics() {
 	vector<string> sorted_metrics;
@@ -31,6 +36,14 @@ vector<string> Core::get_sorted_metrics() {
 	return sorted_metrics;
 }
 
+vector<string> Core::get_sorted_systems() {
+	vector<string> sorted_systems;
+
+	set<string> st = Config::systems;
+	sorted_systems = vector<string>(Config::systems.begin(), Config::systems.end());
+
+	return sorted_systems;
+}
 /*
    my %HREF;
    my @sorted_refs = sort @{$Lref};
@@ -68,7 +81,34 @@ vector<string> Core::get_sorted_metrics() {
       DR::doMultiDR($config, $HYP, $HYP_file, $REF, \%HREF, 1, $hOQ);
    }
 
-   if ($verbose == 1) { print STDERR "]\n"; }*/
+	/*void Core::process_multi_metrics(string HYP, const set<string> &Lref, Scores &hOQ) {
+		// read reports and build hOQ Scores structure
+		// List of Metrics
+	    string REF = Common::join_set(Lref, '_');
+
+	    //compute_metrics_combination(REF, systems, metrics)
+		SC_ASIYA sc_asiya;
+
+		SingleMetric *pBLEU = new BLEU;
+		SingleMetric *pNIST = new NIST;
+		//SingleMetric *pBLEUNIST = new BLEUNIST;
+		SingleMetric *pMETEOR = new METEOR;
+		SingleMetric *pROUGE = new ROUGE;
+		SingleMetric *pGTM = new GTM;
+		SingleMetric *pTER = new TER;
+
+		pBLEU->processMetric();
+
+	    for (set<string>::const_iterator it_m= Config::metrics.begin(); it_m != Config::metrics.end(); ++it_m) {
+	    	string metric = *it_m;
+			for (set<string>::const_iterator it_s = Config::systems.begin(); it_s != Config::systems.end(); ++it_s) {
+		    	string sys = *it_s;
+
+		    	sc_asiya.read_report(sys, REF, metric, hOQ);
+		    }
+	    }
+	}*/
+
 
 void Core::doMultiMetrics(string HYP, const set<string> &Lref, Scores &hOQ) {
    // description _ launches automatic MT evaluation metrics (for multiple references)
@@ -107,12 +147,13 @@ void Core::doMultiMetrics(string HYP, const set<string> &Lref, Scores &hOQ) {
 
 	string HYP_file = TESTBED::Hsystems[HYP];
 
-	set<string>::const_iterator it = Lref.begin();
+	/*set<string>::const_iterator it = Lref.begin();
 	string REF = *it;	++it;
 	while (it != Lref.end()) {
 		REF += "_"; REF += *it;
 		++it;
-	}
+	}*/
+    string REF = Common::join_set(Lref, '_');
 
 	//if (Config::verbose > 1)
 	if (Config::verbose) fprintf(stderr, "computing similarities [%s - %s]...\n", HYP.c_str(), REF.c_str());
@@ -148,6 +189,29 @@ void Core::doMultiMetrics(string HYP, const set<string> &Lref, Scores &hOQ) {
 	bleunist.doMetric(HYP, REF, "", hOQ);*/
 
 	if (Config::verbose == 1) fprintf(stderr, "]\n");
+
+	cout << "[SCORES] : hOQ" << endl;
+	hOQ.print_sys_scores();
+	hOQ.print_doc_scores(2);
+
+//	hOQ.save_struct_scores("serialized_hOQ");
+	const char filename[] = "serialized_hOQ";
+    ofstream ofs(filename);
+    boost::archive::text_oarchive oa(ofs);
+    oa << hOQ;
+
+    Scores new_hOQ;
+
+    ifstream ifs(filename);
+    boost::archive::text_iarchive ia(ifs);
+    ia >> new_hOQ;
+
+	cout << "[SCORES] : new_hOQ" << endl;
+	new_hOQ.print_sys_scores();
+	new_hOQ.print_doc_scores(2);
+
+	cout << "[SCORES] serialized done. FILE < " << filename << endl;
+	exit(1);
 }
 
 void Core::find_max_scores(const Scores &hOQ) {
@@ -193,6 +257,7 @@ double Core::do_scores(Scores &hOQ) {
 			double time1 = omp_get_wtime();
 //doMultiMetrics($config, $sys, $config->{Hsystems}->{$sys}, $config->{references}, $config->{Hrefs}, $hOQ);
 			doMultiMetrics(*it, Config::references, hOQ);
+			//process_multi_metrics(*it, Config::references, hOQ);						//read report files
 
 			if (Config::eval_schemes.find(Common::S_QUEEN) != Config::eval_schemes.end() or \
 				Config::metaeval_schemes.find(Common::S_QUEEN) != Config::metaeval_schemes.end() or \

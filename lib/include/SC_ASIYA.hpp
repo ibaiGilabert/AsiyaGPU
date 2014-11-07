@@ -13,6 +13,8 @@ private:
 	void save_xml(string report_xml, string TGT, string REF, string METRIC, const MetricScore &m);
 
 public:
+	void read_report(string TGT, string REF, string METRIC, Scores &hOQ);
+
 	void write_report(string TGT, string REF, string METRIC, const MetricScore &m);
 	void write_report(string TGT, string REF, string METRIC, double sys_score, const vector<double> &doc_scores, const vector<double> &seg_scores);
 

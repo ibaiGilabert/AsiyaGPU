@@ -17,7 +17,7 @@ public:
 	//write
 	static vector<vector<string> > write_fake_idx_file(string file, string IDX);
 
-	void process_raw_file(string file, string type);
+	string process_file(string file, string type);
 };
 
 #endif

@@ -231,6 +231,12 @@ double Common::safe_division(double numerator, double denominator) {
 	return denominator == 0 ? default_value : numerator/denominator;
 }
 
+string Common::join_set(const set<string> st, char c) {
+    string s;
+    for (set<string>::const_iterator it = st.begin(); it != st.end(); ++it) s += *it + c;
+    s = s.substr(0, s.size()-1);  //remove last 'c' char
+    return s;
+}
 /*
 sub safe_division {
     #description _ if denominator is different from 0 returns regular division; otherwise returns default value (0 if not specified)

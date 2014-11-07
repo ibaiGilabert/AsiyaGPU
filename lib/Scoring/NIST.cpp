@@ -283,16 +283,16 @@ void NIST::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 	if (GO) {
 		if (Config::verbose) fprintf(stderr, "%s\n", NIST::NISTEXT.c_str());
 		stringstream ss1, ss2, ss3, ss4, ss5, ss2i, ss3i, ss4i, ss5i, ssN;
-		ss1 << Common::DATA_PATH << "/" << Common::REPORTS << "/" << TGT << "/" << REF << prefix << NIST::NISTEXT << "-1." << Common::XMLEXT;
-		ss2 << Common::DATA_PATH << "/" << Common::REPORTS << "/" << TGT << "/" << REF << prefix << NIST::NISTEXT << "-2." << Common::XMLEXT;
-		ss3 << Common::DATA_PATH << "/" << Common::REPORTS << "/" << TGT << "/" << REF << prefix << NIST::NISTEXT << "-3." << Common::XMLEXT;
-		ss4 << Common::DATA_PATH << "/" << Common::REPORTS << "/" << TGT << "/" << REF << prefix << NIST::NISTEXT << "-4." << Common::XMLEXT;
-		ss5 << Common::DATA_PATH << "/" << Common::REPORTS << "/" << TGT << "/" << REF << prefix << NIST::NISTEXT << "-5." << Common::XMLEXT;
-		ss2i << Common::DATA_PATH << "/" << Common::REPORTS << "/" << TGT << "/" << REF << prefix << NIST::NISTEXTi << "-2." << Common::XMLEXT;
-		ss3i << Common::DATA_PATH << "/" << Common::REPORTS << "/" << TGT << "/" << REF << prefix << NIST::NISTEXTi << "-3." << Common::XMLEXT;
-		ss4i << Common::DATA_PATH << "/" << Common::REPORTS << "/" << TGT << "/" << REF << prefix << NIST::NISTEXTi << "-4." << Common::XMLEXT;
-		ss5i << Common::DATA_PATH << "/" << Common::REPORTS << "/" << TGT << "/" << REF << prefix << NIST::NISTEXTi << "-5." << Common::XMLEXT;
-		ssN << Common::DATA_PATH << "/" << Common::REPORTS << "/" << TGT << "/" << REF << prefix << NIST::NISTEXT << "." << Common::XMLEXT;
+		ss1 << Common::DATA_PATH << "/" << Common::REPORTS << "/" << TGT << "/" << REF << "/" << prefix << NIST::NISTEXT << "-1." << Common::XMLEXT;
+		ss2 << Common::DATA_PATH << "/" << Common::REPORTS << "/" << TGT << "/" << REF << "/" << prefix << NIST::NISTEXT << "-2." << Common::XMLEXT;
+		ss3 << Common::DATA_PATH << "/" << Common::REPORTS << "/" << TGT << "/" << REF << "/" << prefix << NIST::NISTEXT << "-3." << Common::XMLEXT;
+		ss4 << Common::DATA_PATH << "/" << Common::REPORTS << "/" << TGT << "/" << REF << "/" << prefix << NIST::NISTEXT << "-4." << Common::XMLEXT;
+		ss5 << Common::DATA_PATH << "/" << Common::REPORTS << "/" << TGT << "/" << REF << "/" << prefix << NIST::NISTEXT << "-5." << Common::XMLEXT;
+		ss2i << Common::DATA_PATH << "/" << Common::REPORTS << "/" << TGT << "/" << REF << "/" << prefix << NIST::NISTEXTi << "-2." << Common::XMLEXT;
+		ss3i << Common::DATA_PATH << "/" << Common::REPORTS << "/" << TGT << "/" << REF << "/" << prefix << NIST::NISTEXTi << "-3." << Common::XMLEXT;
+		ss4i << Common::DATA_PATH << "/" << Common::REPORTS << "/" << TGT << "/" << REF << "/" << prefix << NIST::NISTEXTi << "-4." << Common::XMLEXT;
+		ss5i << Common::DATA_PATH << "/" << Common::REPORTS << "/" << TGT << "/" << REF << "/" << prefix << NIST::NISTEXTi << "-5." << Common::XMLEXT;
+		ssN << Common::DATA_PATH << "/" << Common::REPORTS << "/" << TGT << "/" << REF << "/" << prefix << NIST::NISTEXT << "." << Common::XMLEXT;
 
 		string reportNIST1xml = ss1.str();
 		string reportNIST2xml = ss2.str();

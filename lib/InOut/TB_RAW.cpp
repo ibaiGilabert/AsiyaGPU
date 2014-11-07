@@ -61,7 +61,7 @@ vector<vector<string> > TB_RAW::write_fake_idx_file(string file, string IDX) {
 }
 
 
-void TB_RAW::process_raw_file(string file, string type) {
+string TB_RAW::process_file(string file, string type) {
     // description _ read the contents of a RAW plain text file (one sentence per line) and generate fake idx files
     //               (idx structure is also stored onto memory)
     //fprintf(stderr, "%s\n", "----------NIST RAW FILES----------");
@@ -106,4 +106,5 @@ void TB_RAW::process_raw_file(string file, string type) {
     ms << "[ERROR] could not copy " << file << " into " << tokfile;
 
     Common::execute_or_die(sc.str(), ms.str());
+    return file;
 }

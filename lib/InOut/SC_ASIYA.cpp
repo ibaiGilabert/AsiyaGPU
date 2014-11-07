@@ -142,7 +142,6 @@ void SC_ASIYA::save_xml(string report_xml, string TGT, string REF, string METRIC
     xmlCleanupParser();
 }
 
-
 void SC_ASIYA::write_report(string TGT, string REF, string METRIC, double sys_score, const vector<double> &doc_scores, const vector<double> &seg_scores) {
     MetricScore m;
     m.sys_score = sys_score;
@@ -187,6 +186,110 @@ void SC_ASIYA::write_report(string TGT, string REF, string METRIC, const MetricS
     string error = "Couldn't " + Common::GZIP + " " + report_xml;
     Common::execute_or_die(command, error);
 }
+
+
+
+/*void SC_ASIYA::read_xml(xmlNodePtr a_node, ofstream &out_txt, ofstream &out_idx, pair<string, FileInfo> &m, string id, string docid, string genre) {
+
+    xmlNodePtr cur_node = NULL;
+    for (cur_node = a_node; cur_node; cur_node = cur_node->next) {
+        if ((!xmlStrcmp(cur_node->name, (const xmlChar *)"DOC"))) {
+            docid = string( (char*)xmlGetProp(cur_node, (const xmlChar*)"docid") );
+            genre = string( (char*)xmlGetProp(cur_node, (const xmlChar*)"genre") );
+        }
+        else if ((!xmlStrcmp(cur_node->name, (const xmlChar *)"seg"))) {
+            char* segid = (char*)xmlGetProp(cur_node, (const xmlChar*)"id");
+            out_idx << docid << " " << genre << " " << id << " " << segid << endl;
+            out_txt << cur_node->children->content << endl;
+
+            vector<string> lidx(4);
+            lidx[0] = docid;    lidx[1] = genre;    lidx[2] = id; lidx[3] = segid;
+            //m[id].idx.push_back(lidx);
+            m.second.idx.push_back(lidx);
+        }
+        process_xml(cur_node->children, out_txt, out_idx, m, id, docid, genre);
+    }
+}*/
+
+void SC_ASIYA::read_report(string TGT, string REF, string METRIC, Scores &hOQ) {
+    // description _ reads evaluation scores from a given XML report file onto memory.
+    // param1  _ TARGET
+    // param2  _ REFERENCE
+    // param3  _ METRIC name
+    // param4  _ metric scores (hash ref)
+    // param5  _ set of segments (topics) (hash ref)
+    // param6  _ level of granularity ('sys' for system; 'doc' for document; 'seg' for segment; 'all' for all)
+    if (Config::G == Common::G_SYS) {
+        if(hOQ.exists_sys_score(METRIC, TGT, REF)) return;
+    }
+    else if (Config::G == Common::G_DOC) {
+        if (hOQ.exists_doc_score(METRIC, TGT, REF)) return;
+    }
+    else if (Config::G == Common::G_SEG) {
+        if (hOQ.exists_seg_score(METRIC, TGT, REF)) return;
+    }
+    else if (Config::G == Common::G_ALL) {
+        if (hOQ.exists_all_score(METRIC, TGT, REF)) return;
+    }
+    else { fprintf(stderr, "[ERROR] Unknown granularity <%s>\n", Config::G.c_str()); exit(1); }
+
+    string report_xml = Common::DATA_PATH+"/"+Common::REPORTS+"/"+TGT+"/"+REF+"/"+METRIC+"."+Common::XMLEXT;
+    string report_xml_gz = report_xml + "." + Common::GZEXT;
+
+    boost::filesystem::path p (report_xml);
+    boost::filesystem::path p_gz (report_xml_gz);
+
+    srand(time(NULL));
+    double nr = rand() % (Common::NRAND + 1);   //random number [0, Common::NRAND];
+    string randomXML, randomXML2;
+
+    if (exists(p) or exists(p_gz)) {
+        if (Config::verbose) fprintf(stderr, "reading XML report <%s>\n", report_xml.c_str());
+
+        if (!exists(p)) {
+            string report_xml2 = TESTBED::replace_special_characters(report_xml);
+            boost::filesystem::path p2 (report_xml2);
+
+            double r = rand() % (Common::NRAND + 1);   //random number [0, Common::NRAND];
+            stringstream ss, ss2;
+            ss << Common::DATA_PATH << "/" << Common::TMP << "/" << p.filename().string() << "." << r;
+            ss2 << Common::DATA_PATH << "/" << Common::TMP << "/" << p2.filename().string() << "." << r;
+            randomXML = ss.str();
+            randomXML2 = ss2.str();
+
+            string sys_aux = Common::GUNZIP + " -c " + report_xml2+"."+Common::GZEXT + " > " + randomXML2;
+            system(sys_aux.c_str());
+        }
+
+        xmlDocPtr doc;
+        if (exists(p))
+            doc = xmlReadFile(report_xml.c_str(), NULL, 0);
+        else
+            doc = xmlReadFile(randomXML.c_str(), NULL, 0);
+        if (doc == NULL) { fprintf(stderr, "[ERROR] Failed to parse XML REPORT"); exit(1); }
+
+        xmlNodePtr root_node = xmlDocGetRootElement(doc);
+        string REPORT = string( (char*)root_node->children->next->name );
+
+        if (Config::G == Common::G_SYS or Config::G == Common::G_ALL) { // system_score
+            string score = string( (char*)xmlGetProp(root_node->children->next, (const xmlChar*)"score") );
+            hOQ.set_sys_score(METRIC, TGT, REF, atof(score.c_str()));
+        }
+        if (Config::G == Common::G_DOC or Config::G == Common::G_SEG or Config::G == Common::G_ALL) {
+            xmlNodePtr cur_node = root_node->children;
+            int son = 0;
+            while (cur_node != NULL) {
+                cout << "son: " << ++son << "; type: " << cur_node->name << endl;
+                cur_node = cur_node->next;
+            }
+            //read_xml(root_node, out_txt, out_idx, m, "source", "", "");
+        }
+        xmlFreeDoc(doc);
+    }
+}
+
+
+
 
 /*
     while (i < idx.size()) {
@@ -235,3 +338,4 @@ void SC_ASIYA::write_report(string TGT, string REF, string METRIC, const MetricS
         sprintf(buffer, "%f", x);
         xmlNewProp(doc_node, BAD_CAST "score",      (const xmlChar *) buffer);
     }*/
+

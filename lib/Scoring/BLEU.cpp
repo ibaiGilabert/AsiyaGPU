@@ -278,14 +278,14 @@ void BLEU::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 		fprintf(stderr, "GO! BLEU GO!\n");
 		if (Config::verbose) fprintf(stderr, "%s\n", BLEU::BLEUEXT.c_str());
 		stringstream ss1, ss2, ss3, ss4, ss2i, ss3i, ss4i, ssB;
-		ss1 << Common::DATA_PATH << "/" << Common::REPORTS << "/" << TGT << "/" << REF << prefix << BLEU::BLEUEXT << "-1." << Common::XMLEXT;
-		ss2 << Common::DATA_PATH << "/" << Common::REPORTS << "/" << TGT << "/" << REF << prefix << BLEU::BLEUEXT << "-2." << Common::XMLEXT;
-		ss3 << Common::DATA_PATH << "/" << Common::REPORTS << "/" << TGT << "/" << REF << prefix << BLEU::BLEUEXT << "-3." << Common::XMLEXT;
-		ss4 << Common::DATA_PATH << "/" << Common::REPORTS << "/" << TGT << "/" << REF << prefix << BLEU::BLEUEXT << "-4." << Common::XMLEXT;
-		ss2i << Common::DATA_PATH << "/" << Common::REPORTS << "/" << TGT << "/" << REF << prefix << BLEU::BLEUEXTi << "-2." << Common::XMLEXT;
-		ss3i << Common::DATA_PATH << "/" << Common::REPORTS << "/" << TGT << "/" << REF << prefix << BLEU::BLEUEXTi << "-3." << Common::XMLEXT;
-		ss4i << Common::DATA_PATH << "/" << Common::REPORTS << "/" << TGT << "/" << REF << prefix << BLEU::BLEUEXTi << "-4." << Common::XMLEXT;
-		ssB << Common::DATA_PATH << "/" << Common::REPORTS << "/" << TGT << "/" << REF << prefix << BLEU::BLEUEXT << "." << Common::XMLEXT;
+		ss1 << Common::DATA_PATH << "/" << Common::REPORTS << "/" << TGT << "/" << REF << "/" << prefix << BLEU::BLEUEXT << "-1." << Common::XMLEXT;
+		ss2 << Common::DATA_PATH << "/" << Common::REPORTS << "/" << TGT << "/" << REF << "/" << prefix << BLEU::BLEUEXT << "-2." << Common::XMLEXT;
+		ss3 << Common::DATA_PATH << "/" << Common::REPORTS << "/" << TGT << "/" << REF << "/" << prefix << BLEU::BLEUEXT << "-3." << Common::XMLEXT;
+		ss4 << Common::DATA_PATH << "/" << Common::REPORTS << "/" << TGT << "/" << REF << "/" << prefix << BLEU::BLEUEXT << "-4." << Common::XMLEXT;
+		ss2i << Common::DATA_PATH << "/" << Common::REPORTS << "/" << TGT << "/" << REF << "/" << prefix << BLEU::BLEUEXTi << "-2." << Common::XMLEXT;
+		ss3i << Common::DATA_PATH << "/" << Common::REPORTS << "/" << TGT << "/" << REF << "/" << prefix << BLEU::BLEUEXTi << "-3." << Common::XMLEXT;
+		ss4i << Common::DATA_PATH << "/" << Common::REPORTS << "/" << TGT << "/" << REF << "/" << prefix << BLEU::BLEUEXTi << "-4." << Common::XMLEXT;
+		ssB << Common::DATA_PATH << "/" << Common::REPORTS << "/" << TGT << "/" << REF << "/" << prefix << BLEU::BLEUEXT << "." << Common::XMLEXT;
 
 		string reportBLEU1xml = ss1.str();
 		string reportBLEU2xml = ss2.str();
@@ -428,3 +428,69 @@ void BLEU::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 	}
 
 }
+
+/*void BLEU::processMetric(string TGT, string REF, string prefix, Scores &hOQ) {
+	stringstream ss1, ss2, ss3, ss4, ss2i, ss3i, ss4i, ssB;
+	ss1 << Common::DATA_PATH << "/" << Common::REPORTS << "/" << TGT << "/" << REF << "/" << prefix << BLEU::BLEUEXT << "-1." << Common::XMLEXT;
+	ss2 << Common::DATA_PATH << "/" << Common::REPORTS << "/" << TGT << "/" << REF << "/" << prefix << BLEU::BLEUEXT << "-2." << Common::XMLEXT;
+	ss3 << Common::DATA_PATH << "/" << Common::REPORTS << "/" << TGT << "/" << REF << "/" << prefix << BLEU::BLEUEXT << "-3." << Common::XMLEXT;
+	ss4 << Common::DATA_PATH << "/" << Common::REPORTS << "/" << TGT << "/" << REF << "/" << prefix << BLEU::BLEUEXT << "-4." << Common::XMLEXT;
+	ss2i << Common::DATA_PATH << "/" << Common::REPORTS << "/" << TGT << "/" << REF << "/" << prefix << BLEU::BLEUEXTi << "-2." << Common::XMLEXT;
+	ss3i << Common::DATA_PATH << "/" << Common::REPORTS << "/" << TGT << "/" << REF << "/" << prefix << BLEU::BLEUEXTi << "-3." << Common::XMLEXT;
+	ss4i << Common::DATA_PATH << "/" << Common::REPORTS << "/" << TGT << "/" << REF << "/" << prefix << BLEU::BLEUEXTi << "-4." << Common::XMLEXT;
+	ssB << Common::DATA_PATH << "/" << Common::REPORTS << "/" << TGT << "/" << REF << "/" << prefix << BLEU::BLEUEXT << "." << Common::XMLEXT;
+
+    boost::filesystem::path reportBLEU1xml_path(ss1.str());
+	boost::filesystem::path reportBLEU2xml_path(ss2.str());
+    boost::filesystem::path reportBLEU3xml_path(ss3.str());
+    boost::filesystem::path reportBLEU4xml_path(ss4.str());
+    boost::filesystem::path reportBLEUi2xml_path(ss2i.str());
+    boost::filesystem::path reportBLEUi3xml_path(ss3i.str());
+    boost::filesystem::path reportBLEUi4xml_path(ss4i.str());
+    boost::filesystem::path reportBLEUNxml_path(ssB.str());
+
+	boost::filesystem::path reportBLEU1xml_ext(ss1.str() + "." + Common::GZEXT);
+    boost::filesystem::path reportBLEU2xml_ext(ss2.str() + "." + Common::GZEXT);
+    boost::filesystem::path reportBLEU3xml_ext(ss3.str() + "." + Common::GZEXT);
+    boost::filesystem::path reportBLEU4xml_ext(ss4.str() + "." + Common::GZEXT);
+    boost::filesystem::path reportBLEUi2xml_ext(ss2i.str() + "." + Common::GZEXT);
+    boost::filesystem::path reportBLEUi3xml_ext(ss3i.str() + "." + Common::GZEXT);
+    boost::filesystem::path reportBLEUi4xml_ext(ss4i.str() + "." + Common::GZEXT);
+    boost::filesystem::path reportBLEUNxml_ext(ssB.str() + "." + Common::GZEXT);
+
+    if ( (exists(reportBLEU1xml_path) and exists(reportBLEU1xml_ext)) or \
+    (exists(reportBLEU2xml_path) and exists(reportBLEU2xml_ext)) or \
+    (exists(reportBLEU3xml_path) and exists(reportBLEU3xml_ext)) or \
+    (exists(reportBLEU4xml_path) and exists(reportBLEU4xml_ext)) or \
+    (exists(reportBLEUi2xml_path) and exists(reportBLEUi2xml_ext)) or \
+    (exists(reportBLEUi3xml_path) and exists(reportBLEUi3xml_ext)) or \
+    (exists(reportBLEUi4xml_path) and exists(reportBLEUi4xml_ext)) or \
+    (exists(reportBLEUNxml_path) and exists(reportBLEUNxml_ext)) or Config::remake) {
+
+ 		SC_ASIYA sc_asiya;
+
+		string prefB = prefix;	prefB += BLEU::BLEUEXT;	prefB += "-1";
+		sc_asiya.read_report(TGT, REF, prefB);
+
+		prefB = prefix + BLEU::BLEUEXT + "-2";
+		sc_asiya.read_report(TGT, REF, prefB);
+
+		prefB = prefix + BLEU::BLEUEXT + "-3";
+		sc_asiya.read_report(TGT, REF, prefB);
+
+		prefB = prefix + BLEU::BLEUEXT + "-4";
+		sc_asiya.read_report(TGT, REF, prefB);
+
+		prefB = prefix + BLEU::BLEUEXTi + "-2";
+		sc_asiya.read_report(TGT, REF, prefB);
+
+		prefB = prefix + BLEU::BLEUEXTi + "-3";
+		sc_asiya.read_report(TGT, REF, prefB);
+
+		prefB = prefix + BLEU::BLEUEXTi + "-4";
+		sc_asiya.read_report(TGT, REF, prefB);
+
+		sc_asiya.read_report(TGT, REF, BLEU::BLEUEXT);
+	}
+
+}*/

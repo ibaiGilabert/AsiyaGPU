@@ -147,9 +147,9 @@ void GTM::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 		cout << "GO! GTM GO!" << endl;
 		if (Config::verbose == 1) fprintf(stderr, "%s\n", GTM::GTMEXT.c_str());
 		stringstream ss1, ss2, ss3;
-		ss1 << Common::DATA_PATH << "/" << Common::REPORTS << "/" << TGT << "/" << REF << prefix << GTM::GTMEXT << "-1." << Common::XMLEXT;
-		ss2 << Common::DATA_PATH << "/" << Common::REPORTS << "/" << TGT << "/" << REF << prefix << GTM::GTMEXT << "-2." << Common::XMLEXT;
-		ss3 << Common::DATA_PATH << "/" << Common::REPORTS << "/" << TGT << "/" << REF << prefix << GTM::GTMEXT << "-3." << Common::XMLEXT;
+		ss1 << Common::DATA_PATH << "/" << Common::REPORTS << "/" << TGT << "/" << REF << "/" << prefix << GTM::GTMEXT << "-1." << Common::XMLEXT;
+		ss2 << Common::DATA_PATH << "/" << Common::REPORTS << "/" << TGT << "/" << REF << "/" << prefix << GTM::GTMEXT << "-2." << Common::XMLEXT;
+		ss3 << Common::DATA_PATH << "/" << Common::REPORTS << "/" << TGT << "/" << REF << "/" << prefix << GTM::GTMEXT << "-3." << Common::XMLEXT;
 
 		string reportGTM1xml = ss1.str();
 		string reportGTM2xml = ss2.str();

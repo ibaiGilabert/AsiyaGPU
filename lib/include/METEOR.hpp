@@ -13,15 +13,15 @@ private:
 	static map<string, int> create_rLANG_SYN();
 	static map<string, string> create_rLANG();
 
+	static map<string, string> rLANG;
+	static const string MTREXT, TMETEOR, METEORSCRIPT;
+	static const map<string, int> rMETEOR, rLANG_STM, rLANG_PARA, rLANG_SYN;
+
 	MetricScore computeMETEOR(string TGT, string variant);
 
 public:
-
 	void doMetric(string TGT, string REF, string prefix, Scores &hOQ);
 
-	static const string MTREXT, TMETEOR, METEORSCRIPT;
-	static const map<string, int> rMETEOR, rLANG_STM, rLANG_PARA, rLANG_SYN;
-	static map<string, string> rLANG;
 };
 
 

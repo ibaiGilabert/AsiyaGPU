@@ -8,6 +8,8 @@
 class BLEU : public SingleMetric {
 private:
 	static map<string, int> create_rBLEU();
+	static const string BLEUEXT,	BLEUEXTi,	TBLEU;
+	static const map<string, int> rBLEU;
 
 	vector<double> read_bleu(string reportBLEU);
 	vector<vector<double> > read_bleu_segments(string reportBLEU);
@@ -18,8 +20,6 @@ private:
 public:
 	void doMetric(string TGT, string REF, string prefix, Scores &hOQ);
 
-	static const string BLEUEXT,	BLEUEXTi,	TBLEU;
-	static const map<string, int> rBLEU;
 };
 
 

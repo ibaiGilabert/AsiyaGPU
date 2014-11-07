@@ -16,6 +16,7 @@ private:
 	void doMultiMetrics(string HYP, const set<string> &Lref, Scores &hOQ);
 
 	vector<string> get_sorted_metrics();
+	vector<string> get_sorted_systems();
 
 	//Printing
 	void print_metric_names();
@@ -26,6 +27,9 @@ private:
 public:
 	//Compute scores
 	double do_scores(Scores &hOQ);
+
+	//Read scores reports
+	void process_metrics(Scores &hOQ);
 
 	//Print Final Report
 	void do_print(Scores &hOQ);

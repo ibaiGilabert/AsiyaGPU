@@ -87,6 +87,8 @@ REVISAR:
 
 	TESTBED		->	El get_num_docs assumeix que tots els sistemes tenen els mateixos documents assignats.
 
+	SC_ASIYA	->	Al read report tenir en compte les condicions de CE::CEEXT o LeM::LeMEXT
+
 SHORTCUTS
 
 	-->IF file exists
@@ -154,6 +156,14 @@ SHORTCUTS
 
 	-->	#include<omp.h> requires -lgomp
 
+	--> DIRNAME, FILENAME, PATHNAME, etc
+		#include <libgen.h>
+
+		dirname((char*) file)	//TB_NIST
+
+			// ALTERNATIVA amb boost
+
+			exemples a sandbox/boost_filename_extension.cpp
 
 TODO LIST
 

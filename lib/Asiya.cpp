@@ -69,7 +69,7 @@ int main(int argc, char *argv[]) {
 			case 'm': Options["metric_set"] = optarg; break;
 			case 's': Options["system_set"] = optarg; break;
 			case 'r': Options["reference_set"] = optarg; break;
-			case 'g': Options["granularity"] = optarg; break;
+			case 'g': Options["g"] = optarg; break;
 			case 'i': Options["input"] = optarg; break;
 			case 'h': help = 1; break;
 			case 't': Options["time"] = "1"; break;

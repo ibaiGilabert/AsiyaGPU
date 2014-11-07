@@ -15,6 +15,10 @@ private:
 	static map<string, string> create_TESA_mem();
 	static map<string, string> create_TESAindex();
 
+	static const string ESAXT, TESAdir, EMPTY_ITEM;
+	static const map<string, int> rESA, rLANG;
+	static const map<string, string> TESA, TESA_java, TESA_mem, TESAindex;
+
 	void ESA_f_create_doc(string input, string output);
 
 	vector<double> read_esa_segments(string reportESA);
@@ -28,9 +32,6 @@ public:
 
 	void doMetric(string TGT, string REF, string prefix, Scores &hOQ);
 
-	static const string ESAXT, TESAdir, EMPTY_ITEM;
-	static const map<string, int> rESA, rLANG;
-	static const map<string, string> TESA, TESA_java, TESA_mem, TESAindex;
 };
 
 

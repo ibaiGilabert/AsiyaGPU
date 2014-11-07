@@ -1,0 +1,5 @@
+Les úniques métriques que no es poden partir son: BLEU, NIST i DR-*
+Per altra banda, les mètriques METEOR, TER i GTM retornen els resultats
+amb les mesures a nivell de sistema i document ja calculades. Suposo que
+és millor paral·lelitzar i després fer la mitjana a mà com amb la resta
+de mètriques enlloc de no paral·lelitzar.

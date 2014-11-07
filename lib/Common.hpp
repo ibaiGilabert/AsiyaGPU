@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 #include <map>
+#include <set>
 using namespace std;
 
 
@@ -176,6 +177,7 @@ public:
 
 	static void execute_or_die(string command, string message);
 	static double safe_division(double numerator, double denominator);
+	static string join_set(const set<string> st, char c);
 
 	//static double trunk_and_trim_number(double n, int l, int p);
 

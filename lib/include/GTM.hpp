@@ -9,6 +9,8 @@
 class GTM : public SingleMetric {
 private:
 	static map<string, int> create_rGTM();
+	static const string GTMEXT, TGTM;
+	static const map<string, int> rGTM;
 
 	double read_GTM(string reportGTM);
 	vector<double> read_GTM_segments(string reportGTM);
@@ -18,8 +20,6 @@ private:
 public:
 	void doMetric(string TGT, string REF, string prefix, Scores &hOQ);
 
-	static const string GTMEXT, TGTM;
-	static const map<string, int> rGTM;
 };
 
 

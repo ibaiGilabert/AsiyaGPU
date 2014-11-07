@@ -16,7 +16,7 @@
 
 
 
-void TB_NIST::process_xml(xmlNodePtr a_node, ofstream &out_txt, ofstream &out_idx, map<string, FileInfo> &m, string id, string docid, string genre) {
+void TB_NIST::process_xml(xmlNodePtr a_node, ofstream &out_txt, ofstream &out_idx, pair<string, FileInfo> &m, string id, string docid, string genre) {
     xmlNodePtr cur_node = NULL;
     for (cur_node = a_node; cur_node; cur_node = cur_node->next) {
         if ((!xmlStrcmp(cur_node->name, (const xmlChar *)"doc"))) {
@@ -30,18 +30,19 @@ void TB_NIST::process_xml(xmlNodePtr a_node, ofstream &out_txt, ofstream &out_id
 
             vector<string> lidx(4);
             lidx[0] = docid;    lidx[1] = genre;    lidx[2] = id; lidx[3] = segid;
-            m[id].idx.push_back(lidx);
+            //m[id].idx.push_back(lidx);
+            m.second.idx.push_back(lidx);
         }
         process_xml(cur_node->children, out_txt, out_idx, m, id, docid, genre);
     }
 }
 
-map<string, FileInfo> TB_NIST::read_file(const char* file) {
+pair<string, FileInfo> TB_NIST::read_file(const char* file) {    // amb un pair es suficient, nomes llegim UN fitxer.
     // description _ reads a NIST XML file and writes an equivalent RAW file and the correspondence between them (IDX)
     //               (conforming ftp://jaguar.ncsl.nist.gov/mt/resources/mteval-xml-v1.5.dtd)
     if (Config::verbose) fprintf(stderr, "reading NIST XML <%s>\n", file);
 
-    map<string, FileInfo> m;
+    pair<string, FileInfo> m;
 
     boost::filesystem::path p (file);
     string file_gz = string(file) + "." + Common::GZEXT;
@@ -78,11 +79,14 @@ map<string, FileInfo> TB_NIST::read_file(const char* file) {
             out_idx << setid << " " << srclang << " " << "***EMPTY***" << endl;
             vector<string> lidx_headline(3);
             lidx_headline[0] = setid;   lidx_headline[1] = srclang; lidx_headline[2] = "***EMPTY***";   //Common::EMPTY_ITEM;
-            m["source"].idx.push_back(lidx_headline);
-
+            //m["source"].idx.push_back(lidx_headline);
+            m.first = "source";
+            m.second.idx.push_back(lidx_headline);
             process_xml(root_node, out_txt, out_idx, m, "source", "", "");
-            m["source"].txt = name_txt;
-            m["source"].wc = m["source"].idx.size() - 1;
+            //m["source"].txt = name_txt;
+            //m["source"].wc = m["source"].idx.size() - 1;
+            m.second.txt = name_txt;
+            m.second.wc = m.second.idx.size() - 1;
 
             //fprintf(stderr, "wc: %d\n", m["source"].wc);
         }
@@ -103,11 +107,14 @@ map<string, FileInfo> TB_NIST::read_file(const char* file) {
             out_idx << setid << " " << srclang << " " << trglang << endl;
             vector<string> lidx_headline(3);
             lidx_headline[0] = setid;   lidx_headline[1] = srclang; lidx_headline[2] = trglang;
-            m[id].idx.push_back(lidx_headline);
-
+            //m[id].idx.push_back(lidx_headline);
+            m.first = id;
+            m.second.idx.push_back(lidx_headline);
             process_xml(root_node, out_txt, out_idx, m, id, "", "");
-            m[id].txt = name_txt;
-            m[id].wc = m[id].idx.size() - 1;
+            //m[id].txt = name_txt;
+            //m[id].wc = m[id].idx.size() - 1;
+            m.second.txt = name_txt;
+            m.second.wc = m.second.idx.size() - 1;
 
             //fprintf(stderr, "wc: %d\n", m[id].wc);
         }
@@ -120,11 +127,34 @@ map<string, FileInfo> TB_NIST::read_file(const char* file) {
     return m;
 }
 
-void TB_NIST::process_nist_file(string file, string type) {
+string TB_NIST::process_file(string file, string type) {
     // description _ read the contents of a NIST xml and generate txt and idx files
     //              (idx structure is also stored onto memory)
-    map<string, FileInfo> contents = TB_NIST::read_file(file.c_str());
-    for(map<string, FileInfo>::const_iterator it = contents.begin(); it != contents.end(); ++it) {
+    //              return name of processed file (path)
+    pair<string, FileInfo> contents = TB_NIST::read_file(file.c_str());
+    if (type == "source" or type == "src") {
+        TESTBED::src = contents.second.txt;
+        TESTBED::IDX["source"] = contents.second.idx;
+        TESTBED::wc["source"] = contents.second.wc;
+    }
+    else if (type == "reference" or type == "ref") {
+        if (TESTBED::Hrefs.find(contents.first) != TESTBED::Hrefs.end()) {
+            fprintf(stderr, "[ERROR] reference name '%s' duplicated!!\n", contents.first.c_str()); exit(1);
+        }
+        TESTBED::Hrefs[contents.first] = contents.second.txt;
+        TESTBED::IDX[contents.first] = contents.second.idx;
+        TESTBED::wc[contents.first] = contents.second.wc;
+    }
+    else if (type == "system" or type == "sys") {
+        if (TESTBED::Hsystems.find(contents.first) != TESTBED::Hsystems.end()) {
+            fprintf(stderr, "[ERROR] system name '%s' duplicated!!\n", contents.first.c_str()); exit(1);
+        }
+        TESTBED::Hsystems[contents.first] = contents.second.txt;
+        TESTBED::IDX[contents.first] = contents.second.idx;
+        TESTBED::wc[contents.first] = contents.second.wc;
+    }
+    else { fprintf(stderr, "[ERROR] unknown file type <%s>!!\n", type.c_str()); exit(1); }
+    /*for(map<string, FileInfo>::const_iterator it = contents.begin(); it != contents.end(); ++it) {
         if (type == "source" or type == "src") {
             TESTBED::src = it->second.txt;
             TESTBED::IDX["source"] = it->second.idx;
@@ -147,7 +177,8 @@ void TB_NIST::process_nist_file(string file, string type) {
             TESTBED::wc[it->first] = it->second.wc;
         }
         else { fprintf(stderr, "[ERROR] unknown file type <%s>!!\n", type.c_str()); exit(1); }
-    }
+    }*/
+    return contents.second.txt;
 }
 
 /*xmlNodePtr TB_NIST::split_xml(xmlNodePtr a_node, ofstream &out_txt, ofstream &out_idx, string id, string docid, string genre, int chunk, int seg) {
