@@ -12,8 +12,12 @@ using namespace std;
 
 class Core {
 private:
+	//const set<string> whole_metric_set;
+
 	//Compute scores
 	void doMultiMetrics(string HYP, const set<string> &Lref, Scores &hOQ);
+
+	void process_multi_metrics(string HYP, const set<string> &Lref, Scores &hOQ);
 
 	vector<string> get_sorted_metrics();
 	vector<string> get_sorted_systems();
@@ -25,11 +29,13 @@ private:
 	void find_max_metric_scores();
 
 public:
+	Core();
+	~Core();
 	//Compute scores
 	double do_scores(Scores &hOQ);
 
-	//Read scores reports
-	void process_metrics(Scores &hOQ);
+	//Compute scores multi-threading
+	void process_multi_metrics(string HYP, const set<string> &Lref, Scores &hOQ);
 
 	//Print Final Report
 	void do_print(Scores &hOQ);

@@ -7,6 +7,7 @@ int main(int argc, char* argv[]) {
   while(cin >> file) {
     boost::filesystem::path p(file);   // p reads clearer than argv[1] in the following code
     cout << "filename: " << p.filename().string() << endl;
+    cout << "basename: " << p.stem() << endl;
     cout << "extension: " << p.extension().string() << endl;
     cout << "replace_ext (idx): " << p.replace_extension(".idx") << endl;
   }

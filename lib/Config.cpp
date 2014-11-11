@@ -111,7 +111,7 @@ void Config::default_config() {
     Config::min_dist = Common::MIN_DIST_DEFAULT;
     Config::train_prop = Common::TRAINING_PROPORTION_DEFAULT;
     Config::model = Common::MODEL_DEFAULT;
-    Config::num_process = 1;
+    Config::num_process = 0;
 
     char* path = getenv("ASIYA_HOME");
     if (path) {
@@ -201,17 +201,24 @@ void Config::Dumper() {
 }
 
 void Config::process_command_line_options(map<string, string> Options, vector<string> metaeval_options, vector<string> optimize_options) {
-    if (Options.find("paralel") != Options.end() and !atoi(Options["paralel"].c_str()))  {
+    if (Options.find("paralel") != Options.end() and !atoi(Options["paralel"].c_str())) {
         fprintf(stderr, "[ERROR] Enter a valid number of processes.\n"); exit(1);
+    } else if (atoi(Options["paralel"].c_str()) <= 1) {
+        fprintf(stderr, "Paralel (%s) -> No paralelism\n", Options["paralel"].c_str());
     } else Config::num_process = atoi(Options["paralel"].c_str());
+
     if (Options.find("v") != Options.end()) Config::verbose = atoi(Options["v"].c_str()); // = 1;
     else Config::verbose = 0;   // no cal ja que el default ja es = 0
+
     if (Options.find("d") != Options.end()) Config::debug = atoi(Options["d"].c_str());
     else Config::debug = 0;
+
     if (Options.find("remake") != Options.end()) Config::remake = atoi(Options["remake"].c_str());
     else Config::remake = 0;
+
     if (Options.find("time") != Options.end()) Config::do_time = atoi(Options["time"].c_str());
     else Config::do_time = 0;
+
     if (Options.find("no_tok") != Options.end()) Config::tokenize = 0;
     if (Options.find("tsearch") != Options.end()) Config::tsearch = 1;
     else Config::tsearch = 0;
@@ -468,8 +475,10 @@ void Config::process_config_file(char* config_file, map<string, string> Options)
                 file = *i;
 
                 boost::regex re("\\s*$"); //, boost::regex::perl|boost::regex::icase);
-                type = boost::regex_replace(type, re, "");
                 boost::regex re2("^\\s*"); //, boost::regex::perl|boost::regex::icase);
+                type = boost::regex_replace(type, re, "");
+                type = boost::regex_replace(type, re2, "");
+                file = boost::regex_replace(file, re, "");
                 file = boost::regex_replace(file, re2, "");
 
                 pair<string, string> entry(type, file);
@@ -477,7 +486,6 @@ void Config::process_config_file(char* config_file, map<string, string> Options)
                 string file_cs = file;
                 boost::to_lower(type);
                 boost::to_lower(file_cs);
-
                 if (type == "source" or type == "src" or type == "reference" or type == "ref" or type == "system" or type == "sys") {
 
                     //string file = entry.first;
@@ -485,9 +493,9 @@ void Config::process_config_file(char* config_file, map<string, string> Options)
                         TB_NIST tb_nist;
                         string proc_file = tb_nist.process_file(file, type);
 
-                        if (Config::num_process > 1) {
+                        if (Config::num_process) {
                             cout << "to split <" << proc_file << ">" << endl;
-                            tb_nist.split_txt_idx(proc_file, Config::num_process);
+                            tb_nist.split_txt(proc_file, Config::num_process);
                         }
                     }
                     else  {

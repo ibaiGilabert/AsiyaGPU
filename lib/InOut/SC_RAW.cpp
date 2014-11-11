@@ -56,7 +56,7 @@ void SC_RAW::print_system_scores_MMATRIX(string sys, const Scores &hOQ, const ve
     if (Config::G == Common::G_DOC or Config::G == Common::G_ALL) { // DOCUMENT SCORES
         vector<string> ldoc_ids;
         TESTBED::get_docid_list(sys, ldoc_ids);
-        for (int i = 0; i < hOQ.get_doc_scores_size(); ++i) {
+        for (int i = 0; i < hOQ.get_num_doc_scores(); ++i) {
             string scores, docid;
             docid = ldoc_ids[i];
             for(int j = 0; j < sorted_metrics.size(); ++j)
@@ -67,7 +67,7 @@ void SC_RAW::print_system_scores_MMATRIX(string sys, const Scores &hOQ, const ve
         }
     }
     if (Config::G == Common::G_SEG or Config::G == Common::G_ALL) { // SEGMENT SCORES
-        for (int i = 0; i < hOQ.get_seg_scores_size(); ++i) {
+        for (int i = 0; i < hOQ.get_num_seg_scores(); ++i) {
             //if (semgents...doALL...)
             string scores, docid, segid;
             docid = TESTBED::IDX[sys][i + 1][0];

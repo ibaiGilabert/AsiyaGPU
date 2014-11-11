@@ -7,9 +7,6 @@
 
 #include <boost/archive/text_iarchive.hpp>
 #include <boost/archive/text_oarchive.hpp>
-#include <boost/serialization/string.hpp>
-#include <boost/serialization/vector.hpp>
-#include <boost/serialization/map.hpp>
 
 using namespace std;
 
@@ -53,8 +50,8 @@ public:
 	oMap get_doc_scores(int doc_id) const;
 	oMap get_seg_scores(int seg_id) const;
 
-	int get_doc_scores_size() const;
-	int get_seg_scores_size() const;
+	int get_num_doc_scores() const;
+	int get_num_seg_scores() const;
 
 	bool exists_sys_score(string METRIC, string TGT, string REF);
 	bool exists_doc_score(string METRIC, string TGT, string REF);
@@ -65,8 +62,6 @@ public:
 	void set_sys_score(string METRIC, string TGT, string REF, double score);
 
 	//Save
-	void save_struct_scores(const char* filename);
-
 	void save_hash_scores(string metric_name, string system_name, string refere_name, const MetricScore &scores);
 	void save_hash_scores(string metric_name, string system_name, string refere_name, double sys_score, const vector<double> &doc_scores, const vector<double> &seg_scores);
 

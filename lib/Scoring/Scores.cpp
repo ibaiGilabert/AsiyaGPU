@@ -8,7 +8,6 @@
 #include <stdlib.h>
 #include <math.h>
 
-
 Scores::Scores() {
 	doc = vector<oMap>(TESTBED::get_num_docs());
 	seg = vector<oMap>(TESTBED::get_num_segs());
@@ -67,11 +66,11 @@ oMap Scores::get_seg_scores(int seg_id) const {
 	return seg[seg_id];
 }
 
-int Scores::get_doc_scores_size() const {
+int Scores::get_num_doc_scores() const {
 	return doc.size();
 }
 
-int Scores::get_seg_scores_size() const {
+int Scores::get_num_seg_scores() const {
 	return seg.size();
 }
 
@@ -96,6 +95,15 @@ void Scores::set_sys_score(string METRIC, string TGT, string REF, double score) 
 }
 
 void Scores::save_struct_scores(const char* filename) {
+    ofstream ofs(filename);
+    boost::archive::text_oarchive oa(ofs);
+    oa << *this;
+}
+
+void Scores::load_struct_scores(const char* filename) {
+    ifstream ifs(filename);
+    boost::archive::text_iarchive ia(ifs);
+    ia >> *this;
 }
 
 void Scores::save_hash_scores(string metric_name, string system_name, string refere_name, double sys_score, const vector<double> &doc_scores, const vector<double> &seg_scores) {

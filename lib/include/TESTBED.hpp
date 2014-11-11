@@ -13,7 +13,9 @@ private:
 
 
 public:
-	static string give_system_name(string file);
+	static string give_file_name(string file);
+	static string give_relative_name(string file);
+	static string replace_extension(string file, string ext);
 	static string replace_special_characters(string &input);
 
 	static void get_docid_list(string sys, vector<string> &ldoc_ids);

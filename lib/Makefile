@@ -6,8 +6,8 @@ LDFLAGS	= -lboost_system -lboost_filesystem -lboost_regex -lboost_serialization 
 
 all: Asiya
 
-Asiya: Asiya.o Config.o Common.o Core.o Scores.o BLEU.o NIST.o GTM.o METEOR.o ROUGE.o TER.o TESTBED.o TB_FORMAT.o TB_NIST.o TB_RAW.o SC_FORMAT.o SC_ASIYA.o SC_NIST.o SC_RAW.o
-	g++ -o ../sample/Asiya Asiya.o Config.o Common.o Core.o Scores.o BLEU.o NIST.o GTM.o METEOR.o ROUGE.o TER.o TESTBED.o TB_FORMAT.o TB_NIST.o TB_RAW.o SC_FORMAT.o SC_ASIYA.o SC_NIST.o SC_RAW.o $(LDFLAGS) $(CFLAGS)
+Asiya: Asiya.o Config.o Common.o Core.o Scores.o Process.o BLEU.o NIST.o GTM.o METEOR.o ROUGE.o TER.o TESTBED.o TB_FORMAT.o TB_NIST.o TB_RAW.o SC_FORMAT.o SC_ASIYA.o SC_NIST.o SC_RAW.o
+	g++ -o ../sample/Asiya Asiya.o Config.o Common.o Core.o Scores.o Process.o BLEU.o NIST.o GTM.o METEOR.o ROUGE.o TER.o TESTBED.o TB_FORMAT.o TB_NIST.o TB_RAW.o SC_FORMAT.o SC_ASIYA.o SC_NIST.o SC_RAW.o $(LDFLAGS) $(CFLAGS)
 
 Asiya.o: Asiya.cpp
 	g++ -c Asiya.cpp $(CFLAGS)
@@ -23,6 +23,9 @@ Core.o: include/Core.hpp Scoring/Core.cpp
 
 Scores.o: include/Scores.hpp Scoring/Scores.cpp
 	g++ -c Scoring/Scores.cpp $(CFLAGS)
+
+Process.o: include/Process.hpp Scoring/Process.cpp
+	g++ -c Scoring/Process.cpp $(CFLAGS)
 
 BLEU.o: include/BLEU.hpp Scoring/BLEU.cpp
 	g++ -c Scoring/BLEU.cpp $(CFLAGS)
@@ -65,5 +68,6 @@ SC_NIST.o: include/SC_NIST.hpp InOut/SC_NIST.cpp
 
 SC_RAW.o: include/SC_RAW.hpp InOut/SC_RAW.cpp
 	g++ -c InOut/SC_RAW.cpp $(CFLAGS)
+
 clean:
 	rm *.o ../sample/Asiya

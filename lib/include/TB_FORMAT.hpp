@@ -16,14 +16,16 @@ struct FileInfo {
 
 class TB_FORMAT {
 protected:
+    void split_file(const char* file, int s);
 
 public:
 	// split data files
 	//xmlNodePtr split_xml(xmlNodePtr a_node, ofstream &out_txt, ofstream &out_idx, string id, string docid, string genre, int chunk, int seg);
-    void split_file(const char* file, int s);
-    void split_txt_idx(string file, int s);
+    void split_txt(string file, int s);
+	static string get_split(string file, string ext, int thread);
 
-	string process_file(string file, string type) {}
+	virtual string process_file(string file, string type) {}
+
 };
 
 #endif

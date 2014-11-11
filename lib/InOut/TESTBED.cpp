@@ -106,10 +106,23 @@ int TESTBED::get_max_segid_length(string sys) {
 	return max;
 }
 
-string TESTBED::give_system_name(string file) {
-    // description _ get system name from filename
+string TESTBED::give_file_name(string file) {
+    // description _ get the name without the extensions from filename
+    boost::filesystem::path pathname (file);
+    return pathname.stem().string();
+}
+
+string TESTBED::give_relative_name(string file) {
+    // description _ get relative name from filename
     boost::filesystem::path pathname (file);
     return pathname.filename().string();
+}
+
+string TESTBED::replace_extension(string file, string ext) {
+    // description _ get system name from filename
+    boost::filesystem::path p (file);
+    char b[] = "."; strcat(b, ext.c_str());
+    return p.replace_extension(b).string();
 }
 
 string TESTBED::replace_special_characters(string &input) {

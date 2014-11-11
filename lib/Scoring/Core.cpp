@@ -1,6 +1,3 @@
-#include "../Config.hpp"
-#include "../include/TESTBED.hpp"
-#include "../include/Core.hpp"
 #include "../include/BLEU.hpp"
 #include "../include/NIST.hpp"
 //#include "../include/BLEUNIST.hpp"
@@ -9,16 +6,26 @@
 #include "../include/GTM.hpp"
 #include "../include/TER.hpp"
 #include "../include/SC_RAW.hpp"
+#include "../include/TESTBED.hpp"
+#include "../include/Process.hpp"
+#include "../include/Core.hpp"
+#include "../Config.hpp"
 
 #include <omp.h>
 #include <stdio.h>
 #include <iostream>
-#include <fstream>
 
+/*#include <fstream>
 #include <boost/archive/text_iarchive.hpp>
 #include <boost/archive/text_oarchive.hpp>
-//#include <boost/serialization/string.hpp>
-//#include <boost/serialization/map.hpp>
+*/
+
+Core::Core() {
+//	string metric_sets[] = {"BLEU", "GTM", "NE", "METEOR", "NIST", "O", "TER", "ROUGE", "SP", "SR", "CP", "DPm", "DP", "DR", "CE"};
+//	if (whole_metric_set["BLEU"])
+}
+
+Core::~Core() {}
 
 vector<string> Core::get_sorted_metrics() {
 	vector<string> sorted_metrics;
@@ -44,6 +51,124 @@ vector<string> Core::get_sorted_systems() {
 
 	return sorted_systems;
 }
+
+void process_multi_metrics() {
+        string REF = "whatever";
+
+        // LAUNCH
+                // EL PRIMER BULCE SOBRA SI EL TGT VE DONAT PER L'ENTRADA, ITEREM PER CADA SPLIT.
+        for (set<string>::const_iterator it_sys = Config::systems.begin(); it_sys != Config::systems.end(); ++it_sys) { $
+                for (int i = 1; i <= Config::num_process; ++i) {                                                        $
+                        string TGT = get_split(*it, i);                                                                 $
+                        jobid_metrics.insert(launch_metric(TGT, REF, "BLEU"));                                          $
+                        jobid_metrics.insert(launch_metric(TGT, REF, "METEOR"));                                        $
+                        //... and so on
+                }
+        }
+
+        // WAIT
+        while (!jobid_metrics.empty()) {                                                                                $
+                for (set<string>::const_iterator it_job = jobid_metrics.begin(); it_job != jobid_metrics.end(); ++it_job$
+                        if (end(*it_job)) jobid_metrics.erase(it_job);
+                }
+        }
+        Scores new_hOQ;
+        // READ/BUILD hOQ
+         vector< map<string, double> > split_sc(Config::num_process);       //<METRIC, AVERAGE-SCORE>       // for each $
+
+        for (int i = 1; i <= Config::num_process; ++i) {
+                stringstream dir; //tmp/i/metric
+                string TGT_split = get_split(TGT/**it_sys*/, i);
+                Scores r_hOQ = read_struct(dir + "/BLEU/" + TGT_split);
+                //BLEU
+                        // SUPOSEM TGT VE PER L'ENTRADA, ITEREM PER CADA SPLIT
+                        oMap sys_bleu = r_hOQ.get_sys_scores();
+                        for (oMap::const_iterator it_metric = sys_bleu.begin(); it_metric != sys_bleu.end(); ++it_metric$
+                                metric_score[i][it_metric->first] += r_hOQ.get_sys_score(it_metric->first, TGT/**it_sy*/$
+                        }
+        }
+        for (int i = 0; i < split_sc.size(); ++i) {
+                double tgt_score = 0;
+                for (map<string, double>::const_iterator it_m = split_sc[i].begin(); it_m != split_sc.end(); ++it_m) {
+                        tgt_score += it_m->second;
+                }
+                new_hOQ[]
+        }
+
+        for (map<string, double>::const_iterator it_sc = metric_score.begin(); it_sc != metric_score.end(); ++it_sc) {
+                new_hOQ[it_sc->first][TGT][REF] = (it_sc->second)/num_process;          //average
+        }
+}
+
+
+
+
+void Core::process_multi_metrics(string HYP, const set<string> &Lref, Scores &hOQ) {
+	// read reports and build hOQ Scores structure
+	// List of Metrics
+    string REF = Common::join_set(Lref, '_');
+    set<string> jobid_metrics;      								// set de job_ids
+
+    Process proc;
+
+    // LAUNCH
+	for (int i = 1; i <= Config::num_process; ++i) {
+		string TGT_split = TB_FORMAT::get_split(Config::Hsystems[TGT], Common::TXTEXT, i);
+
+        char* config_file = proc.make_config_file(HYP, REF, i);
+
+        char* run_bleu_file = proc.make_run_file(config_file, "BLEU");
+		job_qw.insert(proc.run_paralel(run_bleu_file, "BLEU"));
+
+		char* run_meteor_file = proc.make_run_file(config_file, "METEOR");
+		job_qw.insert(proc.run_paralel(run_meteor_file, "METEOR"));
+
+      	// Crear cada config i script, despres llançar-lo iterativament per cada metrica.
+	}
+
+	// WAIT
+	while (!jobid_metrics.empty()) {
+		for (set<string>::const_iterator it_job = jobid_metrics.begin(); it_job != jobid_metrics.end(); ++it_job) {
+			if (end(*it_job)) jobid_metrics.erase(it_job);
+		}
+	}
+
+	// REBUILD
+
+}
+
+void Core::doMultiMetrics(string HYP, const set<string> &Lref, Scores &hOQ) {
+   // description _ launches automatic MT evaluation metrics (for multiple references)
+   //                              * computes GTM (by calling Proteus java gtm) -> e = 1..3
+   //                              * computes BLEU score (by calling NIST mteval script) -> n = 4
+   //                              * computes NIST score (by calling NIST mteval script) -> n = 5
+   //                              * computes METEOR
+   //                              * computes ROUGE
+   //                              * computes WER
+   //                              * computes PER
+   //                              * computes TER
+   //                              * computes SP-based (Shallow Parsing)
+   //                              * computes DP-based (Dependency Parsing)
+   //                              * computes NE-based (Named Entity Recognition & Classification)
+   //                              * computes CP-based (Full Parsing)
+   //                              * computes SR-based (Semantic Role Labeling)
+   //                              * computes DR-based (Discourse Representation - Semantics)
+   // param2  _ candidate hypothesis (KEY)
+   // param3  _ candidate filename (string)
+   // param4  _ reference list (KEY LIST)		(Config::references)
+   // param5  _ reference filenames (hash ref)		(Config::Hrefs)
+   // param2  _ hash of scores
+
+/*
+	doMultiMetrics($config, $sys, $config->{Hsystems}->{$sys}, $config->{references}, $config->{Hrefs}, $hOQ);
+
+   my $HYP = shift;
+   my $HYP_file = shift;
+   my $Lref = shift;	Config::references
+   my $Href = shift;	Config::Hrefs
+   my $hOQ = shift;
+*/
+
 /*
    my %HREF;
    my @sorted_refs = sort @{$Lref};
@@ -80,67 +205,9 @@ vector<string> Core::get_sorted_systems() {
       DR::doMultiDR($config, $HYP, $HYP_file, $REF, \%HREF, 0, $hOQ);
       DR::doMultiDR($config, $HYP, $HYP_file, $REF, \%HREF, 1, $hOQ);
    }
-
-	/*void Core::process_multi_metrics(string HYP, const set<string> &Lref, Scores &hOQ) {
-		// read reports and build hOQ Scores structure
-		// List of Metrics
-	    string REF = Common::join_set(Lref, '_');
-
-	    //compute_metrics_combination(REF, systems, metrics)
-		SC_ASIYA sc_asiya;
-
-		SingleMetric *pBLEU = new BLEU;
-		SingleMetric *pNIST = new NIST;
-		//SingleMetric *pBLEUNIST = new BLEUNIST;
-		SingleMetric *pMETEOR = new METEOR;
-		SingleMetric *pROUGE = new ROUGE;
-		SingleMetric *pGTM = new GTM;
-		SingleMetric *pTER = new TER;
-
-		pBLEU->processMetric();
-
-	    for (set<string>::const_iterator it_m= Config::metrics.begin(); it_m != Config::metrics.end(); ++it_m) {
-	    	string metric = *it_m;
-			for (set<string>::const_iterator it_s = Config::systems.begin(); it_s != Config::systems.end(); ++it_s) {
-		    	string sys = *it_s;
-
-		    	sc_asiya.read_report(sys, REF, metric, hOQ);
-		    }
-	    }
-	}*/
-
-
-void Core::doMultiMetrics(string HYP, const set<string> &Lref, Scores &hOQ) {
-   // description _ launches automatic MT evaluation metrics (for multiple references)
-   //                              * computes GTM (by calling Proteus java gtm) -> e = 1..3
-   //                              * computes BLEU score (by calling NIST mteval script) -> n = 4
-   //                              * computes NIST score (by calling NIST mteval script) -> n = 5
-   //                              * computes METEOR
-   //                              * computes ROUGE
-   //                              * computes WER
-   //                              * computes PER
-   //                              * computes TER
-   //                              * computes SP-based (Shallow Parsing)
-   //                              * computes DP-based (Dependency Parsing)
-   //                              * computes NE-based (Named Entity Recognition & Classification)
-   //                              * computes CP-based (Full Parsing)
-   //                              * computes SR-based (Semantic Role Labeling)
-   //                              * computes DR-based (Discourse Representation - Semantics)
-   // param2  _ candidate hypothesis (KEY)
-   // param3  _ candidate filename (string)
-   // param4  _ reference list (KEY LIST)		(Config::references)
-   // param5  _ reference filenames (hash ref)		(Config::Hrefs)
-   // param2  _ hash of scores
-
-/*
-	doMultiMetrics($config, $sys, $config->{Hsystems}->{$sys}, $config->{references}, $config->{Hrefs}, $hOQ);
-
-   my $HYP = shift;
-   my $HYP_file = shift;
-   my $Lref = shift;	Config::references
-   my $Href = shift;	Config::Hrefs
-   my $hOQ = shift;
 */
+
+
 
 
    //Lref is already sorted (set's wonders)
@@ -190,28 +257,27 @@ void Core::doMultiMetrics(string HYP, const set<string> &Lref, Scores &hOQ) {
 
 	if (Config::verbose == 1) fprintf(stderr, "]\n");
 
-	cout << "[SCORES] : hOQ" << endl;
+/*	cout << "[SCORES] : hOQ" << endl;
 	hOQ.print_sys_scores();
 	hOQ.print_doc_scores(2);
 
-//	hOQ.save_struct_scores("serialized_hOQ");
-	const char filename[] = "serialized_hOQ";
-    ofstream ofs(filename);
-    boost::archive::text_oarchive oa(ofs);
-    oa << hOQ;
+	string filename = "serialized_hOQ";
 
-    Scores new_hOQ;
+	hOQ.save_struct_scores(filename.c_str());
 
-    ifstream ifs(filename);
-    boost::archive::text_iarchive ia(ifs);
-    ia >> new_hOQ;
+	Scores new_hOQ;
+	new_hOQ.load_struct_scores(filename.c_str());
 
 	cout << "[SCORES] : new_hOQ" << endl;
 	new_hOQ.print_sys_scores();
 	new_hOQ.print_doc_scores(2);
 
 	cout << "[SCORES] serialized done. FILE < " << filename << endl;
-	exit(1);
+
+	string rm_filename = "rm " + filename;
+	system(rm_filename.c_str());
+
+	exit(1);*/
 }
 
 void Core::find_max_scores(const Scores &hOQ) {
@@ -256,8 +322,8 @@ double Core::do_scores(Scores &hOQ) {
 		for (set<string>::const_iterator it = Config::systems.begin(); it != Config::systems.end(); ++it) {	//systems Vs. references
 			double time1 = omp_get_wtime();
 //doMultiMetrics($config, $sys, $config->{Hsystems}->{$sys}, $config->{references}, $config->{Hrefs}, $hOQ);
-			doMultiMetrics(*it, Config::references, hOQ);
-			//process_multi_metrics(*it, Config::references, hOQ);						//read report files
+			if (Config::num_process) process_multi_metrics(*it, Config::references, hOQ);						//read report files
+			else doMultiMetrics(*it, Config::references, hOQ);
 
 			if (Config::eval_schemes.find(Common::S_QUEEN) != Config::eval_schemes.end() or \
 				Config::metaeval_schemes.find(Common::S_QUEEN) != Config::metaeval_schemes.end() or \
