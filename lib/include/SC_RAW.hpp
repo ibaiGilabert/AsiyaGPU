@@ -17,6 +17,7 @@ public:
 	//void print_scores_NIST(const Scores &hOQ);
 	void print_scores_MMATRIX(const Scores &hOQ, const vector<string> &sorted_metrics);
 	//void print_scores_SMATRIX(const Scores &hOQ);
+
 };
 
 #endif

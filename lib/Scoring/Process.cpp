@@ -54,33 +54,33 @@ string Process::getJobID(string cmd) {
 }
 
 
-string Process::run_job(char* run_file, char* metric) {
-	char qsub[] = "/usr/local/sge/bin/linux-x64/qsub ";
+string Process::run_job(string run_file, string metric) {
+	/*char qsub[] = "/usr/local/sge/bin/linux-x64/qsub ";
     strcat(qsub, run_file);
     strcat(qsub, " ");
-    strcat(qsub, metric);
+    strcat(qsub, metric);*/
 
-    string qsub_r = exec(qsub);
-    string jobid_r = getJobID(qsub_r);
+    string qsub = "/usr/local/sge/bin/linux-x64/qsub " + run_file + " " + metric;
+    string qsub_r = exec(qsub.c_str());
 
-    return jobid_r;
+    return getJobID(qsub_r);
 }
 
-string Process::run_job_dep(char* run_file, char* metric, char* dep) {
-    char qsub[] = "/usr/local/sge/bin/linux-x64/qsub -hold_jid ";
+string Process::run_job_dep(string run_file, string metric, string dep) {
+    /*char qsub[] = "/usr/local/sge/bin/linux-x64/qsub -hold_jid ";
     strcat(qsub, dep);
     strcat(qsub, " ");
     strcat(qsub, run_file);
     strcat(qsub, " ");
-    strcat(qsub, metric);
+    strcat(qsub, metric);*/
 
-    string qsub_r = exec(qsub);
-    string jobid_r = getJobID(qsub_r);
+    string qsub = "/usr/local/sge/bin/linux-x64/qsub -hold_jid " + dep + " " + run_file + " " + metric;
+    string qsub_r = exec(qsub.c_str());
 
-    return jobid_r;
+    return getJobID(qsub_r);
 }
 
-char* Process::make_config_file(string SYS, string REF, int thread) {
+string Process::make_config_file(string SYS, string REF, int thread) {
     // build config file for one thread
     // return: config_file name
     char buffer[128];
@@ -102,19 +102,20 @@ char* Process::make_config_file(string SYS, string REF, int thread) {
         config_file << "ref=" << REF << endl;
         config_file << "sys=" << SYS << endl << endl;
         config_file << "metric_set=";
-        for (set<string>::const_iterator it = Config::metrics.begin(); it != Config::metrics.end(); ++ìt) config_file << *it << " ";
+        for(set<string>::const_iterator it = Config::metrics.begin(); it != Config::metrics.end(); ++it)
+            config_file << *it << " ";
         config_file << endl << endl;
         config_file.close();
-    } else { fprintf(stderr, "couldn't build config file: %s\n", ); exit(1); }
+    } else { fprintf(stderr, "[ERROR] Could not build config file <%s>\n", config_name); exit(1); }
 
-    return config_name;
+    return string(config_name);
 }
 
-void Proces::make_run_file(string config_file, string metric) {
+string Process::make_run_file(string config_file, int thread, string metric) {
     // build run script file
     // return: script file name
     char run_buffer[50];
-    sprintf(run_buffer, "run_%s_%.3d.sh", metric_set.c_str(), thread);   // get the system split
+    sprintf(run_buffer, "run_%s_%.3d.sh", metric.c_str(), thread);   // get the system split
 
     ofstream run_file(run_buffer);
     if (run_file) {
@@ -125,15 +126,15 @@ void Proces::make_run_file(string config_file, string metric) {
         run_file << "#$ -M gilabert@cs.upc.edu" << endl;
         run_file << "#$ -l h_vmem=4G" << endl;          //LA MEMORIA QUE CADA METRICA DEMANI
 
-        string cmd = "./Asiya " + config_file + " -eval single -metric_set metric_" << metric;
+        string cmd = "./Asiya " + config_file + " -z -eval single -metric_set metric_" + metric;
         //if (Config::verbose) fprintf(stderr, "[EXEC] %s\n", cmd.c_str());
-    printf(stderr, "[EXEC] %s\n", cmd.c_str());
+    fprintf(stderr, "[EXEC] %s\n", cmd.c_str());
 
         run_file << "echo " << cmd << endl;
         run_file << cmd << endl;
 
         run_file.close();
-    } else { fprintf(stderr, "couldn't build config file: %s\n", ); exit(1); }
+    } else { fprintf(stderr, "[ERROR] Could not build config file <%s>\n", run_buffer); exit(1); }
 
-    return run_buffer;
+    return string(run_buffer);
 }

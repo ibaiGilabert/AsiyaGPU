@@ -26,6 +26,7 @@ private:
 	void process_command_line_options(map<string, string> options, vector<string> metaeval_options, vector<string> optimize_options);
 
 public:
+	static map<string, map<string, double> > max_score,	min_score;	//<granularity, [metric, value]>
 	static map<string, int> 	Hmetrics, 	/*wc,*/ 	eval_schemes,	metaeval_schemes,	optimize_schemes,	metaeval_criteria,	optimize_criteria;
 	//static vector<string> 		COMBO;	//metrics,	systems,		references;
 	//static map<string, vector<vector<string> > > 	IDX;
@@ -40,7 +41,7 @@ public:
 	static int alignments, n_epochs, n_resamplings;
 	static int float_precision, float_length;
 	static int tokenize, remake;
-	static int num_process;
+	static int num_process, serialize;
 	static double train_prop, alfa;
 	//map<,> segments
 	//testbedid

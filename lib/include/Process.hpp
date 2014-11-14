@@ -7,17 +7,18 @@ using namespace std;
 
 class Process {
 private:
-	bool end(string id);
 	string exec(const char* cmd);
 
 	string getJobID(string cmd);
 
 public:
-	char* make_config_file(string SYS, string REF, int thread);
-	char* make_run_file(string config_file, string metric);
+	bool end(string id);
 
-	string run_job(char* run_file, char* metric);
-	string run_job_dep(char* run_file, char* metric, char* dep);
+	string make_config_file(string SYS, string REF, int thread);
+	string make_run_file(string config_file, int thread, string metric);
+
+	string run_job(string run_file, string metric);
+	string run_job_dep(string run_file, string metric, string dep);
 
 };
 

@@ -8,9 +8,6 @@
 #include <boost/regex.hpp>
 #include <boost/filesystem.hpp>
 #include <boost/algorithm/string.hpp>
-#include <boost/serialization/string.hpp>
-#include <boost/serialization/vector.hpp>
-#include <boost/serialization/map.hpp>
 
 
 void TB_RAW::write_fake_idx_file(string file, string IDX, vector<vector<string> > &lIDX) {
@@ -98,7 +95,7 @@ string TB_RAW::process_file(string file, string type) {
         lang = Config::SRCLANG;
     }
     else if (type == "reference" or type == "ref") {
-        string R = TESTBED::give_system_name(file);
+        string R = TESTBED::give_file_name(file);
         //fprintf(stderr, "\tR: '%s'\n", R.c_str());
         TESTBED::IDX[R] = rIDX;
 
@@ -110,7 +107,7 @@ string TB_RAW::process_file(string file, string type) {
         lang = Config::LANG;
     }
     else if (type == "system" or type =="sys") {
-        string S = TESTBED::give_system_name(file);
+        string S = TESTBED::give_file_name(file);
         TESTBED::IDX[S] = rIDX;
         if (TESTBED::Hsystems.find(S) != TESTBED::Hsystems.end()) {
             fprintf(stderr, "[ERROR] system name '%s' duplicated!\n", S.c_str()); exit(1);
@@ -127,16 +124,4 @@ string TB_RAW::process_file(string file, string type) {
 
     Common::execute_or_die(sc.str(), ms.str());
     return file;
-}
-
-void TB_RAW::save_struct_scores(const Scores &hOQ, const char* filename) {
-    ofstream ofs(filename);
-    boost::archive::text_oarchive oa(ofs);
-    oa << hOQ;
-}
-
-void TB_RAW::load_struct_scores(Scores &hOQ, const char* filename) {
-    ifstream ifs(filename);
-    boost::archive::text_iarchive ia(ifs);
-    ia >> hOQ;
 }

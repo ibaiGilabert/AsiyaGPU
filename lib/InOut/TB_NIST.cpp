@@ -286,8 +286,8 @@ void TB_NIST::SGML_f_create_create_doc(string input, string output, string sysid
                 string input2 = TESTBED::replace_special_characters(input);
                 stringstream rIn, rIn2, st;
 
-                rIn << Common::DATA_PATH << "/" << Common::TMP << "/" << TESTBED::give_system_name(input) << "." << nr;
-                rIn2 << Common::DATA_PATH << "/" << Common::TMP << "/" << TESTBED::give_system_name(input2) << "." << nr;
+                rIn << Common::DATA_PATH << "/" << Common::TMP << "/" << TESTBED::give_file_name(input) << "." << nr;
+                rIn2 << Common::DATA_PATH << "/" << Common::TMP << "/" << TESTBED::give_file_name(input2) << "." << nr;
 
                 randomInput = rIn.str();
                 randomInput2 = rIn2.str();
@@ -449,8 +449,8 @@ void TB_NIST::f_create_create_doc(string input, string output, string TGT, strin
             double nr = rand() % (Common::NRAND + 1);
             string input2 = TESTBED::replace_special_characters(input);
             stringstream rIn, rIn2, st;
-            rIn << Common::DATA_PATH << "/" << Common::TMP << "/" << TESTBED::give_system_name(input) << "." << nr;
-            rIn2 << Common::DATA_PATH << "/" << Common::TMP << "/" << TESTBED::give_system_name(input2) << "." << nr;
+            rIn << Common::DATA_PATH << "/" << Common::TMP << "/" << TESTBED::give_file_name(input) << "." << nr;
+            rIn2 << Common::DATA_PATH << "/" << Common::TMP << "/" << TESTBED::give_file_name(input2) << "." << nr;
             randomInput = rIn.str();
             randomInput2 = rIn2.str();
 

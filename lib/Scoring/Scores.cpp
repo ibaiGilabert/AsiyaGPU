@@ -90,11 +90,19 @@ bool Scores::exists_all_score(string METRIC, string TGT, string REF) {
 	return (all[METRIC][TGT].find(REF) != all[METRIC][TGT].end());
 }
 
-void Scores::set_sys_score(string METRIC, string TGT, string REF, double score) {
-	sys[METRIC][TGT][REF] = score;
+void Scores::set_sys_score(string METRIC, string TGT, string REF, double x) {
+	sys[METRIC][TGT][REF] = x;
 }
 
-void Scores::save_struct_scores(const char* filename) {
+void Scores::set_doc_score(int n, string METRIC, string TGT, string REF, double x) {
+	doc[n][METRIC][TGT][REF] = x;
+}
+
+void Scores::set_seg_score(int n, string METRIC, string TGT, string REF, double x) {
+	seg[n][METRIC][TGT][REF] = x;
+}
+
+/*void Scores::save_struct_scores(const char* filename) {
     ofstream ofs(filename);
     boost::archive::text_oarchive oa(ofs);
     oa << *this;
@@ -104,7 +112,7 @@ void Scores::load_struct_scores(const char* filename) {
     ifstream ifs(filename);
     boost::archive::text_iarchive ia(ifs);
     ia >> *this;
-}
+}*/
 
 void Scores::save_hash_scores(string metric_name, string system_name, string refere_name, double sys_score, const vector<double> &doc_scores, const vector<double> &seg_scores) {
 	MetricScore m;

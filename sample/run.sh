@@ -5,7 +5,6 @@
 #$ -M gilabert@cs.upc.edu
 #$ -l h_vmem=4G
 
-bash
 
 DATAPATH=/home/usuaris/gilabert/PROVA/AsiyaGPU/sample
 
@@ -18,4 +17,4 @@ die () {
 
 i=$1
 
-./Asiya Asiya.config.old -p 4 -eval single -metric_set metrics_$i -data_path $DATAPATH > $i.report
+./Asiya Asiya.config.old -p 4 -eval single,ulc -metric_set metrics_$i -data_path $DATAPATH > $i.report

@@ -43,7 +43,7 @@
     string Config::model;
 
     char* Config::PATH;*/
-
+    map<string, map<string, double> >                       Config::max_score,          Config::min_score;
     map<string, int>            Config::Hmetrics,           Config::eval_schemes,       Config::metaeval_schemes;
     map<string, int>            Config::optimize_schemes,   Config::metaeval_criteria,  Config::optimize_criteria;
     set<string>                 Config::metrics,            Config::systems,            Config::references;
@@ -62,7 +62,7 @@
     int Config::float_precision,    Config::float_length,       Config::n_epochs,           Config::n_resamplings;
     int Config::O_STORAGE,          Config::verbose,            Config::debug,              Config::tsearch;
     int Config::tokenize,           Config::remake;
-    int Config::num_process;
+    int Config::num_process,        Config::serialize;
 
     double Config::train_prop,      Config::alfa;
     //map<,> segments
@@ -112,6 +112,7 @@ void Config::default_config() {
     Config::train_prop = Common::TRAINING_PROPORTION_DEFAULT;
     Config::model = Common::MODEL_DEFAULT;
     Config::num_process = 0;
+    Config::serialize = 0;
 
     char* path = getenv("ASIYA_HOME");
     if (path) {
@@ -206,8 +207,10 @@ void Config::process_command_line_options(map<string, string> Options, vector<st
     } else if (atoi(Options["paralel"].c_str()) <= 1) {
         fprintf(stderr, "Paralel (%s) -> No paralelism\n", Options["paralel"].c_str());
     } else Config::num_process = atoi(Options["paralel"].c_str());
+    if (Options.find("serialize") != Options.end()) Config::serialize = 1;
 
-    if (Options.find("v") != Options.end()) Config::verbose = atoi(Options["v"].c_str()); // = 1;
+
+    if (Options.find("v") != Options.end()) Config::verbose = 1;//atoi(Options["v"].c_str());
     else Config::verbose = 0;   // no cal ja que el default ja es = 0
 
     if (Options.find("d") != Options.end()) Config::debug = atoi(Options["d"].c_str());
@@ -216,7 +219,7 @@ void Config::process_command_line_options(map<string, string> Options, vector<st
     if (Options.find("remake") != Options.end()) Config::remake = atoi(Options["remake"].c_str());
     else Config::remake = 0;
 
-    if (Options.find("time") != Options.end()) Config::do_time = atoi(Options["time"].c_str());
+    if (Options.find("time") != Options.end()) Config::do_time = 1; //atoi(Options["time"].c_str());
     else Config::do_time = 0;
 
     if (Options.find("no_tok") != Options.end()) Config::tokenize = 0;

@@ -52,6 +52,68 @@ vector<string> Core::get_sorted_systems() {
 	return sorted_systems;
 }
 
+
+void Core::find_max_metric_scores(const Scores &hOQ, const set<string> &systems, const set<string> &references) {
+    // description _ finds maximum score for each metric, so normalized scores for a given metric "i"
+    //               can be later computed as are Xnorm(i) = X(i) / MAX(i)
+    //               (max metric scores are stored onto the configuration object)
+    string REF = Common::join_set(references, '_');
+    for(set<string>::const_iterator it_m = Config::metrics.begin(); it_m != Config::metrics.end(); ++it_m) {
+    	string ref_tmp = REF;
+    	if (Config::min_score[Common::G_SYS][*it_m] == Config::min_score[Common::G_SYS][*it_m]) Config::min_score[Common::G_SYS][*it_m] = 0;
+    	if (Config::min_score[Common::G_DOC][*it_m] == Config::min_score[Common::G_DOC][*it_m]) Config::min_score[Common::G_DOC][*it_m] = 0;
+    	if (Config::min_score[Common::G_SEG][*it_m] == Config::min_score[Common::G_SEG][*it_m]) Config::min_score[Common::G_SEG][*it_m] = 0;
+
+    	if (Config::max_score[Common::G_SYS][*it_m] == Config::max_score[Common::G_SYS][*it_m]) Config::max_score[Common::G_SYS][*it_m] = 0;
+    	if (Config::max_score[Common::G_DOC][*it_m] == Config::max_score[Common::G_DOC][*it_m]) Config::max_score[Common::G_DOC][*it_m] = 0;
+    	if (Config::max_score[Common::G_SEG][*it_m] == Config::max_score[Common::G_SEG][*it_m]) Config::max_score[Common::G_SEG][*it_m] = 0;
+
+    //SC_ASIYA sc_asiya;
+    	for(set<string>::const_iterator it_s = systems.begin(); it_s != systems.end(); ++it_s) {
+	//sc_asiya.read_report(*it_s, REF, *it_m, hOQ);
+    		if (Config::G == Common::G_SYS or Config::G == Common::G_ALL) {
+    			if (hOQ.get_sys_scores()[*it_m][*it_s][ref_tmp] < Config::min_score[Common::G_SYS][*it_m])
+    				Config::min_score[Common::G_SYS][*it_m] = hOQ.get_sys_scores()[*it_m][*it_s][ref_tmp];
+    			if (hOQ.get_sys_scores()[*it_m][*it_s][ref_tmp] > Config::max_score[Common::G_SYS][*it_m])
+    				Config::max_score[Common::G_SYS][*it_m] = hOQ.get_sys_scores()[*it_m][*it_s][ref_tmp];
+    		}
+    		if (Config::G == Common::G_DOC or Config::G == Common::G_ALL) {
+    			for (int i = 0; i < hOQ.get_num_doc_scores(); ++i) {
+	    			if (hOQ.get_doc_scores(i)[*it_m][*it_s][ref_tmp] < Config::min_score[Common::G_DOC][*it_m])
+	    				Config::min_score[Common::G_DOC][*it_m] = hOQ.get_doc_scores(i)[*it_m][*it_s][ref_tmp];
+	    			if (hOQ.get_doc_scores(i)[*it_m][*it_s][ref_tmp] > Config::max_score[Common::G_DOC][*it_m])
+	    				Config::max_score[Common::G_DOC][*it_m] = hOQ.get_doc_scores(i)[*it_m][*it_s][ref_tmp];
+    			}
+    		}
+    		if (Config::G == Common::G_SEG or Config::G == Common::G_ALL) {
+    			for (int i = 0; i < hOQ.get_num_seg_scores(); ++i) {
+	    			if (hOQ.get_seg_scores(i)[*it_m][*it_s][ref_tmp] < Config::min_score[Common::G_SEG][*it_m])
+	    				Config::min_score[Common::G_SEG][*it_m] = hOQ.get_seg_scores(i)[*it_m][*it_s][ref_tmp];
+	    			if (hOQ.get_seg_scores(i)[*it_m][*it_s][ref_tmp] > Config::max_score[Common::G_SEG][*it_m])
+	    				Config::max_score[Common::G_SEG][*it_m] = hOQ.get_seg_scores(i)[*it_m][*it_s][ref_tmp];
+    			}
+    		}
+    	}
+    }
+}
+
+void Core::find_max_scores(const Scores &hOQ) {
+	// description _ finds maximum score for each metric (), considering system translations by default.
+    //               If "do_refs" reference ranslations are considered as well.
+	find_max_metric_scores(hOQ, Config::systems, Config::references);
+
+	if (Config::do_refs) {
+		for(set<string>::const_iterator it_r = Config::references.begin(); it_r != Config::references.end(); ++it_r) {
+			set<string> all_other_refs;
+			for(set<string>::const_iterator it_r2 = Config::references.begin(); it_r2 != Config::references.end(); ++it_r2)
+				if (*it_r != *it_r2) all_other_refs.insert(*it_r);
+			find_max_metric_scores(hOQ, set<string>(it_r, it_r), all_other_refs);
+		}
+	}
+
+}
+
+/*
 void process_multi_metrics() {
         string REF = "whatever";
 
@@ -78,13 +140,13 @@ void process_multi_metrics() {
 
         for (int i = 1; i <= Config::num_process; ++i) {
                 stringstream dir; //tmp/i/metric
-                string TGT_split = get_split(TGT/**it_sys*/, i);
+                //string TGT_split = get_split(TGT, i);
                 Scores r_hOQ = read_struct(dir + "/BLEU/" + TGT_split);
                 //BLEU
                         // SUPOSEM TGT VE PER L'ENTRADA, ITEREM PER CADA SPLIT
                         oMap sys_bleu = r_hOQ.get_sys_scores();
                         for (oMap::const_iterator it_metric = sys_bleu.begin(); it_metric != sys_bleu.end(); ++it_metric$
-                                metric_score[i][it_metric->first] += r_hOQ.get_sys_score(it_metric->first, TGT/**it_sy*/$
+                                metric_score[i][it_metric->first] += r_hOQ.get_sys_score(it_metric->first, TGT); //it_sy$
                         }
         }
         for (int i = 0; i < split_sc.size(); ++i) {
@@ -99,7 +161,7 @@ void process_multi_metrics() {
                 new_hOQ[it_sc->first][TGT][REF] = (it_sc->second)/num_process;          //average
         }
 }
-
+*/
 
 
 
@@ -107,29 +169,32 @@ void Core::process_multi_metrics(string HYP, const set<string> &Lref, Scores &hO
 	// read reports and build hOQ Scores structure
 	// List of Metrics
     string REF = Common::join_set(Lref, '_');
-    set<string> jobid_metrics;      								// set de job_ids
+    set<string> job_qw;      								// set de job_ids
+
+//map<string, set<string> > wait_seg_list, wait_doc_list;
+
 
     Process proc;
 
     // LAUNCH
 	for (int i = 1; i <= Config::num_process; ++i) {
-		string TGT_split = TB_FORMAT::get_split(Config::Hsystems[TGT], Common::TXTEXT, i);
+		string TGT_split = TB_FORMAT::get_split(TESTBED::Hsystems[HYP], Common::TXTEXT, i);
 
-        char* config_file = proc.make_config_file(HYP, REF, i);
+        string config_file = proc.make_config_file(HYP, REF, i);
 
-        char* run_bleu_file = proc.make_run_file(config_file, "BLEU");
-		job_qw.insert(proc.run_paralel(run_bleu_file, "BLEU"));
+        string run_bleu_file = proc.make_run_file(config_file, i, "BLEU");
+		job_qw.insert(proc.run_job(run_bleu_file, "BLEU"));
 
-		char* run_meteor_file = proc.make_run_file(config_file, "METEOR");
-		job_qw.insert(proc.run_paralel(run_meteor_file, "METEOR"));
+		string run_meteor_file = proc.make_run_file(config_file, i, "METEOR");
+		job_qw.insert(proc.run_job(run_meteor_file, "METEOR"));
 
       	// Crear cada config i script, despres llançar-lo iterativament per cada metrica.
 	}
 
 	// WAIT
-	while (!jobid_metrics.empty()) {
-		for (set<string>::const_iterator it_job = jobid_metrics.begin(); it_job != jobid_metrics.end(); ++it_job) {
-			if (end(*it_job)) jobid_metrics.erase(it_job);
+	while (!job_qw.empty()) {
+		for (set<string>::const_iterator it_job = job_qw.begin(); it_job != job_qw.end(); ++it_job) {
+			if (proc.end(*it_job)) job_qw.erase(it_job);
 		}
 	}
 
@@ -278,14 +343,6 @@ void Core::doMultiMetrics(string HYP, const set<string> &Lref, Scores &hOQ) {
 	system(rm_filename.c_str());
 
 	exit(1);*/
-}
-
-void Core::find_max_scores(const Scores &hOQ) {
-    // description _ finds maximum score for each metric (), considering system translations by default.
-    //               If "do_refs" reference ranslations are considered as well.
-    // param1  _ configuration
-    // param2  _ hash of scores
-
 }
 
 double Core::do_scores(Scores &hOQ) {

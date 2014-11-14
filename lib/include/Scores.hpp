@@ -45,6 +45,11 @@ public:
 	static MetricScore read_scores(string basename, string TGT, int do_neg);
 	static vector<double> read_scores_G(string basename, string G, string TGT, int do_neg);
 
+	bool exists_sys_score(string METRIC, string TGT, string REF);
+	bool exists_doc_score(string METRIC, string TGT, string REF);
+	bool exists_seg_score(string METRIC, string TGT, string REF);
+    bool exists_all_score(string METRIC, string TGT, string REF);
+
 	//Get
 	oMap get_sys_scores() const;
 	oMap get_doc_scores(int doc_id) const;
@@ -53,13 +58,10 @@ public:
 	int get_num_doc_scores() const;
 	int get_num_seg_scores() const;
 
-	bool exists_sys_score(string METRIC, string TGT, string REF);
-	bool exists_doc_score(string METRIC, string TGT, string REF);
-	bool exists_seg_score(string METRIC, string TGT, string REF);
-    bool exists_all_score(string METRIC, string TGT, string REF);
-
     //Set
 	void set_sys_score(string METRIC, string TGT, string REF, double score);
+	void set_doc_score(int n, string METRIC, string TGT, string REF, double x);
+	void set_seg_score(int n, string METRIC, string TGT, string REF, double x);
 
 	//Save
 	void save_hash_scores(string metric_name, string system_name, string refere_name, const MetricScore &scores);

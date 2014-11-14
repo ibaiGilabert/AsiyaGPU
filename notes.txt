@@ -179,11 +179,16 @@ TODO LIST
 				->	Provar el TER
 				->	Provar el WER
 
-		NOTES: (execucions al cluster)
-				->	Canviar el path del tools a Config.cpp
-				->	Canviar el data_path del fitxer d'entrada Asiya.config al directori actual (pwd).
-				->	Si s'executa interactivament (qlogin) ha de ser en bash.
+NOTES:
+	Execucions al cluster (C++):
+		->	Canviar el path del tools a Config.cpp
+		->	Canviar el data_path del fitxer d'entrada Asiya.config al directori actual (pwd).
+		->	Si s'executa interactivament (qlogin) ha de ser en bash.
 
+	Execucions al cluster (perl):
+		->	Copiar el ASIYA12.04.PATH editant les variables d'entorn que facin falta.
+		->	Editar els scripts run.sh amb les macros (#) que facin falta.
+		->	Donar permís d'execució a bin/Asiya.pl
 
 DONE LIST
 

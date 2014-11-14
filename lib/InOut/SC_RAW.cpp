@@ -81,13 +81,6 @@ void SC_RAW::print_system_scores_MMATRIX(string sys, const Scores &hOQ, const ve
     }
 }
 
-/*string join_set(const set<string> st, char c) {
-    string s;
-    for (set<string>::const_iterator it = st.begin(); it != st.end(); ++it) s += *it + c;
-    s = s.substr(0, s.size()-1);  //remove last 'c' char
-    return s;
-}*/
-
 void SC_RAW::print_scores_MMATRIX(const Scores &hOQ, const vector<string> &sorted_metrics) {
     // description _ print metric scores in MMATRIX format (on a metric basis)
     string REF = Common::join_set(Config::references, '_');

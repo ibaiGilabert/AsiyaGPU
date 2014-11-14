@@ -15,13 +15,14 @@ using namespace std;
 
 class TB_NIST : public TB_FORMAT {
 private:
+	static void process_xml(xmlNodePtr a_node, ofstream &out_txt, ofstream &out_idx, pair<string, FileInfo> &m, string id, string docid, string genre);
+	static pair<string, FileInfo> read_file(const char* file);
+
 	static void SGML_f_create_create_doc(string input, string output, string sysid, xmlDocPtr &doc, xmlNodePtr &root_node);
 	static void f_create_create_doc(string input, string output, string TGT, string cas, int type);
 
 public:
 	// read nist input format
-	static void process_xml(xmlNodePtr a_node, ofstream &out_txt, ofstream &out_idx, pair<string, FileInfo> &m, string id, string docid, string genre);
-	static pair<string, FileInfo> read_file(const char* file);
 	string process_file(string file, string type);
 
 	// write middle score files

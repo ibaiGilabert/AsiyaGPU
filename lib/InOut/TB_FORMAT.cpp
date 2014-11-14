@@ -68,9 +68,9 @@ string TB_FORMAT::get_split(string file, string ext, int thread) {
     if (ext == Common::TXTEXT) {
         sprintf(split_file,"%s.%.3d.%s", file.c_str(), thread, Common::TXTEXT.c_str());
     } else if (ext == Common::IDXEXT) {
-        sprintf(split_file,"%s.%.3d.%s.%s", file.c_str(), thread, Common::TXTEXT.c_str(), Common::IDXEXT);
+        sprintf(split_file,"%s.%.3d.%s.%s", file.c_str(), thread, Common::TXTEXT.c_str(), Common::IDXEXT.c_str());
     } else if (ext == Common::TOKEXT) {
-        sprintf(split_file,"%s.%.3d.%s.%s", file.c_str(), thread, Common::TXTEXT.c_str(), Common::TOKEXT);
+        sprintf(split_file,"%s.%.3d.%s.%s", file.c_str(), thread, Common::TXTEXT.c_str(), Common::TOKEXT.c_str());
     } else { fprintf(stderr, "[ERROR] Unknown extension <%s>\n", ext.c_str()); exit(1); }
 
     boost::filesystem::path p (split_file);

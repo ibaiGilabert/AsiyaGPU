@@ -154,7 +154,7 @@ vector<vector<double> > BLEU::read_bleu_segments(string reportBLEU) {
 }
 
 
-pair<vector<double>, vector<vector<double> > > BLEU::computeBLEU(string TGT, bool sr) {
+pair<vector<double>, vector<vector<double> > > BLEU::computeBLEU(string TGT) {
 	stringstream tBLEU;
 	tBLEU << "perl " << Config::tools << "/" << BLEU::TBLEU << "/" << "mteval-v13a.pl -b -d 2 ";
 
@@ -255,7 +255,7 @@ MetricScore BLEU::computeBLEUN(string TGT) {
 	return BLEU_scores;
 }
 
-void BLEU::doMetric(string TGT, string REF, string prefix, Scores &hOQ, bool sr) {
+void BLEU::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
    // description _ computes BLEU score (by calling NIST mteval script) -> n = 1..4 (multiple references)
 
 	//map<string, int> M = Config::Hmetrics;
@@ -424,7 +424,7 @@ void BLEU::doMetric(string TGT, string REF, string prefix, Scores &hOQ, bool sr)
                 cout << "-------------------------------------------------------------------------------------" << endl;
                 exit(1);*/
 
-            if (sr) {  //serialize
+            if (Config::serialize) {  //serialize
                     string file_hOQ = "serialized_" + TGT + "_" + REF + "_BLEU." + Common::TXTEXT;
                     sc_asiya.save_struct_scores(hOQ, file_hOQ);
             }

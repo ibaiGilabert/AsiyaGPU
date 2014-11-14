@@ -56,6 +56,7 @@ int main(int argc, char *argv[]) {
 		{"output",			required_argument,	0, 'o'},
 		{"data_path",		required_argument,  0, 'd'},
 		{"paralel",			required_argument,	0, 'p'},
+		{"serialize",		required_argument,	0, 'z'},
 		{0,0,0,0},
 	};
 	//NO CANVIAR L'ORDRE, PRIMER EL CONFIG
@@ -77,6 +78,7 @@ int main(int argc, char *argv[]) {
 			case 'o': Options["output"] = optarg; break;
 			case 'd': Options["data_path"] = optarg; break;
 			case 'p': Options["paralel"] = optarg; break;
+			case 'z': Options["serialize"] = "1"; break;
 			//default: usage();
 		}
 	}
