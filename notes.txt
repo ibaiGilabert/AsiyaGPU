@@ -168,6 +168,9 @@ SHORTCUTS
 TODO LIST
 
 	-	LOCAL
+
+				->	Si ja creo bé els fixers .config i els .sh, ara falta veure on i com es guarden els resultats.
+
 				->	Completar l'ESA (test de expressions regulars a regular_exp.pl)	(verificar els tipus de computeMultiESA)
 				->	Completar el NGRAM.
 				->	Completar el CE.

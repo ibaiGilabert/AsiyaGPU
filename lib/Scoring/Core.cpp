@@ -175,20 +175,27 @@ void Core::process_multi_metrics(string HYP, const set<string> &Lref, Scores &hO
 
 
     Process proc;
-
+    string erase = "rm ";
     // LAUNCH
 	for (int i = 1; i <= Config::num_process; ++i) {
 		string TGT_split = TB_FORMAT::get_split(TESTBED::Hsystems[HYP], Common::TXTEXT, i);
 
         string config_file = proc.make_config_file(HYP, REF, i);
 
-        string run_bleu_file = proc.make_run_file(config_file, i, "BLEU");
+        string run_bleu_file = proc.make_run_file(config_file, HYP, REF, i, "BLEU");
 		job_qw.insert(proc.run_job(run_bleu_file, "BLEU"));
 
-		string run_meteor_file = proc.make_run_file(config_file, i, "METEOR");
+		string run_meteor_file = proc.make_run_file(config_file, HYP, REF, i, "METEOR");
 		job_qw.insert(proc.run_job(run_meteor_file, "METEOR"));
 
       	// Crear cada config i script, despres llançar-lo iterativament per cada metrica.
+
+		// ELIMINAR scripts
+		string erase_sh;
+		erase_sh = erase + run_bleu_file;			    system(erase_sh.c_str());
+		erase_sh = erase + run_meteor_file;			  system(erase_sh.c_str());
+
+		erase_sh = erase + config_file;				  system(erase_sh.c_str());
 	}
 
 	// WAIT

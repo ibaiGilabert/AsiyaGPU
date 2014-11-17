@@ -56,7 +56,7 @@ int main(int argc, char *argv[]) {
 		{"output",			required_argument,	0, 'o'},
 		{"data_path",		required_argument,  0, 'd'},
 		{"paralel",			required_argument,	0, 'p'},
-		{"serialize",		required_argument,	0, 'z'},
+		{"serialize",		no_argument,		0, 'z'},
 		{0,0,0,0},
 	};
 	//NO CANVIAR L'ORDRE, PRIMER EL CONFIG

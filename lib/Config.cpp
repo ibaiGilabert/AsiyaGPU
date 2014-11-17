@@ -207,8 +207,10 @@ void Config::process_command_line_options(map<string, string> Options, vector<st
     } else if (atoi(Options["paralel"].c_str()) <= 1) {
         fprintf(stderr, "Paralel (%s) -> No paralelism\n", Options["paralel"].c_str());
     } else Config::num_process = atoi(Options["paralel"].c_str());
-    if (Options.find("serialize") != Options.end()) Config::serialize = 1;
-
+    if (Options.find("serialize") != Options.end()) {
+        Config::serialize = 1;
+        fprintf(stderr, "SERIALIZE\n");
+    } else { fprintf(stderr, "DO NOT SERIALIZE\n"); }
 
     if (Options.find("v") != Options.end()) Config::verbose = 1;//atoi(Options["v"].c_str());
     else Config::verbose = 0;   // no cal ja que el default ja es = 0

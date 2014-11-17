@@ -1,4 +1,5 @@
 #include "../include/Process.hpp"
+#include "../include/TB_FORMAT.hpp"
 #include "../include/TESTBED.hpp"
 #include "../Config.hpp"
 
@@ -90,6 +91,10 @@ string Process::make_config_file(string SYS, string REF, int thread) {
     char c_thread[8];    sprintf(c_thread, "%.3d", thread);
     strcat(config_name, c_thread);
 
+    string source = TB_FORMAT::get_split(TESTBED::src, Common::TXTEXT, thread);
+    string reference = TB_FORMAT::get_split(TESTBED::Hrefs[REF], Common::TXTEXT, thread);
+    string syst = TB_FORMAT::get_split(TESTBED::Hsystems[SYS], Common::TXTEXT, thread);
+
     ofstream config_file(config_name);
     if (config_file) {
         config_file << "input=raw" << endl << endl;
@@ -98,9 +103,9 @@ string Process::make_config_file(string SYS, string REF, int thread) {
         config_file << "srccase=" << Config::SRCCASE << endl;
         config_file << "trglang=" << Config::LANG << endl;
         config_file << "trgcase=" << Config::CASE << endl << endl;;
-        config_file << "src=" << TESTBED::src << endl;
-        config_file << "ref=" << REF << endl;
-        config_file << "sys=" << SYS << endl << endl;
+        config_file << "src=" << source << endl;
+        config_file << "ref=" << reference << endl;
+        config_file << "sys=" << syst << endl << endl;
         config_file << "metric_set=";
         for(set<string>::const_iterator it = Config::metrics.begin(); it != Config::metrics.end(); ++it)
             config_file << *it << " ";
@@ -111,11 +116,12 @@ string Process::make_config_file(string SYS, string REF, int thread) {
     return string(config_name);
 }
 
-string Process::make_run_file(string config_file, int thread, string metric) {
+string Process::make_run_file(string config_file, string TGT, string REF, int thread, string metric) {
     // build run script file
     // return: script file name
-    char run_buffer[50];
-    sprintf(run_buffer, "run_%s_%.3d.sh", metric.c_str(), thread);   // get the system split
+    char run_buffer[50], report_buffer[50];
+    sprintf(run_buffer, "run_%s_%s_%s_%.3d.sh", metric.c_str(), TGT.c_str(), REF.c_str(), thread);   // get the system split
+    sprintf(report_buffer, "run_%s_%s_%s_%.3d.report", metric.c_str(), TGT.c_str(), REF.c_str(), thread);   // get the system split
 
     ofstream run_file(run_buffer);
     if (run_file) {
@@ -124,9 +130,9 @@ string Process::make_run_file(string config_file, int thread, string metric) {
         run_file << "#$ -cwd" << endl;
         run_file << "#$ -m eas" << endl;
         run_file << "#$ -M gilabert@cs.upc.edu" << endl;
-        run_file << "#$ -l h_vmem=4G" << endl;          //LA MEMORIA QUE CADA METRICA DEMANI
+        run_file << "#$ -l h_vmem=4G" << endl << endl;          //LA MEMORIA QUE CADA METRICA DEMANI
 
-        string cmd = "./Asiya " + config_file + " -z -eval single -metric_set metric_" + metric;
+        string cmd = "./Asiya " + config_file + " -serialize -eval single -metric_set metrics_" + metric + " > " + string(report_buffer);
         //if (Config::verbose) fprintf(stderr, "[EXEC] %s\n", cmd.c_str());
     fprintf(stderr, "[EXEC] %s\n", cmd.c_str());
 
