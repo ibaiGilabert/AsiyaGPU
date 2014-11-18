@@ -44,10 +44,10 @@ vector<double> ROUGE::read_rouge(string reportROUGE) {
 	    while (getline(file, str)) {
 	    	boost::match_results<string::const_iterator> results;
 	        if (boost::regex_match(str, results, re)) {
-	            cout << "\t That was a kind of line" << endl;
+	            //cout << "\t That was a kind of line" << endl;
 
 	            string s = results[0];
-	            cout << "line: |" << s << "|" << endl;
+	            //cout << "line: |" << s << "|" << endl;
 
 			    vector<string> laux;
 			    istringstream iss(s);
@@ -81,9 +81,9 @@ vector<vector<double> > ROUGE::read_rouge_segments(string reportROUGE) {
 	    	boost::match_results<string::const_iterator> results;
 
 	        if (boost::regex_match(str, results, re)) {
-	            cout << "\t That was a kind of line" << endl;
+	            //cout << "\t That was a kind of line" << endl;
 	            string s = results[0];
-	            cout << "line: |" << s << "|" << endl;
+	            //cout << "line: |" << s << "|" << endl;
 
 				vector<string> laux, ll, llF;
 				//istringstream buffer(s);
@@ -125,7 +125,7 @@ pair<vector<double>, vector<vector<double> > > ROUGE::computeROUGE(string TGT, i
 	if (stemming ? " -m" : "");
 
 	string toolROUGE = tROUGE.str();
-	cout << "toolROUGE ->" << toolROUGE << endl << endl;
+	fprintf(stderr, "toolROUGE -> %s\n", toolROUGE.c_str());
 
 	srand(time(NULL));
 	double nr = rand() % (Common::NRAND + 1);	//random number [0, Common::NRAND];
@@ -353,7 +353,7 @@ void ROUGE::doMetric(string TGT, string REF, string prefix, int stemming, Scores
 
 	    	if (Config::O_STORAGE == 1) {
 	    		sc_asiya.write_report(TGT, REF, prefR, res.first[0], doc_seg.first, doc_seg.second);
-         		cout << "IQXML DOCUMENT " << prefR << " CREATED" << endl;
+         		fprintf(stderr, "SC_ASIYA DOCUMENT %s CREATED\n", prefR.c_str());
          	}
          	hOQ.save_hash_scores(prefR, TGT, REF, res.first[0], doc_seg.first, doc_seg.second);
 
@@ -361,7 +361,7 @@ void ROUGE::doMetric(string TGT, string REF, string prefix, int stemming, Scores
 			doc_seg = TESTBED::get_seg_doc_scores(res.second[1], 0, TGT);
          	if (Config::O_STORAGE == 1) {
 	    		sc_asiya.write_report(TGT, REF, prefR, res.first[1], doc_seg.first, doc_seg.second);
-         		cout << "IQXML DOCUMENT " << prefR << " CREATED" << endl;
+         		fprintf(stderr, "SC_ASIYA DOCUMENT %s CREATED\n", prefR.c_str());
          	}
 	    	hOQ.save_hash_scores(prefR, TGT, REF, res.first[1], doc_seg.first, doc_seg.second);
 
@@ -369,7 +369,7 @@ void ROUGE::doMetric(string TGT, string REF, string prefix, int stemming, Scores
 			doc_seg = TESTBED::get_seg_doc_scores(res.second[2], 0, TGT);
          	if (Config::O_STORAGE == 1) {
 	    		sc_asiya.write_report(TGT, REF, prefR, res.first[2], doc_seg.first, doc_seg.second);
-         		cout << "IQXML DOCUMENT " << prefR << " CREATED" << endl;
+         		fprintf(stderr, "SC_ASIYA DOCUMENT %s CREATED\n", prefR.c_str());
          	}
          	hOQ.save_hash_scores(prefR, TGT, REF, res.first[2], doc_seg.first, doc_seg.second);
 
@@ -377,7 +377,7 @@ void ROUGE::doMetric(string TGT, string REF, string prefix, int stemming, Scores
 			doc_seg = TESTBED::get_seg_doc_scores(res.second[3], 0, TGT);
          	if (Config::O_STORAGE == 1) {
 	    		sc_asiya.write_report(TGT, REF, prefR, res.first[3], doc_seg.first, doc_seg.second);
-         		cout << "IQXML DOCUMENT " << prefR << " CREATED" << endl;
+         		fprintf(stderr, "SC_ASIYA DOCUMENT %s CREATED\n", prefR.c_str());
          	}
 	    	hOQ.save_hash_scores(prefR, TGT, REF, res.first[3], doc_seg.first, doc_seg.second);
 
@@ -385,7 +385,7 @@ void ROUGE::doMetric(string TGT, string REF, string prefix, int stemming, Scores
 			doc_seg = TESTBED::get_seg_doc_scores(res.second[4], 0, TGT);
          	if (Config::O_STORAGE == 1) {
 	    		sc_asiya.write_report(TGT, REF, prefR, res.first[4], doc_seg.first, doc_seg.second);
-         		cout << "IQXML DOCUMENT " << prefR << " CREATED" << endl;
+         		fprintf(stderr, "SC_ASIYA DOCUMENT %s CREATED\n", prefR.c_str());
          	}
 	    	hOQ.save_hash_scores(prefR, TGT, REF, res.first[4], doc_seg.first, doc_seg.second);
 
@@ -393,7 +393,7 @@ void ROUGE::doMetric(string TGT, string REF, string prefix, int stemming, Scores
 			doc_seg = TESTBED::get_seg_doc_scores(res.second[5], 0, TGT);
          	if (Config::O_STORAGE == 1) {
 	    		sc_asiya.write_report(TGT, REF, prefR, res.first[5], doc_seg.first, doc_seg.second);
-         		cout << "IQXML DOCUMENT " << prefR << " CREATED" << endl;
+         		fprintf(stderr, "SC_ASIYA DOCUMENT %s CREATED\n", prefR.c_str());
          	}
          	hOQ.save_hash_scores(prefR, TGT, REF, res.first[5], doc_seg.first, doc_seg.second);
 
@@ -401,7 +401,7 @@ void ROUGE::doMetric(string TGT, string REF, string prefix, int stemming, Scores
 	    	doc_seg = TESTBED::get_seg_doc_scores(res.second[6], 0, TGT);
          	if (Config::O_STORAGE == 1) {
 	    		sc_asiya.write_report(TGT, REF, prefR, res.first[6], doc_seg.first, doc_seg.second);
-         		cout << "IQXML DOCUMENT " << prefR << " CREATED" << endl;
+         		fprintf(stderr, "SC_ASIYA DOCUMENT %s CREATED\n", prefR.c_str());
          	}
 	    	hOQ.save_hash_scores(prefR, TGT, REF, res.first[6], doc_seg.first, doc_seg.second);
 
@@ -409,9 +409,16 @@ void ROUGE::doMetric(string TGT, string REF, string prefix, int stemming, Scores
 	    	doc_seg = TESTBED::get_seg_doc_scores(res.second[7], 0, TGT);
 	    	if (Config::O_STORAGE == 1) {
 	    		sc_asiya.write_report(TGT, REF, prefR, res.first[7], doc_seg.first, doc_seg.second);
-         		cout << "IQXML DOCUMENT " << prefR << " CREATED" << endl;
+         		fprintf(stderr, "SC_ASIYA DOCUMENT %s CREATED\n", prefR.c_str());
          	}
 	    	hOQ.save_hash_scores(prefR, TGT, REF, res.first[7], doc_seg.first, doc_seg.second);
+
+
+            if (Config::serialize) {  //serialize
+                    string file_hOQ = "serialized_ROUGE_" + TGT + "_" + REF;
+                    hOQ.save_struct_scores(file_hOQ);
+                    //sc_asiya.save_struct_scores(hOQ, file_hOQ);
+            }
                 /*cout << "-----------------------------------------ROUGE-SCORES---------------------------------" << endl;
                 hOQ.print_scores();
                 cout << "-------------------------------------------------------------------------------------" << endl;

@@ -424,11 +424,6 @@ void BLEU::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
                 cout << "-------------------------------------------------------------------------------------" << endl;
                 exit(1);*/
 
-            if (Config::serialize) {  //serialize
-                    string file_hOQ = "serialized_BLEU_" + TGT + "_" + REF + "." + Common::TXTEXT;
-                    sc_asiya.save_struct_scores(hOQ, file_hOQ);
-            }
-
 	    }
 
 	}

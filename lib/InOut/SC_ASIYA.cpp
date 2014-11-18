@@ -289,19 +289,6 @@ void SC_ASIYA::read_report(string TGT, string REF, string METRIC, Scores &hOQ) {
     }
 }
 
-void SC_ASIYA::save_struct_scores(const Scores &hOQ, string filename) {
-    ofstream ofs(filename.c_str());
-    boost::archive::text_oarchive oa(ofs);
-    oa << hOQ;
-}
-
-void SC_ASIYA::load_struct_scores(Scores &hOQ, string filename) {
-    ifstream ifs(filename.c_str());
-    boost::archive::text_iarchive ia(ifs);
-    ia >> hOQ;
-}
-
-
 /*
     while (i < idx.size()) {
         if (idx[i][0] != document_id) { // NEW DOCUMENT

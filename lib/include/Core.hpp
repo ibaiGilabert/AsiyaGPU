@@ -12,13 +12,16 @@ using namespace std;
 
 class Core {
 private:
-	//const set<string> whole_metric_set;
+    set<string> job_qw;      								// set de job_ids
+    Process proc;
+	//const map<string, vector<string> > whole_metric_set;
 
 	//Compute scores
 	void doMultiMetrics(string HYP, const set<string> &Lref, Scores &hOQ);
 
 	//Compute scores multi-threading
-	void process_multi_metrics(string HYP, const set<string> &Lref, Scores &hOQ);
+	void process_multi_metrics(string HYP, const set<string> &Lref);
+	void rebuild_hash_scores(string TGT, const set<string> &Lref, Scores &hOQ);
 
 	vector<string> get_sorted_metrics();
 	vector<string> get_sorted_systems();

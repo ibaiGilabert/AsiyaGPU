@@ -14,7 +14,7 @@ private:
 public:
 	bool end(string id);
 
-	string make_config_file(string SYS, string REF, int thread);
+	string make_config_file(string SYS, string REF, string metric_set, int thread);
 	string make_run_file(string config_file, string TGT, string REF, int thread, string metric);
 
 	string run_job(string run_file, string metric);

@@ -81,15 +81,16 @@ string Process::run_job_dep(string run_file, string metric, string dep) {
     return getJobID(qsub_r);
 }
 
-string Process::make_config_file(string SYS, string REF, int thread) {
+string Process::make_config_file(string SYS, string REF, string metric_set, int thread) {
     // build config file for one thread
     // return: config_file name
-    char buffer[128];
+    char buffer[64];
     sprintf(buffer, "%s.%.3d.%s", TESTBED::Hsystems[SYS].c_str(), thread, Common::TXTEXT.c_str());   // get the system split
 
-    char config_name[] = "Asiya.config.";
-    char c_thread[8];    sprintf(c_thread, "%.3d", thread);
-    strcat(config_name, c_thread);
+    char config_name[64];
+    sprintf(config_name, "Asiya_%s_%s_%s_%.3d.config", metric_set.c_str(), SYS.c_str(), REF.c_str(), thread);
+    //char c_thread[8];       sprintf(c_thread, "%.3d", thread);
+    //strcat(config_name, c_thread);
 
     string source = TB_FORMAT::get_split(TESTBED::src, Common::TXTEXT, thread);
     string reference = TB_FORMAT::get_split(TESTBED::Hrefs[REF], Common::TXTEXT, thread);
@@ -98,7 +99,7 @@ string Process::make_config_file(string SYS, string REF, int thread) {
     ofstream config_file(config_name);
     if (config_file) {
         config_file << "input=raw" << endl << endl;
-        config_file << "data_path=" << Common::DATA_PATH << endl << endl;
+        //config_file << "data_path=" << Common::DATA_PATH << endl << endl;
         config_file << "srclang=" << Config::SRCLANG << endl;
         config_file << "srccase=" << Config::SRCCASE << endl;
         config_file << "trglang=" << Config::LANG << endl;
@@ -106,7 +107,7 @@ string Process::make_config_file(string SYS, string REF, int thread) {
         config_file << "src=" << source << endl;
         config_file << "ref=" << reference << endl;
         config_file << "sys=" << syst << endl << endl;
-        config_file << "metric_set=";
+        config_file << "metrics_" << metric_set << "=";
         for(set<string>::const_iterator it = Config::metrics.begin(); it != Config::metrics.end(); ++it)
             config_file << *it << " ";
         config_file << endl << endl;

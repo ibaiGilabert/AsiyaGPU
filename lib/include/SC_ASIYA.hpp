@@ -6,10 +6,6 @@
 #include <string>
 #include <vector>
 
-#include <boost/serialization/string.hpp>
-#include <boost/serialization/vector.hpp>
-#include <boost/serialization/map.hpp>
-
 using namespace std;
 
 class SC_ASIYA : SC_FORMAT {
@@ -22,9 +18,7 @@ public:
 	void write_report(string TGT, string REF, string METRIC, const MetricScore &m);
 	void write_report(string TGT, string REF, string METRIC, double sys_score, const vector<double> &doc_scores, const vector<double> &seg_scores);
 
-	//Serialize hash scores
-	void save_struct_scores(const Scores &hOQ, string filename);
-	void load_struct_scores(Scores &hOQ, string filename);
+	//void rebuild_scores(string TGT, string REF, string METRIC_SET, Scores &hOQ);
 
 };
 

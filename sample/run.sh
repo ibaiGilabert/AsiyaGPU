@@ -17,4 +17,4 @@ die () {
 
 i=$1
 
-./Asiya Asiya.config.old -p 4 -eval single,ulc -metric_set metrics_$i -data_path $DATAPATH > $i.report
+./Asiya Asiya.config.old -p 3 -eval single,ulc -g seg -metric_set metrics_$i -data_path $DATAPATH > $i.report

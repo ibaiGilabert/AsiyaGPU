@@ -5,6 +5,7 @@
 
 #include <iostream>
 #include <fstream>
+#include <sstream>
 #include <stdlib.h>
 #include <math.h>
 
@@ -158,6 +159,52 @@ for (int i = 0; i < scores.seg_scores.size(); ++i) {
 seg[metric_name][system_name] = aux_seg;*/
 
 //all[metric_name][system_name] = vector<Score>(1, Score(refere_name, -1));
+}
+
+void Scores::save_struct_scores(string filename) {
+    ofstream file(filename.c_str());
+    if (file) {
+        for (int n = 1; n <= seg.size(); ++n) {
+            for (oMap::const_iterator i = seg[n].begin(); i != seg[n].end(); ++i) {
+                //cout << "\t" << i->first << " -> " << endl;
+                iMap metric_name = i->second;
+                for (iMap::const_iterator j = metric_name.begin(); j != metric_name.end(); ++j) {
+                    //cout << "\t\t" << j->first << " -> {" << endl;
+                    sMap system_name = j->second;
+                    for (sMap::const_iterator k = system_name.begin(); k != system_name.end(); ++k) {
+                    	file << i->first << " " << j->first << " " << k->first << " " << k->second << endl;
+                        //cout << "\t\t\t" << k->first << " => " << k->second << endl;
+                    }
+                    //cout << "\t\t}" << endl;
+                }
+                //cout << "\t}" << endl;
+            }
+        }
+        file.close();
+    } else { fprintf(stderr, "[ERROR] Could not serialize HASH scores: %s\n", filename.c_str()); exit(1); }
+}
+
+void Scores::load_struct_scores(char* filename, int &n_seg) {
+    ifstream score_file(filename);
+    if (score_file) {
+        string str;
+        while (getline(score_file, str)) {
+            string token;
+        	vector<string> strs(4);
+            istringstream buf(str);
+	    	for(int i = 0; i < 4; ++i) {
+	    		getline(buf, token, ' ');
+	    		strs[i] = token;
+			}
+                //string metric = strs[0];
+                //string tgt = strs[1];
+                //string ref = strs[2];
+                //string score = strs[3];
+                //hOQ.set_seg_score(n_seg, strs[0], strs[1], strs[2], strs[3]);
+            seg[n_seg][strs[0]][strs[1]][strs[2]] = atof(strs[3].c_str());
+            ++n_seg;
+        }
+    } else { fprintf(stderr, "[ERROR] Could not rebuild HASH scores file: %s\n", filename); exit(1); }
 }
 
 void Scores::print_sys_scores() const {
