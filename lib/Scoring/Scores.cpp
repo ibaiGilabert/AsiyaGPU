@@ -164,20 +164,15 @@ seg[metric_name][system_name] = aux_seg;*/
 void Scores::save_struct_scores(string filename) {
     ofstream file(filename.c_str());
     if (file) {
-        for (int n = 1; n <= seg.size(); ++n) {
+        for (int n = 0; n < seg.size(); ++n) {
             for (oMap::const_iterator i = seg[n].begin(); i != seg[n].end(); ++i) {
-                //cout << "\t" << i->first << " -> " << endl;
                 iMap metric_name = i->second;
                 for (iMap::const_iterator j = metric_name.begin(); j != metric_name.end(); ++j) {
-                    //cout << "\t\t" << j->first << " -> {" << endl;
                     sMap system_name = j->second;
                     for (sMap::const_iterator k = system_name.begin(); k != system_name.end(); ++k) {
                     	file << i->first << " " << j->first << " " << k->first << " " << k->second << endl;
-                        //cout << "\t\t\t" << k->first << " => " << k->second << endl;
                     }
-                    //cout << "\t\t}" << endl;
                 }
-                //cout << "\t}" << endl;
             }
         }
         file.close();

@@ -14,8 +14,8 @@ private:
 	vector<double> read_bleu(string reportBLEU);
 	vector<vector<double> > read_bleu_segments(string reportBLEU);
 
-	pair<vector<double>, vector<vector<double> > > computeBLEU(string TGT);
 	MetricScore computeBLEUN(string TGT);
+	void computeBLEU(string TGT, vector<double> &SYS, vector<vector<double> > &SEG);
 
 public:
 	void doMetric(string TGT, string REF, string prefix, Scores &hOQ);

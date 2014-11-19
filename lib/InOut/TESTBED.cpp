@@ -38,11 +38,11 @@ int TESTBED::get_num_segs() {
 	return TESTBED::IDX.begin()->second.size()-1;
 }
 
-pair<vector<double>, vector<double> > TESTBED::get_seg_doc_scores(const vector<double> &scores, int DO_doc, string TGT) {
+void TESTBED::get_seg_doc_scores(const vector<double> &scores, int DO_doc, string TGT, vector<double> &D_scores, vector<double> &S_scores) {
     // description _ returns segment and document scores, given an index structure which
     //               contains information on the number of segments per document
-	vector<vector<string> > idx = TESTBED::IDX[TGT];
-	vector<double> D_scores, S_scores;
+	D_scores.clear();
+	S_scores.clear();
 	string docid = "";
 	double sum = -1;
 	int n_doc = 0;
@@ -53,19 +53,19 @@ pair<vector<double>, vector<double> > TESTBED::get_seg_doc_scores(const vector<d
             for(int j = 0; j < idx[i].size(); ++j) cout << idx[i][j] << ", ";
             cout << "]" << endl;
     }*/
-	for (int i = 1; i < idx.size(); ++i) {
+	for (int i = 1; i < TESTBED::IDX[TGT].size(); ++i) {
 		if (DO_doc) {	//doc-level scores
-			if (idx[i][0] != docid)	{	//NEW DOCUMENT
+			if (TESTBED::IDX[TGT][i][0] != docid)	{	//NEW DOCUMENT
 				D_scores.push_back(scores[n_doc]);
-				docid = idx[i][0];
+				docid = TESTBED::IDX[TGT][i][0];
 				++n_doc;
 			}
 			S_scores.push_back(scores[n_doc-1]);
 		}
 		else {	//segment-level scores
-			if (idx[i][0] != docid)	{	//NEW DOCUMENT
+			if (TESTBED::IDX[TGT][i][0] != docid)	{	//NEW DOCUMENT
 				if (sum != -1) D_scores.push_back(sum/n);
-				docid = idx[i][0];
+				docid = TESTBED::IDX[TGT][i][0];
 				sum = n = 0;
 			}
 			double x = 0;
@@ -79,8 +79,6 @@ pair<vector<double>, vector<double> > TESTBED::get_seg_doc_scores(const vector<d
 	if (!DO_doc) {
 		if (sum != -1) D_scores.push_back(sum/n);
 	}
-
-	return make_pair(D_scores, S_scores);
 }
 
 int TESTBED::get_setid_length(string sys) {

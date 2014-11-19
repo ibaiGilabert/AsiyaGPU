@@ -7,7 +7,6 @@
 #include "../include/TER.hpp"
 #include "../include/SC_RAW.hpp"
 #include "../include/TESTBED.hpp"
-#include "../include/Process.hpp"
 #include "../include/Core.hpp"
 #include "../Config.hpp"
 
@@ -131,9 +130,9 @@ void Core::process_multi_metrics(string HYP, const set<string> &Lref) {
 	for (int i = 1; i <= Config::num_process; ++i) {
 		string TGT_split = TB_FORMAT::get_split(TESTBED::Hsystems[HYP], Common::TXTEXT, i);
 
-		string config_bleu_file = proc.make_config_file(HYP, REF, "BLEU", i);
+		/*string config_bleu_file = proc.make_config_file(HYP, REF, "BLEU", i);
 		string run_bleu_file = proc.make_run_file(config_bleu_file, HYP, REF, i, "BLEU");
-		job_qw.insert(proc.run_job(run_bleu_file, "BLEU"));
+		job_qw.insert(proc.run_job(run_bleu_file, "BLEU"));*/
 
 		string config_rouge_file = proc.make_config_file(HYP, REF, "ROUGE", i);
 		string run_rouge_file = proc.make_run_file(config_rouge_file, HYP, REF, i, "ROUGE");
@@ -144,18 +143,20 @@ void Core::process_multi_metrics(string HYP, const set<string> &Lref) {
 
 		// Crear cada config i script, despres llançar-lo iterativament per cada metrica.
 
-		// ELIMINAR scripts
-		string erase_sh;
-		erase_sh = erase + run_bleu_file;			    system(erase_sh.c_str());
+		// ELIMINAR scripts	(s'ha de fer no al encuar, sino despres de l'execucio)
+		/*string erase_sh;
+		//erase_sh = erase + run_bleu_file;			    system(erase_sh.c_str());
 		erase_sh = erase + run_rouge_file;        system(erase_sh.c_str());
 		//erase_sh = erase + run_meteor_file;			  system(erase_sh.c_str());
 
-		erase_sh = erase + config_bleu_file;				  system(erase_sh.c_str());
-		erase_sh = erase + config_rouge_file;         system(erase_sh.c_str());
-		}
+		//erase_sh = erase + config_bleu_file;				  system(erase_sh.c_str());
+		erase_sh = erase + config_rouge_file;         system(erase_sh.c_str());*/
+	}
 
 	// WAIT IN DO_SCORES
 }
+
+
 
 void Core::rebuild_hash_scores(string TGT, const set<string> &Lref, Scores &hOQ) {
 	string REF = Common::join_set(Lref, '_');

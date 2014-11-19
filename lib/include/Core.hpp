@@ -2,6 +2,7 @@
 #define CORE_HPP
 
 #include "Scores.hpp"
+#include "Process.hpp"
 
 #include <map>
 #include <set>
@@ -12,9 +13,9 @@ using namespace std;
 
 class Core {
 private:
-    set<string> job_qw;      								// set de job_ids
     Process proc;
-	//const map<string, vector<string> > whole_metric_set;
+	set<string> job_qw;      								// set de job_ids
+    //const map<string, vector<string> > whole_metric_set;
 
 	//Compute scores
 	void doMultiMetrics(string HYP, const set<string> &Lref, Scores &hOQ);
