@@ -56,11 +56,7 @@ int main(int argc, char *argv[]) {
 		{"output",			required_argument,	0, 'o'},
 		{"data_path",		required_argument,  0, 'd'},
 		{"paralel",			required_argument,	0, 'p'},
-<<<<<<< HEAD
-		{"serialize",		required_argument,		0, 'z'},
-=======
 		{"serialize",		required_argument,	0, 'z'},
->>>>>>> b5344f6962929c6ce147c46fa47d92c248c59497
 		{0,0,0,0},
 	};
 	//NO CANVIAR L'ORDRE, PRIMER EL CONFIG
@@ -101,7 +97,7 @@ int main(int argc, char *argv[]) {
 
 	// -- process configuration options -------------------------------------------------------------------
 	process_configuration();
-exit(1);	//We should end asiya properly...
+	exit(1);	//We should end asiya properly...
 }
 
 

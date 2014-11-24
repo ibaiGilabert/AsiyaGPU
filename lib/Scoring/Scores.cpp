@@ -167,34 +167,19 @@ seg[metric_name][system_name] = aux_seg;*/
 
 void Scores::save_struct_scores(char* filename) {
     ofstream file(filename);
-<<<<<<< HEAD
-cout << "[SCORES::save_struc_scores]: |" << filename << "|" << endl;
-    if (file) {
-cout << "\t#segs: " << seg.size() << endl;
-=======
 	//cout << "[SCORES::save_struc_scores]: |" << filename << "|" << endl;
     if (file) {
 	//cout << "\t#segs: " << seg.size() << endl;
->>>>>>> b5344f6962929c6ce147c46fa47d92c248c59497
         for (int n = 0; n < seg.size(); ++n) {
             for (oMap::const_iterator i = seg[n].begin(); i != seg[n].end(); ++i) {
                 iMap metric_name = i->second;
                 for (iMap::const_iterator j = metric_name.begin(); j != metric_name.end(); ++j) {
                     sMap system_name = j->second;
                     for (sMap::const_iterator k = system_name.begin(); k != system_name.end(); ++k) {
-<<<<<<< HEAD
-			vector<vector<string> > matrix = TESTBED::IDX[j->first];
-			cout << "segment serialized: " << /*(d-1)*TESTBED::get_num_segs() +*/ Config::serialize + n << "/sys: " << boost::filesystem::path(j->first).stem().string() << "/ref: " << boost::filesystem::path(k->first).stem().string() << "/init_seg: " << Config::serialize << "/n: " << n << endl;
-                    	
-			file << /*TESTBED::IDX[j->first][d+n][3] | (d-1)*TESTBED::get_num_segs() +*/ Config::serialize + n  << " " << i->first << " " << boost::filesystem::path(j->first).stem().string() << " " << boost::filesystem::path(k->first).stem().string() << " " << k->second << endl;
-                        //cout << "\t\t\t" << k->first << " => " << k->second << endl;
-=======
-                        vector<vector<string> > matrix = TESTBED::IDX[j->first];
-                        //cout << "segment serialized: " << /*(d-1)*TESTBED::get_num_segs() +*/ Config::serialize + n << "/sys: " << boost::filesystem::path(j->first).stem().string() << "/ref: " << boost::filesystem::path(k->first).stem().string() << "/init_seg: " << Config::serialize << "/n: " << n << endl;
-
-                        /*file << TESTBED::IDX[j->first][d+n][3] | (d-1)*TESTBED::get_num_segs() << */
-                        file << Config::serialize + n  << " " << i->first << " " << boost::filesystem::path(j->first).stem().string() << " " << boost::filesystem::path(k->first).stem().string() << " " << k->second << endl;
->>>>>>> b5344f6962929c6ce147c46fa47d92c248c59497
+						vector<vector<string> > matrix = TESTBED::IDX[j->first];
+						//cout << "segment serialized: " << /*(d-1)*TESTBED::get_num_segs() +*/ Config::serialize + n << "/sys: " << boost::filesystem::path(j->first).stem().string() << "/ref: " << boost::filesystem::path(k->first).stem().string() << "/init_seg: " << Config::serialize << "/n: " << n << endl;
+						/*TESTBED::IDX[j->first][d+n][3] | (d-1)*TESTBED::get_num_segs() +*/
+						file <<  Config::serialize + n  << " " << i->first << " " << boost::filesystem::path(j->first).stem().string() << " " << boost::filesystem::path(k->first).stem().string() << " " << k->second << endl;
                     }
                 }
             }
@@ -203,14 +188,7 @@ cout << "\t#segs: " << seg.size() << endl;
     } else { fprintf(stderr, "[ERROR] Could not serialize HASH scores: %s\n", filename); exit(1); }
 }
 
-<<<<<<< HEAD
 void Scores::load_struct_scores(char* filename) {
-	fprintf(stderr, "\tfile: %s\n", filename);
-=======
-
-
-void Scores::load_struct_scores(char* filename) {
->>>>>>> b5344f6962929c6ce147c46fa47d92c248c59497
     ifstream score_file(filename);
     if (score_file) {
         string str;
@@ -227,19 +205,11 @@ void Scores::load_struct_scores(char* filename) {
                 //string ref = strs[2];
                 //string score = strs[3];
                 //hOQ.set_seg_score(n_seg, strs[0], strs[1], strs[2], strs[3]);
-<<<<<<< HEAD
-            fprintf(stderr, "\t->loaded n_seg: %s/ metric: %s/ tgt: %s/ ref: %s/ score: %s ->", strs[0].c_str(), strs[1].c_str(), strs[2].c_str(), strs[3].c_str(), strs[4].c_str());
+		//fprintf(stderr, "\t->loaded n_seg: %s/ metric: %s/ tgt: %s/ ref: %s/ score: %s ->", strs[0].c_str(), strs[1].c_str(), strs[2].c_str(), strs[3].c_str(), strs[4].c_str());
 		seg[atof(strs[0].c_str())-1][strs[1]][strs[2]][strs[3]] = atof(strs[4].c_str());
-	   fprintf(stderr, " Check!\n");
-        }
+		//fprintf(stderr, " Check!\n");
+	}
 	score_file.close();
-=======
-	            //fprintf(stderr, "\t->loaded n_seg: %s/ metric: %s/ tgt: %s/ ref: %s/ score: %s ->", strs[0].c_str(), strs[1].c_str(), strs[2].c_str(), strs[3].c_str(), strs[$
-
-            seg[atof(strs[0].c_str())-1][strs[1]][strs[2]][strs[3]] = atof(strs[4].c_str());
-        }
-        score_file.close();
->>>>>>> b5344f6962929c6ce147c46fa47d92c248c59497
     } else { fprintf(stderr, "[ERROR] Could not rebuild HASH scores file: %s\n", filename); exit(1); }
 }
 

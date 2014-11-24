@@ -271,12 +271,6 @@ void ROUGE::computeROUGE(string TGT, vector<double> &SYS, vector<vector<double> 
 			++j;
 		}
 	}*/
-<<<<<<< HEAD
-
-	vector<double> SYS = read_rouge(reportROUGE);
-	vector<vector<double> > SEG = read_rouge_segments(reportROUGE);
-=======
->>>>>>> b5344f6962929c6ce147c46fa47d92c248c59497
 
 	SYS = read_rouge(reportROUGE);
 	SEG = read_rouge_segments(reportROUGE);
@@ -354,7 +348,7 @@ void ROUGE::doMetric(string TGT, string REF, string prefix, int stemming, Scores
 	    	computeROUGE(TGT, SYS, SEG, stemming);
 
 
-cout << "ROUGE computed" << endl;
+//cout << "ROUGE computed" << endl;
          	string prefR = prefix + ROUGE::ROUGEXT + "-1";
         	vector<double> d_scores, s_scores;
         	TESTBED::get_seg_doc_scores(SEG[0], 0, TGT, d_scores, s_scores);
@@ -367,7 +361,7 @@ cout << "ROUGE computed" << endl;
          	}
          	hOQ.save_hash_scores(prefR, TGT, REF, SYS[0], d_scores, s_scores);
 
-cout << "hOQ -> First score saved" << endl;
+//cout << "hOQ -> First score saved" << endl;
 
 			prefR = prefix + ROUGE::ROUGEXT + "-2";
 			TESTBED::get_seg_doc_scores(SEG[1], 0, TGT, d_scores, s_scores);
@@ -425,14 +419,13 @@ cout << "hOQ -> First score saved" << endl;
          	}
 	    	hOQ.save_hash_scores(prefR, TGT, REF, SYS[7], d_scores, s_scores);
 
-cout << "May I serialize you?" << endl;
+//cout << "May I serialize you?" << endl;
 
             if (Config::serialize) {  //serialize
                     hOQ.save_struct_scores(TB_FORMAT::make_serial("ROUGE", TGT, REF));
-                    //sc_asiya.save_struct_scores(hOQ, file_hOQ);
             }
 
-cout << "ROUGE serialized" << endl;
+//cout << "ROUGE serialized" << endl;
                 /*cout << "-----------------------------------------ROUGE-SCORES---------------------------------" << endl;
                 hOQ.print_scores();
                 cout << "-------------------------------------------------------------------------------------" << endl;

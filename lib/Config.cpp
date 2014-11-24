@@ -501,29 +501,20 @@ void Config::process_config_file(char* config_file, map<string, string> Options)
                         TB_NIST tb_nist;
                         string proc_file = tb_nist.process_file(file, type);
 			
-			if (Config::num_process) {
-                            cout << "to split <" << proc_file << ">" << endl;
-                            tb_nist.split_txt_idx(proc_file, Config::num_process);
-                        }
+                        if (Config::num_process) {
+                                cout << "to split <" << proc_file << ">" << endl;
+                                tb_nist.split_txt_idx(proc_file, Config::num_process);
+                            }
                     }
                     else  {
                         TB_RAW tb_raw;
                         string proc_file = tb_raw.process_file(file, type);
-<<<<<<< HEAD
-			
-			if (Config::num_process) {
-                            cout << "to split <" << proc_file << ">" << endl;
-                            tb_raw.split_txt_idx(proc_file, Config::num_process);
-                        }
-		    }
-=======
 
                         if (Config::num_process) {
                             cout << "to split <" << proc_file << ">" << endl;
                             tb_raw.split_txt_idx(proc_file, Config::num_process);
                         }
                     }
->>>>>>> b5344f6962929c6ce147c46fa47d92c248c59497
                 }
                 else if (type == "srclang") {
                     if (Common::rLANGS.find(file_cs) != Common::rLANGS.end()) {

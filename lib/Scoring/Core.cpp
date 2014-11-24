@@ -144,7 +144,6 @@ void Core::process_multi_metrics(string HYP, const set<string> &Lref) {
 
 		// Crear cada config i script, despres llançar-lo iterativament per cada metrica.
 
-<<<<<<< HEAD
 		// ELIMINAR scripts
 		//string erase_sh;
 		//erase_sh = erase + run_bleu_file;			    system(erase_sh.c_str());
@@ -153,18 +152,7 @@ void Core::process_multi_metrics(string HYP, const set<string> &Lref) {
 
 		//erase_sh = erase + config_bleu_file;				  system(erase_sh.c_str());
 		//erase_sh = erase + config_rouge_file;         system(erase_sh.c_str());
-		}
-=======
-		// ELIMINAR scripts	(s'ha de fer no al encuar, sino despres de l'execucio)
-		/*string erase_sh;
-		//erase_sh = erase + run_bleu_file;			    system(erase_sh.c_str());
-		erase_sh = erase + run_rouge_file;        system(erase_sh.c_str());
-		//erase_sh = erase + run_meteor_file;			  system(erase_sh.c_str());
-
-		//erase_sh = erase + config_bleu_file;				  system(erase_sh.c_str());
-		erase_sh = erase + config_rouge_file;         system(erase_sh.c_str());*/
 	}
->>>>>>> b5344f6962929c6ce147c46fa47d92c248c59497
 
 	// WAIT IN DO_SCORES
 }
@@ -173,21 +161,11 @@ void Core::process_multi_metrics(string HYP, const set<string> &Lref) {
 
 void Core::rebuild_hash_scores(string TGT, const set<string> &Lref, Scores &hOQ) {
 	string REF = Common::join_set(Lref, '_');
-
-<<<<<<< HEAD
-	for (int i = 1; i <= Config::num_process; ++i) {
-		fprintf(stderr, "[LOAD]: ROUGE/ tgt: %s/ ref: %s/ split: %d\n", TGT.c_str(), REF.c_str(), i);
-		hOQ.load_struct_scores(TB_FORMAT::get_serial("ROUGE", TGT, REF, i));
-		fprintf(stderr, "[LOAD]: COMPLETE\n");
-	}
-=======
     for (int i = 1; i <= Config::num_process; ++i) {
         //fprintf(stderr, "[LOAD]: ROUGE/ tgt: %s/ ref: %s/ split: %d\n", TGT.c_str(), REF.c_str(), i);
     	hOQ.load_struct_scores(TB_FORMAT::get_serial("ROUGE", TGT, REF, i));
 	    //fprintf(stderr, "[LOAD]: COMPLETE\n");
     }
-
->>>>>>> b5344f6962929c6ce147c46fa47d92c248c59497
 }
 
 void Core::doMultiMetrics(string HYP, const set<string> &Lref, Scores &hOQ) {
@@ -320,33 +298,7 @@ double Core::do_scores(Scores &hOQ) {
 			if (Config::do_time) fprintf(stderr, "t(%s) = %f\n", it->c_str(), t);
 		}
 	}
-
-<<<<<<< HEAD
-if (Config::num_process) {
-	// WAIT
-	fprintf(stderr, "[WAIT]\n");
-	while (!job_qw.empty()) {
-		for (set<string>::const_iterator it_job = job_qw.begin(); it_job != job_qw.end(); ++it_job) {
-			if (proc.end(*it_job)) job_qw.erase(it_job);
-		}
-	}
-
-	// REBUILD
-	fprintf(stderr, "[REBUILD]\n");
-	for (set<string>::const_iterator it = Config::systems.begin(); it != Config::systems.end(); ++it) {
-		rebuild_hash_scores(*it, Config::references, hOQ);
-	}
-
-	//cout << "[REBUILD] hOQ: " << endl;
-	//for(int i = 0; i < hOQ.get_num_seg_scores(); ++i) {
-	//	hOQ.print_seg_scores(i);
-	//}
-}
-        /*for(int i = 0; i < hOQ.get_num_seg_scores(); ++i) {
-                hOQ.print_seg_scores(i);
-        }
-	TESTBED::print_idx();*/
-=======
+	
 	if (Config::num_process) {
 		// WAIT
 		if (Config::verbose) fprintf(stderr, "[WAIT]\n");
@@ -361,8 +313,6 @@ if (Config::num_process) {
 	        rebuild_hash_scores(*it, Config::references, hOQ);
 		}
 	}
-
->>>>>>> b5344f6962929c6ce147c46fa47d92c248c59497
 
 	if (Config::eval_schemes.find(Common::S_QUEEN) != Config::eval_schemes.end() or \
 	Config::metaeval_schemes.find(Common::S_QUEEN) != Config::metaeval_schemes.end() or \
