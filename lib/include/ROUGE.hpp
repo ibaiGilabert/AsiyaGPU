@@ -13,7 +13,7 @@ private:
 	vector<double> read_rouge(string reportROUGE);
 	vector<vector<double> > read_rouge_segments(string reportROUGE);
 
-	pair<vector<double>, vector<vector<double> > > computeROUGE(string TGT, int stemming);
+	void computeROUGE(string TGT, vector<double> &SYS, vector<vector<double> > &SEG, int stemming);
 
 public:
 	ROUGE() {}

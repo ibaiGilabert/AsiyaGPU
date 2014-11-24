@@ -11,11 +11,14 @@ using namespace std;
 
 class TB_RAW : public TB_FORMAT {
 private:
+	//write
+	void write_fake_idx_file(string file, vector<vector<string> > &lIDX);
+	
+	//read
+	void read_fake_idx_file(string file, vector<vector<string> > &lIDX);
 
 public:
-	//write
-	static void write_fake_idx_file(string file, string IDX, vector<vector<string> > &lIDX);
-
+	
 	string process_file(string file, string type);
 
 };

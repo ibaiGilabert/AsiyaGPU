@@ -43,8 +43,8 @@ vector<string> Core::get_sorted_metrics() {
 		//sorted_metrics = vector<string>(Config::metrics.begin(), Config::metrics().end());
 		//if (Config::SORT == Common::SORT_NAME) //already sorted (set)
 	}
-	//if (Config::eval_schemes[Common::S_ULC]) sorted_metrics.push_back(ULC::ULC_NAME);
-	//if (Config::eval_schemes[Common::S_QUEEN]) sorted_metrics.push_back(QARLA::QUEEN);
+	if (Config::eval_schemes[Common::S_ULC]) sorted_metrics.push_back(ULC::ULC_NAME);
+	if (Config::eval_schemes[Common::S_QUEEN]) sorted_metrics.push_back(QARLA::QUEEN);
 
 	return sorted_metrics;
 }
@@ -161,86 +161,85 @@ void Core::process_multi_metrics(string HYP, const set<string> &Lref) {
 void Core::rebuild_hash_scores(string TGT, const set<string> &Lref, Scores &hOQ) {
 	string REF = Common::join_set(Lref, '_');
 
-	int n_seg = 1;
-    char buffer[64];
     for (int i = 1; i <= Config::num_process; ++i) {
-        sprintf(buffer, "serialized_ROUGE_%s.txt.%.3d_%s.txt.%.3d", TGT.c_str(), i, REF.c_str(), i);
-		hOQ.load_struct_scores(buffer, n_seg);
+        //fprintf(stderr, "[LOAD]: ROUGE/ tgt: %s/ ref: %s/ split: %d\n", TGT.c_str(), REF.c_str(), i);
+    	hOQ.load_struct_scores(TB_FORMAT::get_serial("ROUGE", TGT, REF, i));
+	    //fprintf(stderr, "[LOAD]: COMPLETE\n");
     }
 
 }
 
 void Core::doMultiMetrics(string HYP, const set<string> &Lref, Scores &hOQ) {
-// description _ launches automatic MT evaluation metrics (for multiple references)
-//                              * computes GTM (by calling Proteus java gtm) -> e = 1..3
-//                              * computes BLEU score (by calling NIST mteval script) -> n = 4
-//                              * computes NIST score (by calling NIST mteval script) -> n = 5
-//                              * computes METEOR
-//                              * computes ROUGE
-//                              * computes WER
-//                              * computes PER
-//                              * computes TER
-//                              * computes SP-based (Shallow Parsing)
-//                              * computes DP-based (Dependency Parsing)
-//                              * computes NE-based (Named Entity Recognition & Classification)
-//                              * computes CP-based (Full Parsing)
-//                              * computes SR-based (Semantic Role Labeling)
-//                              * computes DR-based (Discourse Representation - Semantics)
-// param2  _ candidate hypothesis (KEY)
-// param3  _ candidate filename (string)
-// param4  _ reference list (KEY LIST)		(Config::references)
-// param5  _ reference filenames (hash ref)		(Config::Hrefs)
-// param2  _ hash of scores
+	// description _ launches automatic MT evaluation metrics (for multiple references)
+	//                              * computes GTM (by calling Proteus java gtm) -> e = 1..3
+	//                              * computes BLEU score (by calling NIST mteval script) -> n = 4
+	//                              * computes NIST score (by calling NIST mteval script) -> n = 5
+	//                              * computes METEOR
+	//                              * computes ROUGE
+	//                              * computes WER
+	//                              * computes PER
+	//                              * computes TER
+	//                              * computes SP-based (Shallow Parsing)
+	//                              * computes DP-based (Dependency Parsing)
+	//                              * computes NE-based (Named Entity Recognition & Classification)
+	//                              * computes CP-based (Full Parsing)
+	//                              * computes SR-based (Semantic Role Labeling)
+	//                              * computes DR-based (Discourse Representation - Semantics)
+	// param2  _ candidate hypothesis (KEY)
+	// param3  _ candidate filename (string)
+	// param4  _ reference list (KEY LIST)		(Config::references)
+	// param5  _ reference filenames (hash ref)		(Config::Hrefs)
+	// param2  _ hash of scores
 
 
-string HYP_file = TESTBED::Hsystems[HYP];
-string REF = Common::join_set(Lref, '_');
+	string HYP_file = TESTBED::Hsystems[HYP];
+	string REF = Common::join_set(Lref, '_');
 
-//if (Config::verbose > 1)
-if (Config::verbose) fprintf(stderr, "computing similarities [%s - %s]...\n", HYP.c_str(), REF.c_str());
-//else if (Config::verbose == 1) fprintf(stderr, "%s - %s [", HYP.c_str(), REF.c_str());
+	//if (Config::verbose > 1)
+	if (Config::verbose) fprintf(stderr, "computing similarities [%s - %s]...\n", HYP.c_str(), REF.c_str());
+	//else if (Config::verbose == 1) fprintf(stderr, "%s - %s [", HYP.c_str(), REF.c_str());
 
-SingleMetric *pBLEU = new BLEU;
-SingleMetric *pNIST = new NIST;
-//SingleMetric *pBLEUNIST = new BLEUNIST;
-SingleMetric *pMETEOR = new METEOR;
-SingleMetric *pROUGE = new ROUGE;
-SingleMetric *pGTM = new GTM;
-SingleMetric *pTER = new TER;
+	SingleMetric *pBLEU = new BLEU;
+	SingleMetric *pNIST = new NIST;
+	//SingleMetric *pBLEUNIST = new BLEUNIST;
+	SingleMetric *pMETEOR = new METEOR;
+	SingleMetric *pROUGE = new ROUGE;
+	SingleMetric *pGTM = new GTM;
+	SingleMetric *pTER = new TER;
 
-pBLEU->doMetric(HYP, REF, "", hOQ);
-pNIST->doMetric(HYP, REF, "", hOQ);
-//pBLEUNIST->doMetric(HYP, REF, "", hOQ);
-pMETEOR->doMetric(HYP, REF, "", hOQ);
-pROUGE->doMetric(HYP, REF, "", 1, hOQ);
-pGTM->doMetric(HYP, REF, "", hOQ);
-pTER->doMetric(HYP, REF, "", hOQ);
+	pBLEU->doMetric(HYP, REF, "", hOQ);
+	pNIST->doMetric(HYP, REF, "", hOQ);
+	//pBLEUNIST->doMetric(HYP, REF, "", hOQ);
+	pMETEOR->doMetric(HYP, REF, "", hOQ);
+	pROUGE->doMetric(HYP, REF, "", 1, hOQ);
+	pGTM->doMetric(HYP, REF, "", hOQ);
+	pTER->doMetric(HYP, REF, "", hOQ);
 
-delete pBLEU, pNIST, pMETEOR, pROUGE, pGTM, pTER;
+	delete pBLEU, pNIST, pMETEOR, pROUGE, pGTM, pTER;
 
-if (Config::verbose == 1) fprintf(stderr, "]\n");
+	if (Config::verbose == 1) fprintf(stderr, "]\n");
 
-/*	cout << "[SCORES] : hOQ" << endl;
-hOQ.print_sys_scores();
-hOQ.print_doc_scores(2);
+	/*	cout << "[SCORES] : hOQ" << endl;
+	hOQ.print_sys_scores();
+	hOQ.print_doc_scores(2);
 
-string filename = "serialized_hOQ";
+	string filename = "serialized_hOQ";
 
-hOQ.save_struct_scores(filename.c_str());
+	hOQ.save_struct_scores(filename.c_str());
 
-Scores new_hOQ;
-new_hOQ.load_struct_scores(filename.c_str());
+	Scores new_hOQ;
+	new_hOQ.load_struct_scores(filename.c_str());
 
-cout << "[SCORES] : new_hOQ" << endl;
-new_hOQ.print_sys_scores();
-new_hOQ.print_doc_scores(2);
+	cout << "[SCORES] : new_hOQ" << endl;
+	new_hOQ.print_sys_scores();
+	new_hOQ.print_doc_scores(2);
 
-cout << "[SCORES] serialized done. FILE < " << filename << endl;
+	cout << "[SCORES] serialized done. FILE < " << filename << endl;
 
-string rm_filename = "rm " + filename;
-system(rm_filename.c_str());
+	string rm_filename = "rm " + filename;
+	system(rm_filename.c_str());
 
-exit(1);*/
+	exit(1);*/
 }
 
 double Core::do_scores(Scores &hOQ) {
@@ -301,17 +300,21 @@ double Core::do_scores(Scores &hOQ) {
 		}
 	}
 
-// WAIT
-while (!job_qw.empty()) {
-	for (set<string>::const_iterator it_job = job_qw.begin(); it_job != job_qw.end(); ++it_job) {
-		if (proc.end(*it_job)) job_qw.erase(it_job);
+	if (Config::num_process) {
+		// WAIT
+		if (Config::verbose) fprintf(stderr, "[WAIT]\n");
+		while (!job_qw.empty()) {
+	        for (set<string>::const_iterator it_job = job_qw.begin(); it_job != job_qw.end(); ++it_job) {
+	                if (proc.end(*it_job)) job_qw.erase(it_job);
+	        }
+		}
+		// REBUILD
+		if (Config::verbose) fprintf(stderr, "[REBUILD]\n");
+		for (set<string>::const_iterator it = Config::systems.begin(); it != Config::systems.end(); ++it) {
+	        rebuild_hash_scores(*it, Config::references, hOQ);
+		}
 	}
-}
 
-// REBUILD
-for (set<string>::const_iterator it = Config::systems.begin(); it != Config::systems.end(); ++it) {
-	rebuild_hash_scores(*it, Config::references, hOQ);
-}
 
 	if (Config::eval_schemes.find(Common::S_QUEEN) != Config::eval_schemes.end() or \
 	Config::metaeval_schemes.find(Common::S_QUEEN) != Config::metaeval_schemes.end() or \
@@ -322,8 +325,7 @@ for (set<string>::const_iterator it = Config::systems.begin(); it != Config::sys
 		for (set<string>::const_iterator it = Config::references.begin(); it != Config::references.end(); ++it) {	//references Vs. references
 			double time1 = omp_get_wtime();
 			for (set<string>::const_iterator itr = Config::references.begin(); itr != Config::references.end(); ++itr) {	//references Vs. references
-				if (*it != *itr)
-				doMultiMetrics(*it, set<string> (itr, itr), hOQ);
+				if (*it != *itr) doMultiMetrics(*it, set<string> (itr, itr), hOQ);
 			}
 			double time2 = omp_get_wtime();
 			double t = time2 - time1;	//Common::get_raw_Benchmark;

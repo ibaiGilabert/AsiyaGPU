@@ -10,13 +10,13 @@
 #include <boost/algorithm/string.hpp>
 
 
-void TB_RAW::write_fake_idx_file(string file, string IDX, vector<vector<string> > &lIDX) {
+void TB_RAW::write_fake_idx_file(string file, vector<vector<string> > &lIDX) {
     // description _ writes a fake idx file, given a raw input file, and loads IDX structure into memory
     if (Config::verbose) fprintf(stderr, "reading raw file <%s>\n", file.c_str());
     //vector<vector <string> > lIDX(0, vector<string>());
 
     string system_name = TESTBED::give_file_name(file);
-    string file_idx = file + "." + Common::IDXEXT; //TESTBED::replace_extension(file, Common::IDXEXT);
+    string file_idx = TESTBED::replace_extension(file, Common::IDXEXT); //file + "." + Common::IDXEXT; 
 //cout << "system_name: " << system_name << endl;
 //cout << "file(.txt): " << file << endl;
 //cout << "file(.idx): " << file_idx << endl;
@@ -76,20 +76,51 @@ void TB_RAW::write_fake_idx_file(string file, string IDX, vector<vector<string> 
     } else { fprintf(stderr, "couldn't open output IDX file: %s\n", system_name.c_str());       exit(1); }
 }
 
+void TB_RAW::read_fake_idx_file(string file, vector<vector<string> > &lIDX) {
+
+    if (Config::verbose) fprintf(stderr, "reading idx file <%s>\n", file.c_str());
+
+    string system_name = TESTBED::give_file_name(file);
+    string file_idx = TESTBED::replace_extension(file, Common::IDXEXT); //file + "." + Common::IDXEXT; 
+
+    ifstream f_idx(file_idx.c_str());
+    if (f_idx) {
+        string line;
+        getline(f_idx, line);       //get header
+        
+        vector<string> l_header(3);
+        l_header[0] = Common::UNKNOWN_SET; l_header[1] = Common::UNKNOWN_LANG; l_header[2] = Common::UNKNOWN_LANG;
+        lIDX.push_back(l_header);
+
+        while (getline(f_idx, line)) {
+            string token;
+            istringstream buf(line);
+            vector<string> l(4);
+            for(int j = 0; j < l.size(); ++j) {
+                    getline(buf, token, ' ');
+                    l[j] = token;
+            }
+            lIDX.push_back(l);
+        }
+        f_idx.close();
+    } else { fprintf(stderr, "couldn't open input IDX file: %s\n", file_idx.c_str()); exit(1); }
+}
 
 string TB_RAW::process_file(string file, string type) {
     // description _ read the contents of a RAW plain text file (one sentence per line) and generate fake idx files
     //               (idx structure is also stored onto memory)
     //fprintf(stderr, "%s\n", "----------NIST RAW FILES----------");
 
-    string IDX = file + "." + Common::IDXEXT;
-    string tokfile = file + "." + Common::TOKEXT;
+    string idxfile = TESTBED::replace_extension(file, Common::IDXEXT);
+    string tokfile = TESTBED::replace_extension(file, Common::TOKEXT); //boost::filesystem::path(file).replace_extension(".tok").string();
     string lang;
 
     vector<vector<string> > rIDX; //(0, vector<string>());
-    write_fake_idx_file(file, IDX, rIDX);
+    if (Config::serialize) read_fake_idx_file(idxfile, rIDX);
+    else write_fake_idx_file(file, rIDX);
+
     if (type == "source" or type == "src") {
-        TESTBED::src = tokfile;
+        TESTBED::src = file; //tokfile;
         TESTBED::IDX["source"] = rIDX;
         TESTBED::wc["source"] = rIDX.size() - 1;
         lang = Config::SRCLANG;
@@ -103,7 +134,7 @@ string TB_RAW::process_file(string file, string type) {
             fprintf(stderr, "[ERROR] reference name '%s' duplicated!\n", R.c_str()); exit(1);
         }
         TESTBED::wc[R] = rIDX.size()-1;
-        TESTBED::Hrefs[R] = tokfile;
+        TESTBED::Hrefs[R] = file; //tokfile;
         lang = Config::LANG;
     }
     else if (type == "system" or type =="sys") {
@@ -113,7 +144,7 @@ string TB_RAW::process_file(string file, string type) {
             fprintf(stderr, "[ERROR] system name '%s' duplicated!\n", S.c_str()); exit(1);
         }
         TESTBED::wc[S] = rIDX.size()-1;
-        TESTBED::Hsystems[S] = tokfile;
+        TESTBED::Hsystems[S] = file; //tokfile;
         lang = Config::LANG;
     }
     else { fprintf(stderr, "[ERROR] unkown file type <%s>!!\n", type.c_str()); exit(1); }

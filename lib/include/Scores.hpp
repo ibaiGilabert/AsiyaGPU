@@ -72,8 +72,8 @@ public:
 	void save_hash_scores(string metric_name, string system_name, string refere_name, double sys_score, const vector<double> &doc_scores, const vector<double> &seg_scores);
 
 	//Serialize hash scores
-	void save_struct_scores(string filename);
-	void load_struct_scores(char* filename, int &n_seg);
+	void save_struct_scores(char* filename);
+	void load_struct_scores(char* filename);
 
 	//Print
 	void print_sys_scores() const;
