@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mteval SYSTEM "ftp://jaguar.ncsl.nist.gov/mt/resources/mteval-xml-v1.5.dtd">
+<mteval>
+<tstset setid="newssyscombtest2010" srclang="Spanish" trglang="English" sysid="uedin">
+<doc docid="idnes.cz/2009/12/11/76492" genre="nw">
+<hl>
+<seg id="1"> The lack of snow in the mountains are concerned hoteliers </seg>
+</hl>
+<p>
+<seg id="2"> Not only the peacekeepers telesquíes in Krkonoše worry about the runways without snow. </seg>
+<seg id="3"> The lack of snow makes people do not reserve ski stays in hotels and pensions. </seg>
+<seg id="4"> That is why, in Krkonoše can still be getting free rooms for all winter dates, including for Christmas Eve and Nochevieja. </seg>
+</p>
+<p>
+<seg id="5"> We have many visitors in our pages. </seg>
+<seg id="6"> People looked tenders, finds prices, but still fears book with commitment. </seg>
+<seg id="7"> And if we call them, wondering immediately on our view, if this Christmas, there will be snow or mud, &quot;he mentioned the mantenedor of information portal Jandura Spindl.Info Martin. </seg>
+</p>
+<p>
+<seg id="8"> Those who want to move into a Špindlerův Mlýn Nochevieja according to their expectations, should not hesitate more in reserve stay. </seg>
+<seg id="9"> Those who prefer to save money and put the quality of accommodation in the second place, they can try to wait a few more days. </seg>
+</p>
+<p>
+<seg id="10"> Hoteliers of Špindlerův Mlýn offer especially weekly stays for Nochevieja. </seg>
+</p>
+</doc>
+<doc docid="lidovky.cz/2009/12/10/75519" genre="nw">
+<hl>
+<seg id="1"> USA: The repetition is the mother of wisdom </seg>
+</hl>
+<p>
+<seg id="2"> It is comical that Barack Obama, the president with the reputation of a man more intelligent, as a diligent student repeats in the Afghan question the strategy of his predecessor, he took on the most stupid. </seg>
+</p>
+<p>
+<seg id="3"> When it finally revealed his Afghan approach, waited anxiously, demonstrated that there is a copy of the script used in Iraq by Bush, established three years ago. </seg>
+<seg id="4"> Not only in the same text uses a number of times the phrase “ just like in Iraq &quot;, but did not hesitate to use the title of Bush&apos;s statement of January 2007 for his own statement:&quot; A new way forward &quot;. </seg>
+</p>
+<p>
+<seg id="5"> It was he himself who three years ago, Bush criticized the idea of sending new military reinforcements to Iraq, the country that is suffering by civil war, and that criticized it as &quot;an irresponsible decision and with catastrophic consequences&quot;. </seg>
+<seg id="6"> The following month, however, showed that the Bush strategy, based on the recommendations of captains of area, was the only possible and successful, so that today we are not talking about Iraq in the news. </seg>
+<seg id="7"> The reputation of Bush did not improve, however objectively left his successor an initial situation much more favourable than expected. </seg>
+<seg id="8"> In Afghanistan, Barack Obama hopes to repeat the miracle. </seg>
+</p>
+<p>
+<seg id="9"> Field captains returned to ask him to increase the military contingent, especially the commander-in-chief of the Afghan operation General Stanley McCristal. He, even though the traditional subordinate relationships, proceeded to the Rifles undecided in the White House to a harsh criticism. </seg>
+<seg id="10"> It requested 40,000 men in order to improve the situation. </seg>
+</p>
+</doc>
+<doc docid="lidovky.cz/2009/12/10/75501" genre="nw">
+<hl>
+<seg id="1"> The managers of the bank Goldman Sachs will not receive cash bonuses </seg>
+</hl>
+<p>
+<seg id="2"> Senior executives of the US bank Goldman Sachs will not receive cash bonuses this year. </seg>
+<seg id="3"> The entity as announced in reacting to the harsh criticism of its pay practices. </seg>
+</p>
+<p>
+<seg id="4"> The group of 30 senior managers will receive, instead of cash, shares that cannot be sold at a minimum period of five years. </seg>
+<seg id="5"> Moreover, the actions may be withdrawn in the event that they had assumed excessive risks. </seg>
+</p>
+<p>
+<seg id="6"> According to Reuters, Goldman Sachs thus became the leader in the effort to bring together the bonuses on Wall Street with the power over the long term. </seg>
+<seg id="7"> I suppose that Wall Street is fully aware of the way longer than it should undertake, mentioned the former investment bank JPMorgan Douglas Elliott of the entity. </seg>
+<seg id="8"> The devil is in the details, he added. </seg>
+</p>
+<p>
+<seg id="9"> The bank Goldman Sachs faced criticism after having (almost $17 billion (nearly $300 billion CZK) for the bonuses, in the first three quarters of this year. </seg>
+<seg id="10"> The total amount of bonuses in the entity for this year, according to Reuters, probably exceed, despite the measures announced today, the $20 billion. </seg>
+</p>
+<p>
+<seg id="11"> The high bonuses in the banking sector became, with the arrival of the financial crisis, in a sensitive issue in politics. </seg>
+<seg id="12"> Britain announced on Wednesday that it plans to tax at once, with a tax of 50 per cent, the bank bonuses for up to 25,000 pounds (approximately 712,000 CZK). </seg>
+<seg id="13"> France is also preparing similar measures. </seg>
+</p>
+</doc>
+</tstset>
+</mteval>

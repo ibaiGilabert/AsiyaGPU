@@ -1,0 +1,1471 @@
+Config_file: Asiya.config
+DO NOT SERIALIZE
+METRICS = metrics_ROUGE
+SYSTEMS = 
+REFERENCES = 
+[INPUT DATA NIST]
+reading NIST XML <./data/src.xml>
+[SPLIT] input to read <./data/source.txt> /ext: txt/ output: ./data/source.001.txt
+[SPLIT] input to read <./data/source.idx> /ext: idx/ output: ./data/source.001.idx
+reading NIST XML <./data/ref.xml>
+[SPLIT] input to read <./data/reference01.txt> /ext: txt/ output: ./data/reference01.001.txt
+[SPLIT] input to read <./data/reference01.idx> /ext: idx/ output: ./data/reference01.001.idx
+reading NIST XML <./data/system_A.xml>
+[SPLIT] input to read <./data/onlineA.txt> /ext: txt/ output: ./data/onlineA.001.txt
+[SPLIT] input to read <./data/onlineA.idx> /ext: idx/ output: ./data/onlineA.001.idx
+reading NIST XML <./data/system_B.xml>
+[SPLIT] input to read <./data/onlineB.txt> /ext: txt/ output: ./data/onlineB.001.txt
+[SPLIT] input to read <./data/onlineB.idx> /ext: idx/ output: ./data/onlineB.001.idx
+reading NIST XML <./data/system_C.xml>
+[SPLIT] input to read <./data/uedin.txt> /ext: txt/ output: ./data/uedin.001.txt
+[SPLIT] input to read <./data/uedin.idx> /ext: idx/ output: ./data/uedin.001.idx
+reading NIST XML <./data/system_D.xml>
+[SPLIT] input to read <./data/upc.txt> /ext: txt/ output: ./data/upc.001.txt
+[SPLIT] input to read <./data/upc.idx> /ext: idx/ output: ./data/upc.001.idx
+reading NIST XML <./data/system_E.xml>
+[SPLIT] input to read <./data/upv-combo.txt> /ext: txt/ output: ./data/upv-combo.001.txt
+[SPLIT] input to read <./data/upv-combo.idx> /ext: idx/ output: ./data/upv-combo.001.idx
+ [DONE]
+LET'S DO SOME STUFF SCORES!!!
+[METRICS] computing 'system vs. reference' scores (one vs. all)...
+get_split (onlineA): sys: ./data/onlineA.txt/ ext: txt/ thread: 1
+[EXEC] ./Asiya Asiya_ROUGE_onlineA_reference01_001.config -serialize 1 -g seg -eval single -metric_set metrics_ROUGE > run_ROUGE_onlineA_reference01_001.report
+get_split (onlineA): sys: ./data/onlineA.txt/ ext: txt/ thread: 2
+[EXEC] ./Asiya Asiya_ROUGE_onlineA_reference01_002.config -serialize 10 -g seg -eval single -metric_set metrics_ROUGE > run_ROUGE_onlineA_reference01_002.report
+get_split (onlineA): sys: ./data/onlineA.txt/ ext: txt/ thread: 3
+[EXEC] ./Asiya Asiya_ROUGE_onlineA_reference01_003.config -serialize 19 -g seg -eval single -metric_set metrics_ROUGE > run_ROUGE_onlineA_reference01_003.report
+get_split (onlineA): sys: ./data/onlineA.txt/ ext: txt/ thread: 4
+[EXEC] ./Asiya Asiya_ROUGE_onlineA_reference01_004.config -serialize 28 -g seg -eval single -metric_set metrics_ROUGE > run_ROUGE_onlineA_reference01_004.report
+time1: 5906495.571278
+time2: 5906495.793147
+time: 0.221869
+get_split (onlineB): sys: ./data/onlineB.txt/ ext: txt/ thread: 1
+[EXEC] ./Asiya Asiya_ROUGE_onlineB_reference01_001.config -serialize 1 -g seg -eval single -metric_set metrics_ROUGE > run_ROUGE_onlineB_reference01_001.report
+get_split (onlineB): sys: ./data/onlineB.txt/ ext: txt/ thread: 2
+[EXEC] ./Asiya Asiya_ROUGE_onlineB_reference01_002.config -serialize 10 -g seg -eval single -metric_set metrics_ROUGE > run_ROUGE_onlineB_reference01_002.report
+get_split (onlineB): sys: ./data/onlineB.txt/ ext: txt/ thread: 3
+[EXEC] ./Asiya Asiya_ROUGE_onlineB_reference01_003.config -serialize 19 -g seg -eval single -metric_set metrics_ROUGE > run_ROUGE_onlineB_reference01_003.report
+get_split (onlineB): sys: ./data/onlineB.txt/ ext: txt/ thread: 4
+[EXEC] ./Asiya Asiya_ROUGE_onlineB_reference01_004.config -serialize 28 -g seg -eval single -metric_set metrics_ROUGE > run_ROUGE_onlineB_reference01_004.report
+time1: 5906495.793243
+time2: 5906496.023429
+time: 0.230186
+get_split (uedin): sys: ./data/uedin.txt/ ext: txt/ thread: 1
+[EXEC] ./Asiya Asiya_ROUGE_uedin_reference01_001.config -serialize 1 -g seg -eval single -metric_set metrics_ROUGE > run_ROUGE_uedin_reference01_001.report
+get_split (uedin): sys: ./data/uedin.txt/ ext: txt/ thread: 2
+[EXEC] ./Asiya Asiya_ROUGE_uedin_reference01_002.config -serialize 10 -g seg -eval single -metric_set metrics_ROUGE > run_ROUGE_uedin_reference01_002.report
+get_split (uedin): sys: ./data/uedin.txt/ ext: txt/ thread: 3
+[EXEC] ./Asiya Asiya_ROUGE_uedin_reference01_003.config -serialize 19 -g seg -eval single -metric_set metrics_ROUGE > run_ROUGE_uedin_reference01_003.report
+get_split (uedin): sys: ./data/uedin.txt/ ext: txt/ thread: 4
+[EXEC] ./Asiya Asiya_ROUGE_uedin_reference01_004.config -serialize 28 -g seg -eval single -metric_set metrics_ROUGE > run_ROUGE_uedin_reference01_004.report
+time1: 5906496.023515
+time2: 5906496.244123
+time: 0.220608
+get_split (upc): sys: ./data/upc.txt/ ext: txt/ thread: 1
+[EXEC] ./Asiya Asiya_ROUGE_upc_reference01_001.config -serialize 1 -g seg -eval single -metric_set metrics_ROUGE > run_ROUGE_upc_reference01_001.report
+get_split (upc): sys: ./data/upc.txt/ ext: txt/ thread: 2
+[EXEC] ./Asiya Asiya_ROUGE_upc_reference01_002.config -serialize 10 -g seg -eval single -metric_set metrics_ROUGE > run_ROUGE_upc_reference01_002.report
+get_split (upc): sys: ./data/upc.txt/ ext: txt/ thread: 3
+[EXEC] ./Asiya Asiya_ROUGE_upc_reference01_003.config -serialize 19 -g seg -eval single -metric_set metrics_ROUGE > run_ROUGE_upc_reference01_003.report
+get_split (upc): sys: ./data/upc.txt/ ext: txt/ thread: 4
+[EXEC] ./Asiya Asiya_ROUGE_upc_reference01_004.config -serialize 28 -g seg -eval single -metric_set metrics_ROUGE > run_ROUGE_upc_reference01_004.report
+time1: 5906496.244209
+time2: 5906496.465435
+time: 0.221226
+get_split (upv-combo): sys: ./data/upv-combo.txt/ ext: txt/ thread: 1
+[EXEC] ./Asiya Asiya_ROUGE_upv-combo_reference01_001.config -serialize 1 -g seg -eval single -metric_set metrics_ROUGE > run_ROUGE_upv-combo_reference01_001.report
+get_split (upv-combo): sys: ./data/upv-combo.txt/ ext: txt/ thread: 2
+[EXEC] ./Asiya Asiya_ROUGE_upv-combo_reference01_002.config -serialize 10 -g seg -eval single -metric_set metrics_ROUGE > run_ROUGE_upv-combo_reference01_002.report
+get_split (upv-combo): sys: ./data/upv-combo.txt/ ext: txt/ thread: 3
+[EXEC] ./Asiya Asiya_ROUGE_upv-combo_reference01_003.config -serialize 19 -g seg -eval single -metric_set metrics_ROUGE > run_ROUGE_upv-combo_reference01_003.report
+get_split (upv-combo): sys: ./data/upv-combo.txt/ ext: txt/ thread: 4
+[EXEC] ./Asiya Asiya_ROUGE_upv-combo_reference01_004.config -serialize 28 -g seg -eval single -metric_set metrics_ROUGE > run_ROUGE_upv-combo_reference01_004.report
+time1: 5906496.465522
+time2: 5906496.685108
+time: 0.219586
+[WAIT]
+[REBUILD]
+[LOAD]: ROUGE/ tgt: onlineA/ ref: reference01/ split: 1
+	file: serialized_ROUGE_onlineA.001_reference01.001
+	->loaded n_seg: 1/ metric: ROUGE-1/ tgt: onlineA/ ref: reference01/ score: 0.47619 -> Check!
+	->loaded n_seg: 1/ metric: ROUGE-2/ tgt: onlineA/ ref: reference01/ score: 0.31579 -> Check!
+	->loaded n_seg: 1/ metric: ROUGE-3/ tgt: onlineA/ ref: reference01/ score: 0.23529 -> Check!
+	->loaded n_seg: 1/ metric: ROUGE-4/ tgt: onlineA/ ref: reference01/ score: 0.13333 -> Check!
+	->loaded n_seg: 1/ metric: ROUGE-L/ tgt: onlineA/ ref: reference01/ score: 0.47619 -> Check!
+	->loaded n_seg: 1/ metric: ROUGE-S*/ tgt: onlineA/ ref: reference01/ score: 0.19608 -> Check!
+	->loaded n_seg: 1/ metric: ROUGE-SU*/ tgt: onlineA/ ref: reference01/ score: 0.24794 -> Check!
+	->loaded n_seg: 1/ metric: ROUGE-W/ tgt: onlineA/ ref: reference01/ score: 0.38511 -> Check!
+	->loaded n_seg: 2/ metric: ROUGE-1/ tgt: onlineA/ ref: reference01/ score: 0.32258 -> Check!
+	->loaded n_seg: 2/ metric: ROUGE-2/ tgt: onlineA/ ref: reference01/ score: 0.13793 -> Check!
+	->loaded n_seg: 2/ metric: ROUGE-3/ tgt: onlineA/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 2/ metric: ROUGE-4/ tgt: onlineA/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 2/ metric: ROUGE-L/ tgt: onlineA/ ref: reference01/ score: 0.32258 -> Check!
+	->loaded n_seg: 2/ metric: ROUGE-S*/ tgt: onlineA/ ref: reference01/ score: 0.08889 -> Check!
+	->loaded n_seg: 2/ metric: ROUGE-SU*/ tgt: onlineA/ ref: reference01/ score: 0.11811 -> Check!
+	->loaded n_seg: 2/ metric: ROUGE-W/ tgt: onlineA/ ref: reference01/ score: 0.2157 -> Check!
+	->loaded n_seg: 3/ metric: ROUGE-1/ tgt: onlineA/ ref: reference01/ score: 0.6 -> Check!
+	->loaded n_seg: 3/ metric: ROUGE-2/ tgt: onlineA/ ref: reference01/ score: 0.35714 -> Check!
+	->loaded n_seg: 3/ metric: ROUGE-3/ tgt: onlineA/ ref: reference01/ score: 0.23077 -> Check!
+	->loaded n_seg: 3/ metric: ROUGE-4/ tgt: onlineA/ ref: reference01/ score: 0.08333 -> Check!
+	->loaded n_seg: 3/ metric: ROUGE-L/ tgt: onlineA/ ref: reference01/ score: 0.53333 -> Check!
+	->loaded n_seg: 3/ metric: ROUGE-S*/ tgt: onlineA/ ref: reference01/ score: 0.3128 -> Check!
+	->loaded n_seg: 3/ metric: ROUGE-SU*/ tgt: onlineA/ ref: reference01/ score: 0.34309 -> Check!
+	->loaded n_seg: 3/ metric: ROUGE-W/ tgt: onlineA/ ref: reference01/ score: 0.32594 -> Check!
+	->loaded n_seg: 4/ metric: ROUGE-1/ tgt: onlineA/ ref: reference01/ score: 0.61905 -> Check!
+	->loaded n_seg: 4/ metric: ROUGE-2/ tgt: onlineA/ ref: reference01/ score: 0.15 -> Check!
+	->loaded n_seg: 4/ metric: ROUGE-3/ tgt: onlineA/ ref: reference01/ score: 0.05263 -> Check!
+	->loaded n_seg: 4/ metric: ROUGE-4/ tgt: onlineA/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 4/ metric: ROUGE-L/ tgt: onlineA/ ref: reference01/ score: 0.42857 -> Check!
+	->loaded n_seg: 4/ metric: ROUGE-S*/ tgt: onlineA/ ref: reference01/ score: 0.30879 -> Check!
+	->loaded n_seg: 4/ metric: ROUGE-SU*/ tgt: onlineA/ ref: reference01/ score: 0.32972 -> Check!
+	->loaded n_seg: 4/ metric: ROUGE-W/ tgt: onlineA/ ref: reference01/ score: 0.26934 -> Check!
+	->loaded n_seg: 5/ metric: ROUGE-1/ tgt: onlineA/ ref: reference01/ score: 0.375 -> Check!
+	->loaded n_seg: 5/ metric: ROUGE-2/ tgt: onlineA/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 5/ metric: ROUGE-3/ tgt: onlineA/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 5/ metric: ROUGE-4/ tgt: onlineA/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 5/ metric: ROUGE-L/ tgt: onlineA/ ref: reference01/ score: 0.375 -> Check!
+	->loaded n_seg: 5/ metric: ROUGE-S*/ tgt: onlineA/ ref: reference01/ score: 0.10526 -> Check!
+	->loaded n_seg: 5/ metric: ROUGE-SU*/ tgt: onlineA/ ref: reference01/ score: 0.16901 -> Check!
+	->loaded n_seg: 5/ metric: ROUGE-W/ tgt: onlineA/ ref: reference01/ score: 0.23829 -> Check!
+	->loaded n_seg: 6/ metric: ROUGE-1/ tgt: onlineA/ ref: reference01/ score: 0.33334 -> Check!
+	->loaded n_seg: 6/ metric: ROUGE-2/ tgt: onlineA/ ref: reference01/ score: 0.14286 -> Check!
+	->loaded n_seg: 6/ metric: ROUGE-3/ tgt: onlineA/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 6/ metric: ROUGE-4/ tgt: onlineA/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 6/ metric: ROUGE-L/ tgt: onlineA/ ref: reference01/ score: 0.33334 -> Check!
+	->loaded n_seg: 6/ metric: ROUGE-S*/ tgt: onlineA/ ref: reference01/ score: 0.09346 -> Check!
+	->loaded n_seg: 6/ metric: ROUGE-SU*/ tgt: onlineA/ ref: reference01/ score: 0.12396 -> Check!
+	->loaded n_seg: 6/ metric: ROUGE-W/ tgt: onlineA/ ref: reference01/ score: 0.19549 -> Check!
+	->loaded n_seg: 7/ metric: ROUGE-1/ tgt: onlineA/ ref: reference01/ score: 0.44444 -> Check!
+	->loaded n_seg: 7/ metric: ROUGE-2/ tgt: onlineA/ ref: reference01/ score: 0.15385 -> Check!
+	->loaded n_seg: 7/ metric: ROUGE-3/ tgt: onlineA/ ref: reference01/ score: 0.04 -> Check!
+	->loaded n_seg: 7/ metric: ROUGE-4/ tgt: onlineA/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 7/ metric: ROUGE-L/ tgt: onlineA/ ref: reference01/ score: 0.33333 -> Check!
+	->loaded n_seg: 7/ metric: ROUGE-S*/ tgt: onlineA/ ref: reference01/ score: 0.16431 -> Check!
+	->loaded n_seg: 7/ metric: ROUGE-SU*/ tgt: onlineA/ ref: reference01/ score: 0.18206 -> Check!
+	->loaded n_seg: 7/ metric: ROUGE-W/ tgt: onlineA/ ref: reference01/ score: 0.17299 -> Check!
+	->loaded n_seg: 8/ metric: ROUGE-1/ tgt: onlineA/ ref: reference01/ score: 0.375 -> Check!
+	->loaded n_seg: 8/ metric: ROUGE-2/ tgt: onlineA/ ref: reference01/ score: 0.17392 -> Check!
+	->loaded n_seg: 8/ metric: ROUGE-3/ tgt: onlineA/ ref: reference01/ score: 0.04546 -> Check!
+	->loaded n_seg: 8/ metric: ROUGE-4/ tgt: onlineA/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 8/ metric: ROUGE-L/ tgt: onlineA/ ref: reference01/ score: 0.25 -> Check!
+	->loaded n_seg: 8/ metric: ROUGE-S*/ tgt: onlineA/ ref: reference01/ score: 0.08318 -> Check!
+	->loaded n_seg: 8/ metric: ROUGE-SU*/ tgt: onlineA/ ref: reference01/ score: 0.10685 -> Check!
+	->loaded n_seg: 8/ metric: ROUGE-W/ tgt: onlineA/ ref: reference01/ score: 0.14398 -> Check!
+	->loaded n_seg: 9/ metric: ROUGE-1/ tgt: onlineA/ ref: reference01/ score: 0.5 -> Check!
+	->loaded n_seg: 9/ metric: ROUGE-2/ tgt: onlineA/ ref: reference01/ score: 0.21053 -> Check!
+	->loaded n_seg: 9/ metric: ROUGE-3/ tgt: onlineA/ ref: reference01/ score: 0.05556 -> Check!
+	->loaded n_seg: 9/ metric: ROUGE-4/ tgt: onlineA/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 9/ metric: ROUGE-L/ tgt: onlineA/ ref: reference01/ score: 0.5 -> Check!
+	->loaded n_seg: 9/ metric: ROUGE-S*/ tgt: onlineA/ ref: reference01/ score: 0.23137 -> Check!
+	->loaded n_seg: 9/ metric: ROUGE-SU*/ tgt: onlineA/ ref: reference01/ score: 0.25292 -> Check!
+	->loaded n_seg: 9/ metric: ROUGE-W/ tgt: onlineA/ ref: reference01/ score: 0.30599 -> Check!
+[LOAD]: COMPLETE
+[LOAD]: ROUGE/ tgt: onlineA/ ref: reference01/ split: 2
+	file: serialized_ROUGE_onlineA.002_reference01.002
+	->loaded n_seg: 10/ metric: ROUGE-1/ tgt: onlineA/ ref: reference01/ score: 0.12 -> Check!
+	->loaded n_seg: 10/ metric: ROUGE-2/ tgt: onlineA/ ref: reference01/ score: 0.04167 -> Check!
+	->loaded n_seg: 10/ metric: ROUGE-3/ tgt: onlineA/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 10/ metric: ROUGE-4/ tgt: onlineA/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 10/ metric: ROUGE-L/ tgt: onlineA/ ref: reference01/ score: 0.12 -> Check!
+	->loaded n_seg: 10/ metric: ROUGE-S*/ tgt: onlineA/ ref: reference01/ score: 0.00649 -> Check!
+	->loaded n_seg: 10/ metric: ROUGE-SU*/ tgt: onlineA/ ref: reference01/ score: 0.01235 -> Check!
+	->loaded n_seg: 10/ metric: ROUGE-W/ tgt: onlineA/ ref: reference01/ score: 0.05502 -> Check!
+	->loaded n_seg: 11/ metric: ROUGE-1/ tgt: onlineA/ ref: reference01/ score: 0.10811 -> Check!
+	->loaded n_seg: 11/ metric: ROUGE-2/ tgt: onlineA/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 11/ metric: ROUGE-3/ tgt: onlineA/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 11/ metric: ROUGE-4/ tgt: onlineA/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 11/ metric: ROUGE-L/ tgt: onlineA/ ref: reference01/ score: 0.10811 -> Check!
+	->loaded n_seg: 11/ metric: ROUGE-S*/ tgt: onlineA/ ref: reference01/ score: 0.00527 -> Check!
+	->loaded n_seg: 11/ metric: ROUGE-SU*/ tgt: onlineA/ ref: reference01/ score: 0.01446 -> Check!
+	->loaded n_seg: 11/ metric: ROUGE-W/ tgt: onlineA/ ref: reference01/ score: 0.08142 -> Check!
+	->loaded n_seg: 12/ metric: ROUGE-1/ tgt: onlineA/ ref: reference01/ score: 0.14285 -> Check!
+	->loaded n_seg: 12/ metric: ROUGE-2/ tgt: onlineA/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 12/ metric: ROUGE-3/ tgt: onlineA/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 12/ metric: ROUGE-4/ tgt: onlineA/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 12/ metric: ROUGE-L/ tgt: onlineA/ ref: reference01/ score: 0.14285 -> Check!
+	->loaded n_seg: 12/ metric: ROUGE-S*/ tgt: onlineA/ ref: reference01/ score: 0.01348 -> Check!
+	->loaded n_seg: 12/ metric: ROUGE-SU*/ tgt: onlineA/ ref: reference01/ score: 0.02474 -> Check!
+	->loaded n_seg: 12/ metric: ROUGE-W/ tgt: onlineA/ ref: reference01/ score: 0.09276 -> Check!
+	->loaded n_seg: 13/ metric: ROUGE-1/ tgt: onlineA/ ref: reference01/ score: 0.25641 -> Check!
+	->loaded n_seg: 13/ metric: ROUGE-2/ tgt: onlineA/ ref: reference01/ score: 0.10811 -> Check!
+	->loaded n_seg: 13/ metric: ROUGE-3/ tgt: onlineA/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 13/ metric: ROUGE-4/ tgt: onlineA/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 13/ metric: ROUGE-L/ tgt: onlineA/ ref: reference01/ score: 0.20513 -> Check!
+	->loaded n_seg: 13/ metric: ROUGE-S*/ tgt: onlineA/ ref: reference01/ score: 0.04408 -> Check!
+	->loaded n_seg: 13/ metric: ROUGE-SU*/ tgt: onlineA/ ref: reference01/ score: 0.065 -> Check!
+	->loaded n_seg: 13/ metric: ROUGE-W/ tgt: onlineA/ ref: reference01/ score: 0.12698 -> Check!
+	->loaded n_seg: 14/ metric: ROUGE-1/ tgt: onlineA/ ref: reference01/ score: 0.49123 -> Check!
+	->loaded n_seg: 14/ metric: ROUGE-2/ tgt: onlineA/ ref: reference01/ score: 0.18182 -> Check!
+	->loaded n_seg: 14/ metric: ROUGE-3/ tgt: onlineA/ ref: reference01/ score: 0.07547 -> Check!
+	->loaded n_seg: 14/ metric: ROUGE-4/ tgt: onlineA/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 14/ metric: ROUGE-L/ tgt: onlineA/ ref: reference01/ score: 0.38597 -> Check!
+	->loaded n_seg: 14/ metric: ROUGE-S*/ tgt: onlineA/ ref: reference01/ score: 0.21429 -> Check!
+	->loaded n_seg: 14/ metric: ROUGE-SU*/ tgt: onlineA/ ref: reference01/ score: 0.23123 -> Check!
+	->loaded n_seg: 14/ metric: ROUGE-W/ tgt: onlineA/ ref: reference01/ score: 0.20003 -> Check!
+	->loaded n_seg: 15/ metric: ROUGE-1/ tgt: onlineA/ ref: reference01/ score: 0.90909 -> Check!
+	->loaded n_seg: 15/ metric: ROUGE-2/ tgt: onlineA/ ref: reference01/ score: 0.66667 -> Check!
+	->loaded n_seg: 15/ metric: ROUGE-3/ tgt: onlineA/ ref: reference01/ score: 0.28571 -> Check!
+	->loaded n_seg: 15/ metric: ROUGE-4/ tgt: onlineA/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 15/ metric: ROUGE-L/ tgt: onlineA/ ref: reference01/ score: 0.90909 -> Check!
+	->loaded n_seg: 15/ metric: ROUGE-S*/ tgt: onlineA/ ref: reference01/ score: 0.8 -> Check!
+	->loaded n_seg: 15/ metric: ROUGE-SU*/ tgt: onlineA/ ref: reference01/ score: 0.82353 -> Check!
+	->loaded n_seg: 15/ metric: ROUGE-W/ tgt: onlineA/ ref: reference01/ score: 0.77527 -> Check!
+	->loaded n_seg: 16/ metric: ROUGE-1/ tgt: onlineA/ ref: reference01/ score: 0.26087 -> Check!
+	->loaded n_seg: 16/ metric: ROUGE-2/ tgt: onlineA/ ref: reference01/ score: 0.09524 -> Check!
+	->loaded n_seg: 16/ metric: ROUGE-3/ tgt: onlineA/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 16/ metric: ROUGE-4/ tgt: onlineA/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 16/ metric: ROUGE-L/ tgt: onlineA/ ref: reference01/ score: 0.26087 -> Check!
+	->loaded n_seg: 16/ metric: ROUGE-S*/ tgt: onlineA/ ref: reference01/ score: 0.04959 -> Check!
+	->loaded n_seg: 16/ metric: ROUGE-SU*/ tgt: onlineA/ ref: reference01/ score: 0.07042 -> Check!
+	->loaded n_seg: 16/ metric: ROUGE-W/ tgt: onlineA/ ref: reference01/ score: 0.17593 -> Check!
+	->loaded n_seg: 17/ metric: ROUGE-1/ tgt: onlineA/ ref: reference01/ score: 0.07843 -> Check!
+	->loaded n_seg: 17/ metric: ROUGE-2/ tgt: onlineA/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 17/ metric: ROUGE-3/ tgt: onlineA/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 17/ metric: ROUGE-4/ tgt: onlineA/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 17/ metric: ROUGE-L/ tgt: onlineA/ ref: reference01/ score: 0.07843 -> Check!
+	->loaded n_seg: 17/ metric: ROUGE-S*/ tgt: onlineA/ ref: reference01/ score: 0.0032 -> Check!
+	->loaded n_seg: 17/ metric: ROUGE-SU*/ tgt: onlineA/ ref: reference01/ score: 0.0089 -> Check!
+	->loaded n_seg: 17/ metric: ROUGE-W/ tgt: onlineA/ ref: reference01/ score: 0.04842 -> Check!
+	->loaded n_seg: 18/ metric: ROUGE-1/ tgt: onlineA/ ref: reference01/ score: 0.4898 -> Check!
+	->loaded n_seg: 18/ metric: ROUGE-2/ tgt: onlineA/ ref: reference01/ score: 0.29788 -> Check!
+	->loaded n_seg: 18/ metric: ROUGE-3/ tgt: onlineA/ ref: reference01/ score: 0.17778 -> Check!
+	->loaded n_seg: 18/ metric: ROUGE-4/ tgt: onlineA/ ref: reference01/ score: 0.04651 -> Check!
+	->loaded n_seg: 18/ metric: ROUGE-L/ tgt: onlineA/ ref: reference01/ score: 0.4898 -> Check!
+	->loaded n_seg: 18/ metric: ROUGE-S*/ tgt: onlineA/ ref: reference01/ score: 0.22917 -> Check!
+	->loaded n_seg: 18/ metric: ROUGE-SU*/ tgt: onlineA/ ref: reference01/ score: 0.24719 -> Check!
+	->loaded n_seg: 18/ metric: ROUGE-W/ tgt: onlineA/ ref: reference01/ score: 0.26793 -> Check!
+[LOAD]: COMPLETE
+[LOAD]: ROUGE/ tgt: onlineA/ ref: reference01/ split: 3
+	file: serialized_ROUGE_onlineA.003_reference01.003
+	->loaded n_seg: 19/ metric: ROUGE-1/ tgt: onlineA/ ref: reference01/ score: 0.12 -> Check!
+	->loaded n_seg: 19/ metric: ROUGE-2/ tgt: onlineA/ ref: reference01/ score: 0.04167 -> Check!
+	->loaded n_seg: 19/ metric: ROUGE-3/ tgt: onlineA/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 19/ metric: ROUGE-4/ tgt: onlineA/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 19/ metric: ROUGE-L/ tgt: onlineA/ ref: reference01/ score: 0.12 -> Check!
+	->loaded n_seg: 19/ metric: ROUGE-S*/ tgt: onlineA/ ref: reference01/ score: 0.00649 -> Check!
+	->loaded n_seg: 19/ metric: ROUGE-SU*/ tgt: onlineA/ ref: reference01/ score: 0.01235 -> Check!
+	->loaded n_seg: 19/ metric: ROUGE-W/ tgt: onlineA/ ref: reference01/ score: 0.05502 -> Check!
+	->loaded n_seg: 20/ metric: ROUGE-1/ tgt: onlineA/ ref: reference01/ score: 0.10811 -> Check!
+	->loaded n_seg: 20/ metric: ROUGE-2/ tgt: onlineA/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 20/ metric: ROUGE-3/ tgt: onlineA/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 20/ metric: ROUGE-4/ tgt: onlineA/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 20/ metric: ROUGE-L/ tgt: onlineA/ ref: reference01/ score: 0.10811 -> Check!
+	->loaded n_seg: 20/ metric: ROUGE-S*/ tgt: onlineA/ ref: reference01/ score: 0.00527 -> Check!
+	->loaded n_seg: 20/ metric: ROUGE-SU*/ tgt: onlineA/ ref: reference01/ score: 0.01446 -> Check!
+	->loaded n_seg: 20/ metric: ROUGE-W/ tgt: onlineA/ ref: reference01/ score: 0.08142 -> Check!
+	->loaded n_seg: 21/ metric: ROUGE-1/ tgt: onlineA/ ref: reference01/ score: 0.14285 -> Check!
+	->loaded n_seg: 21/ metric: ROUGE-2/ tgt: onlineA/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 21/ metric: ROUGE-3/ tgt: onlineA/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 21/ metric: ROUGE-4/ tgt: onlineA/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 21/ metric: ROUGE-L/ tgt: onlineA/ ref: reference01/ score: 0.14285 -> Check!
+	->loaded n_seg: 21/ metric: ROUGE-S*/ tgt: onlineA/ ref: reference01/ score: 0.01348 -> Check!
+	->loaded n_seg: 21/ metric: ROUGE-SU*/ tgt: onlineA/ ref: reference01/ score: 0.02474 -> Check!
+	->loaded n_seg: 21/ metric: ROUGE-W/ tgt: onlineA/ ref: reference01/ score: 0.09276 -> Check!
+	->loaded n_seg: 22/ metric: ROUGE-1/ tgt: onlineA/ ref: reference01/ score: 0.25641 -> Check!
+	->loaded n_seg: 22/ metric: ROUGE-2/ tgt: onlineA/ ref: reference01/ score: 0.10811 -> Check!
+	->loaded n_seg: 22/ metric: ROUGE-3/ tgt: onlineA/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 22/ metric: ROUGE-4/ tgt: onlineA/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 22/ metric: ROUGE-L/ tgt: onlineA/ ref: reference01/ score: 0.20513 -> Check!
+	->loaded n_seg: 22/ metric: ROUGE-S*/ tgt: onlineA/ ref: reference01/ score: 0.04408 -> Check!
+	->loaded n_seg: 22/ metric: ROUGE-SU*/ tgt: onlineA/ ref: reference01/ score: 0.065 -> Check!
+	->loaded n_seg: 22/ metric: ROUGE-W/ tgt: onlineA/ ref: reference01/ score: 0.12698 -> Check!
+	->loaded n_seg: 23/ metric: ROUGE-1/ tgt: onlineA/ ref: reference01/ score: 0.49123 -> Check!
+	->loaded n_seg: 23/ metric: ROUGE-2/ tgt: onlineA/ ref: reference01/ score: 0.18182 -> Check!
+	->loaded n_seg: 23/ metric: ROUGE-3/ tgt: onlineA/ ref: reference01/ score: 0.07547 -> Check!
+	->loaded n_seg: 23/ metric: ROUGE-4/ tgt: onlineA/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 23/ metric: ROUGE-L/ tgt: onlineA/ ref: reference01/ score: 0.38597 -> Check!
+	->loaded n_seg: 23/ metric: ROUGE-S*/ tgt: onlineA/ ref: reference01/ score: 0.21429 -> Check!
+	->loaded n_seg: 23/ metric: ROUGE-SU*/ tgt: onlineA/ ref: reference01/ score: 0.23123 -> Check!
+	->loaded n_seg: 23/ metric: ROUGE-W/ tgt: onlineA/ ref: reference01/ score: 0.20003 -> Check!
+	->loaded n_seg: 24/ metric: ROUGE-1/ tgt: onlineA/ ref: reference01/ score: 0.90909 -> Check!
+	->loaded n_seg: 24/ metric: ROUGE-2/ tgt: onlineA/ ref: reference01/ score: 0.66667 -> Check!
+	->loaded n_seg: 24/ metric: ROUGE-3/ tgt: onlineA/ ref: reference01/ score: 0.28571 -> Check!
+	->loaded n_seg: 24/ metric: ROUGE-4/ tgt: onlineA/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 24/ metric: ROUGE-L/ tgt: onlineA/ ref: reference01/ score: 0.90909 -> Check!
+	->loaded n_seg: 24/ metric: ROUGE-S*/ tgt: onlineA/ ref: reference01/ score: 0.8 -> Check!
+	->loaded n_seg: 24/ metric: ROUGE-SU*/ tgt: onlineA/ ref: reference01/ score: 0.82353 -> Check!
+	->loaded n_seg: 24/ metric: ROUGE-W/ tgt: onlineA/ ref: reference01/ score: 0.77527 -> Check!
+	->loaded n_seg: 25/ metric: ROUGE-1/ tgt: onlineA/ ref: reference01/ score: 0.26087 -> Check!
+	->loaded n_seg: 25/ metric: ROUGE-2/ tgt: onlineA/ ref: reference01/ score: 0.09524 -> Check!
+	->loaded n_seg: 25/ metric: ROUGE-3/ tgt: onlineA/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 25/ metric: ROUGE-4/ tgt: onlineA/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 25/ metric: ROUGE-L/ tgt: onlineA/ ref: reference01/ score: 0.26087 -> Check!
+	->loaded n_seg: 25/ metric: ROUGE-S*/ tgt: onlineA/ ref: reference01/ score: 0.04959 -> Check!
+	->loaded n_seg: 25/ metric: ROUGE-SU*/ tgt: onlineA/ ref: reference01/ score: 0.07042 -> Check!
+	->loaded n_seg: 25/ metric: ROUGE-W/ tgt: onlineA/ ref: reference01/ score: 0.17593 -> Check!
+	->loaded n_seg: 26/ metric: ROUGE-1/ tgt: onlineA/ ref: reference01/ score: 0.07843 -> Check!
+	->loaded n_seg: 26/ metric: ROUGE-2/ tgt: onlineA/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 26/ metric: ROUGE-3/ tgt: onlineA/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 26/ metric: ROUGE-4/ tgt: onlineA/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 26/ metric: ROUGE-L/ tgt: onlineA/ ref: reference01/ score: 0.07843 -> Check!
+	->loaded n_seg: 26/ metric: ROUGE-S*/ tgt: onlineA/ ref: reference01/ score: 0.0032 -> Check!
+	->loaded n_seg: 26/ metric: ROUGE-SU*/ tgt: onlineA/ ref: reference01/ score: 0.0089 -> Check!
+	->loaded n_seg: 26/ metric: ROUGE-W/ tgt: onlineA/ ref: reference01/ score: 0.04842 -> Check!
+	->loaded n_seg: 27/ metric: ROUGE-1/ tgt: onlineA/ ref: reference01/ score: 0.4898 -> Check!
+	->loaded n_seg: 27/ metric: ROUGE-2/ tgt: onlineA/ ref: reference01/ score: 0.29788 -> Check!
+	->loaded n_seg: 27/ metric: ROUGE-3/ tgt: onlineA/ ref: reference01/ score: 0.17778 -> Check!
+	->loaded n_seg: 27/ metric: ROUGE-4/ tgt: onlineA/ ref: reference01/ score: 0.04651 -> Check!
+	->loaded n_seg: 27/ metric: ROUGE-L/ tgt: onlineA/ ref: reference01/ score: 0.4898 -> Check!
+	->loaded n_seg: 27/ metric: ROUGE-S*/ tgt: onlineA/ ref: reference01/ score: 0.22917 -> Check!
+	->loaded n_seg: 27/ metric: ROUGE-SU*/ tgt: onlineA/ ref: reference01/ score: 0.24719 -> Check!
+	->loaded n_seg: 27/ metric: ROUGE-W/ tgt: onlineA/ ref: reference01/ score: 0.26793 -> Check!
+[LOAD]: COMPLETE
+[LOAD]: ROUGE/ tgt: onlineA/ ref: reference01/ split: 4
+	file: serialized_ROUGE_onlineA.004_reference01.004
+	->loaded n_seg: 28/ metric: ROUGE-1/ tgt: onlineA/ ref: reference01/ score: 0.12 -> Check!
+	->loaded n_seg: 28/ metric: ROUGE-2/ tgt: onlineA/ ref: reference01/ score: 0.04167 -> Check!
+	->loaded n_seg: 28/ metric: ROUGE-3/ tgt: onlineA/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 28/ metric: ROUGE-4/ tgt: onlineA/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 28/ metric: ROUGE-L/ tgt: onlineA/ ref: reference01/ score: 0.12 -> Check!
+	->loaded n_seg: 28/ metric: ROUGE-S*/ tgt: onlineA/ ref: reference01/ score: 0.00649 -> Check!
+	->loaded n_seg: 28/ metric: ROUGE-SU*/ tgt: onlineA/ ref: reference01/ score: 0.01235 -> Check!
+	->loaded n_seg: 28/ metric: ROUGE-W/ tgt: onlineA/ ref: reference01/ score: 0.05502 -> Check!
+	->loaded n_seg: 29/ metric: ROUGE-1/ tgt: onlineA/ ref: reference01/ score: 0.10811 -> Check!
+	->loaded n_seg: 29/ metric: ROUGE-2/ tgt: onlineA/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 29/ metric: ROUGE-3/ tgt: onlineA/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 29/ metric: ROUGE-4/ tgt: onlineA/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 29/ metric: ROUGE-L/ tgt: onlineA/ ref: reference01/ score: 0.10811 -> Check!
+	->loaded n_seg: 29/ metric: ROUGE-S*/ tgt: onlineA/ ref: reference01/ score: 0.00527 -> Check!
+	->loaded n_seg: 29/ metric: ROUGE-SU*/ tgt: onlineA/ ref: reference01/ score: 0.01446 -> Check!
+	->loaded n_seg: 29/ metric: ROUGE-W/ tgt: onlineA/ ref: reference01/ score: 0.08142 -> Check!
+	->loaded n_seg: 30/ metric: ROUGE-1/ tgt: onlineA/ ref: reference01/ score: 0.14285 -> Check!
+	->loaded n_seg: 30/ metric: ROUGE-2/ tgt: onlineA/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 30/ metric: ROUGE-3/ tgt: onlineA/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 30/ metric: ROUGE-4/ tgt: onlineA/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 30/ metric: ROUGE-L/ tgt: onlineA/ ref: reference01/ score: 0.14285 -> Check!
+	->loaded n_seg: 30/ metric: ROUGE-S*/ tgt: onlineA/ ref: reference01/ score: 0.01348 -> Check!
+	->loaded n_seg: 30/ metric: ROUGE-SU*/ tgt: onlineA/ ref: reference01/ score: 0.02474 -> Check!
+	->loaded n_seg: 30/ metric: ROUGE-W/ tgt: onlineA/ ref: reference01/ score: 0.09276 -> Check!
+	->loaded n_seg: 31/ metric: ROUGE-1/ tgt: onlineA/ ref: reference01/ score: 0.25641 -> Check!
+	->loaded n_seg: 31/ metric: ROUGE-2/ tgt: onlineA/ ref: reference01/ score: 0.10811 -> Check!
+	->loaded n_seg: 31/ metric: ROUGE-3/ tgt: onlineA/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 31/ metric: ROUGE-4/ tgt: onlineA/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 31/ metric: ROUGE-L/ tgt: onlineA/ ref: reference01/ score: 0.20513 -> Check!
+	->loaded n_seg: 31/ metric: ROUGE-S*/ tgt: onlineA/ ref: reference01/ score: 0.04408 -> Check!
+	->loaded n_seg: 31/ metric: ROUGE-SU*/ tgt: onlineA/ ref: reference01/ score: 0.065 -> Check!
+	->loaded n_seg: 31/ metric: ROUGE-W/ tgt: onlineA/ ref: reference01/ score: 0.12698 -> Check!
+	->loaded n_seg: 32/ metric: ROUGE-1/ tgt: onlineA/ ref: reference01/ score: 0.49123 -> Check!
+	->loaded n_seg: 32/ metric: ROUGE-2/ tgt: onlineA/ ref: reference01/ score: 0.18182 -> Check!
+	->loaded n_seg: 32/ metric: ROUGE-3/ tgt: onlineA/ ref: reference01/ score: 0.07547 -> Check!
+	->loaded n_seg: 32/ metric: ROUGE-4/ tgt: onlineA/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 32/ metric: ROUGE-L/ tgt: onlineA/ ref: reference01/ score: 0.38597 -> Check!
+	->loaded n_seg: 32/ metric: ROUGE-S*/ tgt: onlineA/ ref: reference01/ score: 0.21429 -> Check!
+	->loaded n_seg: 32/ metric: ROUGE-SU*/ tgt: onlineA/ ref: reference01/ score: 0.23123 -> Check!
+	->loaded n_seg: 32/ metric: ROUGE-W/ tgt: onlineA/ ref: reference01/ score: 0.20003 -> Check!
+	->loaded n_seg: 33/ metric: ROUGE-1/ tgt: onlineA/ ref: reference01/ score: 0.90909 -> Check!
+	->loaded n_seg: 33/ metric: ROUGE-2/ tgt: onlineA/ ref: reference01/ score: 0.66667 -> Check!
+	->loaded n_seg: 33/ metric: ROUGE-3/ tgt: onlineA/ ref: reference01/ score: 0.28571 -> Check!
+	->loaded n_seg: 33/ metric: ROUGE-4/ tgt: onlineA/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 33/ metric: ROUGE-L/ tgt: onlineA/ ref: reference01/ score: 0.90909 -> Check!
+	->loaded n_seg: 33/ metric: ROUGE-S*/ tgt: onlineA/ ref: reference01/ score: 0.8 -> Check!
+	->loaded n_seg: 33/ metric: ROUGE-SU*/ tgt: onlineA/ ref: reference01/ score: 0.82353 -> Check!
+	->loaded n_seg: 33/ metric: ROUGE-W/ tgt: onlineA/ ref: reference01/ score: 0.77527 -> Check!
+[LOAD]: COMPLETE
+[LOAD]: ROUGE/ tgt: onlineB/ ref: reference01/ split: 1
+	file: serialized_ROUGE_onlineB.001_reference01.001
+	->loaded n_seg: 1/ metric: ROUGE-1/ tgt: onlineB/ ref: reference01/ score: 0.12 -> Check!
+	->loaded n_seg: 1/ metric: ROUGE-2/ tgt: onlineB/ ref: reference01/ score: 0.04167 -> Check!
+	->loaded n_seg: 1/ metric: ROUGE-3/ tgt: onlineB/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 1/ metric: ROUGE-4/ tgt: onlineB/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 1/ metric: ROUGE-L/ tgt: onlineB/ ref: reference01/ score: 0.12 -> Check!
+	->loaded n_seg: 1/ metric: ROUGE-S*/ tgt: onlineB/ ref: reference01/ score: 0.00649 -> Check!
+	->loaded n_seg: 1/ metric: ROUGE-SU*/ tgt: onlineB/ ref: reference01/ score: 0.01235 -> Check!
+	->loaded n_seg: 1/ metric: ROUGE-W/ tgt: onlineB/ ref: reference01/ score: 0.05502 -> Check!
+	->loaded n_seg: 2/ metric: ROUGE-1/ tgt: onlineB/ ref: reference01/ score: 0.10811 -> Check!
+	->loaded n_seg: 2/ metric: ROUGE-2/ tgt: onlineB/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 2/ metric: ROUGE-3/ tgt: onlineB/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 2/ metric: ROUGE-4/ tgt: onlineB/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 2/ metric: ROUGE-L/ tgt: onlineB/ ref: reference01/ score: 0.10811 -> Check!
+	->loaded n_seg: 2/ metric: ROUGE-S*/ tgt: onlineB/ ref: reference01/ score: 0.00527 -> Check!
+	->loaded n_seg: 2/ metric: ROUGE-SU*/ tgt: onlineB/ ref: reference01/ score: 0.01446 -> Check!
+	->loaded n_seg: 2/ metric: ROUGE-W/ tgt: onlineB/ ref: reference01/ score: 0.08142 -> Check!
+	->loaded n_seg: 3/ metric: ROUGE-1/ tgt: onlineB/ ref: reference01/ score: 0.14285 -> Check!
+	->loaded n_seg: 3/ metric: ROUGE-2/ tgt: onlineB/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 3/ metric: ROUGE-3/ tgt: onlineB/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 3/ metric: ROUGE-4/ tgt: onlineB/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 3/ metric: ROUGE-L/ tgt: onlineB/ ref: reference01/ score: 0.14285 -> Check!
+	->loaded n_seg: 3/ metric: ROUGE-S*/ tgt: onlineB/ ref: reference01/ score: 0.01348 -> Check!
+	->loaded n_seg: 3/ metric: ROUGE-SU*/ tgt: onlineB/ ref: reference01/ score: 0.02474 -> Check!
+	->loaded n_seg: 3/ metric: ROUGE-W/ tgt: onlineB/ ref: reference01/ score: 0.09276 -> Check!
+	->loaded n_seg: 4/ metric: ROUGE-1/ tgt: onlineB/ ref: reference01/ score: 0.25641 -> Check!
+	->loaded n_seg: 4/ metric: ROUGE-2/ tgt: onlineB/ ref: reference01/ score: 0.10811 -> Check!
+	->loaded n_seg: 4/ metric: ROUGE-3/ tgt: onlineB/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 4/ metric: ROUGE-4/ tgt: onlineB/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 4/ metric: ROUGE-L/ tgt: onlineB/ ref: reference01/ score: 0.20513 -> Check!
+	->loaded n_seg: 4/ metric: ROUGE-S*/ tgt: onlineB/ ref: reference01/ score: 0.04408 -> Check!
+	->loaded n_seg: 4/ metric: ROUGE-SU*/ tgt: onlineB/ ref: reference01/ score: 0.065 -> Check!
+	->loaded n_seg: 4/ metric: ROUGE-W/ tgt: onlineB/ ref: reference01/ score: 0.12698 -> Check!
+	->loaded n_seg: 5/ metric: ROUGE-1/ tgt: onlineB/ ref: reference01/ score: 0.49123 -> Check!
+	->loaded n_seg: 5/ metric: ROUGE-2/ tgt: onlineB/ ref: reference01/ score: 0.18182 -> Check!
+	->loaded n_seg: 5/ metric: ROUGE-3/ tgt: onlineB/ ref: reference01/ score: 0.07547 -> Check!
+	->loaded n_seg: 5/ metric: ROUGE-4/ tgt: onlineB/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 5/ metric: ROUGE-L/ tgt: onlineB/ ref: reference01/ score: 0.38597 -> Check!
+	->loaded n_seg: 5/ metric: ROUGE-S*/ tgt: onlineB/ ref: reference01/ score: 0.21429 -> Check!
+	->loaded n_seg: 5/ metric: ROUGE-SU*/ tgt: onlineB/ ref: reference01/ score: 0.23123 -> Check!
+	->loaded n_seg: 5/ metric: ROUGE-W/ tgt: onlineB/ ref: reference01/ score: 0.20003 -> Check!
+	->loaded n_seg: 6/ metric: ROUGE-1/ tgt: onlineB/ ref: reference01/ score: 0.90909 -> Check!
+	->loaded n_seg: 6/ metric: ROUGE-2/ tgt: onlineB/ ref: reference01/ score: 0.66667 -> Check!
+	->loaded n_seg: 6/ metric: ROUGE-3/ tgt: onlineB/ ref: reference01/ score: 0.28571 -> Check!
+	->loaded n_seg: 6/ metric: ROUGE-4/ tgt: onlineB/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 6/ metric: ROUGE-L/ tgt: onlineB/ ref: reference01/ score: 0.90909 -> Check!
+	->loaded n_seg: 6/ metric: ROUGE-S*/ tgt: onlineB/ ref: reference01/ score: 0.8 -> Check!
+	->loaded n_seg: 6/ metric: ROUGE-SU*/ tgt: onlineB/ ref: reference01/ score: 0.82353 -> Check!
+	->loaded n_seg: 6/ metric: ROUGE-W/ tgt: onlineB/ ref: reference01/ score: 0.77527 -> Check!
+	->loaded n_seg: 7/ metric: ROUGE-1/ tgt: onlineB/ ref: reference01/ score: 0.26087 -> Check!
+	->loaded n_seg: 7/ metric: ROUGE-2/ tgt: onlineB/ ref: reference01/ score: 0.09524 -> Check!
+	->loaded n_seg: 7/ metric: ROUGE-3/ tgt: onlineB/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 7/ metric: ROUGE-4/ tgt: onlineB/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 7/ metric: ROUGE-L/ tgt: onlineB/ ref: reference01/ score: 0.26087 -> Check!
+	->loaded n_seg: 7/ metric: ROUGE-S*/ tgt: onlineB/ ref: reference01/ score: 0.04959 -> Check!
+	->loaded n_seg: 7/ metric: ROUGE-SU*/ tgt: onlineB/ ref: reference01/ score: 0.07042 -> Check!
+	->loaded n_seg: 7/ metric: ROUGE-W/ tgt: onlineB/ ref: reference01/ score: 0.17593 -> Check!
+	->loaded n_seg: 8/ metric: ROUGE-1/ tgt: onlineB/ ref: reference01/ score: 0.07843 -> Check!
+	->loaded n_seg: 8/ metric: ROUGE-2/ tgt: onlineB/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 8/ metric: ROUGE-3/ tgt: onlineB/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 8/ metric: ROUGE-4/ tgt: onlineB/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 8/ metric: ROUGE-L/ tgt: onlineB/ ref: reference01/ score: 0.07843 -> Check!
+	->loaded n_seg: 8/ metric: ROUGE-S*/ tgt: onlineB/ ref: reference01/ score: 0.0032 -> Check!
+	->loaded n_seg: 8/ metric: ROUGE-SU*/ tgt: onlineB/ ref: reference01/ score: 0.0089 -> Check!
+	->loaded n_seg: 8/ metric: ROUGE-W/ tgt: onlineB/ ref: reference01/ score: 0.04842 -> Check!
+	->loaded n_seg: 9/ metric: ROUGE-1/ tgt: onlineB/ ref: reference01/ score: 0.4898 -> Check!
+	->loaded n_seg: 9/ metric: ROUGE-2/ tgt: onlineB/ ref: reference01/ score: 0.29788 -> Check!
+	->loaded n_seg: 9/ metric: ROUGE-3/ tgt: onlineB/ ref: reference01/ score: 0.17778 -> Check!
+	->loaded n_seg: 9/ metric: ROUGE-4/ tgt: onlineB/ ref: reference01/ score: 0.04651 -> Check!
+	->loaded n_seg: 9/ metric: ROUGE-L/ tgt: onlineB/ ref: reference01/ score: 0.4898 -> Check!
+	->loaded n_seg: 9/ metric: ROUGE-S*/ tgt: onlineB/ ref: reference01/ score: 0.22917 -> Check!
+	->loaded n_seg: 9/ metric: ROUGE-SU*/ tgt: onlineB/ ref: reference01/ score: 0.24719 -> Check!
+	->loaded n_seg: 9/ metric: ROUGE-W/ tgt: onlineB/ ref: reference01/ score: 0.26793 -> Check!
+[LOAD]: COMPLETE
+[LOAD]: ROUGE/ tgt: onlineB/ ref: reference01/ split: 2
+	file: serialized_ROUGE_onlineB.002_reference01.002
+	->loaded n_seg: 10/ metric: ROUGE-1/ tgt: onlineB/ ref: reference01/ score: 0.12 -> Check!
+	->loaded n_seg: 10/ metric: ROUGE-2/ tgt: onlineB/ ref: reference01/ score: 0.04167 -> Check!
+	->loaded n_seg: 10/ metric: ROUGE-3/ tgt: onlineB/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 10/ metric: ROUGE-4/ tgt: onlineB/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 10/ metric: ROUGE-L/ tgt: onlineB/ ref: reference01/ score: 0.12 -> Check!
+	->loaded n_seg: 10/ metric: ROUGE-S*/ tgt: onlineB/ ref: reference01/ score: 0.00649 -> Check!
+	->loaded n_seg: 10/ metric: ROUGE-SU*/ tgt: onlineB/ ref: reference01/ score: 0.01235 -> Check!
+	->loaded n_seg: 10/ metric: ROUGE-W/ tgt: onlineB/ ref: reference01/ score: 0.05502 -> Check!
+	->loaded n_seg: 11/ metric: ROUGE-1/ tgt: onlineB/ ref: reference01/ score: 0.10811 -> Check!
+	->loaded n_seg: 11/ metric: ROUGE-2/ tgt: onlineB/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 11/ metric: ROUGE-3/ tgt: onlineB/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 11/ metric: ROUGE-4/ tgt: onlineB/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 11/ metric: ROUGE-L/ tgt: onlineB/ ref: reference01/ score: 0.10811 -> Check!
+	->loaded n_seg: 11/ metric: ROUGE-S*/ tgt: onlineB/ ref: reference01/ score: 0.00527 -> Check!
+	->loaded n_seg: 11/ metric: ROUGE-SU*/ tgt: onlineB/ ref: reference01/ score: 0.01446 -> Check!
+	->loaded n_seg: 11/ metric: ROUGE-W/ tgt: onlineB/ ref: reference01/ score: 0.08142 -> Check!
+	->loaded n_seg: 12/ metric: ROUGE-1/ tgt: onlineB/ ref: reference01/ score: 0.14285 -> Check!
+	->loaded n_seg: 12/ metric: ROUGE-2/ tgt: onlineB/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 12/ metric: ROUGE-3/ tgt: onlineB/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 12/ metric: ROUGE-4/ tgt: onlineB/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 12/ metric: ROUGE-L/ tgt: onlineB/ ref: reference01/ score: 0.14285 -> Check!
+	->loaded n_seg: 12/ metric: ROUGE-S*/ tgt: onlineB/ ref: reference01/ score: 0.01348 -> Check!
+	->loaded n_seg: 12/ metric: ROUGE-SU*/ tgt: onlineB/ ref: reference01/ score: 0.02474 -> Check!
+	->loaded n_seg: 12/ metric: ROUGE-W/ tgt: onlineB/ ref: reference01/ score: 0.09276 -> Check!
+	->loaded n_seg: 13/ metric: ROUGE-1/ tgt: onlineB/ ref: reference01/ score: 0.25641 -> Check!
+	->loaded n_seg: 13/ metric: ROUGE-2/ tgt: onlineB/ ref: reference01/ score: 0.10811 -> Check!
+	->loaded n_seg: 13/ metric: ROUGE-3/ tgt: onlineB/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 13/ metric: ROUGE-4/ tgt: onlineB/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 13/ metric: ROUGE-L/ tgt: onlineB/ ref: reference01/ score: 0.20513 -> Check!
+	->loaded n_seg: 13/ metric: ROUGE-S*/ tgt: onlineB/ ref: reference01/ score: 0.04408 -> Check!
+	->loaded n_seg: 13/ metric: ROUGE-SU*/ tgt: onlineB/ ref: reference01/ score: 0.065 -> Check!
+	->loaded n_seg: 13/ metric: ROUGE-W/ tgt: onlineB/ ref: reference01/ score: 0.12698 -> Check!
+	->loaded n_seg: 14/ metric: ROUGE-1/ tgt: onlineB/ ref: reference01/ score: 0.49123 -> Check!
+	->loaded n_seg: 14/ metric: ROUGE-2/ tgt: onlineB/ ref: reference01/ score: 0.18182 -> Check!
+	->loaded n_seg: 14/ metric: ROUGE-3/ tgt: onlineB/ ref: reference01/ score: 0.07547 -> Check!
+	->loaded n_seg: 14/ metric: ROUGE-4/ tgt: onlineB/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 14/ metric: ROUGE-L/ tgt: onlineB/ ref: reference01/ score: 0.38597 -> Check!
+	->loaded n_seg: 14/ metric: ROUGE-S*/ tgt: onlineB/ ref: reference01/ score: 0.21429 -> Check!
+	->loaded n_seg: 14/ metric: ROUGE-SU*/ tgt: onlineB/ ref: reference01/ score: 0.23123 -> Check!
+	->loaded n_seg: 14/ metric: ROUGE-W/ tgt: onlineB/ ref: reference01/ score: 0.20003 -> Check!
+	->loaded n_seg: 15/ metric: ROUGE-1/ tgt: onlineB/ ref: reference01/ score: 0.90909 -> Check!
+	->loaded n_seg: 15/ metric: ROUGE-2/ tgt: onlineB/ ref: reference01/ score: 0.66667 -> Check!
+	->loaded n_seg: 15/ metric: ROUGE-3/ tgt: onlineB/ ref: reference01/ score: 0.28571 -> Check!
+	->loaded n_seg: 15/ metric: ROUGE-4/ tgt: onlineB/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 15/ metric: ROUGE-L/ tgt: onlineB/ ref: reference01/ score: 0.90909 -> Check!
+	->loaded n_seg: 15/ metric: ROUGE-S*/ tgt: onlineB/ ref: reference01/ score: 0.8 -> Check!
+	->loaded n_seg: 15/ metric: ROUGE-SU*/ tgt: onlineB/ ref: reference01/ score: 0.82353 -> Check!
+	->loaded n_seg: 15/ metric: ROUGE-W/ tgt: onlineB/ ref: reference01/ score: 0.77527 -> Check!
+	->loaded n_seg: 16/ metric: ROUGE-1/ tgt: onlineB/ ref: reference01/ score: 0.26087 -> Check!
+	->loaded n_seg: 16/ metric: ROUGE-2/ tgt: onlineB/ ref: reference01/ score: 0.09524 -> Check!
+	->loaded n_seg: 16/ metric: ROUGE-3/ tgt: onlineB/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 16/ metric: ROUGE-4/ tgt: onlineB/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 16/ metric: ROUGE-L/ tgt: onlineB/ ref: reference01/ score: 0.26087 -> Check!
+	->loaded n_seg: 16/ metric: ROUGE-S*/ tgt: onlineB/ ref: reference01/ score: 0.04959 -> Check!
+	->loaded n_seg: 16/ metric: ROUGE-SU*/ tgt: onlineB/ ref: reference01/ score: 0.07042 -> Check!
+	->loaded n_seg: 16/ metric: ROUGE-W/ tgt: onlineB/ ref: reference01/ score: 0.17593 -> Check!
+	->loaded n_seg: 17/ metric: ROUGE-1/ tgt: onlineB/ ref: reference01/ score: 0.07843 -> Check!
+	->loaded n_seg: 17/ metric: ROUGE-2/ tgt: onlineB/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 17/ metric: ROUGE-3/ tgt: onlineB/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 17/ metric: ROUGE-4/ tgt: onlineB/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 17/ metric: ROUGE-L/ tgt: onlineB/ ref: reference01/ score: 0.07843 -> Check!
+	->loaded n_seg: 17/ metric: ROUGE-S*/ tgt: onlineB/ ref: reference01/ score: 0.0032 -> Check!
+	->loaded n_seg: 17/ metric: ROUGE-SU*/ tgt: onlineB/ ref: reference01/ score: 0.0089 -> Check!
+	->loaded n_seg: 17/ metric: ROUGE-W/ tgt: onlineB/ ref: reference01/ score: 0.04842 -> Check!
+	->loaded n_seg: 18/ metric: ROUGE-1/ tgt: onlineB/ ref: reference01/ score: 0.4898 -> Check!
+	->loaded n_seg: 18/ metric: ROUGE-2/ tgt: onlineB/ ref: reference01/ score: 0.29788 -> Check!
+	->loaded n_seg: 18/ metric: ROUGE-3/ tgt: onlineB/ ref: reference01/ score: 0.17778 -> Check!
+	->loaded n_seg: 18/ metric: ROUGE-4/ tgt: onlineB/ ref: reference01/ score: 0.04651 -> Check!
+	->loaded n_seg: 18/ metric: ROUGE-L/ tgt: onlineB/ ref: reference01/ score: 0.4898 -> Check!
+	->loaded n_seg: 18/ metric: ROUGE-S*/ tgt: onlineB/ ref: reference01/ score: 0.22917 -> Check!
+	->loaded n_seg: 18/ metric: ROUGE-SU*/ tgt: onlineB/ ref: reference01/ score: 0.24719 -> Check!
+	->loaded n_seg: 18/ metric: ROUGE-W/ tgt: onlineB/ ref: reference01/ score: 0.26793 -> Check!
+[LOAD]: COMPLETE
+[LOAD]: ROUGE/ tgt: onlineB/ ref: reference01/ split: 3
+	file: serialized_ROUGE_onlineB.003_reference01.003
+	->loaded n_seg: 19/ metric: ROUGE-1/ tgt: onlineB/ ref: reference01/ score: 0.12 -> Check!
+	->loaded n_seg: 19/ metric: ROUGE-2/ tgt: onlineB/ ref: reference01/ score: 0.04167 -> Check!
+	->loaded n_seg: 19/ metric: ROUGE-3/ tgt: onlineB/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 19/ metric: ROUGE-4/ tgt: onlineB/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 19/ metric: ROUGE-L/ tgt: onlineB/ ref: reference01/ score: 0.12 -> Check!
+	->loaded n_seg: 19/ metric: ROUGE-S*/ tgt: onlineB/ ref: reference01/ score: 0.00649 -> Check!
+	->loaded n_seg: 19/ metric: ROUGE-SU*/ tgt: onlineB/ ref: reference01/ score: 0.01235 -> Check!
+	->loaded n_seg: 19/ metric: ROUGE-W/ tgt: onlineB/ ref: reference01/ score: 0.05502 -> Check!
+	->loaded n_seg: 20/ metric: ROUGE-1/ tgt: onlineB/ ref: reference01/ score: 0.10811 -> Check!
+	->loaded n_seg: 20/ metric: ROUGE-2/ tgt: onlineB/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 20/ metric: ROUGE-3/ tgt: onlineB/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 20/ metric: ROUGE-4/ tgt: onlineB/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 20/ metric: ROUGE-L/ tgt: onlineB/ ref: reference01/ score: 0.10811 -> Check!
+	->loaded n_seg: 20/ metric: ROUGE-S*/ tgt: onlineB/ ref: reference01/ score: 0.00527 -> Check!
+	->loaded n_seg: 20/ metric: ROUGE-SU*/ tgt: onlineB/ ref: reference01/ score: 0.01446 -> Check!
+	->loaded n_seg: 20/ metric: ROUGE-W/ tgt: onlineB/ ref: reference01/ score: 0.08142 -> Check!
+	->loaded n_seg: 21/ metric: ROUGE-1/ tgt: onlineB/ ref: reference01/ score: 0.14285 -> Check!
+	->loaded n_seg: 21/ metric: ROUGE-2/ tgt: onlineB/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 21/ metric: ROUGE-3/ tgt: onlineB/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 21/ metric: ROUGE-4/ tgt: onlineB/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 21/ metric: ROUGE-L/ tgt: onlineB/ ref: reference01/ score: 0.14285 -> Check!
+	->loaded n_seg: 21/ metric: ROUGE-S*/ tgt: onlineB/ ref: reference01/ score: 0.01348 -> Check!
+	->loaded n_seg: 21/ metric: ROUGE-SU*/ tgt: onlineB/ ref: reference01/ score: 0.02474 -> Check!
+	->loaded n_seg: 21/ metric: ROUGE-W/ tgt: onlineB/ ref: reference01/ score: 0.09276 -> Check!
+	->loaded n_seg: 22/ metric: ROUGE-1/ tgt: onlineB/ ref: reference01/ score: 0.25641 -> Check!
+	->loaded n_seg: 22/ metric: ROUGE-2/ tgt: onlineB/ ref: reference01/ score: 0.10811 -> Check!
+	->loaded n_seg: 22/ metric: ROUGE-3/ tgt: onlineB/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 22/ metric: ROUGE-4/ tgt: onlineB/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 22/ metric: ROUGE-L/ tgt: onlineB/ ref: reference01/ score: 0.20513 -> Check!
+	->loaded n_seg: 22/ metric: ROUGE-S*/ tgt: onlineB/ ref: reference01/ score: 0.04408 -> Check!
+	->loaded n_seg: 22/ metric: ROUGE-SU*/ tgt: onlineB/ ref: reference01/ score: 0.065 -> Check!
+	->loaded n_seg: 22/ metric: ROUGE-W/ tgt: onlineB/ ref: reference01/ score: 0.12698 -> Check!
+	->loaded n_seg: 23/ metric: ROUGE-1/ tgt: onlineB/ ref: reference01/ score: 0.49123 -> Check!
+	->loaded n_seg: 23/ metric: ROUGE-2/ tgt: onlineB/ ref: reference01/ score: 0.18182 -> Check!
+	->loaded n_seg: 23/ metric: ROUGE-3/ tgt: onlineB/ ref: reference01/ score: 0.07547 -> Check!
+	->loaded n_seg: 23/ metric: ROUGE-4/ tgt: onlineB/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 23/ metric: ROUGE-L/ tgt: onlineB/ ref: reference01/ score: 0.38597 -> Check!
+	->loaded n_seg: 23/ metric: ROUGE-S*/ tgt: onlineB/ ref: reference01/ score: 0.21429 -> Check!
+	->loaded n_seg: 23/ metric: ROUGE-SU*/ tgt: onlineB/ ref: reference01/ score: 0.23123 -> Check!
+	->loaded n_seg: 23/ metric: ROUGE-W/ tgt: onlineB/ ref: reference01/ score: 0.20003 -> Check!
+	->loaded n_seg: 24/ metric: ROUGE-1/ tgt: onlineB/ ref: reference01/ score: 0.90909 -> Check!
+	->loaded n_seg: 24/ metric: ROUGE-2/ tgt: onlineB/ ref: reference01/ score: 0.66667 -> Check!
+	->loaded n_seg: 24/ metric: ROUGE-3/ tgt: onlineB/ ref: reference01/ score: 0.28571 -> Check!
+	->loaded n_seg: 24/ metric: ROUGE-4/ tgt: onlineB/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 24/ metric: ROUGE-L/ tgt: onlineB/ ref: reference01/ score: 0.90909 -> Check!
+	->loaded n_seg: 24/ metric: ROUGE-S*/ tgt: onlineB/ ref: reference01/ score: 0.8 -> Check!
+	->loaded n_seg: 24/ metric: ROUGE-SU*/ tgt: onlineB/ ref: reference01/ score: 0.82353 -> Check!
+	->loaded n_seg: 24/ metric: ROUGE-W/ tgt: onlineB/ ref: reference01/ score: 0.77527 -> Check!
+	->loaded n_seg: 25/ metric: ROUGE-1/ tgt: onlineB/ ref: reference01/ score: 0.26087 -> Check!
+	->loaded n_seg: 25/ metric: ROUGE-2/ tgt: onlineB/ ref: reference01/ score: 0.09524 -> Check!
+	->loaded n_seg: 25/ metric: ROUGE-3/ tgt: onlineB/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 25/ metric: ROUGE-4/ tgt: onlineB/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 25/ metric: ROUGE-L/ tgt: onlineB/ ref: reference01/ score: 0.26087 -> Check!
+	->loaded n_seg: 25/ metric: ROUGE-S*/ tgt: onlineB/ ref: reference01/ score: 0.04959 -> Check!
+	->loaded n_seg: 25/ metric: ROUGE-SU*/ tgt: onlineB/ ref: reference01/ score: 0.07042 -> Check!
+	->loaded n_seg: 25/ metric: ROUGE-W/ tgt: onlineB/ ref: reference01/ score: 0.17593 -> Check!
+	->loaded n_seg: 26/ metric: ROUGE-1/ tgt: onlineB/ ref: reference01/ score: 0.07843 -> Check!
+	->loaded n_seg: 26/ metric: ROUGE-2/ tgt: onlineB/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 26/ metric: ROUGE-3/ tgt: onlineB/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 26/ metric: ROUGE-4/ tgt: onlineB/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 26/ metric: ROUGE-L/ tgt: onlineB/ ref: reference01/ score: 0.07843 -> Check!
+	->loaded n_seg: 26/ metric: ROUGE-S*/ tgt: onlineB/ ref: reference01/ score: 0.0032 -> Check!
+	->loaded n_seg: 26/ metric: ROUGE-SU*/ tgt: onlineB/ ref: reference01/ score: 0.0089 -> Check!
+	->loaded n_seg: 26/ metric: ROUGE-W/ tgt: onlineB/ ref: reference01/ score: 0.04842 -> Check!
+	->loaded n_seg: 27/ metric: ROUGE-1/ tgt: onlineB/ ref: reference01/ score: 0.4898 -> Check!
+	->loaded n_seg: 27/ metric: ROUGE-2/ tgt: onlineB/ ref: reference01/ score: 0.29788 -> Check!
+	->loaded n_seg: 27/ metric: ROUGE-3/ tgt: onlineB/ ref: reference01/ score: 0.17778 -> Check!
+	->loaded n_seg: 27/ metric: ROUGE-4/ tgt: onlineB/ ref: reference01/ score: 0.04651 -> Check!
+	->loaded n_seg: 27/ metric: ROUGE-L/ tgt: onlineB/ ref: reference01/ score: 0.4898 -> Check!
+	->loaded n_seg: 27/ metric: ROUGE-S*/ tgt: onlineB/ ref: reference01/ score: 0.22917 -> Check!
+	->loaded n_seg: 27/ metric: ROUGE-SU*/ tgt: onlineB/ ref: reference01/ score: 0.24719 -> Check!
+	->loaded n_seg: 27/ metric: ROUGE-W/ tgt: onlineB/ ref: reference01/ score: 0.26793 -> Check!
+[LOAD]: COMPLETE
+[LOAD]: ROUGE/ tgt: onlineB/ ref: reference01/ split: 4
+	file: serialized_ROUGE_onlineB.004_reference01.004
+	->loaded n_seg: 28/ metric: ROUGE-1/ tgt: onlineB/ ref: reference01/ score: 0.12 -> Check!
+	->loaded n_seg: 28/ metric: ROUGE-2/ tgt: onlineB/ ref: reference01/ score: 0.04167 -> Check!
+	->loaded n_seg: 28/ metric: ROUGE-3/ tgt: onlineB/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 28/ metric: ROUGE-4/ tgt: onlineB/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 28/ metric: ROUGE-L/ tgt: onlineB/ ref: reference01/ score: 0.12 -> Check!
+	->loaded n_seg: 28/ metric: ROUGE-S*/ tgt: onlineB/ ref: reference01/ score: 0.00649 -> Check!
+	->loaded n_seg: 28/ metric: ROUGE-SU*/ tgt: onlineB/ ref: reference01/ score: 0.01235 -> Check!
+	->loaded n_seg: 28/ metric: ROUGE-W/ tgt: onlineB/ ref: reference01/ score: 0.05502 -> Check!
+	->loaded n_seg: 29/ metric: ROUGE-1/ tgt: onlineB/ ref: reference01/ score: 0.10811 -> Check!
+	->loaded n_seg: 29/ metric: ROUGE-2/ tgt: onlineB/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 29/ metric: ROUGE-3/ tgt: onlineB/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 29/ metric: ROUGE-4/ tgt: onlineB/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 29/ metric: ROUGE-L/ tgt: onlineB/ ref: reference01/ score: 0.10811 -> Check!
+	->loaded n_seg: 29/ metric: ROUGE-S*/ tgt: onlineB/ ref: reference01/ score: 0.00527 -> Check!
+	->loaded n_seg: 29/ metric: ROUGE-SU*/ tgt: onlineB/ ref: reference01/ score: 0.01446 -> Check!
+	->loaded n_seg: 29/ metric: ROUGE-W/ tgt: onlineB/ ref: reference01/ score: 0.08142 -> Check!
+	->loaded n_seg: 30/ metric: ROUGE-1/ tgt: onlineB/ ref: reference01/ score: 0.14285 -> Check!
+	->loaded n_seg: 30/ metric: ROUGE-2/ tgt: onlineB/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 30/ metric: ROUGE-3/ tgt: onlineB/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 30/ metric: ROUGE-4/ tgt: onlineB/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 30/ metric: ROUGE-L/ tgt: onlineB/ ref: reference01/ score: 0.14285 -> Check!
+	->loaded n_seg: 30/ metric: ROUGE-S*/ tgt: onlineB/ ref: reference01/ score: 0.01348 -> Check!
+	->loaded n_seg: 30/ metric: ROUGE-SU*/ tgt: onlineB/ ref: reference01/ score: 0.02474 -> Check!
+	->loaded n_seg: 30/ metric: ROUGE-W/ tgt: onlineB/ ref: reference01/ score: 0.09276 -> Check!
+	->loaded n_seg: 31/ metric: ROUGE-1/ tgt: onlineB/ ref: reference01/ score: 0.25641 -> Check!
+	->loaded n_seg: 31/ metric: ROUGE-2/ tgt: onlineB/ ref: reference01/ score: 0.10811 -> Check!
+	->loaded n_seg: 31/ metric: ROUGE-3/ tgt: onlineB/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 31/ metric: ROUGE-4/ tgt: onlineB/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 31/ metric: ROUGE-L/ tgt: onlineB/ ref: reference01/ score: 0.20513 -> Check!
+	->loaded n_seg: 31/ metric: ROUGE-S*/ tgt: onlineB/ ref: reference01/ score: 0.04408 -> Check!
+	->loaded n_seg: 31/ metric: ROUGE-SU*/ tgt: onlineB/ ref: reference01/ score: 0.065 -> Check!
+	->loaded n_seg: 31/ metric: ROUGE-W/ tgt: onlineB/ ref: reference01/ score: 0.12698 -> Check!
+	->loaded n_seg: 32/ metric: ROUGE-1/ tgt: onlineB/ ref: reference01/ score: 0.49123 -> Check!
+	->loaded n_seg: 32/ metric: ROUGE-2/ tgt: onlineB/ ref: reference01/ score: 0.18182 -> Check!
+	->loaded n_seg: 32/ metric: ROUGE-3/ tgt: onlineB/ ref: reference01/ score: 0.07547 -> Check!
+	->loaded n_seg: 32/ metric: ROUGE-4/ tgt: onlineB/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 32/ metric: ROUGE-L/ tgt: onlineB/ ref: reference01/ score: 0.38597 -> Check!
+	->loaded n_seg: 32/ metric: ROUGE-S*/ tgt: onlineB/ ref: reference01/ score: 0.21429 -> Check!
+	->loaded n_seg: 32/ metric: ROUGE-SU*/ tgt: onlineB/ ref: reference01/ score: 0.23123 -> Check!
+	->loaded n_seg: 32/ metric: ROUGE-W/ tgt: onlineB/ ref: reference01/ score: 0.20003 -> Check!
+	->loaded n_seg: 33/ metric: ROUGE-1/ tgt: onlineB/ ref: reference01/ score: 0.90909 -> Check!
+	->loaded n_seg: 33/ metric: ROUGE-2/ tgt: onlineB/ ref: reference01/ score: 0.66667 -> Check!
+	->loaded n_seg: 33/ metric: ROUGE-3/ tgt: onlineB/ ref: reference01/ score: 0.28571 -> Check!
+	->loaded n_seg: 33/ metric: ROUGE-4/ tgt: onlineB/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 33/ metric: ROUGE-L/ tgt: onlineB/ ref: reference01/ score: 0.90909 -> Check!
+	->loaded n_seg: 33/ metric: ROUGE-S*/ tgt: onlineB/ ref: reference01/ score: 0.8 -> Check!
+	->loaded n_seg: 33/ metric: ROUGE-SU*/ tgt: onlineB/ ref: reference01/ score: 0.82353 -> Check!
+	->loaded n_seg: 33/ metric: ROUGE-W/ tgt: onlineB/ ref: reference01/ score: 0.77527 -> Check!
+[LOAD]: COMPLETE
+[LOAD]: ROUGE/ tgt: uedin/ ref: reference01/ split: 1
+	file: serialized_ROUGE_uedin.001_reference01.001
+	->loaded n_seg: 1/ metric: ROUGE-1/ tgt: uedin/ ref: reference01/ score: 0.12 -> Check!
+	->loaded n_seg: 1/ metric: ROUGE-2/ tgt: uedin/ ref: reference01/ score: 0.04167 -> Check!
+	->loaded n_seg: 1/ metric: ROUGE-3/ tgt: uedin/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 1/ metric: ROUGE-4/ tgt: uedin/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 1/ metric: ROUGE-L/ tgt: uedin/ ref: reference01/ score: 0.12 -> Check!
+	->loaded n_seg: 1/ metric: ROUGE-S*/ tgt: uedin/ ref: reference01/ score: 0.00649 -> Check!
+	->loaded n_seg: 1/ metric: ROUGE-SU*/ tgt: uedin/ ref: reference01/ score: 0.01235 -> Check!
+	->loaded n_seg: 1/ metric: ROUGE-W/ tgt: uedin/ ref: reference01/ score: 0.05502 -> Check!
+	->loaded n_seg: 2/ metric: ROUGE-1/ tgt: uedin/ ref: reference01/ score: 0.10811 -> Check!
+	->loaded n_seg: 2/ metric: ROUGE-2/ tgt: uedin/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 2/ metric: ROUGE-3/ tgt: uedin/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 2/ metric: ROUGE-4/ tgt: uedin/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 2/ metric: ROUGE-L/ tgt: uedin/ ref: reference01/ score: 0.10811 -> Check!
+	->loaded n_seg: 2/ metric: ROUGE-S*/ tgt: uedin/ ref: reference01/ score: 0.00527 -> Check!
+	->loaded n_seg: 2/ metric: ROUGE-SU*/ tgt: uedin/ ref: reference01/ score: 0.01446 -> Check!
+	->loaded n_seg: 2/ metric: ROUGE-W/ tgt: uedin/ ref: reference01/ score: 0.08142 -> Check!
+	->loaded n_seg: 3/ metric: ROUGE-1/ tgt: uedin/ ref: reference01/ score: 0.14285 -> Check!
+	->loaded n_seg: 3/ metric: ROUGE-2/ tgt: uedin/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 3/ metric: ROUGE-3/ tgt: uedin/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 3/ metric: ROUGE-4/ tgt: uedin/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 3/ metric: ROUGE-L/ tgt: uedin/ ref: reference01/ score: 0.14285 -> Check!
+	->loaded n_seg: 3/ metric: ROUGE-S*/ tgt: uedin/ ref: reference01/ score: 0.01348 -> Check!
+	->loaded n_seg: 3/ metric: ROUGE-SU*/ tgt: uedin/ ref: reference01/ score: 0.02474 -> Check!
+	->loaded n_seg: 3/ metric: ROUGE-W/ tgt: uedin/ ref: reference01/ score: 0.09276 -> Check!
+	->loaded n_seg: 4/ metric: ROUGE-1/ tgt: uedin/ ref: reference01/ score: 0.25641 -> Check!
+	->loaded n_seg: 4/ metric: ROUGE-2/ tgt: uedin/ ref: reference01/ score: 0.10811 -> Check!
+	->loaded n_seg: 4/ metric: ROUGE-3/ tgt: uedin/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 4/ metric: ROUGE-4/ tgt: uedin/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 4/ metric: ROUGE-L/ tgt: uedin/ ref: reference01/ score: 0.20513 -> Check!
+	->loaded n_seg: 4/ metric: ROUGE-S*/ tgt: uedin/ ref: reference01/ score: 0.04408 -> Check!
+	->loaded n_seg: 4/ metric: ROUGE-SU*/ tgt: uedin/ ref: reference01/ score: 0.065 -> Check!
+	->loaded n_seg: 4/ metric: ROUGE-W/ tgt: uedin/ ref: reference01/ score: 0.12698 -> Check!
+	->loaded n_seg: 5/ metric: ROUGE-1/ tgt: uedin/ ref: reference01/ score: 0.49123 -> Check!
+	->loaded n_seg: 5/ metric: ROUGE-2/ tgt: uedin/ ref: reference01/ score: 0.18182 -> Check!
+	->loaded n_seg: 5/ metric: ROUGE-3/ tgt: uedin/ ref: reference01/ score: 0.07547 -> Check!
+	->loaded n_seg: 5/ metric: ROUGE-4/ tgt: uedin/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 5/ metric: ROUGE-L/ tgt: uedin/ ref: reference01/ score: 0.38597 -> Check!
+	->loaded n_seg: 5/ metric: ROUGE-S*/ tgt: uedin/ ref: reference01/ score: 0.21429 -> Check!
+	->loaded n_seg: 5/ metric: ROUGE-SU*/ tgt: uedin/ ref: reference01/ score: 0.23123 -> Check!
+	->loaded n_seg: 5/ metric: ROUGE-W/ tgt: uedin/ ref: reference01/ score: 0.20003 -> Check!
+	->loaded n_seg: 6/ metric: ROUGE-1/ tgt: uedin/ ref: reference01/ score: 0.90909 -> Check!
+	->loaded n_seg: 6/ metric: ROUGE-2/ tgt: uedin/ ref: reference01/ score: 0.66667 -> Check!
+	->loaded n_seg: 6/ metric: ROUGE-3/ tgt: uedin/ ref: reference01/ score: 0.28571 -> Check!
+	->loaded n_seg: 6/ metric: ROUGE-4/ tgt: uedin/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 6/ metric: ROUGE-L/ tgt: uedin/ ref: reference01/ score: 0.90909 -> Check!
+	->loaded n_seg: 6/ metric: ROUGE-S*/ tgt: uedin/ ref: reference01/ score: 0.8 -> Check!
+	->loaded n_seg: 6/ metric: ROUGE-SU*/ tgt: uedin/ ref: reference01/ score: 0.82353 -> Check!
+	->loaded n_seg: 6/ metric: ROUGE-W/ tgt: uedin/ ref: reference01/ score: 0.77527 -> Check!
+	->loaded n_seg: 7/ metric: ROUGE-1/ tgt: uedin/ ref: reference01/ score: 0.26087 -> Check!
+	->loaded n_seg: 7/ metric: ROUGE-2/ tgt: uedin/ ref: reference01/ score: 0.09524 -> Check!
+	->loaded n_seg: 7/ metric: ROUGE-3/ tgt: uedin/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 7/ metric: ROUGE-4/ tgt: uedin/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 7/ metric: ROUGE-L/ tgt: uedin/ ref: reference01/ score: 0.26087 -> Check!
+	->loaded n_seg: 7/ metric: ROUGE-S*/ tgt: uedin/ ref: reference01/ score: 0.04959 -> Check!
+	->loaded n_seg: 7/ metric: ROUGE-SU*/ tgt: uedin/ ref: reference01/ score: 0.07042 -> Check!
+	->loaded n_seg: 7/ metric: ROUGE-W/ tgt: uedin/ ref: reference01/ score: 0.17593 -> Check!
+	->loaded n_seg: 8/ metric: ROUGE-1/ tgt: uedin/ ref: reference01/ score: 0.07843 -> Check!
+	->loaded n_seg: 8/ metric: ROUGE-2/ tgt: uedin/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 8/ metric: ROUGE-3/ tgt: uedin/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 8/ metric: ROUGE-4/ tgt: uedin/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 8/ metric: ROUGE-L/ tgt: uedin/ ref: reference01/ score: 0.07843 -> Check!
+	->loaded n_seg: 8/ metric: ROUGE-S*/ tgt: uedin/ ref: reference01/ score: 0.0032 -> Check!
+	->loaded n_seg: 8/ metric: ROUGE-SU*/ tgt: uedin/ ref: reference01/ score: 0.0089 -> Check!
+	->loaded n_seg: 8/ metric: ROUGE-W/ tgt: uedin/ ref: reference01/ score: 0.04842 -> Check!
+	->loaded n_seg: 9/ metric: ROUGE-1/ tgt: uedin/ ref: reference01/ score: 0.4898 -> Check!
+	->loaded n_seg: 9/ metric: ROUGE-2/ tgt: uedin/ ref: reference01/ score: 0.29788 -> Check!
+	->loaded n_seg: 9/ metric: ROUGE-3/ tgt: uedin/ ref: reference01/ score: 0.17778 -> Check!
+	->loaded n_seg: 9/ metric: ROUGE-4/ tgt: uedin/ ref: reference01/ score: 0.04651 -> Check!
+	->loaded n_seg: 9/ metric: ROUGE-L/ tgt: uedin/ ref: reference01/ score: 0.4898 -> Check!
+	->loaded n_seg: 9/ metric: ROUGE-S*/ tgt: uedin/ ref: reference01/ score: 0.22917 -> Check!
+	->loaded n_seg: 9/ metric: ROUGE-SU*/ tgt: uedin/ ref: reference01/ score: 0.24719 -> Check!
+	->loaded n_seg: 9/ metric: ROUGE-W/ tgt: uedin/ ref: reference01/ score: 0.26793 -> Check!
+[LOAD]: COMPLETE
+[LOAD]: ROUGE/ tgt: uedin/ ref: reference01/ split: 2
+	file: serialized_ROUGE_uedin.002_reference01.002
+	->loaded n_seg: 10/ metric: ROUGE-1/ tgt: uedin/ ref: reference01/ score: 0.12 -> Check!
+	->loaded n_seg: 10/ metric: ROUGE-2/ tgt: uedin/ ref: reference01/ score: 0.04167 -> Check!
+	->loaded n_seg: 10/ metric: ROUGE-3/ tgt: uedin/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 10/ metric: ROUGE-4/ tgt: uedin/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 10/ metric: ROUGE-L/ tgt: uedin/ ref: reference01/ score: 0.12 -> Check!
+	->loaded n_seg: 10/ metric: ROUGE-S*/ tgt: uedin/ ref: reference01/ score: 0.00649 -> Check!
+	->loaded n_seg: 10/ metric: ROUGE-SU*/ tgt: uedin/ ref: reference01/ score: 0.01235 -> Check!
+	->loaded n_seg: 10/ metric: ROUGE-W/ tgt: uedin/ ref: reference01/ score: 0.05502 -> Check!
+	->loaded n_seg: 11/ metric: ROUGE-1/ tgt: uedin/ ref: reference01/ score: 0.10811 -> Check!
+	->loaded n_seg: 11/ metric: ROUGE-2/ tgt: uedin/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 11/ metric: ROUGE-3/ tgt: uedin/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 11/ metric: ROUGE-4/ tgt: uedin/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 11/ metric: ROUGE-L/ tgt: uedin/ ref: reference01/ score: 0.10811 -> Check!
+	->loaded n_seg: 11/ metric: ROUGE-S*/ tgt: uedin/ ref: reference01/ score: 0.00527 -> Check!
+	->loaded n_seg: 11/ metric: ROUGE-SU*/ tgt: uedin/ ref: reference01/ score: 0.01446 -> Check!
+	->loaded n_seg: 11/ metric: ROUGE-W/ tgt: uedin/ ref: reference01/ score: 0.08142 -> Check!
+	->loaded n_seg: 12/ metric: ROUGE-1/ tgt: uedin/ ref: reference01/ score: 0.14285 -> Check!
+	->loaded n_seg: 12/ metric: ROUGE-2/ tgt: uedin/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 12/ metric: ROUGE-3/ tgt: uedin/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 12/ metric: ROUGE-4/ tgt: uedin/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 12/ metric: ROUGE-L/ tgt: uedin/ ref: reference01/ score: 0.14285 -> Check!
+	->loaded n_seg: 12/ metric: ROUGE-S*/ tgt: uedin/ ref: reference01/ score: 0.01348 -> Check!
+	->loaded n_seg: 12/ metric: ROUGE-SU*/ tgt: uedin/ ref: reference01/ score: 0.02474 -> Check!
+	->loaded n_seg: 12/ metric: ROUGE-W/ tgt: uedin/ ref: reference01/ score: 0.09276 -> Check!
+	->loaded n_seg: 13/ metric: ROUGE-1/ tgt: uedin/ ref: reference01/ score: 0.25641 -> Check!
+	->loaded n_seg: 13/ metric: ROUGE-2/ tgt: uedin/ ref: reference01/ score: 0.10811 -> Check!
+	->loaded n_seg: 13/ metric: ROUGE-3/ tgt: uedin/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 13/ metric: ROUGE-4/ tgt: uedin/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 13/ metric: ROUGE-L/ tgt: uedin/ ref: reference01/ score: 0.20513 -> Check!
+	->loaded n_seg: 13/ metric: ROUGE-S*/ tgt: uedin/ ref: reference01/ score: 0.04408 -> Check!
+	->loaded n_seg: 13/ metric: ROUGE-SU*/ tgt: uedin/ ref: reference01/ score: 0.065 -> Check!
+	->loaded n_seg: 13/ metric: ROUGE-W/ tgt: uedin/ ref: reference01/ score: 0.12698 -> Check!
+	->loaded n_seg: 14/ metric: ROUGE-1/ tgt: uedin/ ref: reference01/ score: 0.49123 -> Check!
+	->loaded n_seg: 14/ metric: ROUGE-2/ tgt: uedin/ ref: reference01/ score: 0.18182 -> Check!
+	->loaded n_seg: 14/ metric: ROUGE-3/ tgt: uedin/ ref: reference01/ score: 0.07547 -> Check!
+	->loaded n_seg: 14/ metric: ROUGE-4/ tgt: uedin/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 14/ metric: ROUGE-L/ tgt: uedin/ ref: reference01/ score: 0.38597 -> Check!
+	->loaded n_seg: 14/ metric: ROUGE-S*/ tgt: uedin/ ref: reference01/ score: 0.21429 -> Check!
+	->loaded n_seg: 14/ metric: ROUGE-SU*/ tgt: uedin/ ref: reference01/ score: 0.23123 -> Check!
+	->loaded n_seg: 14/ metric: ROUGE-W/ tgt: uedin/ ref: reference01/ score: 0.20003 -> Check!
+	->loaded n_seg: 15/ metric: ROUGE-1/ tgt: uedin/ ref: reference01/ score: 0.90909 -> Check!
+	->loaded n_seg: 15/ metric: ROUGE-2/ tgt: uedin/ ref: reference01/ score: 0.66667 -> Check!
+	->loaded n_seg: 15/ metric: ROUGE-3/ tgt: uedin/ ref: reference01/ score: 0.28571 -> Check!
+	->loaded n_seg: 15/ metric: ROUGE-4/ tgt: uedin/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 15/ metric: ROUGE-L/ tgt: uedin/ ref: reference01/ score: 0.90909 -> Check!
+	->loaded n_seg: 15/ metric: ROUGE-S*/ tgt: uedin/ ref: reference01/ score: 0.8 -> Check!
+	->loaded n_seg: 15/ metric: ROUGE-SU*/ tgt: uedin/ ref: reference01/ score: 0.82353 -> Check!
+	->loaded n_seg: 15/ metric: ROUGE-W/ tgt: uedin/ ref: reference01/ score: 0.77527 -> Check!
+	->loaded n_seg: 16/ metric: ROUGE-1/ tgt: uedin/ ref: reference01/ score: 0.26087 -> Check!
+	->loaded n_seg: 16/ metric: ROUGE-2/ tgt: uedin/ ref: reference01/ score: 0.09524 -> Check!
+	->loaded n_seg: 16/ metric: ROUGE-3/ tgt: uedin/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 16/ metric: ROUGE-4/ tgt: uedin/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 16/ metric: ROUGE-L/ tgt: uedin/ ref: reference01/ score: 0.26087 -> Check!
+	->loaded n_seg: 16/ metric: ROUGE-S*/ tgt: uedin/ ref: reference01/ score: 0.04959 -> Check!
+	->loaded n_seg: 16/ metric: ROUGE-SU*/ tgt: uedin/ ref: reference01/ score: 0.07042 -> Check!
+	->loaded n_seg: 16/ metric: ROUGE-W/ tgt: uedin/ ref: reference01/ score: 0.17593 -> Check!
+	->loaded n_seg: 17/ metric: ROUGE-1/ tgt: uedin/ ref: reference01/ score: 0.07843 -> Check!
+	->loaded n_seg: 17/ metric: ROUGE-2/ tgt: uedin/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 17/ metric: ROUGE-3/ tgt: uedin/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 17/ metric: ROUGE-4/ tgt: uedin/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 17/ metric: ROUGE-L/ tgt: uedin/ ref: reference01/ score: 0.07843 -> Check!
+	->loaded n_seg: 17/ metric: ROUGE-S*/ tgt: uedin/ ref: reference01/ score: 0.0032 -> Check!
+	->loaded n_seg: 17/ metric: ROUGE-SU*/ tgt: uedin/ ref: reference01/ score: 0.0089 -> Check!
+	->loaded n_seg: 17/ metric: ROUGE-W/ tgt: uedin/ ref: reference01/ score: 0.04842 -> Check!
+	->loaded n_seg: 18/ metric: ROUGE-1/ tgt: uedin/ ref: reference01/ score: 0.4898 -> Check!
+	->loaded n_seg: 18/ metric: ROUGE-2/ tgt: uedin/ ref: reference01/ score: 0.29788 -> Check!
+	->loaded n_seg: 18/ metric: ROUGE-3/ tgt: uedin/ ref: reference01/ score: 0.17778 -> Check!
+	->loaded n_seg: 18/ metric: ROUGE-4/ tgt: uedin/ ref: reference01/ score: 0.04651 -> Check!
+	->loaded n_seg: 18/ metric: ROUGE-L/ tgt: uedin/ ref: reference01/ score: 0.4898 -> Check!
+	->loaded n_seg: 18/ metric: ROUGE-S*/ tgt: uedin/ ref: reference01/ score: 0.22917 -> Check!
+	->loaded n_seg: 18/ metric: ROUGE-SU*/ tgt: uedin/ ref: reference01/ score: 0.24719 -> Check!
+	->loaded n_seg: 18/ metric: ROUGE-W/ tgt: uedin/ ref: reference01/ score: 0.26793 -> Check!
+[LOAD]: COMPLETE
+[LOAD]: ROUGE/ tgt: uedin/ ref: reference01/ split: 3
+	file: serialized_ROUGE_uedin.003_reference01.003
+	->loaded n_seg: 19/ metric: ROUGE-1/ tgt: uedin/ ref: reference01/ score: 0.12 -> Check!
+	->loaded n_seg: 19/ metric: ROUGE-2/ tgt: uedin/ ref: reference01/ score: 0.04167 -> Check!
+	->loaded n_seg: 19/ metric: ROUGE-3/ tgt: uedin/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 19/ metric: ROUGE-4/ tgt: uedin/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 19/ metric: ROUGE-L/ tgt: uedin/ ref: reference01/ score: 0.12 -> Check!
+	->loaded n_seg: 19/ metric: ROUGE-S*/ tgt: uedin/ ref: reference01/ score: 0.00649 -> Check!
+	->loaded n_seg: 19/ metric: ROUGE-SU*/ tgt: uedin/ ref: reference01/ score: 0.01235 -> Check!
+	->loaded n_seg: 19/ metric: ROUGE-W/ tgt: uedin/ ref: reference01/ score: 0.05502 -> Check!
+	->loaded n_seg: 20/ metric: ROUGE-1/ tgt: uedin/ ref: reference01/ score: 0.10811 -> Check!
+	->loaded n_seg: 20/ metric: ROUGE-2/ tgt: uedin/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 20/ metric: ROUGE-3/ tgt: uedin/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 20/ metric: ROUGE-4/ tgt: uedin/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 20/ metric: ROUGE-L/ tgt: uedin/ ref: reference01/ score: 0.10811 -> Check!
+	->loaded n_seg: 20/ metric: ROUGE-S*/ tgt: uedin/ ref: reference01/ score: 0.00527 -> Check!
+	->loaded n_seg: 20/ metric: ROUGE-SU*/ tgt: uedin/ ref: reference01/ score: 0.01446 -> Check!
+	->loaded n_seg: 20/ metric: ROUGE-W/ tgt: uedin/ ref: reference01/ score: 0.08142 -> Check!
+	->loaded n_seg: 21/ metric: ROUGE-1/ tgt: uedin/ ref: reference01/ score: 0.14285 -> Check!
+	->loaded n_seg: 21/ metric: ROUGE-2/ tgt: uedin/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 21/ metric: ROUGE-3/ tgt: uedin/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 21/ metric: ROUGE-4/ tgt: uedin/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 21/ metric: ROUGE-L/ tgt: uedin/ ref: reference01/ score: 0.14285 -> Check!
+	->loaded n_seg: 21/ metric: ROUGE-S*/ tgt: uedin/ ref: reference01/ score: 0.01348 -> Check!
+	->loaded n_seg: 21/ metric: ROUGE-SU*/ tgt: uedin/ ref: reference01/ score: 0.02474 -> Check!
+	->loaded n_seg: 21/ metric: ROUGE-W/ tgt: uedin/ ref: reference01/ score: 0.09276 -> Check!
+	->loaded n_seg: 22/ metric: ROUGE-1/ tgt: uedin/ ref: reference01/ score: 0.25641 -> Check!
+	->loaded n_seg: 22/ metric: ROUGE-2/ tgt: uedin/ ref: reference01/ score: 0.10811 -> Check!
+	->loaded n_seg: 22/ metric: ROUGE-3/ tgt: uedin/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 22/ metric: ROUGE-4/ tgt: uedin/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 22/ metric: ROUGE-L/ tgt: uedin/ ref: reference01/ score: 0.20513 -> Check!
+	->loaded n_seg: 22/ metric: ROUGE-S*/ tgt: uedin/ ref: reference01/ score: 0.04408 -> Check!
+	->loaded n_seg: 22/ metric: ROUGE-SU*/ tgt: uedin/ ref: reference01/ score: 0.065 -> Check!
+	->loaded n_seg: 22/ metric: ROUGE-W/ tgt: uedin/ ref: reference01/ score: 0.12698 -> Check!
+	->loaded n_seg: 23/ metric: ROUGE-1/ tgt: uedin/ ref: reference01/ score: 0.49123 -> Check!
+	->loaded n_seg: 23/ metric: ROUGE-2/ tgt: uedin/ ref: reference01/ score: 0.18182 -> Check!
+	->loaded n_seg: 23/ metric: ROUGE-3/ tgt: uedin/ ref: reference01/ score: 0.07547 -> Check!
+	->loaded n_seg: 23/ metric: ROUGE-4/ tgt: uedin/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 23/ metric: ROUGE-L/ tgt: uedin/ ref: reference01/ score: 0.38597 -> Check!
+	->loaded n_seg: 23/ metric: ROUGE-S*/ tgt: uedin/ ref: reference01/ score: 0.21429 -> Check!
+	->loaded n_seg: 23/ metric: ROUGE-SU*/ tgt: uedin/ ref: reference01/ score: 0.23123 -> Check!
+	->loaded n_seg: 23/ metric: ROUGE-W/ tgt: uedin/ ref: reference01/ score: 0.20003 -> Check!
+	->loaded n_seg: 24/ metric: ROUGE-1/ tgt: uedin/ ref: reference01/ score: 0.90909 -> Check!
+	->loaded n_seg: 24/ metric: ROUGE-2/ tgt: uedin/ ref: reference01/ score: 0.66667 -> Check!
+	->loaded n_seg: 24/ metric: ROUGE-3/ tgt: uedin/ ref: reference01/ score: 0.28571 -> Check!
+	->loaded n_seg: 24/ metric: ROUGE-4/ tgt: uedin/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 24/ metric: ROUGE-L/ tgt: uedin/ ref: reference01/ score: 0.90909 -> Check!
+	->loaded n_seg: 24/ metric: ROUGE-S*/ tgt: uedin/ ref: reference01/ score: 0.8 -> Check!
+	->loaded n_seg: 24/ metric: ROUGE-SU*/ tgt: uedin/ ref: reference01/ score: 0.82353 -> Check!
+	->loaded n_seg: 24/ metric: ROUGE-W/ tgt: uedin/ ref: reference01/ score: 0.77527 -> Check!
+	->loaded n_seg: 25/ metric: ROUGE-1/ tgt: uedin/ ref: reference01/ score: 0.26087 -> Check!
+	->loaded n_seg: 25/ metric: ROUGE-2/ tgt: uedin/ ref: reference01/ score: 0.09524 -> Check!
+	->loaded n_seg: 25/ metric: ROUGE-3/ tgt: uedin/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 25/ metric: ROUGE-4/ tgt: uedin/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 25/ metric: ROUGE-L/ tgt: uedin/ ref: reference01/ score: 0.26087 -> Check!
+	->loaded n_seg: 25/ metric: ROUGE-S*/ tgt: uedin/ ref: reference01/ score: 0.04959 -> Check!
+	->loaded n_seg: 25/ metric: ROUGE-SU*/ tgt: uedin/ ref: reference01/ score: 0.07042 -> Check!
+	->loaded n_seg: 25/ metric: ROUGE-W/ tgt: uedin/ ref: reference01/ score: 0.17593 -> Check!
+	->loaded n_seg: 26/ metric: ROUGE-1/ tgt: uedin/ ref: reference01/ score: 0.07843 -> Check!
+	->loaded n_seg: 26/ metric: ROUGE-2/ tgt: uedin/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 26/ metric: ROUGE-3/ tgt: uedin/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 26/ metric: ROUGE-4/ tgt: uedin/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 26/ metric: ROUGE-L/ tgt: uedin/ ref: reference01/ score: 0.07843 -> Check!
+	->loaded n_seg: 26/ metric: ROUGE-S*/ tgt: uedin/ ref: reference01/ score: 0.0032 -> Check!
+	->loaded n_seg: 26/ metric: ROUGE-SU*/ tgt: uedin/ ref: reference01/ score: 0.0089 -> Check!
+	->loaded n_seg: 26/ metric: ROUGE-W/ tgt: uedin/ ref: reference01/ score: 0.04842 -> Check!
+	->loaded n_seg: 27/ metric: ROUGE-1/ tgt: uedin/ ref: reference01/ score: 0.4898 -> Check!
+	->loaded n_seg: 27/ metric: ROUGE-2/ tgt: uedin/ ref: reference01/ score: 0.29788 -> Check!
+	->loaded n_seg: 27/ metric: ROUGE-3/ tgt: uedin/ ref: reference01/ score: 0.17778 -> Check!
+	->loaded n_seg: 27/ metric: ROUGE-4/ tgt: uedin/ ref: reference01/ score: 0.04651 -> Check!
+	->loaded n_seg: 27/ metric: ROUGE-L/ tgt: uedin/ ref: reference01/ score: 0.4898 -> Check!
+	->loaded n_seg: 27/ metric: ROUGE-S*/ tgt: uedin/ ref: reference01/ score: 0.22917 -> Check!
+	->loaded n_seg: 27/ metric: ROUGE-SU*/ tgt: uedin/ ref: reference01/ score: 0.24719 -> Check!
+	->loaded n_seg: 27/ metric: ROUGE-W/ tgt: uedin/ ref: reference01/ score: 0.26793 -> Check!
+[LOAD]: COMPLETE
+[LOAD]: ROUGE/ tgt: uedin/ ref: reference01/ split: 4
+	file: serialized_ROUGE_uedin.004_reference01.004
+	->loaded n_seg: 28/ metric: ROUGE-1/ tgt: uedin/ ref: reference01/ score: 0.12 -> Check!
+	->loaded n_seg: 28/ metric: ROUGE-2/ tgt: uedin/ ref: reference01/ score: 0.04167 -> Check!
+	->loaded n_seg: 28/ metric: ROUGE-3/ tgt: uedin/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 28/ metric: ROUGE-4/ tgt: uedin/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 28/ metric: ROUGE-L/ tgt: uedin/ ref: reference01/ score: 0.12 -> Check!
+	->loaded n_seg: 28/ metric: ROUGE-S*/ tgt: uedin/ ref: reference01/ score: 0.00649 -> Check!
+	->loaded n_seg: 28/ metric: ROUGE-SU*/ tgt: uedin/ ref: reference01/ score: 0.01235 -> Check!
+	->loaded n_seg: 28/ metric: ROUGE-W/ tgt: uedin/ ref: reference01/ score: 0.05502 -> Check!
+	->loaded n_seg: 29/ metric: ROUGE-1/ tgt: uedin/ ref: reference01/ score: 0.10811 -> Check!
+	->loaded n_seg: 29/ metric: ROUGE-2/ tgt: uedin/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 29/ metric: ROUGE-3/ tgt: uedin/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 29/ metric: ROUGE-4/ tgt: uedin/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 29/ metric: ROUGE-L/ tgt: uedin/ ref: reference01/ score: 0.10811 -> Check!
+	->loaded n_seg: 29/ metric: ROUGE-S*/ tgt: uedin/ ref: reference01/ score: 0.00527 -> Check!
+	->loaded n_seg: 29/ metric: ROUGE-SU*/ tgt: uedin/ ref: reference01/ score: 0.01446 -> Check!
+	->loaded n_seg: 29/ metric: ROUGE-W/ tgt: uedin/ ref: reference01/ score: 0.08142 -> Check!
+	->loaded n_seg: 30/ metric: ROUGE-1/ tgt: uedin/ ref: reference01/ score: 0.14285 -> Check!
+	->loaded n_seg: 30/ metric: ROUGE-2/ tgt: uedin/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 30/ metric: ROUGE-3/ tgt: uedin/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 30/ metric: ROUGE-4/ tgt: uedin/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 30/ metric: ROUGE-L/ tgt: uedin/ ref: reference01/ score: 0.14285 -> Check!
+	->loaded n_seg: 30/ metric: ROUGE-S*/ tgt: uedin/ ref: reference01/ score: 0.01348 -> Check!
+	->loaded n_seg: 30/ metric: ROUGE-SU*/ tgt: uedin/ ref: reference01/ score: 0.02474 -> Check!
+	->loaded n_seg: 30/ metric: ROUGE-W/ tgt: uedin/ ref: reference01/ score: 0.09276 -> Check!
+	->loaded n_seg: 31/ metric: ROUGE-1/ tgt: uedin/ ref: reference01/ score: 0.25641 -> Check!
+	->loaded n_seg: 31/ metric: ROUGE-2/ tgt: uedin/ ref: reference01/ score: 0.10811 -> Check!
+	->loaded n_seg: 31/ metric: ROUGE-3/ tgt: uedin/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 31/ metric: ROUGE-4/ tgt: uedin/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 31/ metric: ROUGE-L/ tgt: uedin/ ref: reference01/ score: 0.20513 -> Check!
+	->loaded n_seg: 31/ metric: ROUGE-S*/ tgt: uedin/ ref: reference01/ score: 0.04408 -> Check!
+	->loaded n_seg: 31/ metric: ROUGE-SU*/ tgt: uedin/ ref: reference01/ score: 0.065 -> Check!
+	->loaded n_seg: 31/ metric: ROUGE-W/ tgt: uedin/ ref: reference01/ score: 0.12698 -> Check!
+	->loaded n_seg: 32/ metric: ROUGE-1/ tgt: uedin/ ref: reference01/ score: 0.49123 -> Check!
+	->loaded n_seg: 32/ metric: ROUGE-2/ tgt: uedin/ ref: reference01/ score: 0.18182 -> Check!
+	->loaded n_seg: 32/ metric: ROUGE-3/ tgt: uedin/ ref: reference01/ score: 0.07547 -> Check!
+	->loaded n_seg: 32/ metric: ROUGE-4/ tgt: uedin/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 32/ metric: ROUGE-L/ tgt: uedin/ ref: reference01/ score: 0.38597 -> Check!
+	->loaded n_seg: 32/ metric: ROUGE-S*/ tgt: uedin/ ref: reference01/ score: 0.21429 -> Check!
+	->loaded n_seg: 32/ metric: ROUGE-SU*/ tgt: uedin/ ref: reference01/ score: 0.23123 -> Check!
+	->loaded n_seg: 32/ metric: ROUGE-W/ tgt: uedin/ ref: reference01/ score: 0.20003 -> Check!
+	->loaded n_seg: 33/ metric: ROUGE-1/ tgt: uedin/ ref: reference01/ score: 0.90909 -> Check!
+	->loaded n_seg: 33/ metric: ROUGE-2/ tgt: uedin/ ref: reference01/ score: 0.66667 -> Check!
+	->loaded n_seg: 33/ metric: ROUGE-3/ tgt: uedin/ ref: reference01/ score: 0.28571 -> Check!
+	->loaded n_seg: 33/ metric: ROUGE-4/ tgt: uedin/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 33/ metric: ROUGE-L/ tgt: uedin/ ref: reference01/ score: 0.90909 -> Check!
+	->loaded n_seg: 33/ metric: ROUGE-S*/ tgt: uedin/ ref: reference01/ score: 0.8 -> Check!
+	->loaded n_seg: 33/ metric: ROUGE-SU*/ tgt: uedin/ ref: reference01/ score: 0.82353 -> Check!
+	->loaded n_seg: 33/ metric: ROUGE-W/ tgt: uedin/ ref: reference01/ score: 0.77527 -> Check!
+[LOAD]: COMPLETE
+[LOAD]: ROUGE/ tgt: upc/ ref: reference01/ split: 1
+	file: serialized_ROUGE_upc.001_reference01.001
+	->loaded n_seg: 1/ metric: ROUGE-1/ tgt: upc/ ref: reference01/ score: 0.12 -> Check!
+	->loaded n_seg: 1/ metric: ROUGE-2/ tgt: upc/ ref: reference01/ score: 0.04167 -> Check!
+	->loaded n_seg: 1/ metric: ROUGE-3/ tgt: upc/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 1/ metric: ROUGE-4/ tgt: upc/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 1/ metric: ROUGE-L/ tgt: upc/ ref: reference01/ score: 0.12 -> Check!
+	->loaded n_seg: 1/ metric: ROUGE-S*/ tgt: upc/ ref: reference01/ score: 0.00649 -> Check!
+	->loaded n_seg: 1/ metric: ROUGE-SU*/ tgt: upc/ ref: reference01/ score: 0.01235 -> Check!
+	->loaded n_seg: 1/ metric: ROUGE-W/ tgt: upc/ ref: reference01/ score: 0.05502 -> Check!
+	->loaded n_seg: 2/ metric: ROUGE-1/ tgt: upc/ ref: reference01/ score: 0.10811 -> Check!
+	->loaded n_seg: 2/ metric: ROUGE-2/ tgt: upc/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 2/ metric: ROUGE-3/ tgt: upc/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 2/ metric: ROUGE-4/ tgt: upc/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 2/ metric: ROUGE-L/ tgt: upc/ ref: reference01/ score: 0.10811 -> Check!
+	->loaded n_seg: 2/ metric: ROUGE-S*/ tgt: upc/ ref: reference01/ score: 0.00527 -> Check!
+	->loaded n_seg: 2/ metric: ROUGE-SU*/ tgt: upc/ ref: reference01/ score: 0.01446 -> Check!
+	->loaded n_seg: 2/ metric: ROUGE-W/ tgt: upc/ ref: reference01/ score: 0.08142 -> Check!
+	->loaded n_seg: 3/ metric: ROUGE-1/ tgt: upc/ ref: reference01/ score: 0.14285 -> Check!
+	->loaded n_seg: 3/ metric: ROUGE-2/ tgt: upc/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 3/ metric: ROUGE-3/ tgt: upc/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 3/ metric: ROUGE-4/ tgt: upc/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 3/ metric: ROUGE-L/ tgt: upc/ ref: reference01/ score: 0.14285 -> Check!
+	->loaded n_seg: 3/ metric: ROUGE-S*/ tgt: upc/ ref: reference01/ score: 0.01348 -> Check!
+	->loaded n_seg: 3/ metric: ROUGE-SU*/ tgt: upc/ ref: reference01/ score: 0.02474 -> Check!
+	->loaded n_seg: 3/ metric: ROUGE-W/ tgt: upc/ ref: reference01/ score: 0.09276 -> Check!
+	->loaded n_seg: 4/ metric: ROUGE-1/ tgt: upc/ ref: reference01/ score: 0.25641 -> Check!
+	->loaded n_seg: 4/ metric: ROUGE-2/ tgt: upc/ ref: reference01/ score: 0.10811 -> Check!
+	->loaded n_seg: 4/ metric: ROUGE-3/ tgt: upc/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 4/ metric: ROUGE-4/ tgt: upc/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 4/ metric: ROUGE-L/ tgt: upc/ ref: reference01/ score: 0.20513 -> Check!
+	->loaded n_seg: 4/ metric: ROUGE-S*/ tgt: upc/ ref: reference01/ score: 0.04408 -> Check!
+	->loaded n_seg: 4/ metric: ROUGE-SU*/ tgt: upc/ ref: reference01/ score: 0.065 -> Check!
+	->loaded n_seg: 4/ metric: ROUGE-W/ tgt: upc/ ref: reference01/ score: 0.12698 -> Check!
+	->loaded n_seg: 5/ metric: ROUGE-1/ tgt: upc/ ref: reference01/ score: 0.49123 -> Check!
+	->loaded n_seg: 5/ metric: ROUGE-2/ tgt: upc/ ref: reference01/ score: 0.18182 -> Check!
+	->loaded n_seg: 5/ metric: ROUGE-3/ tgt: upc/ ref: reference01/ score: 0.07547 -> Check!
+	->loaded n_seg: 5/ metric: ROUGE-4/ tgt: upc/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 5/ metric: ROUGE-L/ tgt: upc/ ref: reference01/ score: 0.38597 -> Check!
+	->loaded n_seg: 5/ metric: ROUGE-S*/ tgt: upc/ ref: reference01/ score: 0.21429 -> Check!
+	->loaded n_seg: 5/ metric: ROUGE-SU*/ tgt: upc/ ref: reference01/ score: 0.23123 -> Check!
+	->loaded n_seg: 5/ metric: ROUGE-W/ tgt: upc/ ref: reference01/ score: 0.20003 -> Check!
+	->loaded n_seg: 6/ metric: ROUGE-1/ tgt: upc/ ref: reference01/ score: 0.90909 -> Check!
+	->loaded n_seg: 6/ metric: ROUGE-2/ tgt: upc/ ref: reference01/ score: 0.66667 -> Check!
+	->loaded n_seg: 6/ metric: ROUGE-3/ tgt: upc/ ref: reference01/ score: 0.28571 -> Check!
+	->loaded n_seg: 6/ metric: ROUGE-4/ tgt: upc/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 6/ metric: ROUGE-L/ tgt: upc/ ref: reference01/ score: 0.90909 -> Check!
+	->loaded n_seg: 6/ metric: ROUGE-S*/ tgt: upc/ ref: reference01/ score: 0.8 -> Check!
+	->loaded n_seg: 6/ metric: ROUGE-SU*/ tgt: upc/ ref: reference01/ score: 0.82353 -> Check!
+	->loaded n_seg: 6/ metric: ROUGE-W/ tgt: upc/ ref: reference01/ score: 0.77527 -> Check!
+	->loaded n_seg: 7/ metric: ROUGE-1/ tgt: upc/ ref: reference01/ score: 0.26087 -> Check!
+	->loaded n_seg: 7/ metric: ROUGE-2/ tgt: upc/ ref: reference01/ score: 0.09524 -> Check!
+	->loaded n_seg: 7/ metric: ROUGE-3/ tgt: upc/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 7/ metric: ROUGE-4/ tgt: upc/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 7/ metric: ROUGE-L/ tgt: upc/ ref: reference01/ score: 0.26087 -> Check!
+	->loaded n_seg: 7/ metric: ROUGE-S*/ tgt: upc/ ref: reference01/ score: 0.04959 -> Check!
+	->loaded n_seg: 7/ metric: ROUGE-SU*/ tgt: upc/ ref: reference01/ score: 0.07042 -> Check!
+	->loaded n_seg: 7/ metric: ROUGE-W/ tgt: upc/ ref: reference01/ score: 0.17593 -> Check!
+	->loaded n_seg: 8/ metric: ROUGE-1/ tgt: upc/ ref: reference01/ score: 0.07843 -> Check!
+	->loaded n_seg: 8/ metric: ROUGE-2/ tgt: upc/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 8/ metric: ROUGE-3/ tgt: upc/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 8/ metric: ROUGE-4/ tgt: upc/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 8/ metric: ROUGE-L/ tgt: upc/ ref: reference01/ score: 0.07843 -> Check!
+	->loaded n_seg: 8/ metric: ROUGE-S*/ tgt: upc/ ref: reference01/ score: 0.0032 -> Check!
+	->loaded n_seg: 8/ metric: ROUGE-SU*/ tgt: upc/ ref: reference01/ score: 0.0089 -> Check!
+	->loaded n_seg: 8/ metric: ROUGE-W/ tgt: upc/ ref: reference01/ score: 0.04842 -> Check!
+	->loaded n_seg: 9/ metric: ROUGE-1/ tgt: upc/ ref: reference01/ score: 0.4898 -> Check!
+	->loaded n_seg: 9/ metric: ROUGE-2/ tgt: upc/ ref: reference01/ score: 0.29788 -> Check!
+	->loaded n_seg: 9/ metric: ROUGE-3/ tgt: upc/ ref: reference01/ score: 0.17778 -> Check!
+	->loaded n_seg: 9/ metric: ROUGE-4/ tgt: upc/ ref: reference01/ score: 0.04651 -> Check!
+	->loaded n_seg: 9/ metric: ROUGE-L/ tgt: upc/ ref: reference01/ score: 0.4898 -> Check!
+	->loaded n_seg: 9/ metric: ROUGE-S*/ tgt: upc/ ref: reference01/ score: 0.22917 -> Check!
+	->loaded n_seg: 9/ metric: ROUGE-SU*/ tgt: upc/ ref: reference01/ score: 0.24719 -> Check!
+	->loaded n_seg: 9/ metric: ROUGE-W/ tgt: upc/ ref: reference01/ score: 0.26793 -> Check!
+[LOAD]: COMPLETE
+[LOAD]: ROUGE/ tgt: upc/ ref: reference01/ split: 2
+	file: serialized_ROUGE_upc.002_reference01.002
+	->loaded n_seg: 10/ metric: ROUGE-1/ tgt: upc/ ref: reference01/ score: 0.12 -> Check!
+	->loaded n_seg: 10/ metric: ROUGE-2/ tgt: upc/ ref: reference01/ score: 0.04167 -> Check!
+	->loaded n_seg: 10/ metric: ROUGE-3/ tgt: upc/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 10/ metric: ROUGE-4/ tgt: upc/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 10/ metric: ROUGE-L/ tgt: upc/ ref: reference01/ score: 0.12 -> Check!
+	->loaded n_seg: 10/ metric: ROUGE-S*/ tgt: upc/ ref: reference01/ score: 0.00649 -> Check!
+	->loaded n_seg: 10/ metric: ROUGE-SU*/ tgt: upc/ ref: reference01/ score: 0.01235 -> Check!
+	->loaded n_seg: 10/ metric: ROUGE-W/ tgt: upc/ ref: reference01/ score: 0.05502 -> Check!
+	->loaded n_seg: 11/ metric: ROUGE-1/ tgt: upc/ ref: reference01/ score: 0.10811 -> Check!
+	->loaded n_seg: 11/ metric: ROUGE-2/ tgt: upc/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 11/ metric: ROUGE-3/ tgt: upc/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 11/ metric: ROUGE-4/ tgt: upc/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 11/ metric: ROUGE-L/ tgt: upc/ ref: reference01/ score: 0.10811 -> Check!
+	->loaded n_seg: 11/ metric: ROUGE-S*/ tgt: upc/ ref: reference01/ score: 0.00527 -> Check!
+	->loaded n_seg: 11/ metric: ROUGE-SU*/ tgt: upc/ ref: reference01/ score: 0.01446 -> Check!
+	->loaded n_seg: 11/ metric: ROUGE-W/ tgt: upc/ ref: reference01/ score: 0.08142 -> Check!
+	->loaded n_seg: 12/ metric: ROUGE-1/ tgt: upc/ ref: reference01/ score: 0.14285 -> Check!
+	->loaded n_seg: 12/ metric: ROUGE-2/ tgt: upc/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 12/ metric: ROUGE-3/ tgt: upc/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 12/ metric: ROUGE-4/ tgt: upc/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 12/ metric: ROUGE-L/ tgt: upc/ ref: reference01/ score: 0.14285 -> Check!
+	->loaded n_seg: 12/ metric: ROUGE-S*/ tgt: upc/ ref: reference01/ score: 0.01348 -> Check!
+	->loaded n_seg: 12/ metric: ROUGE-SU*/ tgt: upc/ ref: reference01/ score: 0.02474 -> Check!
+	->loaded n_seg: 12/ metric: ROUGE-W/ tgt: upc/ ref: reference01/ score: 0.09276 -> Check!
+	->loaded n_seg: 13/ metric: ROUGE-1/ tgt: upc/ ref: reference01/ score: 0.25641 -> Check!
+	->loaded n_seg: 13/ metric: ROUGE-2/ tgt: upc/ ref: reference01/ score: 0.10811 -> Check!
+	->loaded n_seg: 13/ metric: ROUGE-3/ tgt: upc/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 13/ metric: ROUGE-4/ tgt: upc/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 13/ metric: ROUGE-L/ tgt: upc/ ref: reference01/ score: 0.20513 -> Check!
+	->loaded n_seg: 13/ metric: ROUGE-S*/ tgt: upc/ ref: reference01/ score: 0.04408 -> Check!
+	->loaded n_seg: 13/ metric: ROUGE-SU*/ tgt: upc/ ref: reference01/ score: 0.065 -> Check!
+	->loaded n_seg: 13/ metric: ROUGE-W/ tgt: upc/ ref: reference01/ score: 0.12698 -> Check!
+	->loaded n_seg: 14/ metric: ROUGE-1/ tgt: upc/ ref: reference01/ score: 0.49123 -> Check!
+	->loaded n_seg: 14/ metric: ROUGE-2/ tgt: upc/ ref: reference01/ score: 0.18182 -> Check!
+	->loaded n_seg: 14/ metric: ROUGE-3/ tgt: upc/ ref: reference01/ score: 0.07547 -> Check!
+	->loaded n_seg: 14/ metric: ROUGE-4/ tgt: upc/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 14/ metric: ROUGE-L/ tgt: upc/ ref: reference01/ score: 0.38597 -> Check!
+	->loaded n_seg: 14/ metric: ROUGE-S*/ tgt: upc/ ref: reference01/ score: 0.21429 -> Check!
+	->loaded n_seg: 14/ metric: ROUGE-SU*/ tgt: upc/ ref: reference01/ score: 0.23123 -> Check!
+	->loaded n_seg: 14/ metric: ROUGE-W/ tgt: upc/ ref: reference01/ score: 0.20003 -> Check!
+	->loaded n_seg: 15/ metric: ROUGE-1/ tgt: upc/ ref: reference01/ score: 0.90909 -> Check!
+	->loaded n_seg: 15/ metric: ROUGE-2/ tgt: upc/ ref: reference01/ score: 0.66667 -> Check!
+	->loaded n_seg: 15/ metric: ROUGE-3/ tgt: upc/ ref: reference01/ score: 0.28571 -> Check!
+	->loaded n_seg: 15/ metric: ROUGE-4/ tgt: upc/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 15/ metric: ROUGE-L/ tgt: upc/ ref: reference01/ score: 0.90909 -> Check!
+	->loaded n_seg: 15/ metric: ROUGE-S*/ tgt: upc/ ref: reference01/ score: 0.8 -> Check!
+	->loaded n_seg: 15/ metric: ROUGE-SU*/ tgt: upc/ ref: reference01/ score: 0.82353 -> Check!
+	->loaded n_seg: 15/ metric: ROUGE-W/ tgt: upc/ ref: reference01/ score: 0.77527 -> Check!
+	->loaded n_seg: 16/ metric: ROUGE-1/ tgt: upc/ ref: reference01/ score: 0.26087 -> Check!
+	->loaded n_seg: 16/ metric: ROUGE-2/ tgt: upc/ ref: reference01/ score: 0.09524 -> Check!
+	->loaded n_seg: 16/ metric: ROUGE-3/ tgt: upc/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 16/ metric: ROUGE-4/ tgt: upc/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 16/ metric: ROUGE-L/ tgt: upc/ ref: reference01/ score: 0.26087 -> Check!
+	->loaded n_seg: 16/ metric: ROUGE-S*/ tgt: upc/ ref: reference01/ score: 0.04959 -> Check!
+	->loaded n_seg: 16/ metric: ROUGE-SU*/ tgt: upc/ ref: reference01/ score: 0.07042 -> Check!
+	->loaded n_seg: 16/ metric: ROUGE-W/ tgt: upc/ ref: reference01/ score: 0.17593 -> Check!
+	->loaded n_seg: 17/ metric: ROUGE-1/ tgt: upc/ ref: reference01/ score: 0.07843 -> Check!
+	->loaded n_seg: 17/ metric: ROUGE-2/ tgt: upc/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 17/ metric: ROUGE-3/ tgt: upc/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 17/ metric: ROUGE-4/ tgt: upc/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 17/ metric: ROUGE-L/ tgt: upc/ ref: reference01/ score: 0.07843 -> Check!
+	->loaded n_seg: 17/ metric: ROUGE-S*/ tgt: upc/ ref: reference01/ score: 0.0032 -> Check!
+	->loaded n_seg: 17/ metric: ROUGE-SU*/ tgt: upc/ ref: reference01/ score: 0.0089 -> Check!
+	->loaded n_seg: 17/ metric: ROUGE-W/ tgt: upc/ ref: reference01/ score: 0.04842 -> Check!
+	->loaded n_seg: 18/ metric: ROUGE-1/ tgt: upc/ ref: reference01/ score: 0.4898 -> Check!
+	->loaded n_seg: 18/ metric: ROUGE-2/ tgt: upc/ ref: reference01/ score: 0.29788 -> Check!
+	->loaded n_seg: 18/ metric: ROUGE-3/ tgt: upc/ ref: reference01/ score: 0.17778 -> Check!
+	->loaded n_seg: 18/ metric: ROUGE-4/ tgt: upc/ ref: reference01/ score: 0.04651 -> Check!
+	->loaded n_seg: 18/ metric: ROUGE-L/ tgt: upc/ ref: reference01/ score: 0.4898 -> Check!
+	->loaded n_seg: 18/ metric: ROUGE-S*/ tgt: upc/ ref: reference01/ score: 0.22917 -> Check!
+	->loaded n_seg: 18/ metric: ROUGE-SU*/ tgt: upc/ ref: reference01/ score: 0.24719 -> Check!
+	->loaded n_seg: 18/ metric: ROUGE-W/ tgt: upc/ ref: reference01/ score: 0.26793 -> Check!
+[LOAD]: COMPLETE
+[LOAD]: ROUGE/ tgt: upc/ ref: reference01/ split: 3
+	file: serialized_ROUGE_upc.003_reference01.003
+	->loaded n_seg: 19/ metric: ROUGE-1/ tgt: upc/ ref: reference01/ score: 0.12 -> Check!
+	->loaded n_seg: 19/ metric: ROUGE-2/ tgt: upc/ ref: reference01/ score: 0.04167 -> Check!
+	->loaded n_seg: 19/ metric: ROUGE-3/ tgt: upc/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 19/ metric: ROUGE-4/ tgt: upc/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 19/ metric: ROUGE-L/ tgt: upc/ ref: reference01/ score: 0.12 -> Check!
+	->loaded n_seg: 19/ metric: ROUGE-S*/ tgt: upc/ ref: reference01/ score: 0.00649 -> Check!
+	->loaded n_seg: 19/ metric: ROUGE-SU*/ tgt: upc/ ref: reference01/ score: 0.01235 -> Check!
+	->loaded n_seg: 19/ metric: ROUGE-W/ tgt: upc/ ref: reference01/ score: 0.05502 -> Check!
+	->loaded n_seg: 20/ metric: ROUGE-1/ tgt: upc/ ref: reference01/ score: 0.10811 -> Check!
+	->loaded n_seg: 20/ metric: ROUGE-2/ tgt: upc/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 20/ metric: ROUGE-3/ tgt: upc/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 20/ metric: ROUGE-4/ tgt: upc/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 20/ metric: ROUGE-L/ tgt: upc/ ref: reference01/ score: 0.10811 -> Check!
+	->loaded n_seg: 20/ metric: ROUGE-S*/ tgt: upc/ ref: reference01/ score: 0.00527 -> Check!
+	->loaded n_seg: 20/ metric: ROUGE-SU*/ tgt: upc/ ref: reference01/ score: 0.01446 -> Check!
+	->loaded n_seg: 20/ metric: ROUGE-W/ tgt: upc/ ref: reference01/ score: 0.08142 -> Check!
+	->loaded n_seg: 21/ metric: ROUGE-1/ tgt: upc/ ref: reference01/ score: 0.14285 -> Check!
+	->loaded n_seg: 21/ metric: ROUGE-2/ tgt: upc/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 21/ metric: ROUGE-3/ tgt: upc/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 21/ metric: ROUGE-4/ tgt: upc/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 21/ metric: ROUGE-L/ tgt: upc/ ref: reference01/ score: 0.14285 -> Check!
+	->loaded n_seg: 21/ metric: ROUGE-S*/ tgt: upc/ ref: reference01/ score: 0.01348 -> Check!
+	->loaded n_seg: 21/ metric: ROUGE-SU*/ tgt: upc/ ref: reference01/ score: 0.02474 -> Check!
+	->loaded n_seg: 21/ metric: ROUGE-W/ tgt: upc/ ref: reference01/ score: 0.09276 -> Check!
+	->loaded n_seg: 22/ metric: ROUGE-1/ tgt: upc/ ref: reference01/ score: 0.25641 -> Check!
+	->loaded n_seg: 22/ metric: ROUGE-2/ tgt: upc/ ref: reference01/ score: 0.10811 -> Check!
+	->loaded n_seg: 22/ metric: ROUGE-3/ tgt: upc/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 22/ metric: ROUGE-4/ tgt: upc/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 22/ metric: ROUGE-L/ tgt: upc/ ref: reference01/ score: 0.20513 -> Check!
+	->loaded n_seg: 22/ metric: ROUGE-S*/ tgt: upc/ ref: reference01/ score: 0.04408 -> Check!
+	->loaded n_seg: 22/ metric: ROUGE-SU*/ tgt: upc/ ref: reference01/ score: 0.065 -> Check!
+	->loaded n_seg: 22/ metric: ROUGE-W/ tgt: upc/ ref: reference01/ score: 0.12698 -> Check!
+	->loaded n_seg: 23/ metric: ROUGE-1/ tgt: upc/ ref: reference01/ score: 0.49123 -> Check!
+	->loaded n_seg: 23/ metric: ROUGE-2/ tgt: upc/ ref: reference01/ score: 0.18182 -> Check!
+	->loaded n_seg: 23/ metric: ROUGE-3/ tgt: upc/ ref: reference01/ score: 0.07547 -> Check!
+	->loaded n_seg: 23/ metric: ROUGE-4/ tgt: upc/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 23/ metric: ROUGE-L/ tgt: upc/ ref: reference01/ score: 0.38597 -> Check!
+	->loaded n_seg: 23/ metric: ROUGE-S*/ tgt: upc/ ref: reference01/ score: 0.21429 -> Check!
+	->loaded n_seg: 23/ metric: ROUGE-SU*/ tgt: upc/ ref: reference01/ score: 0.23123 -> Check!
+	->loaded n_seg: 23/ metric: ROUGE-W/ tgt: upc/ ref: reference01/ score: 0.20003 -> Check!
+	->loaded n_seg: 24/ metric: ROUGE-1/ tgt: upc/ ref: reference01/ score: 0.90909 -> Check!
+	->loaded n_seg: 24/ metric: ROUGE-2/ tgt: upc/ ref: reference01/ score: 0.66667 -> Check!
+	->loaded n_seg: 24/ metric: ROUGE-3/ tgt: upc/ ref: reference01/ score: 0.28571 -> Check!
+	->loaded n_seg: 24/ metric: ROUGE-4/ tgt: upc/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 24/ metric: ROUGE-L/ tgt: upc/ ref: reference01/ score: 0.90909 -> Check!
+	->loaded n_seg: 24/ metric: ROUGE-S*/ tgt: upc/ ref: reference01/ score: 0.8 -> Check!
+	->loaded n_seg: 24/ metric: ROUGE-SU*/ tgt: upc/ ref: reference01/ score: 0.82353 -> Check!
+	->loaded n_seg: 24/ metric: ROUGE-W/ tgt: upc/ ref: reference01/ score: 0.77527 -> Check!
+	->loaded n_seg: 25/ metric: ROUGE-1/ tgt: upc/ ref: reference01/ score: 0.26087 -> Check!
+	->loaded n_seg: 25/ metric: ROUGE-2/ tgt: upc/ ref: reference01/ score: 0.09524 -> Check!
+	->loaded n_seg: 25/ metric: ROUGE-3/ tgt: upc/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 25/ metric: ROUGE-4/ tgt: upc/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 25/ metric: ROUGE-L/ tgt: upc/ ref: reference01/ score: 0.26087 -> Check!
+	->loaded n_seg: 25/ metric: ROUGE-S*/ tgt: upc/ ref: reference01/ score: 0.04959 -> Check!
+	->loaded n_seg: 25/ metric: ROUGE-SU*/ tgt: upc/ ref: reference01/ score: 0.07042 -> Check!
+	->loaded n_seg: 25/ metric: ROUGE-W/ tgt: upc/ ref: reference01/ score: 0.17593 -> Check!
+	->loaded n_seg: 26/ metric: ROUGE-1/ tgt: upc/ ref: reference01/ score: 0.07843 -> Check!
+	->loaded n_seg: 26/ metric: ROUGE-2/ tgt: upc/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 26/ metric: ROUGE-3/ tgt: upc/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 26/ metric: ROUGE-4/ tgt: upc/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 26/ metric: ROUGE-L/ tgt: upc/ ref: reference01/ score: 0.07843 -> Check!
+	->loaded n_seg: 26/ metric: ROUGE-S*/ tgt: upc/ ref: reference01/ score: 0.0032 -> Check!
+	->loaded n_seg: 26/ metric: ROUGE-SU*/ tgt: upc/ ref: reference01/ score: 0.0089 -> Check!
+	->loaded n_seg: 26/ metric: ROUGE-W/ tgt: upc/ ref: reference01/ score: 0.04842 -> Check!
+	->loaded n_seg: 27/ metric: ROUGE-1/ tgt: upc/ ref: reference01/ score: 0.4898 -> Check!
+	->loaded n_seg: 27/ metric: ROUGE-2/ tgt: upc/ ref: reference01/ score: 0.29788 -> Check!
+	->loaded n_seg: 27/ metric: ROUGE-3/ tgt: upc/ ref: reference01/ score: 0.17778 -> Check!
+	->loaded n_seg: 27/ metric: ROUGE-4/ tgt: upc/ ref: reference01/ score: 0.04651 -> Check!
+	->loaded n_seg: 27/ metric: ROUGE-L/ tgt: upc/ ref: reference01/ score: 0.4898 -> Check!
+	->loaded n_seg: 27/ metric: ROUGE-S*/ tgt: upc/ ref: reference01/ score: 0.22917 -> Check!
+	->loaded n_seg: 27/ metric: ROUGE-SU*/ tgt: upc/ ref: reference01/ score: 0.24719 -> Check!
+	->loaded n_seg: 27/ metric: ROUGE-W/ tgt: upc/ ref: reference01/ score: 0.26793 -> Check!
+[LOAD]: COMPLETE
+[LOAD]: ROUGE/ tgt: upc/ ref: reference01/ split: 4
+	file: serialized_ROUGE_upc.004_reference01.004
+	->loaded n_seg: 28/ metric: ROUGE-1/ tgt: upc/ ref: reference01/ score: 0.12 -> Check!
+	->loaded n_seg: 28/ metric: ROUGE-2/ tgt: upc/ ref: reference01/ score: 0.04167 -> Check!
+	->loaded n_seg: 28/ metric: ROUGE-3/ tgt: upc/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 28/ metric: ROUGE-4/ tgt: upc/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 28/ metric: ROUGE-L/ tgt: upc/ ref: reference01/ score: 0.12 -> Check!
+	->loaded n_seg: 28/ metric: ROUGE-S*/ tgt: upc/ ref: reference01/ score: 0.00649 -> Check!
+	->loaded n_seg: 28/ metric: ROUGE-SU*/ tgt: upc/ ref: reference01/ score: 0.01235 -> Check!
+	->loaded n_seg: 28/ metric: ROUGE-W/ tgt: upc/ ref: reference01/ score: 0.05502 -> Check!
+	->loaded n_seg: 29/ metric: ROUGE-1/ tgt: upc/ ref: reference01/ score: 0.10811 -> Check!
+	->loaded n_seg: 29/ metric: ROUGE-2/ tgt: upc/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 29/ metric: ROUGE-3/ tgt: upc/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 29/ metric: ROUGE-4/ tgt: upc/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 29/ metric: ROUGE-L/ tgt: upc/ ref: reference01/ score: 0.10811 -> Check!
+	->loaded n_seg: 29/ metric: ROUGE-S*/ tgt: upc/ ref: reference01/ score: 0.00527 -> Check!
+	->loaded n_seg: 29/ metric: ROUGE-SU*/ tgt: upc/ ref: reference01/ score: 0.01446 -> Check!
+	->loaded n_seg: 29/ metric: ROUGE-W/ tgt: upc/ ref: reference01/ score: 0.08142 -> Check!
+	->loaded n_seg: 30/ metric: ROUGE-1/ tgt: upc/ ref: reference01/ score: 0.14285 -> Check!
+	->loaded n_seg: 30/ metric: ROUGE-2/ tgt: upc/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 30/ metric: ROUGE-3/ tgt: upc/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 30/ metric: ROUGE-4/ tgt: upc/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 30/ metric: ROUGE-L/ tgt: upc/ ref: reference01/ score: 0.14285 -> Check!
+	->loaded n_seg: 30/ metric: ROUGE-S*/ tgt: upc/ ref: reference01/ score: 0.01348 -> Check!
+	->loaded n_seg: 30/ metric: ROUGE-SU*/ tgt: upc/ ref: reference01/ score: 0.02474 -> Check!
+	->loaded n_seg: 30/ metric: ROUGE-W/ tgt: upc/ ref: reference01/ score: 0.09276 -> Check!
+	->loaded n_seg: 31/ metric: ROUGE-1/ tgt: upc/ ref: reference01/ score: 0.25641 -> Check!
+	->loaded n_seg: 31/ metric: ROUGE-2/ tgt: upc/ ref: reference01/ score: 0.10811 -> Check!
+	->loaded n_seg: 31/ metric: ROUGE-3/ tgt: upc/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 31/ metric: ROUGE-4/ tgt: upc/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 31/ metric: ROUGE-L/ tgt: upc/ ref: reference01/ score: 0.20513 -> Check!
+	->loaded n_seg: 31/ metric: ROUGE-S*/ tgt: upc/ ref: reference01/ score: 0.04408 -> Check!
+	->loaded n_seg: 31/ metric: ROUGE-SU*/ tgt: upc/ ref: reference01/ score: 0.065 -> Check!
+	->loaded n_seg: 31/ metric: ROUGE-W/ tgt: upc/ ref: reference01/ score: 0.12698 -> Check!
+	->loaded n_seg: 32/ metric: ROUGE-1/ tgt: upc/ ref: reference01/ score: 0.49123 -> Check!
+	->loaded n_seg: 32/ metric: ROUGE-2/ tgt: upc/ ref: reference01/ score: 0.18182 -> Check!
+	->loaded n_seg: 32/ metric: ROUGE-3/ tgt: upc/ ref: reference01/ score: 0.07547 -> Check!
+	->loaded n_seg: 32/ metric: ROUGE-4/ tgt: upc/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 32/ metric: ROUGE-L/ tgt: upc/ ref: reference01/ score: 0.38597 -> Check!
+	->loaded n_seg: 32/ metric: ROUGE-S*/ tgt: upc/ ref: reference01/ score: 0.21429 -> Check!
+	->loaded n_seg: 32/ metric: ROUGE-SU*/ tgt: upc/ ref: reference01/ score: 0.23123 -> Check!
+	->loaded n_seg: 32/ metric: ROUGE-W/ tgt: upc/ ref: reference01/ score: 0.20003 -> Check!
+	->loaded n_seg: 33/ metric: ROUGE-1/ tgt: upc/ ref: reference01/ score: 0.90909 -> Check!
+	->loaded n_seg: 33/ metric: ROUGE-2/ tgt: upc/ ref: reference01/ score: 0.66667 -> Check!
+	->loaded n_seg: 33/ metric: ROUGE-3/ tgt: upc/ ref: reference01/ score: 0.28571 -> Check!
+	->loaded n_seg: 33/ metric: ROUGE-4/ tgt: upc/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 33/ metric: ROUGE-L/ tgt: upc/ ref: reference01/ score: 0.90909 -> Check!
+	->loaded n_seg: 33/ metric: ROUGE-S*/ tgt: upc/ ref: reference01/ score: 0.8 -> Check!
+	->loaded n_seg: 33/ metric: ROUGE-SU*/ tgt: upc/ ref: reference01/ score: 0.82353 -> Check!
+	->loaded n_seg: 33/ metric: ROUGE-W/ tgt: upc/ ref: reference01/ score: 0.77527 -> Check!
+[LOAD]: COMPLETE
+[LOAD]: ROUGE/ tgt: upv-combo/ ref: reference01/ split: 1
+	file: serialized_ROUGE_upv-combo.001_reference01.001
+	->loaded n_seg: 1/ metric: ROUGE-1/ tgt: upv-combo/ ref: reference01/ score: 0.12 -> Check!
+	->loaded n_seg: 1/ metric: ROUGE-2/ tgt: upv-combo/ ref: reference01/ score: 0.04167 -> Check!
+	->loaded n_seg: 1/ metric: ROUGE-3/ tgt: upv-combo/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 1/ metric: ROUGE-4/ tgt: upv-combo/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 1/ metric: ROUGE-L/ tgt: upv-combo/ ref: reference01/ score: 0.12 -> Check!
+	->loaded n_seg: 1/ metric: ROUGE-S*/ tgt: upv-combo/ ref: reference01/ score: 0.00649 -> Check!
+	->loaded n_seg: 1/ metric: ROUGE-SU*/ tgt: upv-combo/ ref: reference01/ score: 0.01235 -> Check!
+	->loaded n_seg: 1/ metric: ROUGE-W/ tgt: upv-combo/ ref: reference01/ score: 0.05502 -> Check!
+	->loaded n_seg: 2/ metric: ROUGE-1/ tgt: upv-combo/ ref: reference01/ score: 0.10811 -> Check!
+	->loaded n_seg: 2/ metric: ROUGE-2/ tgt: upv-combo/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 2/ metric: ROUGE-3/ tgt: upv-combo/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 2/ metric: ROUGE-4/ tgt: upv-combo/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 2/ metric: ROUGE-L/ tgt: upv-combo/ ref: reference01/ score: 0.10811 -> Check!
+	->loaded n_seg: 2/ metric: ROUGE-S*/ tgt: upv-combo/ ref: reference01/ score: 0.00527 -> Check!
+	->loaded n_seg: 2/ metric: ROUGE-SU*/ tgt: upv-combo/ ref: reference01/ score: 0.01446 -> Check!
+	->loaded n_seg: 2/ metric: ROUGE-W/ tgt: upv-combo/ ref: reference01/ score: 0.08142 -> Check!
+	->loaded n_seg: 3/ metric: ROUGE-1/ tgt: upv-combo/ ref: reference01/ score: 0.14285 -> Check!
+	->loaded n_seg: 3/ metric: ROUGE-2/ tgt: upv-combo/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 3/ metric: ROUGE-3/ tgt: upv-combo/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 3/ metric: ROUGE-4/ tgt: upv-combo/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 3/ metric: ROUGE-L/ tgt: upv-combo/ ref: reference01/ score: 0.14285 -> Check!
+	->loaded n_seg: 3/ metric: ROUGE-S*/ tgt: upv-combo/ ref: reference01/ score: 0.01348 -> Check!
+	->loaded n_seg: 3/ metric: ROUGE-SU*/ tgt: upv-combo/ ref: reference01/ score: 0.02474 -> Check!
+	->loaded n_seg: 3/ metric: ROUGE-W/ tgt: upv-combo/ ref: reference01/ score: 0.09276 -> Check!
+	->loaded n_seg: 4/ metric: ROUGE-1/ tgt: upv-combo/ ref: reference01/ score: 0.25641 -> Check!
+	->loaded n_seg: 4/ metric: ROUGE-2/ tgt: upv-combo/ ref: reference01/ score: 0.10811 -> Check!
+	->loaded n_seg: 4/ metric: ROUGE-3/ tgt: upv-combo/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 4/ metric: ROUGE-4/ tgt: upv-combo/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 4/ metric: ROUGE-L/ tgt: upv-combo/ ref: reference01/ score: 0.20513 -> Check!
+	->loaded n_seg: 4/ metric: ROUGE-S*/ tgt: upv-combo/ ref: reference01/ score: 0.04408 -> Check!
+	->loaded n_seg: 4/ metric: ROUGE-SU*/ tgt: upv-combo/ ref: reference01/ score: 0.065 -> Check!
+	->loaded n_seg: 4/ metric: ROUGE-W/ tgt: upv-combo/ ref: reference01/ score: 0.12698 -> Check!
+	->loaded n_seg: 5/ metric: ROUGE-1/ tgt: upv-combo/ ref: reference01/ score: 0.49123 -> Check!
+	->loaded n_seg: 5/ metric: ROUGE-2/ tgt: upv-combo/ ref: reference01/ score: 0.18182 -> Check!
+	->loaded n_seg: 5/ metric: ROUGE-3/ tgt: upv-combo/ ref: reference01/ score: 0.07547 -> Check!
+	->loaded n_seg: 5/ metric: ROUGE-4/ tgt: upv-combo/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 5/ metric: ROUGE-L/ tgt: upv-combo/ ref: reference01/ score: 0.38597 -> Check!
+	->loaded n_seg: 5/ metric: ROUGE-S*/ tgt: upv-combo/ ref: reference01/ score: 0.21429 -> Check!
+	->loaded n_seg: 5/ metric: ROUGE-SU*/ tgt: upv-combo/ ref: reference01/ score: 0.23123 -> Check!
+	->loaded n_seg: 5/ metric: ROUGE-W/ tgt: upv-combo/ ref: reference01/ score: 0.20003 -> Check!
+	->loaded n_seg: 6/ metric: ROUGE-1/ tgt: upv-combo/ ref: reference01/ score: 0.90909 -> Check!
+	->loaded n_seg: 6/ metric: ROUGE-2/ tgt: upv-combo/ ref: reference01/ score: 0.66667 -> Check!
+	->loaded n_seg: 6/ metric: ROUGE-3/ tgt: upv-combo/ ref: reference01/ score: 0.28571 -> Check!
+	->loaded n_seg: 6/ metric: ROUGE-4/ tgt: upv-combo/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 6/ metric: ROUGE-L/ tgt: upv-combo/ ref: reference01/ score: 0.90909 -> Check!
+	->loaded n_seg: 6/ metric: ROUGE-S*/ tgt: upv-combo/ ref: reference01/ score: 0.8 -> Check!
+	->loaded n_seg: 6/ metric: ROUGE-SU*/ tgt: upv-combo/ ref: reference01/ score: 0.82353 -> Check!
+	->loaded n_seg: 6/ metric: ROUGE-W/ tgt: upv-combo/ ref: reference01/ score: 0.77527 -> Check!
+	->loaded n_seg: 7/ metric: ROUGE-1/ tgt: upv-combo/ ref: reference01/ score: 0.26087 -> Check!
+	->loaded n_seg: 7/ metric: ROUGE-2/ tgt: upv-combo/ ref: reference01/ score: 0.09524 -> Check!
+	->loaded n_seg: 7/ metric: ROUGE-3/ tgt: upv-combo/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 7/ metric: ROUGE-4/ tgt: upv-combo/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 7/ metric: ROUGE-L/ tgt: upv-combo/ ref: reference01/ score: 0.26087 -> Check!
+	->loaded n_seg: 7/ metric: ROUGE-S*/ tgt: upv-combo/ ref: reference01/ score: 0.04959 -> Check!
+	->loaded n_seg: 7/ metric: ROUGE-SU*/ tgt: upv-combo/ ref: reference01/ score: 0.07042 -> Check!
+	->loaded n_seg: 7/ metric: ROUGE-W/ tgt: upv-combo/ ref: reference01/ score: 0.17593 -> Check!
+	->loaded n_seg: 8/ metric: ROUGE-1/ tgt: upv-combo/ ref: reference01/ score: 0.07843 -> Check!
+	->loaded n_seg: 8/ metric: ROUGE-2/ tgt: upv-combo/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 8/ metric: ROUGE-3/ tgt: upv-combo/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 8/ metric: ROUGE-4/ tgt: upv-combo/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 8/ metric: ROUGE-L/ tgt: upv-combo/ ref: reference01/ score: 0.07843 -> Check!
+	->loaded n_seg: 8/ metric: ROUGE-S*/ tgt: upv-combo/ ref: reference01/ score: 0.0032 -> Check!
+	->loaded n_seg: 8/ metric: ROUGE-SU*/ tgt: upv-combo/ ref: reference01/ score: 0.0089 -> Check!
+	->loaded n_seg: 8/ metric: ROUGE-W/ tgt: upv-combo/ ref: reference01/ score: 0.04842 -> Check!
+	->loaded n_seg: 9/ metric: ROUGE-1/ tgt: upv-combo/ ref: reference01/ score: 0.4898 -> Check!
+	->loaded n_seg: 9/ metric: ROUGE-2/ tgt: upv-combo/ ref: reference01/ score: 0.29788 -> Check!
+	->loaded n_seg: 9/ metric: ROUGE-3/ tgt: upv-combo/ ref: reference01/ score: 0.17778 -> Check!
+	->loaded n_seg: 9/ metric: ROUGE-4/ tgt: upv-combo/ ref: reference01/ score: 0.04651 -> Check!
+	->loaded n_seg: 9/ metric: ROUGE-L/ tgt: upv-combo/ ref: reference01/ score: 0.4898 -> Check!
+	->loaded n_seg: 9/ metric: ROUGE-S*/ tgt: upv-combo/ ref: reference01/ score: 0.22917 -> Check!
+	->loaded n_seg: 9/ metric: ROUGE-SU*/ tgt: upv-combo/ ref: reference01/ score: 0.24719 -> Check!
+	->loaded n_seg: 9/ metric: ROUGE-W/ tgt: upv-combo/ ref: reference01/ score: 0.26793 -> Check!
+[LOAD]: COMPLETE
+[LOAD]: ROUGE/ tgt: upv-combo/ ref: reference01/ split: 2
+	file: serialized_ROUGE_upv-combo.002_reference01.002
+	->loaded n_seg: 10/ metric: ROUGE-1/ tgt: upv-combo/ ref: reference01/ score: 0.12 -> Check!
+	->loaded n_seg: 10/ metric: ROUGE-2/ tgt: upv-combo/ ref: reference01/ score: 0.04167 -> Check!
+	->loaded n_seg: 10/ metric: ROUGE-3/ tgt: upv-combo/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 10/ metric: ROUGE-4/ tgt: upv-combo/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 10/ metric: ROUGE-L/ tgt: upv-combo/ ref: reference01/ score: 0.12 -> Check!
+	->loaded n_seg: 10/ metric: ROUGE-S*/ tgt: upv-combo/ ref: reference01/ score: 0.00649 -> Check!
+	->loaded n_seg: 10/ metric: ROUGE-SU*/ tgt: upv-combo/ ref: reference01/ score: 0.01235 -> Check!
+	->loaded n_seg: 10/ metric: ROUGE-W/ tgt: upv-combo/ ref: reference01/ score: 0.05502 -> Check!
+	->loaded n_seg: 11/ metric: ROUGE-1/ tgt: upv-combo/ ref: reference01/ score: 0.10811 -> Check!
+	->loaded n_seg: 11/ metric: ROUGE-2/ tgt: upv-combo/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 11/ metric: ROUGE-3/ tgt: upv-combo/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 11/ metric: ROUGE-4/ tgt: upv-combo/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 11/ metric: ROUGE-L/ tgt: upv-combo/ ref: reference01/ score: 0.10811 -> Check!
+	->loaded n_seg: 11/ metric: ROUGE-S*/ tgt: upv-combo/ ref: reference01/ score: 0.00527 -> Check!
+	->loaded n_seg: 11/ metric: ROUGE-SU*/ tgt: upv-combo/ ref: reference01/ score: 0.01446 -> Check!
+	->loaded n_seg: 11/ metric: ROUGE-W/ tgt: upv-combo/ ref: reference01/ score: 0.08142 -> Check!
+	->loaded n_seg: 12/ metric: ROUGE-1/ tgt: upv-combo/ ref: reference01/ score: 0.14285 -> Check!
+	->loaded n_seg: 12/ metric: ROUGE-2/ tgt: upv-combo/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 12/ metric: ROUGE-3/ tgt: upv-combo/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 12/ metric: ROUGE-4/ tgt: upv-combo/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 12/ metric: ROUGE-L/ tgt: upv-combo/ ref: reference01/ score: 0.14285 -> Check!
+	->loaded n_seg: 12/ metric: ROUGE-S*/ tgt: upv-combo/ ref: reference01/ score: 0.01348 -> Check!
+	->loaded n_seg: 12/ metric: ROUGE-SU*/ tgt: upv-combo/ ref: reference01/ score: 0.02474 -> Check!
+	->loaded n_seg: 12/ metric: ROUGE-W/ tgt: upv-combo/ ref: reference01/ score: 0.09276 -> Check!
+	->loaded n_seg: 13/ metric: ROUGE-1/ tgt: upv-combo/ ref: reference01/ score: 0.25641 -> Check!
+	->loaded n_seg: 13/ metric: ROUGE-2/ tgt: upv-combo/ ref: reference01/ score: 0.10811 -> Check!
+	->loaded n_seg: 13/ metric: ROUGE-3/ tgt: upv-combo/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 13/ metric: ROUGE-4/ tgt: upv-combo/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 13/ metric: ROUGE-L/ tgt: upv-combo/ ref: reference01/ score: 0.20513 -> Check!
+	->loaded n_seg: 13/ metric: ROUGE-S*/ tgt: upv-combo/ ref: reference01/ score: 0.04408 -> Check!
+	->loaded n_seg: 13/ metric: ROUGE-SU*/ tgt: upv-combo/ ref: reference01/ score: 0.065 -> Check!
+	->loaded n_seg: 13/ metric: ROUGE-W/ tgt: upv-combo/ ref: reference01/ score: 0.12698 -> Check!
+	->loaded n_seg: 14/ metric: ROUGE-1/ tgt: upv-combo/ ref: reference01/ score: 0.49123 -> Check!
+	->loaded n_seg: 14/ metric: ROUGE-2/ tgt: upv-combo/ ref: reference01/ score: 0.18182 -> Check!
+	->loaded n_seg: 14/ metric: ROUGE-3/ tgt: upv-combo/ ref: reference01/ score: 0.07547 -> Check!
+	->loaded n_seg: 14/ metric: ROUGE-4/ tgt: upv-combo/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 14/ metric: ROUGE-L/ tgt: upv-combo/ ref: reference01/ score: 0.38597 -> Check!
+	->loaded n_seg: 14/ metric: ROUGE-S*/ tgt: upv-combo/ ref: reference01/ score: 0.21429 -> Check!
+	->loaded n_seg: 14/ metric: ROUGE-SU*/ tgt: upv-combo/ ref: reference01/ score: 0.23123 -> Check!
+	->loaded n_seg: 14/ metric: ROUGE-W/ tgt: upv-combo/ ref: reference01/ score: 0.20003 -> Check!
+	->loaded n_seg: 15/ metric: ROUGE-1/ tgt: upv-combo/ ref: reference01/ score: 0.90909 -> Check!
+	->loaded n_seg: 15/ metric: ROUGE-2/ tgt: upv-combo/ ref: reference01/ score: 0.66667 -> Check!
+	->loaded n_seg: 15/ metric: ROUGE-3/ tgt: upv-combo/ ref: reference01/ score: 0.28571 -> Check!
+	->loaded n_seg: 15/ metric: ROUGE-4/ tgt: upv-combo/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 15/ metric: ROUGE-L/ tgt: upv-combo/ ref: reference01/ score: 0.90909 -> Check!
+	->loaded n_seg: 15/ metric: ROUGE-S*/ tgt: upv-combo/ ref: reference01/ score: 0.8 -> Check!
+	->loaded n_seg: 15/ metric: ROUGE-SU*/ tgt: upv-combo/ ref: reference01/ score: 0.82353 -> Check!
+	->loaded n_seg: 15/ metric: ROUGE-W/ tgt: upv-combo/ ref: reference01/ score: 0.77527 -> Check!
+	->loaded n_seg: 16/ metric: ROUGE-1/ tgt: upv-combo/ ref: reference01/ score: 0.26087 -> Check!
+	->loaded n_seg: 16/ metric: ROUGE-2/ tgt: upv-combo/ ref: reference01/ score: 0.09524 -> Check!
+	->loaded n_seg: 16/ metric: ROUGE-3/ tgt: upv-combo/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 16/ metric: ROUGE-4/ tgt: upv-combo/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 16/ metric: ROUGE-L/ tgt: upv-combo/ ref: reference01/ score: 0.26087 -> Check!
+	->loaded n_seg: 16/ metric: ROUGE-S*/ tgt: upv-combo/ ref: reference01/ score: 0.04959 -> Check!
+	->loaded n_seg: 16/ metric: ROUGE-SU*/ tgt: upv-combo/ ref: reference01/ score: 0.07042 -> Check!
+	->loaded n_seg: 16/ metric: ROUGE-W/ tgt: upv-combo/ ref: reference01/ score: 0.17593 -> Check!
+	->loaded n_seg: 17/ metric: ROUGE-1/ tgt: upv-combo/ ref: reference01/ score: 0.07843 -> Check!
+	->loaded n_seg: 17/ metric: ROUGE-2/ tgt: upv-combo/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 17/ metric: ROUGE-3/ tgt: upv-combo/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 17/ metric: ROUGE-4/ tgt: upv-combo/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 17/ metric: ROUGE-L/ tgt: upv-combo/ ref: reference01/ score: 0.07843 -> Check!
+	->loaded n_seg: 17/ metric: ROUGE-S*/ tgt: upv-combo/ ref: reference01/ score: 0.0032 -> Check!
+	->loaded n_seg: 17/ metric: ROUGE-SU*/ tgt: upv-combo/ ref: reference01/ score: 0.0089 -> Check!
+	->loaded n_seg: 17/ metric: ROUGE-W/ tgt: upv-combo/ ref: reference01/ score: 0.04842 -> Check!
+	->loaded n_seg: 18/ metric: ROUGE-1/ tgt: upv-combo/ ref: reference01/ score: 0.4898 -> Check!
+	->loaded n_seg: 18/ metric: ROUGE-2/ tgt: upv-combo/ ref: reference01/ score: 0.29788 -> Check!
+	->loaded n_seg: 18/ metric: ROUGE-3/ tgt: upv-combo/ ref: reference01/ score: 0.17778 -> Check!
+	->loaded n_seg: 18/ metric: ROUGE-4/ tgt: upv-combo/ ref: reference01/ score: 0.04651 -> Check!
+	->loaded n_seg: 18/ metric: ROUGE-L/ tgt: upv-combo/ ref: reference01/ score: 0.4898 -> Check!
+	->loaded n_seg: 18/ metric: ROUGE-S*/ tgt: upv-combo/ ref: reference01/ score: 0.22917 -> Check!
+	->loaded n_seg: 18/ metric: ROUGE-SU*/ tgt: upv-combo/ ref: reference01/ score: 0.24719 -> Check!
+	->loaded n_seg: 18/ metric: ROUGE-W/ tgt: upv-combo/ ref: reference01/ score: 0.26793 -> Check!
+[LOAD]: COMPLETE
+[LOAD]: ROUGE/ tgt: upv-combo/ ref: reference01/ split: 3
+	file: serialized_ROUGE_upv-combo.003_reference01.003
+	->loaded n_seg: 19/ metric: ROUGE-1/ tgt: upv-combo/ ref: reference01/ score: 0.12 -> Check!
+	->loaded n_seg: 19/ metric: ROUGE-2/ tgt: upv-combo/ ref: reference01/ score: 0.04167 -> Check!
+	->loaded n_seg: 19/ metric: ROUGE-3/ tgt: upv-combo/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 19/ metric: ROUGE-4/ tgt: upv-combo/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 19/ metric: ROUGE-L/ tgt: upv-combo/ ref: reference01/ score: 0.12 -> Check!
+	->loaded n_seg: 19/ metric: ROUGE-S*/ tgt: upv-combo/ ref: reference01/ score: 0.00649 -> Check!
+	->loaded n_seg: 19/ metric: ROUGE-SU*/ tgt: upv-combo/ ref: reference01/ score: 0.01235 -> Check!
+	->loaded n_seg: 19/ metric: ROUGE-W/ tgt: upv-combo/ ref: reference01/ score: 0.05502 -> Check!
+	->loaded n_seg: 20/ metric: ROUGE-1/ tgt: upv-combo/ ref: reference01/ score: 0.10811 -> Check!
+	->loaded n_seg: 20/ metric: ROUGE-2/ tgt: upv-combo/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 20/ metric: ROUGE-3/ tgt: upv-combo/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 20/ metric: ROUGE-4/ tgt: upv-combo/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 20/ metric: ROUGE-L/ tgt: upv-combo/ ref: reference01/ score: 0.10811 -> Check!
+	->loaded n_seg: 20/ metric: ROUGE-S*/ tgt: upv-combo/ ref: reference01/ score: 0.00527 -> Check!
+	->loaded n_seg: 20/ metric: ROUGE-SU*/ tgt: upv-combo/ ref: reference01/ score: 0.01446 -> Check!
+	->loaded n_seg: 20/ metric: ROUGE-W/ tgt: upv-combo/ ref: reference01/ score: 0.08142 -> Check!
+	->loaded n_seg: 21/ metric: ROUGE-1/ tgt: upv-combo/ ref: reference01/ score: 0.14285 -> Check!
+	->loaded n_seg: 21/ metric: ROUGE-2/ tgt: upv-combo/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 21/ metric: ROUGE-3/ tgt: upv-combo/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 21/ metric: ROUGE-4/ tgt: upv-combo/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 21/ metric: ROUGE-L/ tgt: upv-combo/ ref: reference01/ score: 0.14285 -> Check!
+	->loaded n_seg: 21/ metric: ROUGE-S*/ tgt: upv-combo/ ref: reference01/ score: 0.01348 -> Check!
+	->loaded n_seg: 21/ metric: ROUGE-SU*/ tgt: upv-combo/ ref: reference01/ score: 0.02474 -> Check!
+	->loaded n_seg: 21/ metric: ROUGE-W/ tgt: upv-combo/ ref: reference01/ score: 0.09276 -> Check!
+	->loaded n_seg: 22/ metric: ROUGE-1/ tgt: upv-combo/ ref: reference01/ score: 0.25641 -> Check!
+	->loaded n_seg: 22/ metric: ROUGE-2/ tgt: upv-combo/ ref: reference01/ score: 0.10811 -> Check!
+	->loaded n_seg: 22/ metric: ROUGE-3/ tgt: upv-combo/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 22/ metric: ROUGE-4/ tgt: upv-combo/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 22/ metric: ROUGE-L/ tgt: upv-combo/ ref: reference01/ score: 0.20513 -> Check!
+	->loaded n_seg: 22/ metric: ROUGE-S*/ tgt: upv-combo/ ref: reference01/ score: 0.04408 -> Check!
+	->loaded n_seg: 22/ metric: ROUGE-SU*/ tgt: upv-combo/ ref: reference01/ score: 0.065 -> Check!
+	->loaded n_seg: 22/ metric: ROUGE-W/ tgt: upv-combo/ ref: reference01/ score: 0.12698 -> Check!
+	->loaded n_seg: 23/ metric: ROUGE-1/ tgt: upv-combo/ ref: reference01/ score: 0.49123 -> Check!
+	->loaded n_seg: 23/ metric: ROUGE-2/ tgt: upv-combo/ ref: reference01/ score: 0.18182 -> Check!
+	->loaded n_seg: 23/ metric: ROUGE-3/ tgt: upv-combo/ ref: reference01/ score: 0.07547 -> Check!
+	->loaded n_seg: 23/ metric: ROUGE-4/ tgt: upv-combo/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 23/ metric: ROUGE-L/ tgt: upv-combo/ ref: reference01/ score: 0.38597 -> Check!
+	->loaded n_seg: 23/ metric: ROUGE-S*/ tgt: upv-combo/ ref: reference01/ score: 0.21429 -> Check!
+	->loaded n_seg: 23/ metric: ROUGE-SU*/ tgt: upv-combo/ ref: reference01/ score: 0.23123 -> Check!
+	->loaded n_seg: 23/ metric: ROUGE-W/ tgt: upv-combo/ ref: reference01/ score: 0.20003 -> Check!
+	->loaded n_seg: 24/ metric: ROUGE-1/ tgt: upv-combo/ ref: reference01/ score: 0.90909 -> Check!
+	->loaded n_seg: 24/ metric: ROUGE-2/ tgt: upv-combo/ ref: reference01/ score: 0.66667 -> Check!
+	->loaded n_seg: 24/ metric: ROUGE-3/ tgt: upv-combo/ ref: reference01/ score: 0.28571 -> Check!
+	->loaded n_seg: 24/ metric: ROUGE-4/ tgt: upv-combo/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 24/ metric: ROUGE-L/ tgt: upv-combo/ ref: reference01/ score: 0.90909 -> Check!
+	->loaded n_seg: 24/ metric: ROUGE-S*/ tgt: upv-combo/ ref: reference01/ score: 0.8 -> Check!
+	->loaded n_seg: 24/ metric: ROUGE-SU*/ tgt: upv-combo/ ref: reference01/ score: 0.82353 -> Check!
+	->loaded n_seg: 24/ metric: ROUGE-W/ tgt: upv-combo/ ref: reference01/ score: 0.77527 -> Check!
+	->loaded n_seg: 25/ metric: ROUGE-1/ tgt: upv-combo/ ref: reference01/ score: 0.26087 -> Check!
+	->loaded n_seg: 25/ metric: ROUGE-2/ tgt: upv-combo/ ref: reference01/ score: 0.09524 -> Check!
+	->loaded n_seg: 25/ metric: ROUGE-3/ tgt: upv-combo/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 25/ metric: ROUGE-4/ tgt: upv-combo/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 25/ metric: ROUGE-L/ tgt: upv-combo/ ref: reference01/ score: 0.26087 -> Check!
+	->loaded n_seg: 25/ metric: ROUGE-S*/ tgt: upv-combo/ ref: reference01/ score: 0.04959 -> Check!
+	->loaded n_seg: 25/ metric: ROUGE-SU*/ tgt: upv-combo/ ref: reference01/ score: 0.07042 -> Check!
+	->loaded n_seg: 25/ metric: ROUGE-W/ tgt: upv-combo/ ref: reference01/ score: 0.17593 -> Check!
+	->loaded n_seg: 26/ metric: ROUGE-1/ tgt: upv-combo/ ref: reference01/ score: 0.07843 -> Check!
+	->loaded n_seg: 26/ metric: ROUGE-2/ tgt: upv-combo/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 26/ metric: ROUGE-3/ tgt: upv-combo/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 26/ metric: ROUGE-4/ tgt: upv-combo/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 26/ metric: ROUGE-L/ tgt: upv-combo/ ref: reference01/ score: 0.07843 -> Check!
+	->loaded n_seg: 26/ metric: ROUGE-S*/ tgt: upv-combo/ ref: reference01/ score: 0.0032 -> Check!
+	->loaded n_seg: 26/ metric: ROUGE-SU*/ tgt: upv-combo/ ref: reference01/ score: 0.0089 -> Check!
+	->loaded n_seg: 26/ metric: ROUGE-W/ tgt: upv-combo/ ref: reference01/ score: 0.04842 -> Check!
+	->loaded n_seg: 27/ metric: ROUGE-1/ tgt: upv-combo/ ref: reference01/ score: 0.4898 -> Check!
+	->loaded n_seg: 27/ metric: ROUGE-2/ tgt: upv-combo/ ref: reference01/ score: 0.29788 -> Check!
+	->loaded n_seg: 27/ metric: ROUGE-3/ tgt: upv-combo/ ref: reference01/ score: 0.17778 -> Check!
+	->loaded n_seg: 27/ metric: ROUGE-4/ tgt: upv-combo/ ref: reference01/ score: 0.04651 -> Check!
+	->loaded n_seg: 27/ metric: ROUGE-L/ tgt: upv-combo/ ref: reference01/ score: 0.4898 -> Check!
+	->loaded n_seg: 27/ metric: ROUGE-S*/ tgt: upv-combo/ ref: reference01/ score: 0.22917 -> Check!
+	->loaded n_seg: 27/ metric: ROUGE-SU*/ tgt: upv-combo/ ref: reference01/ score: 0.24719 -> Check!
+	->loaded n_seg: 27/ metric: ROUGE-W/ tgt: upv-combo/ ref: reference01/ score: 0.26793 -> Check!
+[LOAD]: COMPLETE
+[LOAD]: ROUGE/ tgt: upv-combo/ ref: reference01/ split: 4
+	file: serialized_ROUGE_upv-combo.004_reference01.004
+	->loaded n_seg: 28/ metric: ROUGE-1/ tgt: upv-combo/ ref: reference01/ score: 0.12 -> Check!
+	->loaded n_seg: 28/ metric: ROUGE-2/ tgt: upv-combo/ ref: reference01/ score: 0.04167 -> Check!
+	->loaded n_seg: 28/ metric: ROUGE-3/ tgt: upv-combo/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 28/ metric: ROUGE-4/ tgt: upv-combo/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 28/ metric: ROUGE-L/ tgt: upv-combo/ ref: reference01/ score: 0.12 -> Check!
+	->loaded n_seg: 28/ metric: ROUGE-S*/ tgt: upv-combo/ ref: reference01/ score: 0.00649 -> Check!
+	->loaded n_seg: 28/ metric: ROUGE-SU*/ tgt: upv-combo/ ref: reference01/ score: 0.01235 -> Check!
+	->loaded n_seg: 28/ metric: ROUGE-W/ tgt: upv-combo/ ref: reference01/ score: 0.05502 -> Check!
+	->loaded n_seg: 29/ metric: ROUGE-1/ tgt: upv-combo/ ref: reference01/ score: 0.10811 -> Check!
+	->loaded n_seg: 29/ metric: ROUGE-2/ tgt: upv-combo/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 29/ metric: ROUGE-3/ tgt: upv-combo/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 29/ metric: ROUGE-4/ tgt: upv-combo/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 29/ metric: ROUGE-L/ tgt: upv-combo/ ref: reference01/ score: 0.10811 -> Check!
+	->loaded n_seg: 29/ metric: ROUGE-S*/ tgt: upv-combo/ ref: reference01/ score: 0.00527 -> Check!
+	->loaded n_seg: 29/ metric: ROUGE-SU*/ tgt: upv-combo/ ref: reference01/ score: 0.01446 -> Check!
+	->loaded n_seg: 29/ metric: ROUGE-W/ tgt: upv-combo/ ref: reference01/ score: 0.08142 -> Check!
+	->loaded n_seg: 30/ metric: ROUGE-1/ tgt: upv-combo/ ref: reference01/ score: 0.14285 -> Check!
+	->loaded n_seg: 30/ metric: ROUGE-2/ tgt: upv-combo/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 30/ metric: ROUGE-3/ tgt: upv-combo/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 30/ metric: ROUGE-4/ tgt: upv-combo/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 30/ metric: ROUGE-L/ tgt: upv-combo/ ref: reference01/ score: 0.14285 -> Check!
+	->loaded n_seg: 30/ metric: ROUGE-S*/ tgt: upv-combo/ ref: reference01/ score: 0.01348 -> Check!
+	->loaded n_seg: 30/ metric: ROUGE-SU*/ tgt: upv-combo/ ref: reference01/ score: 0.02474 -> Check!
+	->loaded n_seg: 30/ metric: ROUGE-W/ tgt: upv-combo/ ref: reference01/ score: 0.09276 -> Check!
+	->loaded n_seg: 31/ metric: ROUGE-1/ tgt: upv-combo/ ref: reference01/ score: 0.25641 -> Check!
+	->loaded n_seg: 31/ metric: ROUGE-2/ tgt: upv-combo/ ref: reference01/ score: 0.10811 -> Check!
+	->loaded n_seg: 31/ metric: ROUGE-3/ tgt: upv-combo/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 31/ metric: ROUGE-4/ tgt: upv-combo/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 31/ metric: ROUGE-L/ tgt: upv-combo/ ref: reference01/ score: 0.20513 -> Check!
+	->loaded n_seg: 31/ metric: ROUGE-S*/ tgt: upv-combo/ ref: reference01/ score: 0.04408 -> Check!
+	->loaded n_seg: 31/ metric: ROUGE-SU*/ tgt: upv-combo/ ref: reference01/ score: 0.065 -> Check!
+	->loaded n_seg: 31/ metric: ROUGE-W/ tgt: upv-combo/ ref: reference01/ score: 0.12698 -> Check!
+	->loaded n_seg: 32/ metric: ROUGE-1/ tgt: upv-combo/ ref: reference01/ score: 0.49123 -> Check!
+	->loaded n_seg: 32/ metric: ROUGE-2/ tgt: upv-combo/ ref: reference01/ score: 0.18182 -> Check!
+	->loaded n_seg: 32/ metric: ROUGE-3/ tgt: upv-combo/ ref: reference01/ score: 0.07547 -> Check!
+	->loaded n_seg: 32/ metric: ROUGE-4/ tgt: upv-combo/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 32/ metric: ROUGE-L/ tgt: upv-combo/ ref: reference01/ score: 0.38597 -> Check!
+	->loaded n_seg: 32/ metric: ROUGE-S*/ tgt: upv-combo/ ref: reference01/ score: 0.21429 -> Check!
+	->loaded n_seg: 32/ metric: ROUGE-SU*/ tgt: upv-combo/ ref: reference01/ score: 0.23123 -> Check!
+	->loaded n_seg: 32/ metric: ROUGE-W/ tgt: upv-combo/ ref: reference01/ score: 0.20003 -> Check!
+	->loaded n_seg: 33/ metric: ROUGE-1/ tgt: upv-combo/ ref: reference01/ score: 0.90909 -> Check!
+	->loaded n_seg: 33/ metric: ROUGE-2/ tgt: upv-combo/ ref: reference01/ score: 0.66667 -> Check!
+	->loaded n_seg: 33/ metric: ROUGE-3/ tgt: upv-combo/ ref: reference01/ score: 0.28571 -> Check!
+	->loaded n_seg: 33/ metric: ROUGE-4/ tgt: upv-combo/ ref: reference01/ score: 0 -> Check!
+	->loaded n_seg: 33/ metric: ROUGE-L/ tgt: upv-combo/ ref: reference01/ score: 0.90909 -> Check!
+	->loaded n_seg: 33/ metric: ROUGE-S*/ tgt: upv-combo/ ref: reference01/ score: 0.8 -> Check!
+	->loaded n_seg: 33/ metric: ROUGE-SU*/ tgt: upv-combo/ ref: reference01/ score: 0.82353 -> Check!
+	->loaded n_seg: 33/ metric: ROUGE-W/ tgt: upv-combo/ ref: reference01/ score: 0.77527 -> Check!
+[LOAD]: COMPLETE
+[METRICS] finding max metric scores (for normalization)...
+[FINISHED]
+LET'S PRINT DA FINAL REPORT!!!
+[EMD] ASIYA

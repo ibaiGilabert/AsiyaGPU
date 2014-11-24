@@ -2,6 +2,7 @@
 #define CORE_HPP
 
 #include "Scores.hpp"
+#include "Process.hpp"
 
 #include <map>
 #include <set>

@@ -7,7 +7,6 @@
 #include "../include/TER.hpp"
 #include "../include/SC_RAW.hpp"
 #include "../include/TESTBED.hpp"
-#include "../include/Process.hpp"
 #include "../include/Core.hpp"
 #include "../Config.hpp"
 
@@ -129,11 +128,12 @@ void Core::process_multi_metrics(string HYP, const set<string> &Lref) {
 	string erase = "rm ";
 	// LAUNCH
 	for (int i = 1; i <= Config::num_process; ++i) {
+		fprintf(stderr, "get_split (%s): sys: %s/ ext: %s/ thread: %d\n", HYP.c_str(), TESTBED::Hsystems[HYP].c_str(), Common::TXTEXT.c_str(), i );
 		string TGT_split = TB_FORMAT::get_split(TESTBED::Hsystems[HYP], Common::TXTEXT, i);
 
-		string config_bleu_file = proc.make_config_file(HYP, REF, "BLEU", i);
+		/*string config_bleu_file = proc.make_config_file(HYP, REF, "BLEU", i);
 		string run_bleu_file = proc.make_run_file(config_bleu_file, HYP, REF, i, "BLEU");
-		job_qw.insert(proc.run_job(run_bleu_file, "BLEU"));
+		job_qw.insert(proc.run_job(run_bleu_file, "BLEU"));*/
 
 		string config_rouge_file = proc.make_config_file(HYP, REF, "ROUGE", i);
 		string run_rouge_file = proc.make_run_file(config_rouge_file, HYP, REF, i, "ROUGE");
@@ -145,13 +145,13 @@ void Core::process_multi_metrics(string HYP, const set<string> &Lref) {
 		// Crear cada config i script, despres llançar-lo iterativament per cada metrica.
 
 		// ELIMINAR scripts
-		string erase_sh;
-		erase_sh = erase + run_bleu_file;			    system(erase_sh.c_str());
-		erase_sh = erase + run_rouge_file;        system(erase_sh.c_str());
+		//string erase_sh;
+		//erase_sh = erase + run_bleu_file;			    system(erase_sh.c_str());
+		//erase_sh = erase + run_rouge_file;        system(erase_sh.c_str());
 		//erase_sh = erase + run_meteor_file;			  system(erase_sh.c_str());
 
-		erase_sh = erase + config_bleu_file;				  system(erase_sh.c_str());
-		erase_sh = erase + config_rouge_file;         system(erase_sh.c_str());
+		//erase_sh = erase + config_bleu_file;				  system(erase_sh.c_str());
+		//erase_sh = erase + config_rouge_file;         system(erase_sh.c_str());
 		}
 
 	// WAIT IN DO_SCORES
@@ -160,13 +160,11 @@ void Core::process_multi_metrics(string HYP, const set<string> &Lref) {
 void Core::rebuild_hash_scores(string TGT, const set<string> &Lref, Scores &hOQ) {
 	string REF = Common::join_set(Lref, '_');
 
-	int n_seg = 1;
-    char buffer[64];
-    for (int i = 1; i <= Config::num_process; ++i) {
-        sprintf(buffer, "serialized_ROUGE_%s.txt.%.3d_%s.txt.%.3d", TGT.c_str(), i, REF.c_str(), i);
-		hOQ.load_struct_scores(buffer, n_seg);
-    }
-
+	for (int i = 1; i <= Config::num_process; ++i) {
+		fprintf(stderr, "[LOAD]: ROUGE/ tgt: %s/ ref: %s/ split: %d\n", TGT.c_str(), REF.c_str(), i);
+		hOQ.load_struct_scores(TB_FORMAT::get_serial("ROUGE", TGT, REF, i));
+		fprintf(stderr, "[LOAD]: COMPLETE\n");
+	}
 }
 
 void Core::doMultiMetrics(string HYP, const set<string> &Lref, Scores &hOQ) {
@@ -300,17 +298,30 @@ double Core::do_scores(Scores &hOQ) {
 		}
 	}
 
-// WAIT
-while (!job_qw.empty()) {
-	for (set<string>::const_iterator it_job = job_qw.begin(); it_job != job_qw.end(); ++it_job) {
-		if (proc.end(*it_job)) job_qw.erase(it_job);
+if (Config::num_process) {
+	// WAIT
+	fprintf(stderr, "[WAIT]\n");
+	while (!job_qw.empty()) {
+		for (set<string>::const_iterator it_job = job_qw.begin(); it_job != job_qw.end(); ++it_job) {
+			if (proc.end(*it_job)) job_qw.erase(it_job);
+		}
 	}
-}
 
-// REBUILD
-for (set<string>::const_iterator it = Config::systems.begin(); it != Config::systems.end(); ++it) {
-	rebuild_hash_scores(*it, Config::references, hOQ);
+	// REBUILD
+	fprintf(stderr, "[REBUILD]\n");
+	for (set<string>::const_iterator it = Config::systems.begin(); it != Config::systems.end(); ++it) {
+		rebuild_hash_scores(*it, Config::references, hOQ);
+	}
+
+	//cout << "[REBUILD] hOQ: " << endl;
+	//for(int i = 0; i < hOQ.get_num_seg_scores(); ++i) {
+	//	hOQ.print_seg_scores(i);
+	//}
 }
+        /*for(int i = 0; i < hOQ.get_num_seg_scores(); ++i) {
+                hOQ.print_seg_scores(i);
+        }
+	TESTBED::print_idx();*/
 
 	if (Config::eval_schemes.find(Common::S_QUEEN) != Config::eval_schemes.end() or \
 	Config::metaeval_schemes.find(Common::S_QUEEN) != Config::metaeval_schemes.end() or \

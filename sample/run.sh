@@ -6,7 +6,7 @@
 #$ -l h_vmem=4G
 
 
-DATAPATH=/home/usuaris/gilabert/PROVA/AsiyaGPU/sample
+DATAPATH=/home/usuaris/gilabert/PROVA_REBUILD/AsiyaGPU/sample
 
 die () {
     echo >&2 "$@"
@@ -17,4 +17,4 @@ die () {
 
 i=$1
 
-./Asiya Asiya.config -p 3 -eval single,ulc -g seg -metric_set metrics_$i -data_path $DATAPATH > $i.report
+./Asiya Asiya.config -p 4 -v -eval single,ulc -g seg -metric_set metrics_$i -data_path $DATAPATH > $i.report

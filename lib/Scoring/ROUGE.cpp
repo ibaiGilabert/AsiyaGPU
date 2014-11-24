@@ -238,7 +238,7 @@ pair<vector<double>, vector<vector<double> > > ROUGE::computeROUGE(string TGT, i
     string ms = "[ERROR] problems running ROUGE...";
 	Common::execute_or_die(sc, ms);
 
-	string sysaux = "rm -f " + configROUGE;
+	/*string sysaux = "rm -f " + configROUGE;
 	system(sysaux.c_str());
 
 	int j = 1;
@@ -270,7 +270,7 @@ pair<vector<double>, vector<vector<double> > > ROUGE::computeROUGE(string TGT, i
 			}
 			++j;
 		}
-	}
+	}*/
 
 	vector<double> SYS = read_rouge(reportROUGE);
 	vector<vector<double> > SEG = read_rouge_segments(reportROUGE);
@@ -346,6 +346,8 @@ void ROUGE::doMetric(string TGT, string REF, string prefix, int stemming, Scores
         	//my ($SYS, $SEGS) = ROUGE::computeMultiROUGE($src, $out, $Href, $remakeREPORTS, $TGT, $REF, $tools, $stemming, $verbose);
 	    	pair<vector<double>, vector<vector<double> > > res = computeROUGE(TGT, stemming);
 
+
+cout << "ROUGE computed" << endl;
          	string prefR = prefix + ROUGE::ROUGEXT + "-1";
 			pair<vector<double>, vector<double> > doc_seg =  TESTBED::get_seg_doc_scores(res.second[0], 0, TGT);
 
@@ -356,6 +358,8 @@ void ROUGE::doMetric(string TGT, string REF, string prefix, int stemming, Scores
          		fprintf(stderr, "SC_ASIYA DOCUMENT %s CREATED\n", prefR.c_str());
          	}
          	hOQ.save_hash_scores(prefR, TGT, REF, res.first[0], doc_seg.first, doc_seg.second);
+
+cout << "hOQ -> First score saved" << endl;
 
 			prefR = prefix + ROUGE::ROUGEXT + "-2";
 			doc_seg = TESTBED::get_seg_doc_scores(res.second[1], 0, TGT);
@@ -413,12 +417,14 @@ void ROUGE::doMetric(string TGT, string REF, string prefix, int stemming, Scores
          	}
 	    	hOQ.save_hash_scores(prefR, TGT, REF, res.first[7], doc_seg.first, doc_seg.second);
 
+cout << "May I serialize you?" << endl;
 
             if (Config::serialize) {  //serialize
-                    string file_hOQ = "serialized_ROUGE_" + TGT + "_" + REF;
-                    hOQ.save_struct_scores(file_hOQ);
+                    hOQ.save_struct_scores(TB_FORMAT::make_serial("ROUGE", TGT, REF));
                     //sc_asiya.save_struct_scores(hOQ, file_hOQ);
             }
+
+cout << "ROUGE serialized" << endl;
                 /*cout << "-----------------------------------------ROUGE-SCORES---------------------------------" << endl;
                 hOQ.print_scores();
                 cout << "-------------------------------------------------------------------------------------" << endl;

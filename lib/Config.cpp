@@ -208,7 +208,7 @@ void Config::process_command_line_options(map<string, string> Options, vector<st
         fprintf(stderr, "Paralel (%s) -> No paralelism\n", Options["paralel"].c_str());
     } else Config::num_process = atoi(Options["paralel"].c_str());
     if (Options.find("serialize") != Options.end()) {
-        Config::serialize = 1;
+        Config::serialize = atoi(Options["serialize"].c_str());
         fprintf(stderr, "SERIALIZE\n");
     } else { fprintf(stderr, "DO NOT SERIALIZE\n"); }
 
@@ -497,16 +497,21 @@ void Config::process_config_file(char* config_file, map<string, string> Options)
                     if (Config::I == Common::I_NIST) {
                         TB_NIST tb_nist;
                         string proc_file = tb_nist.process_file(file, type);
-
-                        if (Config::num_process) {
+			
+			if (Config::num_process) {
                             cout << "to split <" << proc_file << ">" << endl;
-                            tb_nist.split_txt(proc_file, Config::num_process);
+                            tb_nist.split_txt_idx(proc_file, Config::num_process);
                         }
                     }
                     else  {
                         TB_RAW tb_raw;
                         string proc_file = tb_raw.process_file(file, type);
-                    }
+			
+			if (Config::num_process) {
+                            cout << "to split <" << proc_file << ">" << endl;
+                            tb_raw.split_txt_idx(proc_file, Config::num_process);
+                        }
+		    }
                 }
                 else if (type == "srclang") {
                     if (Common::rLANGS.find(file_cs) != Common::rLANGS.end()) {
