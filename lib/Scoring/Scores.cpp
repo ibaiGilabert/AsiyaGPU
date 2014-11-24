@@ -213,6 +213,22 @@ void Scores::load_struct_scores(char* filename) {
     } else { fprintf(stderr, "[ERROR] Could not rebuild HASH scores file: %s\n", filename); exit(1); }
 }
 
+void Scores::make_doc_scores(string metric_name, string system_name, string ref_name) {
+	int n_doc = 0;
+	double c_sum = 0;
+	dtring c_doc = "";	//TESTBED::IDX[TGT][1][0];		//first name_doc
+	vector<double> d_scores(doc.size()+1);
+	for(int i = 1; i < TESTBED::IDX[system_name].size(); ++i) {
+		if (TESTBED::IDX[system_name][i][0] != c_doc) {
+			c_doc = TESTBED::IDX[system_name][i][0];
+			d_scores[n_doc++] = c_sum;
+			c_sum = 0;
+			//++n_doc;
+		}
+		c_sum += seg[i+1][metric_name][system_name][ref_name];
+	}
+}
+
 void Scores::print_sys_scores() const {
 	cout << "----sys scores----" << endl;
 	for (oMap::const_iterator i = sys.begin(); i != sys.end(); ++i) {

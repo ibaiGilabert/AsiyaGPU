@@ -43,8 +43,8 @@ vector<string> Core::get_sorted_metrics() {
 		//sorted_metrics = vector<string>(Config::metrics.begin(), Config::metrics().end());
 		//if (Config::SORT == Common::SORT_NAME) //already sorted (set)
 	}
-	if (Config::eval_schemes[Common::S_ULC]) sorted_metrics.push_back(ULC::ULC_NAME);
-	if (Config::eval_schemes[Common::S_QUEEN]) sorted_metrics.push_back(QARLA::QUEEN);
+	//if (Config::eval_schemes[Common::S_ULC]) sorted_metrics.push_back(ULC::ULC_NAME);
+	//if (Config::eval_schemes[Common::S_QUEEN]) sorted_metrics.push_back(QARLA::QUEEN);
 
 	return sorted_metrics;
 }
@@ -166,6 +166,7 @@ void Core::rebuild_hash_scores(string TGT, const set<string> &Lref, Scores &hOQ)
     	hOQ.load_struct_scores(TB_FORMAT::get_serial("ROUGE", TGT, REF, i));
 	    //fprintf(stderr, "[LOAD]: COMPLETE\n");
     }
+    hOQ.make_doc_score("ROUGE", TGT, REF);
 }
 
 void Core::doMultiMetrics(string HYP, const set<string> &Lref, Scores &hOQ) {
@@ -299,20 +300,22 @@ double Core::do_scores(Scores &hOQ) {
 		}
 	}
 	
-	if (Config::num_process) {
-		// WAIT
-		if (Config::verbose) fprintf(stderr, "[WAIT]\n");
-		while (!job_qw.empty()) {
-	        for (set<string>::const_iterator it_job = job_qw.begin(); it_job != job_qw.end(); ++it_job) {
-	                if (proc.end(*it_job)) job_qw.erase(it_job);
-	        }
-		}
-		// REBUILD
-		if (Config::verbose) fprintf(stderr, "[REBUILD]\n");
-		for (set<string>::const_iterator it = Config::systems.begin(); it != Config::systems.end(); ++it) {
-	        rebuild_hash_scores(*it, Config::references, hOQ);
-		}
+if (Config::num_process) {
+	// WAIT
+	if (Config::verbose) fprintf(stderr, "[WAIT]\n");
+	while (!job_qw.empty()) {
+        for (set<string>::const_iterator it_job = job_qw.begin(); it_job != job_qw.end(); ++it_job) {
+                if (proc.end(*it_job)) job_qw.erase(it_job);
+        }
 	}
+	// REBUILD
+	if (Config::verbose) fprintf(stderr, "[REBUILD]\n");
+	for (set<string>::const_iterator it = Config::systems.begin(); it != Config::systems.end(); ++it) {
+        rebuild_hash_scores(*it, Config::references, hOQ);
+	}
+	
+    for (int i = 0; i < hOQ.get_num_doc_scores(); ++i) hOQ.print_doc_scores(i);
+}
 
 	if (Config::eval_schemes.find(Common::S_QUEEN) != Config::eval_schemes.end() or \
 	Config::metaeval_schemes.find(Common::S_QUEEN) != Config::metaeval_schemes.end() or \

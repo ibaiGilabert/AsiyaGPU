@@ -70,6 +70,7 @@ public:
 	//Save
 	void save_hash_scores(string metric_name, string system_name, string refere_name, const MetricScore &scores);
 	void save_hash_scores(string metric_name, string system_name, string refere_name, double sys_score, const vector<double> &doc_scores, const vector<double> &seg_scores);
+	void make_doc_scores(string metric_name, string system_name, string ref_name);
 
 	//Serialize hash scores
 	void save_struct_scores(char* filename);
