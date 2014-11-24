@@ -22,7 +22,10 @@ cout << "num_process: " << s << endl;
 cout << "n_segs: " << n_segs << endl;
 cout << "n_files: " << n_files << " expected" << endl;
 cout << "chunk: " << chunk << endl;*/
+    boost::filesystem::path p(file);
+    string basename_abs = p.parent_path().string() + "/" + p.stem().string();
 
+<<<<<<< HEAD
 	boost::filesystem::path p(file);
     string basename_abs = p.parent_path().string() + "/" + p.stem().string();
 /*	char* basename_abs = boost::filesystem::path(file).direname();
@@ -31,6 +34,10 @@ fprintf(stderr, "[TB_FORMAT] dirname: %s\n", basename_abs);
 fprintf(stderr, "[TB_FORMAT] + separator: %s\n", basename_abs);
 	strcat(basename_abs, boost::filesystem::path(file).stem().string().c_str());
 fprintf(stderr, "[TB_FORMAT] + separator + stem: %s\n", basename_abs);*/
+=======
+//fprintf(stderr, "[TB_FORMAT] basename: %s\n", basename_abs);
+    
+>>>>>>> b5344f6962929c6ce147c46fa47d92c248c59497
     ofstream output_file;
     ifstream input_file(file);
     if (input_file) {
@@ -38,6 +45,7 @@ fprintf(stderr, "[TB_FORMAT] + separator + stem: %s\n", basename_abs);*/
         char buffer[128];
         int c_file = 1;
         int c_seg = 0;
+<<<<<<< HEAD
         //int c_line = 0;
         sprintf(buffer, "%s.%.3d.%s", basename_abs.c_str(), c_file, ext);
 fprintf(stderr, "[SPLIT] input to read <%s> /ext: %s/ output: %s\n", file, ext, buffer);
@@ -51,23 +59,43 @@ fprintf(stderr, "[SPLIT] input to read <%s> /ext: %s/ output: %s\n", file, ext, 
                 //cout << "line[" << c_line << "]: seg: " << c_seg  << endl;
             //if (c_seg == 0 and strcmp (Common::IDXEXT.c_str(), ext) == 0)
              //   output_file << Common::UNKNOWN_SET << " " << Common::UNKNOWN_LANG << " " << Common::UNKNOWN_LANG << endl;
+=======
+        sprintf(buffer, "%s.%.3d.%s", basename_abs.c_str(), c_file, ext);
+        //fprintf(stderr, "[SPLIT] input to read <%s> /ext: %s/ output: %s\n", file, ext, buffer);
+        output_file.open(buffer);
+
+        if (strcmp (Common::IDXEXT.c_str(), ext) == 0) {
+            getline(input_file, header);    //get header
+            output_file << header << endl;
+        }
+        while(getline(input_file,str)) {
+                //cout << "line[" << c_line << "]: seg: " << c_seg  << endl;
+                //if (c_seg == 0 and strcmp (Common::IDXEXT.c_str(), ext) == 0)
+                //   output_file << Common::UNKNOWN_SET << " " << Common::UNKNOWN_LANG << " " << Common::UNKNOWN_LANG << endl;
+>>>>>>> b5344f6962929c6ce147c46fa47d92c248c59497
             if (c_seg == TB_FORMAT::chunk) {
                 ++c_file;
                 c_seg %= chunk;
                 sprintf(buffer, "%s.%.3d.%s", basename_abs.c_str(), c_file, ext);
                 output_file.close();
                 output_file.open(buffer);
+<<<<<<< HEAD
                if ( strcmp (Common::IDXEXT.c_str(), ext) == 0) output_file << header << endl;
 
+=======
+                if (strcmp (Common::IDXEXT.c_str(), ext) == 0) 
+                    output_file << header << endl;
+>>>>>>> b5344f6962929c6ce147c46fa47d92c248c59497
             }
-                //cout << "\tFILE: " << c_file << "; seg: " << c_seg << endl;
             output_file << str << endl;
+<<<<<<< HEAD
            // ++c_line;
+=======
+>>>>>>> b5344f6962929c6ce147c46fa47d92c248c59497
             ++c_seg;
         }
         output_file.close();
         input_file.close();
-
     } else { fprintf(stderr, "couldn't open file: %s\n", file); exit(1); }
     //cout << "-----------------------------" << endl;
 }
@@ -89,7 +117,11 @@ void TB_FORMAT::split_txt_idx(string file, int s) {
 string TB_FORMAT::get_split(string file, string ext, int thread) {
     boost::filesystem::path p (file);
     string basename = p.parent_path().string() + "/" + p.stem().string();
+<<<<<<< HEAD
 
+=======
+    
+>>>>>>> b5344f6962929c6ce147c46fa47d92c248c59497
     char split_file[100];
     if (ext == Common::TXTEXT) {
         sprintf(split_file,"%s.%.3d.%s", basename.c_str(), thread, Common::TXTEXT.c_str());
@@ -119,7 +151,11 @@ char* TB_FORMAT::make_serial(string METRIC, string TGT, string REF) {
 }
 
 int TB_FORMAT::get_thread(string file) {
+<<<<<<< HEAD
 	cout << "[GET THREAD] file_name: " << file << " /extension: " << boost::filesystem::path(file).extension().string() << endl;
 	return atof(file.substr(file.find_last_of(".") + 1).c_str());
+=======
+    return atof(file.substr(file.find_last_of(".") + 1).c_str());
+>>>>>>> b5344f6962929c6ce147c46fa47d92c248c59497
     //return atof(boost::filesystem::path(file).extension().string().c_str());
 }

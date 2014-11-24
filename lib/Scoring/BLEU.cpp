@@ -154,7 +154,7 @@ vector<vector<double> > BLEU::read_bleu_segments(string reportBLEU) {
 }
 
 
-pair<vector<double>, vector<vector<double> > > BLEU::computeBLEU(string TGT) {
+void BLEU::computeBLEU(string TGT, vector<double> &SYS, vector<vector<double> > &SEG) {
 	stringstream tBLEU;
 	tBLEU << "perl " << Config::tools << "/" << BLEU::TBLEU << "/" << "mteval-v13a.pl -b -d 2 ";
 
@@ -201,10 +201,8 @@ pair<vector<double>, vector<vector<double> > > BLEU::computeBLEU(string TGT) {
 		system (sysaux.c_str());
 	}
 
-	vector<double> SYS = read_bleu(ssReport.str());
-	vector<vector<double> > SEG = read_bleu_segments(ssReport.str());
-
-	return make_pair(SYS, SEG);
+	SYS = read_bleu(ssReport.str());
+	SEG = read_bleu_segments(ssReport.str());
 }
 
 MetricScore BLEU::computeBLEUN(string TGT) {
@@ -322,7 +320,9 @@ void BLEU::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 	    (!exists(reportBLEUi4xml_path) and !exists(reportBLEUi4xml_ext)) or \
 	    (!exists(reportBLEUNxml_path) and !exists(reportBLEUNxml_ext)) or Config::remake) {
 	     	//my ($SYS, $SEGS) = BLEU::computeMultiBLEU($src, $out, $Href, $remakeREPORTS, $config->{CASE}, $tools, $verbose);
-	    	pair<vector<double>, vector<vector<double> > > res = computeBLEU(TGT);
+	    	vector<double> SYS;
+	    	vector<vector<double> > SEG;
+	    	computeBLEU(TGT, SYS, SEG);
 
                 /*vector<double> SYS = res.first;
                 vector<vector<double> > SEG = res.second;
@@ -344,7 +344,8 @@ void BLEU::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 	    	//Scores::save_hash_scores(string metric_name, string system_name, string refere_name, double sys_score, const vector<double> &doc_scores, const vector<double> &seg_scores) {
 
          	string prefB = prefix;	prefB += BLEU::BLEUEXT;	prefB += "-1";
-			pair<vector<double>, vector<double> > doc_seg =  TESTBED::get_seg_doc_scores(res.second[0], 0, TGT);
+			vector<double> d_scores, s_scores;
+			TESTBED::get_seg_doc_scores(SEG[0], 0, TGT, d_scores, s_scores);
 			SC_ASIYA sc_asiya;
 
 	            /*fprintf(stderr, "res.second[0]: [");
@@ -357,58 +358,58 @@ void BLEU::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 	            fprintf(stderr, "]\n");*/
 
 	    	if (Config::O_STORAGE == 1) {
-	    		sc_asiya.write_report(TGT, REF, prefB, res.first[0], doc_seg.first, doc_seg.second);
+	    		sc_asiya.write_report(TGT, REF, prefB, SYS[0], d_scores, s_scores);
 	    		fprintf(stderr, "SC_ASIYA DOCUMENT %s CREATED\n", prefB.c_str());
          	}
-         	hOQ.save_hash_scores(prefB, TGT, REF, res.first[0], doc_seg.first, doc_seg.second);
+         	hOQ.save_hash_scores(prefB, TGT, REF, SYS[0], d_scores, s_scores);
 
 			prefB = prefix + BLEU::BLEUEXT + "-2";
-			doc_seg = TESTBED::get_seg_doc_scores(res.second[1], 0, TGT);
+			TESTBED::get_seg_doc_scores(SEG[1], 0, TGT, d_scores, s_scores);
          	if (Config::O_STORAGE == 1) {
-	    		sc_asiya.write_report(TGT, REF, prefB, res.first[1], doc_seg.first, doc_seg.second);
+	    		sc_asiya.write_report(TGT, REF, prefB, SYS[1], d_scores, s_scores);
          		fprintf(stderr, "SC_ASIYA DOCUMENT %s CREATED\n", prefB.c_str());
          	}
-	    	hOQ.save_hash_scores(prefB, TGT, REF, res.first[1], doc_seg.first, doc_seg.second);
+	    	hOQ.save_hash_scores(prefB, TGT, REF, SYS[1], d_scores, s_scores);
 
 	    	prefB = prefix + BLEU::BLEUEXT + "-3";
-			doc_seg = TESTBED::get_seg_doc_scores(res.second[2], 0, TGT);
+			TESTBED::get_seg_doc_scores(SEG[2], 0, TGT, d_scores, s_scores);
          	if (Config::O_STORAGE == 1) {
-	    		sc_asiya.write_report(TGT, REF, prefB, res.first[2], doc_seg.first, doc_seg.second);
+	    		sc_asiya.write_report(TGT, REF, prefB, SYS[2], d_scores, s_scores);
          		fprintf(stderr, "SC_ASIYA DOCUMENT %s CREATED\n", prefB.c_str());
          	}
-         	hOQ.save_hash_scores(prefB, TGT, REF, res.first[2], doc_seg.first, doc_seg.second);
+         	hOQ.save_hash_scores(prefB, TGT, REF, SYS[2], d_scores, s_scores);
 
 	    	prefB = prefix + BLEU::BLEUEXT + "-4";
-			doc_seg = TESTBED::get_seg_doc_scores(res.second[3], 0, TGT);
+			TESTBED::get_seg_doc_scores(SEG[3], 0, TGT, d_scores, s_scores);
          	if (Config::O_STORAGE == 1) {
-	    		sc_asiya.write_report(TGT, REF, prefB, res.first[3], doc_seg.first, doc_seg.second);
+	    		sc_asiya.write_report(TGT, REF, prefB, SYS[3], d_scores, s_scores);
          		fprintf(stderr, "SC_ASIYA DOCUMENT %s CREATED\n", prefB.c_str());
          	}
-	    	hOQ.save_hash_scores(prefB, TGT, REF, res.first[3], doc_seg.first, doc_seg.second);
+	    	hOQ.save_hash_scores(prefB, TGT, REF, SYS[3], d_scores, s_scores);
 
 			prefB = prefix + BLEU::BLEUEXTi + "-2";
-			doc_seg = TESTBED::get_seg_doc_scores(res.second[5], 0, TGT);
+			TESTBED::get_seg_doc_scores(SEG[5], 0, TGT, d_scores, s_scores);
          	if (Config::O_STORAGE == 1) {
-	    		sc_asiya.write_report(TGT, REF, prefB, res.first[5], doc_seg.first, doc_seg.second);
+	    		sc_asiya.write_report(TGT, REF, prefB, SYS[5], d_scores, s_scores);
          		fprintf(stderr, "SC_ASIYA DOCUMENT %s CREATED\n", prefB.c_str());
          	}
-         	hOQ.save_hash_scores(prefB, TGT, REF, res.first[5], doc_seg.first, doc_seg.second);
+         	hOQ.save_hash_scores(prefB, TGT, REF, SYS[5], d_scores, s_scores);
 
 	    	prefB = prefix + BLEU::BLEUEXTi + "-3";
-	    	doc_seg = TESTBED::get_seg_doc_scores(res.second[6], 0, TGT);
+	    	TESTBED::get_seg_doc_scores(SEG[6], 0, TGT, d_scores, s_scores);
          	if (Config::O_STORAGE == 1) {
-	    		sc_asiya.write_report(TGT, REF, prefB, res.first[6], doc_seg.first, doc_seg.second);
+	    		sc_asiya.write_report(TGT, REF, prefB, SYS[6], d_scores, s_scores);
          		fprintf(stderr, "SC_ASIYA DOCUMENT %s CREATED\n", prefB.c_str());
          	}
-	    	hOQ.save_hash_scores(prefB, TGT, REF, res.first[6], doc_seg.first, doc_seg.second);
+	    	hOQ.save_hash_scores(prefB, TGT, REF, SYS[6], d_scores, s_scores);
 
 	    	prefB = prefix + BLEU::BLEUEXTi + "-4";
-	    	doc_seg = TESTBED::get_seg_doc_scores(res.second[7], 0, TGT);
+	    	TESTBED::get_seg_doc_scores(SEG[7], 0, TGT, d_scores, s_scores);
 	    	if (Config::O_STORAGE == 1) {
-	    		sc_asiya.write_report(TGT, REF, prefB, res.first[7], doc_seg.first, doc_seg.second);
+	    		sc_asiya.write_report(TGT, REF, prefB, SYS[7], d_scores, s_scores);
          		fprintf(stderr, "SC_ASIYA DOCUMENT %s CREATED\n", prefB.c_str());
          	}
-	    	hOQ.save_hash_scores(prefB, TGT, REF, res.first[7], doc_seg.first, doc_seg.second);
+	    	hOQ.save_hash_scores(prefB, TGT, REF, SYS[7], d_scores, s_scores);
 
 
 	    	MetricScore m = computeBLEUN(TGT);

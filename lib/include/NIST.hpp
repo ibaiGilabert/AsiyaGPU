@@ -15,8 +15,8 @@ private:
 	vector<double> read_nist(string reportNIST);
 	vector<vector<double> > read_nist_segments(string reportNIST);
 
-	pair<vector<double>, vector<vector<double> > > computeNIST(string TGT);
 	MetricScore computeNISTN(string TGT);
+	void computeNIST(string TGT, vector<double> &SYS, vector<vector<double> > &SEG);
 
 public:
 	void doMetric(string TGT, string REF, string prefix, Scores &hOQ);

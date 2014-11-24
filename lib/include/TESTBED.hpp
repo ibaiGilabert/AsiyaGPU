@@ -33,7 +33,7 @@ public:
 	static void do_system_names();
 	static void do_reference_names();
 
-	static pair<vector<double>, vector<double> > get_seg_doc_scores(const vector<double> &scores, int DO_doc, string TGT);
+	static void get_seg_doc_scores(const vector<double> &scores, int DO_doc, string TGT, vector<double> &D_scores, vector<double> &S_scores);
 
 	static map<string, string> Hrefs, Hsystems;
 	static map<string, vector<vector<string> > > IDX;

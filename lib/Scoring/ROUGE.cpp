@@ -118,7 +118,7 @@ vector<vector<double> > ROUGE::read_rouge_segments(string reportROUGE) {
 }
 
 
-pair<vector<double>, vector<vector<double> > > ROUGE::computeROUGE(string TGT, int stemming) {
+void ROUGE::computeROUGE(string TGT, vector<double> &SYS, vector<vector<double> > &SEG, int stemming) {
 	stringstream tROUGE;
 	// description _ computes ROUGE scores -> n = 1..4, LCS, S*, SU*, W-1.2 (multiple references)
 	tROUGE << Config::tools << "/" << ROUGE::TROUGE << "/" << "ROUGE-1.5.5.pl -e " << Config::tools << "/" << ROUGE::TROUGE << "/data -z SPL -2 -1 -U -r 1000 -n 4 -w 1.2 -c 95 -d";
@@ -271,11 +271,15 @@ pair<vector<double>, vector<vector<double> > > ROUGE::computeROUGE(string TGT, i
 			++j;
 		}
 	}*/
+<<<<<<< HEAD
 
 	vector<double> SYS = read_rouge(reportROUGE);
 	vector<vector<double> > SEG = read_rouge_segments(reportROUGE);
+=======
+>>>>>>> b5344f6962929c6ce147c46fa47d92c248c59497
 
-	return make_pair(SYS, SEG);
+	SYS = read_rouge(reportROUGE);
+	SEG = read_rouge_segments(reportROUGE);
 }
 
 void ROUGE::doMetric(string TGT, string REF, string prefix, int stemming, Scores &hOQ) {
@@ -286,9 +290,9 @@ void ROUGE::doMetric(string TGT, string REF, string prefix, int stemming, Scores
 
 	int GO, i;
 	GO = i = 0;
-	for (map<string, int>::const_iterator it = ROUGE::rROUGE.begin(); it != ROUGE::rROUGE.end(); ++it, ++i) {
+	for (map<string, int>::const_iterator it = ROUGE::rROUGE.begin(); it != ROUGE::rROUGE.end(); ++it, ++i)
 		mROUGE[i] = it->first;
-	}
+
 	for (i = 0; i < mROUGE.size() and !GO; ++i) {
 		string aux = prefix + mROUGE[i];
 		if (Config::Hmetrics.find(aux) != Config::Hmetrics.end()) GO = 1;
@@ -344,78 +348,82 @@ void ROUGE::doMetric(string TGT, string REF, string prefix, int stemming, Scores
 	    (!exists(reportROUGESUxml_path) and !exists(reportROUGESUxml_gz)) or \
 	    (!exists(reportROUGEWxml_path) and !exists(reportROUGEWxml_gz)) or Config::remake) {
         	//my ($SYS, $SEGS) = ROUGE::computeMultiROUGE($src, $out, $Href, $remakeREPORTS, $TGT, $REF, $tools, $stemming, $verbose);
-	    	pair<vector<double>, vector<vector<double> > > res = computeROUGE(TGT, stemming);
+
+	    	vector<double> SYS;
+	    	vector<vector<double> > SEG;
+	    	computeROUGE(TGT, SYS, SEG, stemming);
 
 
 cout << "ROUGE computed" << endl;
          	string prefR = prefix + ROUGE::ROUGEXT + "-1";
-			pair<vector<double>, vector<double> > doc_seg =  TESTBED::get_seg_doc_scores(res.second[0], 0, TGT);
+        	vector<double> d_scores, s_scores;
+        	TESTBED::get_seg_doc_scores(SEG[0], 0, TGT, d_scores, s_scores);
 
 			SC_ASIYA sc_asiya;
 
 	    	if (Config::O_STORAGE == 1) {
-	    		sc_asiya.write_report(TGT, REF, prefR, res.first[0], doc_seg.first, doc_seg.second);
+	    		sc_asiya.write_report(TGT, REF, prefR, SYS[0], d_scores, s_scores);
          		fprintf(stderr, "SC_ASIYA DOCUMENT %s CREATED\n", prefR.c_str());
          	}
-         	hOQ.save_hash_scores(prefR, TGT, REF, res.first[0], doc_seg.first, doc_seg.second);
+         	hOQ.save_hash_scores(prefR, TGT, REF, SYS[0], d_scores, s_scores);
 
 cout << "hOQ -> First score saved" << endl;
 
 			prefR = prefix + ROUGE::ROUGEXT + "-2";
-			doc_seg = TESTBED::get_seg_doc_scores(res.second[1], 0, TGT);
+			TESTBED::get_seg_doc_scores(SEG[1], 0, TGT, d_scores, s_scores);
          	if (Config::O_STORAGE == 1) {
-	    		sc_asiya.write_report(TGT, REF, prefR, res.first[1], doc_seg.first, doc_seg.second);
+	    		sc_asiya.write_report(TGT, REF, prefR, SYS[1], d_scores, s_scores);
          		fprintf(stderr, "SC_ASIYA DOCUMENT %s CREATED\n", prefR.c_str());
          	}
-	    	hOQ.save_hash_scores(prefR, TGT, REF, res.first[1], doc_seg.first, doc_seg.second);
+	    	hOQ.save_hash_scores(prefR, TGT, REF, SYS[1], d_scores, s_scores);
 
 	    	prefR = prefix + ROUGE::ROUGEXT + "-3";
-			doc_seg = TESTBED::get_seg_doc_scores(res.second[2], 0, TGT);
+			TESTBED::get_seg_doc_scores(SEG[2], 0, TGT, d_scores, s_scores);
          	if (Config::O_STORAGE == 1) {
-	    		sc_asiya.write_report(TGT, REF, prefR, res.first[2], doc_seg.first, doc_seg.second);
+	    		sc_asiya.write_report(TGT, REF, prefR, SYS[2], d_scores, s_scores);
          		fprintf(stderr, "SC_ASIYA DOCUMENT %s CREATED\n", prefR.c_str());
          	}
-         	hOQ.save_hash_scores(prefR, TGT, REF, res.first[2], doc_seg.first, doc_seg.second);
+         	hOQ.save_hash_scores(prefR, TGT, REF, SYS[2], d_scores, s_scores);
 
 	    	prefR = prefix + ROUGE::ROUGEXT + "-4";
-			doc_seg = TESTBED::get_seg_doc_scores(res.second[3], 0, TGT);
+			TESTBED::get_seg_doc_scores(SEG[3], 0, TGT, d_scores, s_scores);
          	if (Config::O_STORAGE == 1) {
-	    		sc_asiya.write_report(TGT, REF, prefR, res.first[3], doc_seg.first, doc_seg.second);
+	    		sc_asiya.write_report(TGT, REF, prefR, SYS[3], d_scores, s_scores);
          		fprintf(stderr, "SC_ASIYA DOCUMENT %s CREATED\n", prefR.c_str());
          	}
-	    	hOQ.save_hash_scores(prefR, TGT, REF, res.first[3], doc_seg.first, doc_seg.second);
+	    	hOQ.save_hash_scores(prefR, TGT, REF, SYS[3], d_scores, s_scores);
 
 	    	prefR = prefix + ROUGE::ROUGEXT + "-L";
-			doc_seg = TESTBED::get_seg_doc_scores(res.second[4], 0, TGT);
+			TESTBED::get_seg_doc_scores(SEG[4], 0, TGT, d_scores, s_scores);
          	if (Config::O_STORAGE == 1) {
-	    		sc_asiya.write_report(TGT, REF, prefR, res.first[4], doc_seg.first, doc_seg.second);
+	    		sc_asiya.write_report(TGT, REF, prefR, SYS[4], d_scores, s_scores);
          		fprintf(stderr, "SC_ASIYA DOCUMENT %s CREATED\n", prefR.c_str());
          	}
-	    	hOQ.save_hash_scores(prefR, TGT, REF, res.first[4], doc_seg.first, doc_seg.second);
+	    	hOQ.save_hash_scores(prefR, TGT, REF, SYS[4], d_scores, s_scores);
 
 			prefR = prefix + ROUGE::ROUGEXT + "-S*";
-			doc_seg = TESTBED::get_seg_doc_scores(res.second[5], 0, TGT);
+			TESTBED::get_seg_doc_scores(SEG[5], 0, TGT, d_scores, s_scores);
          	if (Config::O_STORAGE == 1) {
-	    		sc_asiya.write_report(TGT, REF, prefR, res.first[5], doc_seg.first, doc_seg.second);
+	    		sc_asiya.write_report(TGT, REF, prefR, SYS[5], d_scores, s_scores);
          		fprintf(stderr, "SC_ASIYA DOCUMENT %s CREATED\n", prefR.c_str());
          	}
-         	hOQ.save_hash_scores(prefR, TGT, REF, res.first[5], doc_seg.first, doc_seg.second);
+         	hOQ.save_hash_scores(prefR, TGT, REF, SYS[5], d_scores, s_scores);
 
 	    	prefR = prefix + ROUGE::ROUGEXT + "-SU*";
-	    	doc_seg = TESTBED::get_seg_doc_scores(res.second[6], 0, TGT);
+	    	TESTBED::get_seg_doc_scores(SEG[6], 0, TGT, d_scores, s_scores);
          	if (Config::O_STORAGE == 1) {
-	    		sc_asiya.write_report(TGT, REF, prefR, res.first[6], doc_seg.first, doc_seg.second);
+	    		sc_asiya.write_report(TGT, REF, prefR, SYS[6], d_scores, s_scores);
          		fprintf(stderr, "SC_ASIYA DOCUMENT %s CREATED\n", prefR.c_str());
          	}
-	    	hOQ.save_hash_scores(prefR, TGT, REF, res.first[6], doc_seg.first, doc_seg.second);
+	    	hOQ.save_hash_scores(prefR, TGT, REF, SYS[6], d_scores, s_scores);
 
 	    	prefR = prefix + ROUGE::ROUGEXT + "-W";
-	    	doc_seg = TESTBED::get_seg_doc_scores(res.second[7], 0, TGT);
+	    	TESTBED::get_seg_doc_scores(SEG[7], 0, TGT, d_scores, s_scores);
 	    	if (Config::O_STORAGE == 1) {
-	    		sc_asiya.write_report(TGT, REF, prefR, res.first[7], doc_seg.first, doc_seg.second);
+	    		sc_asiya.write_report(TGT, REF, prefR, SYS[7], d_scores, s_scores);
          		fprintf(stderr, "SC_ASIYA DOCUMENT %s CREATED\n", prefR.c_str());
          	}
-	    	hOQ.save_hash_scores(prefR, TGT, REF, res.first[7], doc_seg.first, doc_seg.second);
+	    	hOQ.save_hash_scores(prefR, TGT, REF, SYS[7], d_scores, s_scores);
 
 cout << "May I serialize you?" << endl;
 

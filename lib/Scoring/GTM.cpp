@@ -165,38 +165,41 @@ void GTM::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 
 	    SC_ASIYA sc_asiya;
 	    if ( (!exists(reportGTM1xml_path) and !exists(reportGTM1xml_gz)) or Config::remake) {
-	    	pair<double, vector<double> > res = computeGTM(TGT, 1);
+			pair<double, vector<double> > res = computeGTM(TGT, 1);
+	    	vector<double> d_scores, s_scores;
+			TESTBED::get_seg_doc_scores(res.second, 0, TGT, d_scores, s_scores);
 
          	string prefG = prefix + GTM::GTMEXT + "-1";
-			pair<vector<double>, vector<double> > doc_seg =  TESTBED::get_seg_doc_scores(res.second, 0, TGT);
 
 	    	if (Config::O_STORAGE == 1) {
-	    		sc_asiya.write_report(TGT, REF, prefG, res.first, doc_seg.first, doc_seg.second);
+	    		sc_asiya.write_report(TGT, REF, prefG, res.first, d_scores, s_scores);
          		cout << "IQXML DOCUMENT " << prefG << " CREATED" << endl;
          	}
-         	hOQ.save_hash_scores(prefG, TGT, REF, res.first, doc_seg.first, doc_seg.second);
+         	hOQ.save_hash_scores(prefG, TGT, REF, res.first, d_scores, s_scores);
 	    }
 		if ( (!exists(reportGTM2xml_path) and !exists(reportGTM2xml_gz)) or Config::remake) {
-	    	pair<double, vector<double> > res = computeGTM(TGT, 2);
+			pair<double, vector<double> > res = computeGTM(TGT, 2);
+	    	vector<double> d_scores, s_scores;
+         	TESTBED::get_seg_doc_scores(res.second, 0, TGT, d_scores, s_scores);
 
 			string prefG = prefix + GTM::GTMEXT + "-2";
-			pair<vector<double>, vector<double> > doc_seg = TESTBED::get_seg_doc_scores(res.second, 0, TGT);
-         	if (Config::O_STORAGE == 1) {
-	    		sc_asiya.write_report(TGT, REF, prefG, res.first, doc_seg.first, doc_seg.second);
+			if (Config::O_STORAGE == 1) {
+	    		sc_asiya.write_report(TGT, REF, prefG, res.first, d_scores, s_scores);
          		cout << "IQXML DOCUMENT " << prefG << " CREATED" << endl;
          	}
-	    	hOQ.save_hash_scores(prefG, TGT, REF, res.first, doc_seg.first, doc_seg.second);
+	    	hOQ.save_hash_scores(prefG, TGT, REF, res.first, d_scores, s_scores);
 		}
 	    if ( (!exists(reportGTM3xml_path) and !exists(reportGTM3xml_gz)) or Config::remake) {
-	    	pair<double, vector<double> > res = computeGTM(TGT, 3);
+			pair<double, vector<double> > res = computeGTM(TGT, 3);
+			vector<double> d_scores, s_scores;
+			TESTBED::get_seg_doc_scores(res.second, 0, TGT, d_scores, s_scores);
 
 	    	string prefG = prefix + GTM::GTMEXT + "-3";
-			pair<vector<double>, vector<double> > doc_seg = TESTBED::get_seg_doc_scores(res.second, 0, TGT);
          	if (Config::O_STORAGE == 1) {
-	    		sc_asiya.write_report(TGT, REF, prefG, res.first, doc_seg.first, doc_seg.second);
+	    		sc_asiya.write_report(TGT, REF, prefG, res.first, d_scores, s_scores);
          		cout << "IQXML DOCUMENT " << prefG << " CREATED" << endl;
          	}
-         	hOQ.save_hash_scores(prefG, TGT, REF, res.first, doc_seg.first, doc_seg.second);
+         	hOQ.save_hash_scores(prefG, TGT, REF, res.first, d_scores, s_scores);
 		}
 	}
 }

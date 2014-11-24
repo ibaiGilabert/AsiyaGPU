@@ -204,9 +204,12 @@ void Config::Dumper() {
 void Config::process_command_line_options(map<string, string> Options, vector<string> metaeval_options, vector<string> optimize_options) {
     if (Options.find("paralel") != Options.end() and !atoi(Options["paralel"].c_str())) {
         fprintf(stderr, "[ERROR] Enter a valid number of processes.\n"); exit(1);
-    } else if (atoi(Options["paralel"].c_str()) <= 1) {
+    } 
+    else if (atoi(Options["paralel"].c_str()) <= 1) {
         fprintf(stderr, "Paralel (%s) -> No paralelism\n", Options["paralel"].c_str());
-    } else Config::num_process = atoi(Options["paralel"].c_str());
+    } 
+    else Config::num_process = atoi(Options["paralel"].c_str());
+    
     if (Options.find("serialize") != Options.end()) {
         Config::serialize = atoi(Options["serialize"].c_str());
         fprintf(stderr, "SERIALIZE\n");
@@ -506,12 +509,21 @@ void Config::process_config_file(char* config_file, map<string, string> Options)
                     else  {
                         TB_RAW tb_raw;
                         string proc_file = tb_raw.process_file(file, type);
+<<<<<<< HEAD
 			
 			if (Config::num_process) {
                             cout << "to split <" << proc_file << ">" << endl;
                             tb_raw.split_txt_idx(proc_file, Config::num_process);
                         }
 		    }
+=======
+
+                        if (Config::num_process) {
+                            cout << "to split <" << proc_file << ">" << endl;
+                            tb_raw.split_txt_idx(proc_file, Config::num_process);
+                        }
+                    }
+>>>>>>> b5344f6962929c6ce147c46fa47d92c248c59497
                 }
                 else if (type == "srclang") {
                     if (Common::rLANGS.find(file_cs) != Common::rLANGS.end()) {

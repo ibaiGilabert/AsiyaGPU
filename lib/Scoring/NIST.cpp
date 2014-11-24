@@ -164,7 +164,7 @@ vector<vector<double> > NIST::read_nist_segments(string reportNIST) {
 	return SEG;
 }
 
-pair<vector<double>, vector<vector<double> > > NIST::computeNIST(string TGT) {
+void NIST::computeNIST(string TGT, vector<double> &SYS, vector<vector<double> > &SEG) {
 	// description _ computes NIST score (by calling NIST mteval script) -> n = 1..4 (multiple references)
 	stringstream tNIST;
 
@@ -213,10 +213,8 @@ pair<vector<double>, vector<vector<double> > > NIST::computeNIST(string TGT) {
 		system (sysaux.c_str());
 	}
 
-	vector<double> SYS = read_nist(ssReport.str());
-	vector<vector<double> > SEG = read_nist_segments(ssReport.str());
-
-	return make_pair(SYS, SEG);
+	SYS = read_nist(ssReport.str());
+	SEG = read_nist_segments(ssReport.str());
 }
 
 
@@ -339,89 +337,92 @@ void NIST::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 	    (!exists(reportNISTi5xml_path) and !exists(reportNISTi5xml_ext)) or \
 	    (!exists(reportNISTNxml_path) and !exists(reportNISTNxml_ext)) or Config::remake) {
 			//my ($SYS, $SEGS) = NIST::computeMultiNIST($src, $out, $Href, $remakeREPORTS, $config->{CASE}, $tools, $verbose, $hOQ );
-	    	pair<vector<double>, vector<vector<double> > > res = computeNIST(TGT);
+	    	vector<double> SYS;
+	    	vector<vector<double> > SEG;
+	    	computeNIST(TGT, SYS, SEG);
 
          	string prefN = prefix;	prefN += NIST::NISTEXT;	prefN += "-1";
-	    	pair<vector<double>, vector<double> > doc_seg =  TESTBED::get_seg_doc_scores(res.second[0], 0, TGT);
+	    	vector<double> d_scores, s_scores;
+	    	TESTBED::get_seg_doc_scores(SEG[0], 0, TGT, d_scores, s_scores);
 	    	SC_ASIYA sc_asiya;
 
 	    	if (Config::O_STORAGE == 1) {
-	    		sc_asiya.write_report(TGT, REF, prefN, res.first[0], doc_seg.first, doc_seg.second);
+	    		sc_asiya.write_report(TGT, REF, prefN, SYS[0], d_scores, s_scores);
          		cout << "IQXML DOCUMENT " << prefN << " CREATED" << endl;
          	}
-         	hOQ.save_hash_scores(prefN, TGT, REF, res.first[0], doc_seg.first, doc_seg.second);
+         	hOQ.save_hash_scores(prefN, TGT, REF, SYS[0], d_scores, s_scores);
 
 	    	prefN = prefix + NIST::NISTEXT + "-2";
-			doc_seg = TESTBED::get_seg_doc_scores(res.second[1], 0, TGT);
+			TESTBED::get_seg_doc_scores(SEG[1], 0, TGT, d_scores, s_scores);
 			if (Config::O_STORAGE == 1) {
-	    		sc_asiya.write_report(TGT, REF, prefN, res.first[1], doc_seg.first, doc_seg.second);
+	    		sc_asiya.write_report(TGT, REF, prefN, SYS[1], d_scores, s_scores);
          		cout << "IQXML DOCUMENT " << prefN << " CREATED" << endl;
          	}
-         	hOQ.save_hash_scores(prefN, TGT, REF, res.first[1], doc_seg.first, doc_seg.second);
+         	hOQ.save_hash_scores(prefN, TGT, REF, SYS[1], d_scores, s_scores);
 
 	    	prefN = prefix + NIST::NISTEXT + "-3";
-			doc_seg = TESTBED::get_seg_doc_scores(res.second[2], 0, TGT);
+			TESTBED::get_seg_doc_scores(SEG[2], 0, TGT, d_scores, s_scores);
          	if (Config::O_STORAGE == 1) {
-	    		sc_asiya.write_report(TGT, REF, prefN, res.first[2], doc_seg.first, doc_seg.second);
+	    		sc_asiya.write_report(TGT, REF, prefN, SYS[2], d_scores, s_scores);
          		cout << "IQXML DOCUMENT " << prefN << " CREATED" << endl;
          	}
-	    	hOQ.save_hash_scores(prefN, TGT, REF, res.first[2], doc_seg.first, doc_seg.second);
+	    	hOQ.save_hash_scores(prefN, TGT, REF, SYS[2], d_scores, s_scores);
 
 	    	prefN = prefix + NIST::NISTEXT + "-4";
-			doc_seg = TESTBED::get_seg_doc_scores(res.second[3], 0, TGT);
+			TESTBED::get_seg_doc_scores(SEG[3], 0, TGT, d_scores, s_scores);
          	if (Config::O_STORAGE == 1) {
-	    		sc_asiya.write_report(TGT, REF, prefN, res.first[3], doc_seg.first, doc_seg.second);
+	    		sc_asiya.write_report(TGT, REF, prefN, SYS[3], d_scores, s_scores);
          		cout << "IQXML DOCUMENT " << prefN << " CREATED" << endl;
          	}
-	    	hOQ.save_hash_scores(prefN, TGT, REF, res.first[3], doc_seg.first, doc_seg.second);
+	    	hOQ.save_hash_scores(prefN, TGT, REF, SYS[3], d_scores, s_scores);
 
 	    	prefN = prefix + NIST::NISTEXT + "-5";
-			doc_seg = TESTBED::get_seg_doc_scores(res.second[4], 0, TGT);
+			TESTBED::get_seg_doc_scores(SEG[4], 0, TGT, d_scores, s_scores);
          	if (Config::O_STORAGE == 1) {
-	    		sc_asiya.write_report(TGT, REF, prefN, res.first[4], doc_seg.first, doc_seg.second);
+	    		sc_asiya.write_report(TGT, REF, prefN, SYS[4], d_scores, s_scores);
          		cout << "IQXML DOCUMENT " << prefN << " CREATED" << endl;
          	}
-	    	hOQ.save_hash_scores(prefN, TGT, REF, res.first[4], doc_seg.first, doc_seg.second);
+	    	hOQ.save_hash_scores(prefN, TGT, REF, SYS[4], d_scores, s_scores);
 
 	    	prefN = prefix + NIST::NISTEXTi + "-2";
-			doc_seg = TESTBED::get_seg_doc_scores(res.second[5], 0, TGT);
+			TESTBED::get_seg_doc_scores(SEG[5], 0, TGT, d_scores, s_scores);
          	if (Config::O_STORAGE == 1) {
-	    		sc_asiya.write_report(TGT, REF, prefN, res.first[5], doc_seg.first, doc_seg.second);
+	    		sc_asiya.write_report(TGT, REF, prefN, SYS[5], d_scores, s_scores);
          		cout << "IQXML DOCUMENT " << prefN << " CREATED" << endl;
          	}
-	    	hOQ.save_hash_scores(prefN, TGT, REF, res.first[5], doc_seg.first, doc_seg.second);
+	    	hOQ.save_hash_scores(prefN, TGT, REF, SYS[5], d_scores, s_scores);
 
 	    	prefN = prefix + NIST::NISTEXTi + "-3";
-	    	doc_seg = TESTBED::get_seg_doc_scores(res.second[6], 0, TGT);
+	    	TESTBED::get_seg_doc_scores(SEG[6], 0, TGT, d_scores, s_scores);
          	if (Config::O_STORAGE == 1) {
-	    		sc_asiya.write_report(TGT, REF, prefN, res.first[6], doc_seg.first, doc_seg.second);
+	    		sc_asiya.write_report(TGT, REF, prefN, SYS[6], d_scores, s_scores);
          		cout << "IQXML DOCUMENT " << prefN << " CREATED" << endl;
          	}
-	    	hOQ.save_hash_scores(prefN, TGT, REF, res.first[6], doc_seg.first, doc_seg.second);
+	    	hOQ.save_hash_scores(prefN, TGT, REF, SYS[6], d_scores, s_scores);
 
 	    	prefN = prefix + NIST::NISTEXTi + "-3";
-	    	doc_seg = TESTBED::get_seg_doc_scores(res.second[7], 0, TGT);
+	    	TESTBED::get_seg_doc_scores(SEG[7], 0, TGT, d_scores, s_scores);
          	if (Config::O_STORAGE == 1) {
-	    		sc_asiya.write_report(TGT, REF, prefN, res.first[7], doc_seg.first, doc_seg.second);
+	    		sc_asiya.write_report(TGT, REF, prefN, SYS[7], d_scores, s_scores);
          		cout << "IQXML DOCUMENT " << prefN << " CREATED" << endl;
          	}
-	    	hOQ.save_hash_scores(prefN, TGT, REF, res.first[7], doc_seg.first, doc_seg.second);
+	    	hOQ.save_hash_scores(prefN, TGT, REF, SYS[7], d_scores, s_scores);
 
 	    	prefN = prefix + NIST::NISTEXTi + "-4";
-	    	doc_seg = TESTBED::get_seg_doc_scores(res.second[8], 0, TGT);
+	    	TESTBED::get_seg_doc_scores(SEG[8], 0, TGT, d_scores, s_scores);
          	if (Config::O_STORAGE == 1) {
-	    		sc_asiya.write_report(TGT, REF, prefN, res.first[8], doc_seg.first, doc_seg.second);
+	    		sc_asiya.write_report(TGT, REF, prefN, SYS[8], d_scores, s_scores);
          		cout << "IQXML DOCUMENT " << prefN << " CREATED" << endl;
          	}
-	    	hOQ.save_hash_scores(prefN, TGT, REF, res.first[8], doc_seg.first, doc_seg.second);
+	    	hOQ.save_hash_scores(prefN, TGT, REF, SYS[8], d_scores, s_scores);
 
 	    	prefN = prefix + NIST::NISTEXTi + "-5";
-	    	doc_seg = TESTBED::get_seg_doc_scores(res.second[9], 0, TGT);
+	    	TESTBED::get_seg_doc_scores(SEG[9], 0, TGT, d_scores, s_scores);
          	if (Config::O_STORAGE == 1) {
-	    		sc_asiya.write_report(TGT, REF, prefN, res.first[9], doc_seg.first, doc_seg.second);
+	    		sc_asiya.write_report(TGT, REF, prefN, SYS[9], d_scores, s_scores);
          		cout << "IQXML DOCUMENT " << prefN << " CREATED" << endl;
          	}
-	    	hOQ.save_hash_scores(prefN, TGT, REF, res.first[9], doc_seg.first, doc_seg.second);
+	    	hOQ.save_hash_scores(prefN, TGT, REF, SYS[9], d_scores, s_scores);
 
 	    	MetricScore m = computeNISTN(TGT);
 

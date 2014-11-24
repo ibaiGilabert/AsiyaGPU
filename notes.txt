@@ -154,6 +154,11 @@ SHORTCUTS
 	        type = boost::regex_replace(type, re, "");
 	        data = boost::regex_replace(data, re2, "");
 
+	-->	STRING to CHAR*
+		
+			string file;
+			dirname(&file[0]);
+
 	-->	#include<omp.h> requires -lgomp
 
 	--> DIRNAME, FILENAME, PATHNAME, etc
