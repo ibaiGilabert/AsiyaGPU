@@ -216,7 +216,6 @@ void Scores::load_struct_scores(char* filename) {
 void Scores::make_doc_scores() {
 	for(oMap::const_iterator it_m = seg[0].begin(); it_m != seg[0].end(); ++it_m) {         //iterate through all metrics
 		string metric = it_m->first; 
-		//iMap systems = it_m->second;
 		for (iMap::const_iterator it_s = it_m->second.begin(); it_s != it_m->second.end(); ++it_s) {
 			string system_name = it_s->first;
 			sMap::const_iterator it_r = it_s->second.begin();
@@ -225,21 +224,19 @@ void Scores::make_doc_scores() {
 			int c_seg = 0;
 			double c_sum = 0;
 			string c_doc = TESTBED::IDX[system_name][1][0];         //first name_doc
-			//vector<double> d_scores(doc.size()+1);
-			cout << "[make_doc]: metric: " << metric << "/system_name: " << system_name << "/segs: " << seg.size() << "/through: " << TESTBED::IDX[system_name].size() << endl;
+			//cout << "[make_doc]: metric: " << metric << "/system_name: " << system_name << "/segs: " << seg.size() << "/through: " << TESTBED::IDX[system_name].size() << endl;
 			for(int i = 1; i < TESTBED::IDX[system_name].size(); ++i) {
 				if (TESTBED::IDX[system_name][i][0] != c_doc) {
-					cout << "\tdoc #" << n_doc << ": " << c_doc << "/c_seg: " << c_seg << "/c_sum: " << c_sum << "/scr: " << c_sum/c_seg << endl;
+					//cout << "\tdoc #" << n_doc << ": " << c_doc << "/c_seg: " << c_seg << "/c_sum: " << c_sum << "/scr: " << c_sum/c_seg << endl;
 					c_doc = TESTBED::IDX[system_name][i][0];
-					//d_scores[n_doc++] = c_sum/c_seg;
 					doc[n_doc++][metric][system_name][ref_name] = c_sum/c_seg;
-					_sum = c_seg = 0;
+					c_sum = c_seg = 0;
 				}
-				cout << "\t\ti-1: " << i-1 << "/m_name: " << metric << "/s_name: " << system_name << "/r_name: " << ref_name << "/c_seg: " << c_seg << "/scr: " << seg[i-1][metric][system_name][ref_name] << endl;
+				//cout << "\t\ti-1: " << i-1 << "/m_name: " << metric << "/s_name: " << system_name << "/r_name: " << ref_name << "/c_seg: " << c_seg << "/scr: " << seg[i-1][metric][system_name][ref_name] << endl;
 				c_sum += seg[i-1][metric][system_name][ref_name];
 				++c_seg;
 			}
-			cout << "\tdoc #" << n_doc << ": " << c_doc << "/c_seg: " << c_seg << "/c_sum: " << c_sum << "/scr: " << c_sum/c_seg << endl;
+			//cout << "\tdoc #" << n_doc << ": " << c_doc << "/c_seg: " << c_seg << "/c_sum: " << c_sum << "/scr: " << c_sum/c_seg << endl;
 			doc[n_doc++][metric][system_name][ref_name] = c_sum/c_seg;
 		}
 	}

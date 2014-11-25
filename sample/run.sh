@@ -6,7 +6,7 @@
 #$ -l h_vmem=4G
 
 
-DATAPATH=/home/usuaris/gilabert/PROVA_REBUILD/AsiyaGPU/sample
+DATAPATH=/home/usuaris/gilabert/PROVA_TESTBED/AsiyaGPU/sample
 
 die () {
     echo >&2 "$@"
