@@ -166,7 +166,6 @@ void Core::rebuild_hash_scores(string TGT, const set<string> &Lref, Scores &hOQ)
     	hOQ.load_struct_scores(TB_FORMAT::get_serial("ROUGE", TGT, REF, i));
 	    //fprintf(stderr, "[LOAD]: COMPLETE\n");
     }
-    hOQ.make_doc_score("ROUGE", TGT, REF);
 }
 
 void Core::doMultiMetrics(string HYP, const set<string> &Lref, Scores &hOQ) {
@@ -299,13 +298,13 @@ double Core::do_scores(Scores &hOQ) {
 			if (Config::do_time) fprintf(stderr, "t(%s) = %f\n", it->c_str(), t);
 		}
 	}
-	
+
 if (Config::num_process) {
 	// WAIT
 	if (Config::verbose) fprintf(stderr, "[WAIT]\n");
 	while (!job_qw.empty()) {
         for (set<string>::const_iterator it_job = job_qw.begin(); it_job != job_qw.end(); ++it_job) {
-                if (proc.end(*it_job)) job_qw.erase(it_job);
+            if (proc.end(*it_job)) job_qw.erase(it_job);
         }
 	}
 	// REBUILD
@@ -313,8 +312,18 @@ if (Config::num_process) {
 	for (set<string>::const_iterator it = Config::systems.begin(); it != Config::systems.end(); ++it) {
         rebuild_hash_scores(*it, Config::references, hOQ);
 	}
-	
-    for (int i = 0; i < hOQ.get_num_doc_scores(); ++i) hOQ.print_doc_scores(i);
+    if (Config::G != Common::G_SEG){
+        fprintf(stderr, "[DOC REBUILD]\n");
+        hOQ.make_doc_scores();
+        if (Config::G == Common::G_SYS) {
+            fprintf(stderr, "[SYS REBUILD]\n");
+            hOQ.make_sys_scores();
+        }
+    }
+    
+	if (Config::verbose) fprintf(stderr, "[REBUILD DONE]\n");
+
+    //for (int i = 0; i < hOQ.get_num_doc_scores(); ++i) hOQ.print_doc_scores(i);
 }
 
 	if (Config::eval_schemes.find(Common::S_QUEEN) != Config::eval_schemes.end() or \
