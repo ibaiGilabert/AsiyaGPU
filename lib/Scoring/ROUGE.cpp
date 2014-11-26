@@ -129,9 +129,12 @@ void ROUGE::computeROUGE(string TGT, vector<double> &SYS, vector<vector<double> 
 
 	srand(time(NULL));
 	double nr = rand() % (Common::NRAND + 1);	//random number [0, Common::NRAND];
+	string t_id;
+    if (Config::serialize) t_id = TB_FORMAT::get_formated_thread(string file);
+
 	stringstream ssReport, ssConfig;
-	ssReport << Common::DATA_PATH << "/" << Common::TMP << "/" << nr << "." << ROUGE::ROUGEXT << "." << Common::REPORTEXT;
-	ssConfig << Common::DATA_PATH << "/" << Common::TMP << "/" << nr << "." << ROUGE::ROUGEXT << "." << ROUGE::CFGEXT;
+	ssReport << Common::DATA_PATH << "/" << Common::TMP << "/" << nr << "." << ROUGE::ROUGEXT << t_id << "." << Common::REPORTEXT;
+	ssConfig << Common::DATA_PATH << "/" << Common::TMP << "/" << nr << "." << ROUGE::ROUGEXT << t_id << "." << ROUGE::CFGEXT;
 
 	string reportROUGE = ssReport.str();
 	string configROUGE = ssConfig.str();
@@ -151,7 +154,7 @@ void ROUGE::computeROUGE(string TGT, vector<double> &SYS, vector<vector<double> 
 
 		    while (getline(ref_file, str)) {
 				stringstream ssJ;
-				ssJ << Common::DATA_PATH << "/" << Common::TMP << "/" << ROUGE::ROUGEXT << "." << random << "." << Common::REFEXT << "." << j;
+				ssJ << Common::DATA_PATH << "/" << Common::TMP << "/" << ROUGE::ROUGEXT << t_id << "." << random << "." << Common::REFEXT << "." << j;
 
 				string ref_j = ssJ.str();
 		 	    boost::filesystem::path refJ_path(ref_j);
@@ -165,7 +168,7 @@ void ROUGE::computeROUGE(string TGT, vector<double> &SYS, vector<vector<double> 
 				        str = boost::regex_replace(str, re, "");
 				        str = boost::regex_replace(str, re2, "");
 
-		    			boost::match_results<string::const_iterator> results;
+		    			boost::mat[]]_results<string::const_iterator> results;
 				        if (str == "" or boost::regex_match(str, results, re3)) str = Common::EMPTY_ITEM;
 						refJ_file << str << endl;
 
@@ -186,14 +189,14 @@ void ROUGE::computeROUGE(string TGT, vector<double> &SYS, vector<vector<double> 
 
     while (getline(out_file, str)) {
 		stringstream ssOut_i;
-		ssOut_i << Common::DATA_PATH << "/" << Common::TMP << "/" << ROUGE::ROUGEXT << "." << random << "." << Common::SYSEXT << "." << i;
+		ssOut_i << Common::DATA_PATH << "/" << Common::TMP << "/" << ROUGE::ROUGEXT << t_id << "." << random << "." << Common::SYSEXT << "." << i;
 
 		string out_i = ssOut_i.str();
 
 		vector<string> cfgline;
 		for (map<string, string>::const_iterator it = TESTBED::Hrefs.begin(); it != TESTBED::Hrefs.end(); ++it) {
 			stringstream ssRef_i;
-			ssRef_i << Common::DATA_PATH << "/" << Common::TMP << "/" << ROUGE::ROUGEXT << "." << hRAND[it->first] << "." << Common::REFEXT << "." << i;
+			ssRef_i << Common::DATA_PATH << "/" << Common::TMP << "/" << ROUGE::ROUGEXT << t_id << "." << hRAND[it->first] << "." << Common::REFEXT << "." << i;
 
 			string ref_i = ssRef_i.str();
 			cfgline.push_back(ref_i);

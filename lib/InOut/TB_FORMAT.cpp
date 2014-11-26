@@ -112,3 +112,7 @@ int TB_FORMAT::get_thread(string file) {
 	return atof(file.substr(file.find_last_of(".") + 1).c_str());
     //return atof(boost::filesystem::path(file).extension().string().c_str());
 }
+
+string TB_FORMAT::get_formated_thread(string file) {
+    return file.substr(file.find_last_of(".") + 1);
+}

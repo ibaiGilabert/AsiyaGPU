@@ -29,6 +29,7 @@ public:
 	static string get_split(string file, string ext, int thread);
 	static char* get_serial(string METRIC, string TGT, string REF, int thread);
 	static int get_thread(string file);
+	static string get_formated_thread(string file);
 
 	static char* make_serial(string METRIC, string TGT, string REF);
 
