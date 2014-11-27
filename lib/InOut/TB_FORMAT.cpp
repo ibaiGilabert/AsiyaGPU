@@ -1,5 +1,6 @@
 #include "../include/TB_FORMAT.hpp"
 #include "../Common.hpp"
+#include "../Config.hpp"
 
 #include <math.h>
 #include <stdio.h>
@@ -11,10 +12,11 @@
 
 int TB_FORMAT::chunk = -1;
 
-void TB_FORMAT::split_file(const char* file, const char* ext, int s) {
+void TB_FORMAT::split_file(const char* file, const char* ext) {
     // split file for s processes
     double n_segs = TESTBED::get_num_segs();
-    TB_FORMAT::chunk = n_segs/s + (ceil(n_segs/s) - floor(n_segs/s));
+    TB_FORMAT::chunk = n_segs/Config::num_process + (ceil(n_segs/Config::num_process) - floor(n_segs/Config::num_process));
+    if (TB_FORMAT::chunk*(Config::num_process - 1) >= n_segs) --Config::num_process;    //parche. Ex -> n_segs: 33/ s: 10 (>)| Ex -> n_segs: 33/ s: 12 (==)
     //int n_files = s + (ceil(n_segs/s) - chunk);
 
 /*cout << "--------split <" << string(file) << "---------" << endl;
@@ -62,16 +64,16 @@ cout << "chunk: " << chunk << endl;*/
     //cout << "-----------------------------" << endl;
 }
 
-void TB_FORMAT::split_txt_idx(string file, int s) {
-    // description _ split input file into ".txt" and ".idx" format
+void TB_FORMAT::split_txt_idx(string file) {
+    // description _ split input file into ".txt" and ".idx" format. 's' fragments.
     boost::filesystem::path p (file);
     //cout << "[SPLIT]: " << file << endl;
 
-    split_file(file.c_str(), Common::TXTEXT.c_str(), s);
+    split_file(file.c_str(), Common::TXTEXT.c_str());
     //cout << "[DONE]" << endl;
     //cout << "[SPLIT]: " << p.replace_extension(".idx") << endl;
     //string idx_ext = Common::TXTEXT + "." + Common::IDXEXT;
-    split_file(TESTBED::replace_extension(file, Common::IDXEXT).c_str(), Common::IDXEXT.c_str(), s);
+    split_file(TESTBED::replace_extension(file, Common::IDXEXT).c_str(), Common::IDXEXT.c_str());
     //split_file(p.replace_extension(".idx").c_str(), s);
     //cout << "[DONE]" << endl;
 }
@@ -113,6 +115,6 @@ int TB_FORMAT::get_thread(string file) {
     //return atof(boost::filesystem::path(file).extension().string().c_str());
 }
 
-string TB_FORMAT::get_formated_thread(string file) {
+/*string TB_FORMAT::get_formated_thread(string file) {
     return file.substr(file.find_last_of(".") + 1);
-}
+}*/

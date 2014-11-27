@@ -130,7 +130,7 @@ void ROUGE::computeROUGE(string TGT, vector<double> &SYS, vector<vector<double> 
 	srand(time(NULL));
 	double nr = rand() % (Common::NRAND + 1);	//random number [0, Common::NRAND];
 	string t_id;
-    if (Config::serialize) t_id = "_" + TB_FORMAT::get_formated_thread(TGT);
+    if (Config::serialize) t_id = "_" + TGT;//TB_FORMAT::get_formated_thread(TGT);
 
 	stringstream ssReport, ssConfig;
 	ssReport << Common::DATA_PATH << "/" << Common::TMP << "/" << nr << "." << ROUGE::ROUGEXT << t_id << "." << Common::REPORTEXT;

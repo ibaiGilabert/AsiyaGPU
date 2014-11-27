@@ -16,7 +16,7 @@ struct FileInfo {
 
 class TB_FORMAT {
 protected:
-    void split_file(const char* file, const char* ext, int s);
+    void split_file(const char* file, const char* ext);
 
 public:
 	//TB_FORMAT();
@@ -25,11 +25,11 @@ public:
 
 	// split data files
 	//xmlNodePtr split_xml(xmlNodePtr a_node, ofstream &out_txt, ofstream &out_idx, string id, string docid, string genre, int chunk, int seg);
-    void split_txt_idx(string file, int s);
+    void split_txt_idx(string file);
 	static string get_split(string file, string ext, int thread);
 	static char* get_serial(string METRIC, string TGT, string REF, int thread);
 	static int get_thread(string file);
-	static string get_formated_thread(string file);
+	//static string get_formated_thread(string file);
 
 	static char* make_serial(string METRIC, string TGT, string REF);
 
