@@ -66,7 +66,7 @@ void SC_ASIYA::save_xml(string report_xml, string TGT, string REF, string METRIC
 */
 
     //double x;
-    char buffer[50];
+    char buffer[128];
     xmlNodePtr doc_node = xmlNewChild(root_node, NULL, BAD_CAST "DOC", NULL);
 
     while (i < idx.size()) {
