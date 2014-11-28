@@ -61,7 +61,7 @@ string Process::run_job(string run_file, string metric) {
     strcat(qsub, " ");
     strcat(qsub, metric);*/
 
-    string qsub = "/usr/local/sge/bin/linux-x64/qsub " + run_file + " " + metric;
+    string qsub = "/usr/local/sge/bin/linux-x64/qsub -q \\!gpu " + run_file + " " + metric;
     string qsub_r = exec(qsub.c_str());
 
     return getJobID(qsub_r);
@@ -75,7 +75,7 @@ string Process::run_job_dep(string run_file, string metric, string dep) {
     strcat(qsub, " ");
     strcat(qsub, metric);*/
 
-    string qsub = "/usr/local/sge/bin/linux-x64/qsub -hold_jid " + dep + " " + run_file + " " + metric;
+    string qsub = "/usr/local/sge/bin/linux-x64/qsub -q \\!gpu -hold_jid " + dep + " " + run_file + " " + metric;
     string qsub_r = exec(qsub.c_str());
 
     return getJobID(qsub_r);
@@ -136,7 +136,7 @@ string Process::make_run_file(string config_file, string TGT, string REF, int th
         stringstream s_cmd;
         s_cmd << "./Asiya " << config_file << " -serialize " << (thread-1)*TB_FORMAT::chunk + 1 << " -g seg -eval single -metric_set metrics_" << metric << " > " << string(report_buffer);
         string cmd = s_cmd.str();
-                
+
         if (Config::verbose) fprintf(stderr, "[EXEC] %s\n", cmd.c_str());
 
         run_file << "echo " << cmd << endl;

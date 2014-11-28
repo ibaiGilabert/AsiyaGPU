@@ -106,7 +106,7 @@ int TESTBED::get_max_segid_length(string sys) {
 
 string TESTBED::give_file_name(string file) {
     // description _ get the name without the extensions from filename
-    boost::filesystem::path pathname (file);
+    boost::filesystem::path pathname(file);
     return pathname.stem().string();
 }
 

@@ -378,20 +378,24 @@ void Config::process_config_file(char* config_file, map<string, string> Options)
     boost::regex re2("/+");
     TOOLS = boost::regex_replace(TOOLS, re2, "/");
 
+    //fprintf(stderr, "[Config]: replaced tools:(%s)\n", TOOLS.c_str());
     boost::filesystem::path p (TOOLS);   // p reads clearer than argv[1] in the following code
+    //fprintf(stderr, "[Config]: pathed\n");
 
-    if (!is_directory(p)) {
-        fprintf(stderr, "[%s] directory <%s> does not exist!\n", Common::appNAME.c_str(), TOOLS.c_str()); exit(1);
-    }
+    if (!is_directory(p)) fprintf(stderr, "[%s] directory <%s> does not exist!\n", Common::appNAME.c_str(), TOOLS.c_str()); exit(1);
 
     Config::tools = TOOLS;
 
+    //fprintf(stderr, "[Config]: repathed\n");
     string path_aux = Common::DATA_PATH; path_aux += "/"; path_aux += Common::TMP;
-    p = path_aux;
+    p = boost::filesystem::path(path_aux);
+    //fprintf(stderr, "[Config]: check directory path_aux:(%s)\n", path_aux.c_str());
 
     if (!is_directory(p)) {
         string s = "mkdir " + Common::DATA_PATH + "/" + Common::TMP;
         system(s.c_str());
+        //fprintf(stderr, "tmp:(%s) create\n", s.c_str());
+
         /*for (int i = 1; i <= Config::num_process; ++i) {
             stringstream ss;
             ss << s << "/" << i;
@@ -400,22 +404,17 @@ void Config::process_config_file(char* config_file, map<string, string> Options)
 
     } //TEMPORARY DIRECTORY
 
-    map<string,string>::const_iterator it = Options.find("verbose");
-    if (it != Options.end()) {
-        fprintf(stderr, "[%s] READING ASIYA setup config file <%s>...", Common::appNAME.c_str(), config_file); // IQ_Config::c_str());
-    } //TEMPORARY DIRECTORY
+    if (Options.find("verbose") != Options.end()) fprintf(stderr, "[%s] READING ASIYA setup config file <%s>...", Common::appNAME.c_str(), config_file); //TEMPORARY DIRECTORY
+    //fprintf(stderr, "[Config]: tmp created\n");
 
-    p = IQ_config;
-    if (!exists(p)) {
-        fprintf(stderr, "[%s] config file <%s> does not exist!\n", Common::appNAME.c_str(), config_file); //IQ_Config::c_str());
-        exit(1);
-    }
-    else { Config::IQ_config = IQ_config; }
+    p = boost::filesystem::path(IQ_config);
+    if (!exists(p)) { fprintf(stderr, "[%s] config file <%s> does not exist!\n", Common::appNAME.c_str(), config_file); exit(1); }
+    else Config::IQ_config = IQ_config;
 
-    ifstream file;
 
-    //read input mode
-    file.open(config_file);     //(IQ_Config::c_str());
+    ifstream file;              //read input mode
+    file.open(config_file);
+    //fprintf(stderr, "[Config]: OK, let's read da confics\n");
     if (file) {
         boost::regex re("^[^#].*=.*");
         string str;
@@ -441,9 +440,11 @@ void Config::process_config_file(char* config_file, map<string, string> Options)
 
                 type = boost::regex_replace(type, re, "");
                 data = boost::regex_replace(data, re2, "");
+                //fprintf(stderr, "[Config]: replaced\n");
 
                 boost::to_lower(type);
                 boost::to_lower(data);
+                //fprintf(stderr, "[Config]: lowered type: %s/ data: %s\n", type.c_str(), data.c_str());
 
                 if (type == "input") {
                     if (data == Common::I_NIST) {
@@ -488,12 +489,14 @@ void Config::process_config_file(char* config_file, map<string, string> Options)
                 type = boost::regex_replace(type, re2, "");
                 file = boost::regex_replace(file, re, "");
                 file = boost::regex_replace(file, re2, "");
+                //fprintf(stderr, "[Config]: replaced\n");
 
                 pair<string, string> entry(type, file);
 
                 string file_cs = file;
                 boost::to_lower(type);
                 boost::to_lower(file_cs);
+    //            fprintf(stderr, "[Config]: lowered type: %s/ file_cs: %s\n", type.c_str(), file_cs.c_str());
                 if (type == "source" or type == "src" or type == "reference" or type == "ref" or type == "system" or type == "sys") {
 
                     //string file = entry.first;
@@ -502,17 +505,19 @@ void Config::process_config_file(char* config_file, map<string, string> Options)
                         string proc_file = tb_nist.process_file(file, type);
 
                         if (Config::num_process) {
-                                cout << "to split <" << proc_file << ">" << endl;
-                                tb_nist.split_txt_idx(proc_file);
-                            }
+                            //fprintf(stderr, "[Config]: to split <%s>\n", proc_file.c_str());
+                            tb_nist.split_txt_idx(proc_file);
+                            //fprintf(stderr, "[Config]: splited\n");
+                        }
                     }
                     else  {
                         TB_RAW tb_raw;
                         string proc_file = tb_raw.process_file(file, type);
 
                         if (Config::num_process) {
-                            cout << "to split <" << proc_file << ">" << endl;
+                            //fprintf(stderr, "[Config]: to split <%s>\n", proc_file.c_str());
                             tb_raw.split_txt_idx(proc_file);
+                            //fprintf(stderr, "[Config]: splited\n");
                         }
                     }
                 }
