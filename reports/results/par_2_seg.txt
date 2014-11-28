@@ -1,0 +1,44 @@
+par 2 seg
+==============================================================
+qname        short
+hostname     node208
+group        lsi
+owner        gilabert
+project      NONE
+department   defaultdepartment
+jobname      run.sh
+jobnumber    3502706
+taskid       undefined
+account      sge
+priority     0
+qsub_time    Fri Nov 28 19:34:57 2014
+start_time   Fri Nov 28 19:35:01 2014
+end_time     Fri Nov 28 19:35:23 2014
+granted_pe   NONE
+slots        1
+failed       0
+exit_status  1
+ru_wallclock 22
+ru_utime     6.170
+ru_stime     7.155
+ru_maxrss    7088
+ru_ixrss     0
+ru_ismrss    0
+ru_idrss     0
+ru_isrss     0
+ru_minflt    1310715
+ru_majflt    9
+ru_nswap     0
+ru_inblock   0
+ru_oublock   2320
+ru_msgsnd    0
+ru_msgrcv    0
+ru_nsignals  0
+ru_nvcsw     36793
+ru_nivcsw    6008
+cpu          13.325
+mem          0.071
+io           0.235
+iow          0.000
+maxvmem      106.117M
+arid         undefined

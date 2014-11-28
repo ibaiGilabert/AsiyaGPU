@@ -16,7 +16,7 @@ void TB_RAW::write_fake_idx_file(string file, vector<vector<string> > &lIDX) {
     //vector<vector <string> > lIDX(0, vector<string>());
 
     string system_name = TESTBED::give_file_name(file);
-    string file_idx = TESTBED::replace_extension(file, Common::IDXEXT); //file + "." + Common::IDXEXT; 
+    string file_idx = TESTBED::replace_extension(file, Common::IDXEXT); //file + "." + Common::IDXEXT;
 //cout << "system_name: " << system_name << endl;
 //cout << "file(.txt): " << file << endl;
 //cout << "file(.idx): " << file_idx << endl;
@@ -81,13 +81,13 @@ void TB_RAW::read_fake_idx_file(string file, vector<vector<string> > &lIDX) {
     if (Config::verbose) fprintf(stderr, "reading idx file <%s>\n", file.c_str());
 
     string system_name = TESTBED::give_file_name(file);
-    string file_idx = TESTBED::replace_extension(file, Common::IDXEXT); //file + "." + Common::IDXEXT; 
+    string file_idx = TESTBED::replace_extension(file, Common::IDXEXT); //file + "." + Common::IDXEXT;
 
     ifstream f_idx(file_idx.c_str());
     if (f_idx) {
         string line;
         getline(f_idx, line);       //get header
-        
+
         vector<string> l_header(3);
         l_header[0] = Common::UNKNOWN_SET; l_header[1] = Common::UNKNOWN_LANG; l_header[2] = Common::UNKNOWN_LANG;
         lIDX.push_back(l_header);
@@ -152,7 +152,9 @@ string TB_RAW::process_file(string file, string type) {
     stringstream sc, ms;
     sc << "cp -f "<< file << " " << tokfile;
     ms << "[ERROR] could not copy " << file << " into " << tokfile;
-
+    //if (exists(boost::filesystem::path(tokfile))) fprintf(stderr, "[TB_RAW] tokefile exists (%s)\n", tokfile.c_str());
+    //else fprintf(stderr, "[TB_RAW]: tokefile NOT exists (%s)\n", tokfile.c_str());
     Common::execute_or_die(sc.str(), ms.str());
+
     return file;
 }

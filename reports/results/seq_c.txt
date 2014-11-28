@@ -1,0 +1,60 @@
+seq
+SET         SYS                     ROUGE-1      ROUGE-2      ROUGE-3      ROUGE-4      ROUGE-L     ROUGE-S*    ROUGE-SU*      ROUGE-W
+======================================================================================================================================
+UNKNOWN_SET bbn-combo            0.10283000   0.03394000   0.01139000   0.00391000   0.10082000   0.01524000   0.02236000   0.06076000
+UNKNOWN_SET cambridge            0.10283000   0.03433000   0.01178000   0.00360000   0.10095000   0.01507000   0.02218000   0.06109000
+UNKNOWN_SET cmu-heafield-combo   0.10108000   0.03466000   0.01323000   0.00455000   0.09900000   0.01533000   0.02238000   0.05984000
+UNKNOWN_SET columbia             0.06887000   0.01351000   0.00093000   0.00000000   0.06685000   0.00644000   0.01138000   0.03989000
+UNKNOWN_SET cu-zeman             0.15708000   0.04962000   0.01698000   0.00583000   0.15276000   0.03326000   0.04374000   0.08980000
+UNKNOWN_SET dfki                 0.08662000   0.02866000   0.01084000   0.00469000   0.08470000   0.01199000   0.01769000   0.05144000
+UNKNOWN_SET huicong              0.11347000   0.03236000   0.00928000   0.00401000   0.10629000   0.01616000   0.02398000   0.06297000
+UNKNOWN_SET jhu                  0.10603000   0.03613000   0.01329000   0.00443000   0.10313000   0.01642000   0.02390000   0.06236000
+UNKNOWN_SET jhu-combo            0.09134000   0.02376000   0.00587000   0.00275000   0.08947000   0.01159000   0.01806000   0.05303000
+UNKNOWN_SET onlineA              0.11013000   0.03814000   0.01478000   0.00519000   0.10702000   0.01776000   0.02549000   0.06432000
+UNKNOWN_SET onlineB              0.10418000   0.03287000   0.01135000   0.00409000   0.10086000   0.01596000   0.02348000   0.06095000
+UNKNOWN_SET uedin                0.11061000   0.03641000   0.01367000   0.00451000   0.10715000   0.01651000   0.02428000   0.06539000
+UNKNOWN_SET upc                  0.11309000   0.03507000   0.01185000   0.00303000   0.10777000   0.01722000   0.02522000   0.06522000
+UNKNOWN_SET upv-combo            0.10775000   0.03555000   0.01346000   0.00463000   0.10424000   0.01647000   0.02384000   0.06311000
+==============================================================
+qname        short
+hostname     node208
+group        lsi
+owner        gilabert
+project      NONE
+department   defaultdepartment
+jobname      run.sh
+jobnumber    3501830
+taskid       undefined
+account      sge
+priority     0
+qsub_time    Fri Nov 28 18:57:29 2014
+start_time   Fri Nov 28 18:57:31 2014
+end_time     Fri Nov 28 18:58:22 2014
+granted_pe   NONE
+slots        1
+failed       0
+exit_status  1
+ru_wallclock 51
+ru_utime     25.246
+ru_stime     7.011
+ru_maxrss    14152
+ru_ixrss     0
+ru_ismrss    0
+ru_idrss     0
+ru_isrss     0
+ru_minflt    178076
+ru_majflt    0
+ru_nswap     0
+ru_inblock   0
+ru_oublock   26608
+ru_msgsnd    0
+ru_msgrcv    0
+ru_nsignals  0
+ru_nvcsw     73332
+ru_nivcsw    713
+cpu          32.257
+mem          1.253
+io           0.028
+iow          0.000
+maxvmem      156.207M
+arid         undefined

@@ -382,7 +382,7 @@ void Config::process_config_file(char* config_file, map<string, string> Options)
     boost::filesystem::path p (TOOLS);   // p reads clearer than argv[1] in the following code
     //fprintf(stderr, "[Config]: pathed\n");
 
-    if (!is_directory(p)) fprintf(stderr, "[%s] directory <%s> does not exist!\n", Common::appNAME.c_str(), TOOLS.c_str()); exit(1);
+    if (!is_directory(p)) { fprintf(stderr, "[%s] directory <%s> does not exist!\n", Common::appNAME.c_str(), TOOLS.c_str()); exit(1); }
 
     Config::tools = TOOLS;
 
@@ -496,7 +496,7 @@ void Config::process_config_file(char* config_file, map<string, string> Options)
                 string file_cs = file;
                 boost::to_lower(type);
                 boost::to_lower(file_cs);
-    //            fprintf(stderr, "[Config]: lowered type: %s/ file_cs: %s\n", type.c_str(), file_cs.c_str());
+                //fprintf(stderr, "[Config]: lowered type: %s/ file_cs: %s\n", type.c_str(), file_cs.c_str());
                 if (type == "source" or type == "src" or type == "reference" or type == "ref" or type == "system" or type == "sys") {
 
                     //string file = entry.first;
@@ -515,7 +515,7 @@ void Config::process_config_file(char* config_file, map<string, string> Options)
                         string proc_file = tb_raw.process_file(file, type);
 
                         if (Config::num_process) {
-                            //fprintf(stderr, "[Config]: to split <%s>\n", proc_file.c_str());
+                            //printf(stderr, "[Config]: to split <%s>\n", proc_file.c_str());
                             tb_raw.split_txt_idx(proc_file);
                             //fprintf(stderr, "[Config]: splited\n");
                         }
