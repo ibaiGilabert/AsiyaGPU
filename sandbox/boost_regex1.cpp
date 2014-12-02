@@ -24,7 +24,7 @@ int main() {
   char const* s1  = "hello, world";
   char const* s2  = "hello, world!  hello, bob!";
   char const* es1 = "hello";
-  char const* es2 = ".*hello.*";
+  char const* es2 = "^hello.*"; //".*hello.*";
   char const* es3 = ".*(hello).*(world).*";
 
   /* Build (compile) our regular expressions */

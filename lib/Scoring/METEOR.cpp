@@ -62,22 +62,22 @@ map<string, string> METEOR::create_rLANG() {
 map<string, string> METEOR::rLANG = create_rLANG();
 
 
-MetricScore METEOR::computeMETEOR(string TGT, string variant) {
+void METEOR::computeMETEOR(string TGT, string variant, MetricScore &res) {
 	// description _ computes METEOR scores (exact + stem + syn + para) (multiple references)
-	string mem_options = " -Xms1024M -Xmx1024M ";
+	string mem_options = "-Xms1024M -Xmx1024M";
 
-	string lang;
+	string lang, t_id;
 	if (METEOR::rLANG.find(Config::LANG) != METEOR::rLANG.end()) lang = "-l " + METEOR::rLANG[Config::LANG];
+    if (Config::serialize) t_id = "_" + TGT;//TB_FORMAT::get_formated_thread(TGT);
 
 	srand(time(NULL));
 	double nr = rand() % (Common::NRAND + 1);	//random number [0, Common::NRAND];
 
 	string sysid = TESTBED::IDX[TGT][1][2];
 
-
 	stringstream ssOut, ssRef;
-	ssOut << Common::DATA_PATH << "/" << Common::TMP << "/" << nr << "." << Common::SYSEXT << "." << METEOR::MTREXT << "." << Common::XMLEXT;
-	ssRef << Common::DATA_PATH << "/" << Common::TMP << "/" << nr << "." << Common::REFEXT << "." << METEOR::MTREXT << "." << Common::XMLEXT;
+	ssOut << Common::DATA_PATH << "/" << Common::TMP << "/" << nr << "." << Common::SYSEXT << "." << METEOR::MTREXT << t_id << "." << Common::XMLEXT;
+	ssRef << Common::DATA_PATH << "/" << Common::TMP << "/" << nr << "." << Common::REFEXT << "." << METEOR::MTREXT << t_id << "." << Common::XMLEXT;
 
 	string outMTRsgml = ssOut.str();
 	string refMTRsgml = ssRef.str();
@@ -85,27 +85,36 @@ MetricScore METEOR::computeMETEOR(string TGT, string variant) {
     boost::filesystem::path outMTRsgml_path(outMTRsgml);
     boost::filesystem::path refMTRsgml_path(refMTRsgml);
 
-	if (!exists(outMTRsgml_path) or Config::remake) TB_NIST::f_create_mteval_doc(TESTBED::src, outMTRsgml, TGT, Config::CASE, 1);
+	if (!exists(outMTRsgml_path) or Config::remake) TB_NIST::f_create_mteval_doc(TESTBED::Hsystems[TGT], outMTRsgml, TGT, Config::CASE, 1);
     if (!exists(refMTRsgml_path) or Config::remake) TB_NIST::f_create_mteval_multidoc(refMTRsgml, Config::CASE, 2);
 
     string modules;
     if (variant == "exact") modules = "exact";
-    else if (variant == "stem") modules == "exact stem";
-    else if (variant == "syn") modules == "exact stem synonym";
-    else if (variant == "para" and lang != "l -cz") modules == "exact stem paraphrase";
-    else if (variant == "para" and lang == "l -cz") modules == "exact paraphrase";
+    else if (variant == "stem") modules = "exact stem";
+    else if (variant == "syn") modules = "exact stem synonym";
+    else if (variant == "para" and lang != "l -cz") modules = "exact stem paraphrase";
+    else if (variant == "para" and lang == "l -cz") modules = "exact paraphrase";
     else { fprintf(stderr, "[ERROR] unknown METEOR variant <%s>\n", variant.c_str()); exit(1); }
 
 	string toolMETEOR = "java -Dfile.encoding=UTF-8 "+mem_options+" -jar "+Config::tools+"/"+METEOR::TMETEOR+"/"+METEOR::METEORSCRIPT;
 
 	cout << "toolMETEOR ->" << toolMETEOR << endl << endl;
 
-	string sc = toolMETEOR +" "+outMTRsgml+" "+refMTRsgml+" -sgml -f "+Common::DATA_PATH+"/"+Common::TMP+"/"+sysid+" "+lang+" -m \""+modules+"\" > /dev/null 2> /dev/null";
+	/*stringstream ssBase;
+	ssBase << Common::DATA_PATH << "/" << Common::TMP << "/" << nr << TGT;	//sysid;
+	string basename = ssBase.str();*/
+
+	string basename = Common::DATA_PATH+"/"+Common::TMP+"/METEOR"+t_id;	//sysid;
+	string sc = toolMETEOR +" "+outMTRsgml+" "+refMTRsgml+" -sgml -f "+basename/*Common::DATA_PATH+"/"+Common::TMP+"/"+sysid*/+" "+lang+" -m \""+modules+"\" > /dev/null 2> /dev/null";
     string ms = "[ERROR] problems running METEOR...";
 	Common::execute_or_die(sc, ms);
 
-	string basename = Common::DATA_PATH+"/"+Common::TMP+"/"+sysid;
-	MetricScore res = Scores::read_scores(basename, TGT, 0);
+	//string basename = Common::DATA_PATH+"/"+Common::TMP+"/"+TGT;	//sysid;
+
+	//cout << "MetricScore BEFORE read <" << basename << "> file" << endl;
+    //hOQ.print_MetricScore(res);
+	res = Scores::read_scores(basename, TGT, 0);
+	//cout << "MetricScore AFTER read <" << basename << "> file" << endl;
 
 	if (exists(outMTRsgml_path)) {
 		string sysaux = "rm -f "+outMTRsgml;
@@ -115,7 +124,6 @@ MetricScore METEOR::computeMETEOR(string TGT, string variant) {
 		string sysaux = "rm -f "+refMTRsgml;
 		system (sysaux.c_str());
 	}
-	return res;
 }
 
 
@@ -123,15 +131,13 @@ void METEOR::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 	// description _ computes METEOR scores (exact + stem + syn + para) (multiple references)
 	vector<string> mMETEOR(METEOR::rMETEOR.size());
 
-	int GO , i;
+	int GO, i;
 	GO = i = 0;
 	for (map<string, int>::const_iterator it = METEOR::rMETEOR.begin(); it != METEOR::rMETEOR.end(); ++it, ++i)
 		mMETEOR[i] = it->first;
 
-	i = 0;
-	while (i < mMETEOR.size() and !GO) {
+	for (i = 0; i < mMETEOR.size() and !GO; ++i) {
 		if (Config::Hmetrics.find(mMETEOR[i]) != Config::Hmetrics.end()) GO = 1;
-		++i;
 	}
 
 	cout << "METEOR ei!" << endl;
@@ -169,22 +175,22 @@ void METEOR::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 		bool m_sy = Config::Hmetrics.find(mtr_sy) != Config::Hmetrics.end();
 		bool m_pa = Config::Hmetrics.find(mtr_pa) != Config::Hmetrics.end();
 
-		SC_ASIYA sc_asiya;
-
-	    if ( ((!exists(reportMTRexactXML_path) and !exists(reportMTRexactXML_ext)) or Config::remake) and m_ex) {	//exact
-			MetricScore res = computeMETEOR(TGT, "exact");
+		MetricScore res;
+	    SC_ASIYA sc_asiya;
+		if ( ((!exists(reportMTRexactXML_path) and !exists(reportMTRexactXML_ext)) or Config::remake) and m_ex) {	//exact
+			computeMETEOR(TGT, "exact", res);
 	    	if (Config::O_STORAGE == 1) {
 	    		sc_asiya.write_report(TGT, REF, mtr_ex, res);
-         		cout << "IQXML DOCUMENT " << mtr_ex << " CREATED" << endl;
+         		cout << "SC_ASIYA DOCUMENT " << mtr_ex << " CREATED" << endl;
          	}
          	hOQ.save_hash_scores(mtr_ex, TGT, REF, res);
 		}
 	    if ( ((!exists(reportMTRstemXML_path) and !exists(reportMTRstemXML_ext)) or Config::remake) and m_st) {	//exact + porter_stem
 			if (METEOR::rLANG_STM.find(Config::LANG) != METEOR::rLANG_STM.end()) {
-				MetricScore res = computeMETEOR(TGT, "stem");
+				computeMETEOR(TGT, "stem", res);
 		    	if (Config::O_STORAGE == 1) {
 		    		sc_asiya.write_report(TGT, REF, mtr_st, res);
-	         		cout << "IQXML DOCUMENT " << mtr_st << " CREATED" << endl;
+	         		cout << "SC_ASIYA DOCUMENT " << mtr_st << " CREATED" << endl;
 	         	}
 	         	hOQ.save_hash_scores(mtr_st, TGT, REF, res);
 			}
@@ -193,10 +199,10 @@ void METEOR::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 		}
 	    if ( ((!exists(reportMTRsynXML_path) and !exists(reportMTRsynXML_ext)) or Config::remake) and m_sy) {	//exact + porter_stem + wn_stem + wn_syn
 			if (METEOR::rLANG_SYN.find(Config::LANG) != METEOR::rLANG_SYN.end()) {
-				MetricScore res = computeMETEOR(TGT, "syn");
+				computeMETEOR(TGT, "syn", res);
 		    	if (Config::O_STORAGE == 1) {
 		    		sc_asiya.write_report(TGT, REF, mtr_sy, res);
-	         		cout << "IQXML DOCUMENT " << mtr_sy << " CREATED" << endl;
+	         		cout << "SC_ASIYA DOCUMENT " << mtr_sy << " CREATED" << endl;
 	         	}
 	         	hOQ.save_hash_scores(mtr_sy, TGT, REF, res);
 	        }
@@ -204,15 +210,18 @@ void METEOR::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 		}
 	    if ( ((!exists(reportMTRparaXML_path) and !exists(reportMTRparaXML_ext)) or Config::remake) and m_pa) {	//exact + porter_stem + wn_steam + wn_syn + para
 			if (METEOR::rLANG_PARA.find(Config::LANG) != METEOR::rLANG_PARA.end()) {
-				MetricScore res = computeMETEOR(TGT, "para");
+				computeMETEOR(TGT, "para", res);
 		    	if (Config::O_STORAGE == 1) {
 		    		sc_asiya.write_report(TGT, REF, mtr_pa, res);
-	         		cout << "IQXML DOCUMENT " << mtr_pa << " CREATED" << endl;
+	         		cout << "SC_ASIYA DOCUMENT " << mtr_pa << " CREATED" << endl;
 	         	}
 	         	hOQ.save_hash_scores(mtr_pa, TGT, REF, res);
 	        }
 			else { fprintf(stderr, "[ERROR] %s metric not available for language '%s'\n", mtr_pa.c_str(), Config::LANG.c_str()); exit(1); }
 		}
+
+        if (Config::serialize) //serialize
+            hOQ.save_struct_scores(TB_FORMAT::make_serial("METEOR", TGT, REF));
 	}
 
 }

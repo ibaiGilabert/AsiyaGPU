@@ -15,7 +15,7 @@ private:
 	double read_GTM(string reportGTM);
 	vector<double> read_GTM_segments(string reportGTM);
 
-	pair<double, vector<double> > computeGTM(string TGT, int e);
+	void computeGTM(string TGT, int e, double &SYS, vector<double> &SEG);
 
 public:
 	void doMetric(string TGT, string REF, string prefix, Scores &hOQ);

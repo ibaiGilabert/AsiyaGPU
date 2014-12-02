@@ -424,9 +424,8 @@ void ROUGE::doMetric(string TGT, string REF, string prefix, int stemming, Scores
 
 //cout << "May I serialize you?" << endl;
 
-            if (Config::serialize) {  //serialize
-                    hOQ.save_struct_scores(TB_FORMAT::make_serial("ROUGE", TGT, REF));
-            }
+            if (Config::serialize) //serialize
+                hOQ.save_struct_scores(TB_FORMAT::make_serial("ROUGE", TGT, REF));
 
 //cout << "ROUGE serialized" << endl;
                 /*cout << "-----------------------------------------ROUGE-SCORES---------------------------------" << endl;

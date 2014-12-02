@@ -155,7 +155,7 @@ SHORTCUTS
 	        data = boost::regex_replace(data, re2, "");
 
 	-->	STRING to CHAR*
-		
+
 			string file;
 			dirname(&file[0]);
 
@@ -170,18 +170,19 @@ SHORTCUTS
 
 			exemples a sandbox/boost_filename_extension.cpp
 
+	-->	IF "cp" command drops a shit use this:
+
+		$set -C &&  cat < /path/to/src > /path/to/dest
+
+
 TODO LIST
 
 	-	LOCAL
-
-				->	Si ja creo bé els fixers .config i els .sh, ara falta veure on i com es guarden els resultats.
-
 				->	Completar l'ESA (test de expressions regulars a regular_exp.pl)	(verificar els tipus de computeMultiESA)
 				->	Completar el NGRAM.
 				->	Completar el CE.
 
 	-	CLUSTER
-				->	Comprovar de nou el done-list amb les noves modificacions de les metriques.
 				->	Provar els METEOR/ESA (Asiya.config).
 				->	Provar el GTM	(nova versio de NISTXML amb SGML_GTM_create_doc)
 				->	Provar el TER
@@ -200,7 +201,7 @@ NOTES:
 
 DONE LIST
 
-	->	BLEU, NIST, BLEUNIST, ROUGE;	resultats escirts correctament.
+	->	BLEU, NIST, ROUGE;	resultats escirts correctament.
 
 
 QUESTIONS

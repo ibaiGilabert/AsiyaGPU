@@ -46,7 +46,7 @@
     map<string, map<string, double> >                       Config::max_score,          Config::min_score;
     map<string, int>            Config::Hmetrics,           Config::eval_schemes,       Config::metaeval_schemes;
     map<string, int>            Config::optimize_schemes,   Config::metaeval_criteria,  Config::optimize_criteria;
-    set<string>                 Config::metrics,            Config::systems,            Config::references;
+    set<string>                 Config::Fmetrics,           Config::metrics,            Config::systems,            Config::references;
     //vector<string>              Config::COMBO;  //metrics,  systems,        references;
 
     string Config::IQ_config,   Config::learn_scheme,   Config::ci;
@@ -596,26 +596,17 @@ void Config::process_config_file(char* config_file, map<string, string> Options)
 void Config::validate_configuration() {
     // description _ validate configuration (through simple verifications on mandatory arguments and option values)
 
-    if (Config::PATH == "") {
-        fprintf(stderr, "[ERROR] PATH undefined\n");
-        exit(1);
-    }
-    boost::filesystem::path p (Config::PATH);   // p reads clearer than argv[1] in the following code
-    if (!is_directory(p)) {
-        fprintf(stderr, "[ERROR] PATH directory <%s> does not exist!\n", Config::PATH);
-        exit(1);
-    }
-    boost::filesystem::path t (Config::tools);   // p reads clearer than argv[1] in the following code
-    if (!is_directory(t)) {
-        fprintf(stderr, "[ERROR] PATH directory <%s> does not exist!\n", Config::tools.c_str());
-        exit(1);
-    }
+    if (Config::PATH == "") { fprintf(stderr, "[ERROR] PATH undefined\n"); exit(1); }
+
+    boost::filesystem::path p(Config::PATH);   // p reads clearer than argv[1] in the following code
+    if (!is_directory(p)) { fprintf(stderr, "[ERROR] PATH directory <%s> does not exist!\n", Config::PATH); exit(1); }
+
+    boost::filesystem::path t(Config::tools);   // p reads clearer than argv[1] in the following code
+    if (!is_directory(t)) { fprintf(stderr, "[ERROR] PATH directory <%s> does not exist!\n", Config::tools.c_str()); exit(1); }
+
     if (!Config::references.empty()) {
         for (set<string>::const_iterator it = Config::references.begin(); it != Config::references.end(); ++it) {
-            if (TESTBED::Hrefs.find(*it) == TESTBED::Hrefs.end()) {
-                fprintf(stderr, "[ERROR] reference '%s' not in test suite!!\n", it->c_str());
-                exit(1);
-            }
+            if (TESTBED::Hrefs.find(*it) == TESTBED::Hrefs.end()) { fprintf(stderr, "[ERROR] reference '%s' not in test suite!!\n", it->c_str()); exit(1); }
         }
     } else {
         for (map<string, string>::const_iterator it = TESTBED::Hrefs.begin(); it != TESTBED::Hrefs.end(); ++it) Config::references.insert(it->first);
@@ -623,17 +614,11 @@ void Config::validate_configuration() {
 
     if (!Config::systems.empty()) {
         for (set<string>::const_iterator it = Config::systems.begin(); it != Config::systems.end(); ++it) {
-            if (TESTBED::Hsystems.find(*it) == TESTBED::Hsystems.end()) {
-                fprintf(stderr, "[ERROR] system '%s' not in test suite!!\n", it->c_str());
-                exit(1);
-            }
+            if (TESTBED::Hsystems.find(*it) == TESTBED::Hsystems.end()) { fprintf(stderr, "[ERROR] system '%s' not in test suite!!\n", it->c_str()); exit(1); }
         }
     } else {
         for (map<string, string>::const_iterator it = TESTBED::Hsystems.begin(); it != TESTBED::Hsystems.end(); ++it) Config::systems.insert(it->first);
-        if (Config::systems.empty()) {
-            fprintf(stderr, "[ERROR] set of systems undefined!!\n");
-            exit(1);
-        }
+        if (Config::systems.empty()) { fprintf(stderr, "[ERROR] set of systems undefined!!\n"); exit(1); }
     }
     /*if (!Config::Hmetrics.empty()) {
         //metric_set = Metrics::load_metric_set();
@@ -659,6 +644,48 @@ void Config::validate_configuration() {
     Config::segid_length = TESTBED::get_max_segid_length(*Config::systems.begin());
     if (Config::segid_length < Common::MIN_ID_LENGTH) Config::segid_length = Common::MIN_ID_LENGTH;
 
+    if (Config::num_process) {
+        for (set<string>::const_iterator it = Config::metrics.begin(); it != Config::metrics.end(); ++it) {
+            boost::regex re_BLEU("^BLEU.*");
+            boost::regex re_GTM("^GTM.*");
+            boost::regex re_NIST("^NIST.*");
+            boost::regex re_ROUGE("^ROUGE.*");
+            boost::regex re_WER("^WER.*");
+            boost::regex re_PER("^PER.*");
+            boost::regex re_TER("^TER.*");
+            boost::regex re_METEOR("^METEOR.*");
+            boost::regex re_Ol("^Ol.*");
+            boost::regex re_Pl("^Pl.*");
+            boost::regex re_Fl("^Fl.*");
+            boost::regex re_Rl("^Rl.*");
+            /*boost::regex re_SP("SP");
+            boost::regex re_CP("CP");
+            boost::regex re_DP("DP");
+            boost::regex re_SR("SR");
+            boost::regex re_NE("NE");
+            boost::regex re_ALGN("ALGN");*/
+
+            boost::match_results<string::const_iterator> results;
+            if (boost::regex_match(*it, results, re_BLEU)) Config::Fmetrics.insert("BLEU");
+            else if (boost::regex_match(*it, results, re_GTM)) Config::Fmetrics.insert("GTM");
+            else if (boost::regex_match(*it, results, re_NIST)) Config::Fmetrics.insert("NIST");
+            else if (boost::regex_match(*it, results, re_ROUGE)) Config::Fmetrics.insert("ROUGE");
+            else if (boost::regex_match(*it, results, re_WER)) Config::Fmetrics.insert("WER");
+            else if (boost::regex_match(*it, results, re_PER)) Config::Fmetrics.insert("PER");
+            else if (boost::regex_match(*it, results, re_TER)) Config::Fmetrics.insert("TER");
+            else if (boost::regex_match(*it, results, re_METEOR)) Config::Fmetrics.insert("METEOR");
+            else if (boost::regex_match(*it, results, re_Ol)) Config::Fmetrics.insert("Ol");
+            else if (boost::regex_match(*it, results, re_Pl)) Config::Fmetrics.insert("Pl");
+            else if (boost::regex_match(*it, results, re_Fl)) Config::Fmetrics.insert("Fl");
+            else if (boost::regex_match(*it, results, re_Rl)) Config::Fmetrics.insert("Rl");
+        }
+
+        fprintf(stderr, "METRICS (families): ");
+        for (set<string>::const_iterator it = Config::Fmetrics.begin(); it != Config::Fmetrics.end(); ++it) {
+            fprintf(stderr, "%s, ", it->c_str());
+        }
+        fprintf(stderr, "\n");
+    }
     /*cout << "-------" << endl;
     cout << "\tsysid: " << Config::sysid_length << endl;
     cout << "\tsetid: " << Config::setid_length << endl;

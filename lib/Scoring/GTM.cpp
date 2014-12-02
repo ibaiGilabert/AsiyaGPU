@@ -62,12 +62,15 @@ vector<double> GTM::read_GTM_segments(string reportGTM) {
 }
 
 
-pair<double, vector<double> > GTM::computeGTM(string TGT, int e) {
+void GTM::computeGTM(string TGT, int e, double &SYS, vector<double> &SEG) {
 	stringstream tGTM;
 	// description _ computes GTM scores -> n = 1..4, LCS, S*, SU*, W-1.2 (multiple references)
 	tGTM << "java -Dfile.encoding=UTF-8 -jar " << Config::tools << "/" << GTM::TGTM << "/gtm.jar +s +d";
 	string toolGTM = tGTM.str();
 	cout << "toolGTM ->" << toolGTM << endl << endl;
+
+	string t_id;
+    if (Config::serialize) t_id = "_" + TGT;//TB_FORMAT::get_formated_thread(TGT);
 
 	srand(time(NULL));
 	vector<string> LrefTGMsgml;
@@ -75,7 +78,7 @@ pair<double, vector<double> > GTM::computeGTM(string TGT, int e) {
 		string ref = it->second;
 
 		stringstream ssRef;
-		ssRef << Common::DATA_PATH << "/" << Common::TMP << "/" << rand() % (Common::NRAND + 1) << "." << Common::REFEXT << "." <<  GTM::GTMEXT << "." << Common::SGMLEXT;
+		ssRef << Common::DATA_PATH << "/" << Common::TMP << "/" << rand() % (Common::NRAND + 1) << "." << Common::REFEXT << "." <<  GTM::GTMEXT << t_id << "." << Common::SGMLEXT;
 		string refGTMsgml = ssRef.str();
  	    boost::filesystem::path ref_path(refGTMsgml);
 
@@ -86,8 +89,8 @@ pair<double, vector<double> > GTM::computeGTM(string TGT, int e) {
 	}
 
 	stringstream ssOut, ssReport;
-	ssOut << Common::DATA_PATH << "/" << Common::TMP << "/" << rand() % (Common::NRAND + 1) << "." << Common::SYSEXT << "." <<  GTM::GTMEXT << "." << Common::SGMLEXT;
-	ssReport << Common::DATA_PATH << "/" << Common::TMP << "/" << rand() % (Common::NRAND + 1) << "." << GTM::GTMEXT << "-" << e << "." << Common::REPORTEXT;
+	ssOut << Common::DATA_PATH << "/" << Common::TMP << "/" << rand() % (Common::NRAND + 1) << "." << Common::SYSEXT << "." <<  GTM::GTMEXT << t_id << "." << Common::SGMLEXT;
+	ssReport << Common::DATA_PATH << "/" << Common::TMP << "/" << rand() % (Common::NRAND + 1) << "." << GTM::GTMEXT << "-" << e << t_id << "." << Common::REPORTEXT;
 
 	string outGTMsgml = ssOut.str();
 	string reportGTM = ssReport.str();
@@ -107,8 +110,8 @@ pair<double, vector<double> > GTM::computeGTM(string TGT, int e) {
 
 	Common::execute_or_die(sc.str(), ms);
 
-	double SYS = read_GTM(reportGTM);
-	vector<double> SEG = read_GTM_segments(reportGTM);
+	SYS = read_GTM(reportGTM);
+	SEG = read_GTM_segments(reportGTM);
 
 	string sysaux = "rm -f " + reportGTM;
 	system(sysaux.c_str());
@@ -124,8 +127,6 @@ pair<double, vector<double> > GTM::computeGTM(string TGT, int e) {
 		sysaux = "rm -f " + outGTMsgml;
 		system(sysaux.c_str());
 	}
-
-	return make_pair(SYS, SEG);
 }
 
 void GTM::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
@@ -146,6 +147,7 @@ void GTM::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 	if (GO) {
 		cout << "GO! GTM GO!" << endl;
 		if (Config::verbose == 1) fprintf(stderr, "%s\n", GTM::GTMEXT.c_str());
+
 		stringstream ss1, ss2, ss3;
 		ss1 << Common::DATA_PATH << "/" << Common::REPORTS << "/" << TGT << "/" << REF << "/" << prefix << GTM::GTMEXT << "-1." << Common::XMLEXT;
 		ss2 << Common::DATA_PATH << "/" << Common::REPORTS << "/" << TGT << "/" << REF << "/" << prefix << GTM::GTMEXT << "-2." << Common::XMLEXT;
@@ -163,43 +165,47 @@ void GTM::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 		boost::filesystem::path reportGTM2xml_gz(reportGTM2xml + "." + Common::GZEXT);
 	    boost::filesystem::path reportGTM3xml_gz(reportGTM3xml + "." + Common::GZEXT);
 
-	    SC_ASIYA sc_asiya;
+	    double SYS;
+    	vector<double> SEG;
+		SC_ASIYA sc_asiya;
 	    if ( (!exists(reportGTM1xml_path) and !exists(reportGTM1xml_gz)) or Config::remake) {
-			pair<double, vector<double> > res = computeGTM(TGT, 1);
+			computeGTM(TGT, 1, SYS, SEG);
 	    	vector<double> d_scores, s_scores;
-			TESTBED::get_seg_doc_scores(res.second, 0, TGT, d_scores, s_scores);
+			TESTBED::get_seg_doc_scores(SEG, 0, TGT, d_scores, s_scores);
 
          	string prefG = prefix + GTM::GTMEXT + "-1";
 
 	    	if (Config::O_STORAGE == 1) {
-	    		sc_asiya.write_report(TGT, REF, prefG, res.first, d_scores, s_scores);
-         		cout << "IQXML DOCUMENT " << prefG << " CREATED" << endl;
+	    		sc_asiya.write_report(TGT, REF, prefG, SYS, d_scores, s_scores);
+         		cout << "SC_ASIYA DOCUMENT " << prefG << " CREATED" << endl;
          	}
-         	hOQ.save_hash_scores(prefG, TGT, REF, res.first, d_scores, s_scores);
+         	hOQ.save_hash_scores(prefG, TGT, REF, SYS, d_scores, s_scores);
 	    }
 		if ( (!exists(reportGTM2xml_path) and !exists(reportGTM2xml_gz)) or Config::remake) {
-			pair<double, vector<double> > res = computeGTM(TGT, 2);
+			computeGTM(TGT, 2, SYS, SEG);
 	    	vector<double> d_scores, s_scores;
-         	TESTBED::get_seg_doc_scores(res.second, 0, TGT, d_scores, s_scores);
+         	TESTBED::get_seg_doc_scores(SEG, 0, TGT, d_scores, s_scores);
 
 			string prefG = prefix + GTM::GTMEXT + "-2";
 			if (Config::O_STORAGE == 1) {
-	    		sc_asiya.write_report(TGT, REF, prefG, res.first, d_scores, s_scores);
-         		cout << "IQXML DOCUMENT " << prefG << " CREATED" << endl;
+	    		sc_asiya.write_report(TGT, REF, prefG, SYS, d_scores, s_scores);
+         		cout << "SC_ASIYA DOCUMENT " << prefG << " CREATED" << endl;
          	}
-	    	hOQ.save_hash_scores(prefG, TGT, REF, res.first, d_scores, s_scores);
+	    	hOQ.save_hash_scores(prefG, TGT, REF, SYS, d_scores, s_scores);
 		}
 	    if ( (!exists(reportGTM3xml_path) and !exists(reportGTM3xml_gz)) or Config::remake) {
-			pair<double, vector<double> > res = computeGTM(TGT, 3);
+			computeGTM(TGT, 3, SYS, SEG);
 			vector<double> d_scores, s_scores;
-			TESTBED::get_seg_doc_scores(res.second, 0, TGT, d_scores, s_scores);
+			TESTBED::get_seg_doc_scores(SEG, 0, TGT, d_scores, s_scores);
 
 	    	string prefG = prefix + GTM::GTMEXT + "-3";
          	if (Config::O_STORAGE == 1) {
-	    		sc_asiya.write_report(TGT, REF, prefG, res.first, d_scores, s_scores);
-         		cout << "IQXML DOCUMENT " << prefG << " CREATED" << endl;
+	    		sc_asiya.write_report(TGT, REF, prefG, SYS, d_scores, s_scores);
+         		cout << "SC_ASIYA DOCUMENT " << prefG << " CREATED" << endl;
          	}
-         	hOQ.save_hash_scores(prefG, TGT, REF, res.first, d_scores, s_scores);
+         	hOQ.save_hash_scores(prefG, TGT, REF, SYS, d_scores, s_scores);
 		}
+        if (Config::serialize) //serialize
+            hOQ.save_struct_scores(TB_FORMAT::make_serial("GTM", TGT, REF));
 	}
 }

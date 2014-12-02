@@ -76,11 +76,13 @@ public:
 	void load_struct_scores(char* filename);
 	void make_doc_scores();
 	void make_sys_scores();
-	
+
 	//Print
 	void print_sys_scores() const;
 	void print_doc_scores(int n) const;
 	void print_seg_scores(int n) const;
+
+	void print_MetricScore(const MetricScore &res) const;
 };
 
 #endif

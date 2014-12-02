@@ -135,10 +135,13 @@ void Core::process_multi_metrics(string HYP, const set<string> &Lref) {
 		string run_bleu_file = proc.make_run_file(config_bleu_file, HYP, REF, i, "BLEU");
 		job_qw.insert(proc.run_job(run_bleu_file, "BLEU"));*/
 
-		string config_rouge_file = proc.make_config_file(HYP, REF, "ROUGE", i);
-		string run_rouge_file = proc.make_run_file(config_rouge_file, HYP, REF, i, "ROUGE");
-		job_qw.insert(proc.run_job(run_rouge_file, "ROUGE"));
-
+		for (set<string>::const_iterator it_fm = Config::Fmetrics.begin(); it_fm != Config::Fmetrics.end(); ++it_fm) {
+			string config_file = proc.make_config_file(HYP, REF, *it_fm, i);
+			string run_file = proc.make_run_file(config_file, HYP, REF, i, *it_fm);
+			job_qw.insert(proc.run_job(run_file, *it_fm));
+			//file_qw.push(config_file);
+			//file_qw.push(run_file);
+		}
 		/*string run_meteor_file = proc.make_run_file(config_file, HYP, REF, i, "METEOR");
 		job_qw.insert(proc.run_job(run_meteor_file, "METEOR")); */
 
@@ -162,9 +165,11 @@ void Core::process_multi_metrics(string HYP, const set<string> &Lref) {
 void Core::rebuild_hash_scores(string TGT, const set<string> &Lref, Scores &hOQ) {
 	string REF = Common::join_set(Lref, '_');
     for (int i = 1; i <= Config::num_process; ++i) {
-        //fprintf(stderr, "[LOAD]: ROUGE/ tgt: %s/ ref: %s/ split: %d\n", TGT.c_str(), REF.c_str(), i);
-    	hOQ.load_struct_scores(TB_FORMAT::get_serial("ROUGE", TGT, REF, i));
-	    //fprintf(stderr, "[LOAD]: COMPLETE\n");
+		for (set<string>::const_iterator it_fm = Config::Fmetrics.begin(); it_fm != Config::Fmetrics.end(); ++it_fm) {
+	        //fprintf(stderr, "[LOAD]: ROUGE/ tgt: %s/ ref: %s/ split: %d\n", TGT.c_str(), REF.c_str(), i);
+	    	hOQ.load_struct_scores(TB_FORMAT::get_serial(*it_fm, TGT, REF, i));
+		    //fprintf(stderr, "[LOAD]: COMPLETE\n");
+	    }
     }
 }
 
@@ -320,8 +325,16 @@ if (Config::num_process) {
             hOQ.make_sys_scores();
         }
     }
-    
+
 	if (Config::verbose) fprintf(stderr, "[REBUILD DONE]\n");
+
+	// DELETE GARBAGE
+	/*string rm = "rm ";
+	while(!file_qw.empty()) {
+		string rm_aux = rm + file_qw.top();
+		system(rm_aux.c_str());
+		file_qw.pop();
+	}*/
 
     //for (int i = 0; i < hOQ.get_num_doc_scores(); ++i) hOQ.print_doc_scores(i);
 }

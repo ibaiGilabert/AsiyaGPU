@@ -6,6 +6,7 @@
 
 #include <map>
 #include <set>
+//#include <stack>
 #include <vector>
 #include <string>
 
@@ -15,7 +16,7 @@ class Core {
 private:
     Process proc;
 	set<string> job_qw;      								// set de job_ids
-    //const map<string, vector<string> > whole_metric_set;
+    //stack<string> file_qw;
 
 	//Compute scores
 	void doMultiMetrics(string HYP, const set<string> &Lref, Scores &hOQ);

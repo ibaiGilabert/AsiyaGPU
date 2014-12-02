@@ -17,7 +17,7 @@ private:
 	static const string MTREXT, TMETEOR, METEORSCRIPT;
 	static const map<string, int> rMETEOR, rLANG_STM, rLANG_PARA, rLANG_SYN;
 
-	MetricScore computeMETEOR(string TGT, string variant);
+	void computeMETEOR(string TGT, string variant, MetricScore &res);
 
 public:
 	void doMetric(string TGT, string REF, string prefix, Scores &hOQ);

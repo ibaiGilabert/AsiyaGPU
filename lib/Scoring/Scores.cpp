@@ -215,7 +215,7 @@ void Scores::load_struct_scores(char* filename) {
 
 void Scores::make_doc_scores() {
 	for(oMap::const_iterator it_m = seg[0].begin(); it_m != seg[0].end(); ++it_m) {         //iterate through all metrics
-		string metric = it_m->first; 
+		string metric = it_m->first;
 		for (iMap::const_iterator it_s = it_m->second.begin(); it_s != it_m->second.end(); ++it_s) {
 			string system_name = it_s->first;
 			sMap::const_iterator it_r = it_s->second.begin();
@@ -324,5 +324,17 @@ void Scores::print_seg_scores(int n) const {
 		cout << "\t}" << endl;
 	}
 	cout << "}" << endl;
+	cout << "---------------------" << endl;
+}
+
+void Scores::print_MetricScore(const MetricScore &res) const {
+	cout << "---- MetricScore ----" << endl;
+	cout << "\tSYS: " << res.sys_score << endl;
+	cout << "\tDOC: ";
+	for (int i = 0; i < res.doc_scores.size(); ++i) cout << res.doc_scores[i] << ",";
+	cout << endl;
+	cout << "\tSEG: ";
+	for (int j = 0; j < res.seg_scores.size(); ++j) cout << res.seg_scores[j] << ",";
+	cout << endl;
 	cout << "---------------------" << endl;
 }
