@@ -7,24 +7,22 @@
 
 class NGRAM : public SingleMetric {
 private:
-	static map<string, int> create_rMETEOR();
-	static map<string, int> create_rLANG_STM();
-	static map<string, int> create_rLANG_PARA();
-	static map<string, int> create_rLANG_SYN();
-	static map<string, string> create_rLANG();
+	static map<string, int> create_rNGRAM();
+	static map<string, int> create_rCENGRAM();
 
-	MetricScore computeMETEOR(string TGT, string variant);
+	void read_NGRAM_segments(string reportNGRAM, string opt, map<string, vector<double> > &SEGS);
 
-public:
+	void NGRAM_f_create_doc(string input, string output);
 
-	void doMetric(string TGT, string REF, string prefix, Scores &hOQ);
+	void computeNGRAM(string opt, string ref, string out, int issrcbased, map<string, vector<double> > &SEGS);
+	void computeMultiNGRAM(string opt, string out, int issrcbased, map<string, double> &MAXSYS, map<string, vector<double> > &MAXSEG);
 
-	static const string MTREXT, TMETEOR, METEORSCRIPT;
-	static const map<string, int> rMETEOR, rLANG_STM, rLANG_PARA, rLANG_SYN;
-	static map<string, string> rLANG;
-
+	static const map<string, int> rNGRAM, rCENGRAM;
 	static const string EMPTY_ITEM, TNGRAM, TNGRAMdir, TRANSLITERATOR;
 	static const string NGRAMSRC, NGRAMREF, NGRAMEXT, CENGRAMEXT;
+
+public:
+	void doMetric(string TGT, string REF, string prefix, Scores &hOQ);
 };
 
 

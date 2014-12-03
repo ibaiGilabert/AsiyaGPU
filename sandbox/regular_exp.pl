@@ -58,6 +58,12 @@ print "1: |$1|\n";
 print "2: |$2|\n";
 
 print "pwd: |$pwd|\n";
+
+my $outRND = $pwd."./puta";
+print "outRND: |$outRND|\n";
+$outRND =~ s/\.\///;
+print "outRND: |$outRND|\n";
+
 if ( $outRND =~ m/\.\// ) {
   $outRND =~ s/\.\///;
   $outRND = "$pwd/$outRND";
