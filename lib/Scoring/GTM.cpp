@@ -28,19 +28,27 @@ const map<string, int> GTM::rGTM = create_rGTM();
 
 double GTM::read_GTM(string reportGTM) {
 	// description _ read GTM value from report file
-	vector<string> GTM;
+	string last;
 	ifstream file(reportGTM.c_str());
-    if (file) {
-    	string str;
-	    //while (getline(file, str)) {
-		getline(file, str);
-        istringstream iss(str);
-	    for(std::string token; getline(iss, token, ' '); ) GTM.push_back(token);
-	    //}
-        file.close();
-    } else { fprintf(stderr, "couldn't open input file: %s\n", reportGTM.c_str()); exit(1); }
+	if (file) {
+		file.seekg(-1, ios_base::end);  //go to one spot before end of file
+		bool loop = true;
+		while (loop) {
+			char c;
+			file.get(c);					// Get current byte's data
+			if ((int)file.tellg() <= 1) {
+				file.seekg(0);				// If the data was at or before the 0th byte
+				loop = false;				// The first line is the last line, so stop here
+			}
+			else if (c == ' ') loop = false;
+			else file.seekg(-2, ios_base::cur);	// Move to the front of that data, then to the front of the data before it
+		}
+		getline(file, last);
+		file.close();
+	} else { fprintf(stderr, "couldn't open input file: %s\n", reportGTM.c_str()); exit(1); }
 
-    return atof(GTM[1].c_str());
+    //cout << "[GTM]: SYS scores readed: " << last << endl;
+    return atof(last.c_str());
 }
 
 vector<double> GTM::read_GTM_segments(string reportGTM) {
@@ -63,9 +71,11 @@ vector<double> GTM::read_GTM_segments(string reportGTM) {
 
 
 void GTM::computeGTM(string TGT, int e, double &SYS, vector<double> &SEG) {
-	stringstream tGTM;
 	// description _ computes GTM scores -> n = 1..4, LCS, S*, SU*, W-1.2 (multiple references)
-	tGTM << "java -Dfile.encoding=UTF-8 -jar " << Config::tools << "/" << GTM::TGTM << "/gtm.jar +s +d";
+	string mem_options = "-Xms2G -Xmx2G";
+
+	stringstream tGTM;
+	tGTM << "java -Dfile.encoding=UTF-8 " << mem_options << " -jar " << Config::tools << "/" << GTM::TGTM << "/gtm.jar +s +d";
 	string toolGTM = tGTM.str();
 	cout << "toolGTM ->" << toolGTM << endl << endl;
 

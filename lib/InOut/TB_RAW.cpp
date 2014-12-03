@@ -149,13 +149,13 @@ string TB_RAW::process_file(string file, string type) {
     }
     else { fprintf(stderr, "[ERROR] unkown file type <%s>!!\n", type.c_str()); exit(1); }
 
-    if (!exists(boost::filesystem::path(tokfile))) {
+    /*if (!exists(boost::filesystem::path(tokfile))) {
         stringstream sc, ms;
         sc << "cp -f "<< file << " " << tokfile;
         ms << "[ERROR] could not copy " << file << " into " << tokfile;
         //if (exists(boost::filesystem::path(tokfile))) fprintf(stderr, "[TB_RAW] tokefile exists (%s)\n", tokfile.c_str());
         //else fprintf(stderr, "[TB_RAW]: tokefile NOT exists (%s)\n", tokfile.c_str());
         Common::execute_or_die(sc.str(), ms.str());
-    }
+    }*/
     return file;
 }

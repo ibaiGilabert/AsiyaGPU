@@ -134,7 +134,7 @@ NGRAM::NGRAM_f_create_doc(string input, string output) {
 
 
 //computeNGRAM($NGRAM::NGRAMREF, $out, $Href->{$ref}, $tools, $case, $srclang, $trglang, $verbose, $issrcbased);
-NGRAM::computeNGRAM(string opt, string ref, string TGT) {
+NGRAM::computeNGRAM(string opt, string ref, string out) {
 	srand(time(NULL));
 	double nr = rand() % (Common::NRAND + 1);	//random number [0, Common::NRAND];
 
@@ -143,23 +143,25 @@ NGRAM::computeNGRAM(string opt, string ref, string TGT) {
 	ssRef << Common::DATA_PATH << "/" << Common::TMP << "/" << nr << "." << NGRAM::NGRAMEXT << "." << Common::REFEXT;
 	ssReport << Common::DATA_PATH << "/" << Common::TMP << "/" << nr << "." << NGRAM::NGRAMEXT << "." << Common::REPORTEXT;
 
-	string outRND= ssOut.str();
-	string refRND= ssRef.str();
+	string outRND = ssOut.str();
+	string refRND = ssRef.str();
 	string reportNGRAM = ssReport.str();
 
-	NGRAM_f_create_doc(TESTBED::Hsystems[TGT], outRND);
+	NGRAM_f_create_doc(out, outRND);
 	NGRAM_f_create_doc(ref, refRND);
 
 	if (verbose > 1) fprintf(stderr, "building %s...\n", reportNGRAM.c_str());
 
+	readpipe();
 
 }
 
 //my ($SYS,$SEGS) = NGRAM::computeMultiNGRAM($NGRAM::NGRAMSRC, $out, $Href, $src, $config->{CASE}, $srcL, $trgL, $tools, $verbose, 1 );
-pair<vector<double>, vector<vector<double> > > NGRAM::computeMultiNGRAM(string opt, string TGT) {
+void NGRAM::computeMultiNGRAM(string opt, string out, vector<double> &SYS, vector<vector<double> > &SEG) {
+	// description _ computes NGRAM score (multiple references)
 	if (opt == NGRAM::NGRAMREF) {
     	for (map<string, string>::const_iterator it = TESTBED::Hrefs.begin(); it != TESTBED::Hrefs.end(); ++it) {
-    		computeNGRAM(NGRAM::NGRAMREF, it->second, TGT);
+    		computeNGRAM(NGRAM::NGRAMREF, it->second, out);
     	}
 	}
 	else if (opt== NGRAM::NGRAMSRC) {
@@ -177,10 +179,8 @@ void NGRAM::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 	for (map<string, int>::const_iterator it = NGRAM::rNGRAM.begin(); it != NGRAM::rNGRAM.end(); ++it, ++i)
 		mNGRAM[i] = it->first;
 
-	i = 0;
-	while (i < mNGRAM.size() and !GO) {
+	for (i = 0; i < mNGRAM.size() and !GO; ++i) {
 		if (Config::Hmetrics.find(mNGRAM[i]) != Config::Hmetrics.end()) GO = 1;
-		++i;
 	}
 
 	cout << "NGRAM ei!" << endl;
@@ -235,11 +235,12 @@ void NGRAM::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 			(!exists(reportNGRAMjac4_path) and !exists(reportNGRAMjac4_gz)) or \
 			(!exists(reportNGRAMjac5_path) and !exists(reportNGRAMjac5_gz)) or Config::remake) {
 
-	    	pair<vector<double>, vector<vector<double> > > res = computeMultiNGRAM(TGT);
-
+	    	vector<double> SYS;
+	    	vector<vector<double> > SEG;
+	    	computeMultiNGRAM(NGRAM::NGRAMREF, TESTBED::Hsystems[TGT], SYS, SEG);
 	    }
-
-
 	}
+    // source-based measures (CE)
+
 
 }

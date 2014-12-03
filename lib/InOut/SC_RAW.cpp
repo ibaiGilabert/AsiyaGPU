@@ -83,6 +83,7 @@ void SC_RAW::print_system_scores_MMATRIX(string sys, const Scores &hOQ, const ve
 
 void SC_RAW::print_scores_MMATRIX(const Scores &hOQ, const vector<string> &sorted_metrics) {
     // description _ print metric scores in MMATRIX format (on a metric basis)
+    if (Config::verbose) fprintf(stderr, "[SC_RAW]: Print Scores MMATRIX format\n");
     string REF = Common::join_set(Config::references, '_');
 
     print_MMATRIX_header(sorted_metrics);
