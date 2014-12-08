@@ -4,6 +4,7 @@
 #include "../include/METEOR.hpp"
 #include "../include/ROUGE.hpp"
 #include "../include/GTM.hpp"
+#include "../include/NGRAM.hpp"
 #include "../include/TER.hpp"
 #include "../include/SC_RAW.hpp"
 #include "../include/TESTBED.hpp"
@@ -209,7 +210,9 @@ void Core::doMultiMetrics(string HYP, const set<string> &Lref, Scores &hOQ) {
 	SingleMetric *pMETEOR = new METEOR;
 	SingleMetric *pROUGE = new ROUGE;
 	SingleMetric *pGTM = new GTM;
+	SingleMetric *pNGRAM = new NGRAM;
 	SingleMetric *pTER = new TER;
+
 
 	pBLEU->doMetric(HYP, REF, "", hOQ);
 	pNIST->doMetric(HYP, REF, "", hOQ);
@@ -217,9 +220,10 @@ void Core::doMultiMetrics(string HYP, const set<string> &Lref, Scores &hOQ) {
 	pMETEOR->doMetric(HYP, REF, "", hOQ);
 	pROUGE->doMetric(HYP, REF, "", 1, hOQ);
 	pGTM->doMetric(HYP, REF, "", hOQ);
+	pNGRAM->doMetric(HYP, REF, "", hOQ);
 	pTER->doMetric(HYP, REF, "", hOQ);
 
-	delete pBLEU, pNIST, pMETEOR, pROUGE, pGTM, pTER;
+	delete pBLEU, pNIST, pMETEOR, pROUGE, pGTM, pNGRAM, pTER;
 
 	if (Config::verbose == 1) fprintf(stderr, "]\n");
 

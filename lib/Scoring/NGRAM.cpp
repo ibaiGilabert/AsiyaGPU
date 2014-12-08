@@ -197,6 +197,19 @@ void NGRAM::computeMultiNGRAM(string opt, string out, int issrcbased, map<string
 				maxsys += it->second[i];
 			MAXSYS[it->first] = Common::safe_division(maxsys, it->second.size());
 		}
+
+		cout << "[NGRAM] MAXSEG" << endl;
+		for (map<string, vector<double> >::const_iterator it = MAXSEG.begin(); it != MAXSEG.end(); ++it) {
+			cout << "\t" << it->first << "[" << it->second.size() << "]" << endl;
+			for (int i = 0; i < it->second.size(); ++i) {
+				cout << "\t\t" << it->second[i] << endl;
+			}
+		}
+		cout << "[NGRAM] MAXSYS:" << endl;
+		for (map<string, double>::const_iterator it = MAXSYS.begin(); it != MAXSYS.end(); ++it) {
+			cout << "\t" << it->first << " -> " << it->second << endl;
+		}
+
 	}
 	else if (opt== NGRAM::NGRAMSRC) {
 		map<string, vector<double> > SEGS;

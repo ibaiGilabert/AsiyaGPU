@@ -231,6 +231,11 @@ double Common::safe_division(double numerator, double denominator) {
 	return denominator == 0 ? default_value : numerator/denominator;
 }
 
+double Common::f_measure(double p, double r, double beta) {
+	// description _ computes F measure
+	return safe_division((1+beta*beta)*p*r, beta*beta*p+r);
+}
+
 string Common::join_set(const set<string> st, char c) {
     string s;
     for (set<string>::const_iterator it = st.begin(); it != st.end(); ++it) s += *it + c;
