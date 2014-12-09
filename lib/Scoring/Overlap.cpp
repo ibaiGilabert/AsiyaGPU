@@ -312,10 +312,10 @@ void Overlap::computeFl(string out, string ref, double &SYS, vector<double> &SEG
 void Overlap::computeMultiOl(string out, double &MAXSYS, vector<double> &MAXSEG) {
  	// description _ computes lexical overlap (multiple reference)
  	map<int, double> max_seg;
-	for(map<string, int>::const_iterator it = Config::Hmetrics.begin(); it != Config::Hmetrics.end(); ++it) {
+	for(map<string, string>::const_iterator it = TESTBED::Hrefs.begin(); it != TESTBED::Hrefs.end(); ++it) {
 		double SYS;
 		vector<double> SEG;
-		computeOl(out, it->first, SYS, SEG);
+		computeOl(out, it->second, SYS, SEG);
 		for (int i = 0; i < SEG.size(); ++i) {
 			if (max_seg.find(i) != max_seg.end()) max_seg[i] = SEG[i];
 			else if (SEG[i] > max_seg[i]) max_seg[i] = SEG[i];
@@ -333,10 +333,10 @@ void Overlap::computeMultiOl(string out, double &MAXSYS, vector<double> &MAXSEG)
 void Overlap::computeMultiPl(string out, double &MAXSYS, vector<double> &MAXSEG) {
 	// description _ computes lexical precision (multiple reference)
  	map<int, double> max_seg;
-	for(map<string, int>::const_iterator it = Config::Hmetrics.begin(); it != Config::Hmetrics.end(); ++it) {
+	for(map<string, string>::const_iterator it = TESTBED::Hrefs.begin(); it != TESTBED::Hrefs.end(); ++it) {
 		double SYS;
 		vector<double> SEG;
-		computePl(out, it->first, SYS, SEG);
+		computePl(out, it->second, SYS, SEG);
 		for (int i = 0; i < SEG.size(); ++i) {
 			if (max_seg.find(i) != max_seg.end()) max_seg[i] = SEG[i];
 			else if (SEG[i] > max_seg[i]) max_seg[i] = SEG[i];
@@ -354,10 +354,10 @@ void Overlap::computeMultiPl(string out, double &MAXSYS, vector<double> &MAXSEG)
 void Overlap::computeMultiRl(string out, double &MAXSYS, vector<double> &MAXSEG) {
 	// description _ computes lexical recall (multiple reference)
  	map<int, double> max_seg;
-	for(map<string, int>::const_iterator it = Config::Hmetrics.begin(); it != Config::Hmetrics.end(); ++it) {
+	for(map<string, string>::const_iterator it = TESTBED::Hrefs.begin(); it != TESTBED::Hrefs.end(); ++it) {
 		double SYS;
 		vector<double> SEG;
-		computeRl(out, it->first, SYS, SEG);
+		computeRl(out, it->second, SYS, SEG);
 		for (int i = 0; i < SEG.size(); ++i) {
 			if (max_seg.find(i) != max_seg.end()) max_seg[i] = SEG[i];
 			else if (SEG[i] > max_seg[i]) max_seg[i] = SEG[i];
@@ -375,10 +375,10 @@ void Overlap::computeMultiRl(string out, double &MAXSYS, vector<double> &MAXSEG)
 void Overlap::computeMultiFl(string out, double &MAXSYS, vector<double> &MAXSEG) {
 	// description _ computes lexical f-measure 2 * P * R / (P + R) (multiple reference)
  	map<int, double> max_seg;
-	for(map<string, int>::const_iterator it = Config::Hmetrics.begin(); it != Config::Hmetrics.end(); ++it) {
+	for(map<string, string>::const_iterator it = TESTBED::Hrefs.begin(); it != TESTBED::Hrefs.end(); ++it) {
 		double SYS;
 		vector<double> SEG;
-		computeFl(out, it->first, SYS, SEG);
+		computeFl(out, it->second, SYS, SEG);
 		for (int i = 0; i < SEG.size(); ++i) {
 			if (max_seg.find(i) != max_seg.end()) max_seg[i] = SEG[i];
 			else if (SEG[i] > max_seg[i]) max_seg[i] = SEG[i];
@@ -422,7 +422,7 @@ void Overlap::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 					fprintf(stderr, "SC_ASIYA DOCUMENT %s CREATED\n", Overlap::OlEXT.c_str());
 				}
 				hOQ.save_hash_scores(Overlap::OlEXT, TGT, REF, SYS, d_scores, s_scores);
-
+		        if (Config::serialize) hOQ.save_struct_scores(TB_FORMAT::make_serial(Overlap::OlEXT, TGT, REF));
 			}
 		}
 		if (Config::Hmetrics.find(Overlap::PlEXT) != Config::Hmetrics.end()) {
@@ -442,6 +442,7 @@ void Overlap::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 					fprintf(stderr, "SC_ASIYA DOCUMENT %s CREATED\n", Overlap::PlEXT.c_str());
 				}
 				hOQ.save_hash_scores(Overlap::PlEXT, TGT, REF, SYS, d_scores, s_scores);
+		        if (Config::serialize) hOQ.save_struct_scores(TB_FORMAT::make_serial(Overlap::PlEXT, TGT, REF));
 
 			}
 		}
@@ -462,6 +463,7 @@ void Overlap::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 					fprintf(stderr, "SC_ASIYA DOCUMENT %s CREATED\n", Overlap::RlEXT.c_str());
 				}
 				hOQ.save_hash_scores(Overlap::RlEXT, TGT, REF, SYS, d_scores, s_scores);
+		        if (Config::serialize) hOQ.save_struct_scores(TB_FORMAT::make_serial(Overlap::RlEXT, TGT, REF));
 
 			}
 		}
@@ -482,6 +484,7 @@ void Overlap::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 					fprintf(stderr, "SC_ASIYA DOCUMENT %s CREATED\n", Overlap::FlEXT.c_str());
 				}
 				hOQ.save_hash_scores(Overlap::FlEXT, TGT, REF, SYS, d_scores, s_scores);
+		        if (Config::serialize) hOQ.save_struct_scores(TB_FORMAT::make_serial(Overlap::FlEXT, TGT, REF));
 
 			}
 		}

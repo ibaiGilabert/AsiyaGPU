@@ -8,28 +8,26 @@
 
 class ESA : public SingleMetric {
 private:
-	static map<string, int> create_rESA();
-	static map<string, map<string, int> > create_rLANG();
+	static set<string> create_rESA();
+	static map<string, set<string> > create_rLANG();
 	static map<string, string> create_TESA();
 	static map<string, string> create_TESA_java();
 	static map<string, string> create_TESA_mem();
 	static map<string, string> create_TESAindex();
 
-	static const string ESAXT, TESAdir, EMPTY_ITEM;
-	static const map<string, int> rESA, rLANG;
-	static const map<string, string> TESA, TESA_java, TESA_mem, TESAindex;
+	static const string ESAEXT, TESAdir, EMPTY_ITEM;
+	static set<string> rESA;
+	static map<string, set<string> > rLANG;
+	static map<string, string> TESA, TESA_java, TESA_mem, TESAindex;
 
 	void ESA_f_create_doc(string input, string output);
 
-	vector<double> read_esa_segments(string reportESA);
-	vector<double> computeESA(string metric, string out, string ref);
+	vector<double> read_ESA_segments(string reportESA);
 
-	pair<double, vector<double> > computeMultiESA(string metric, string out);
+	void computeESA(string metric, string out, string ref, vector<double> &SEG);
+	void computeMultiESA(string metric, string out, double &MAXSYS, vector<double> &MAXSEG);
 
 public:
-	ESA() {}
-	~ESA() {}
-
 	void doMetric(string TGT, string REF, string prefix, Scores &hOQ);
 
 };

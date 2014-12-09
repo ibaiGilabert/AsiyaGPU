@@ -47,10 +47,10 @@ const map<string, int> NGRAM::rCENGRAM = create_rCENGRAM();
 
 void NGRAM::NGRAM_f_create_doc(string input, string output) {
 	// description _ creation of a RAW evaluation document
-	if (Config::verbose > 1) fprintf(stderr, "OPENING <%s> for NGRAM parsing...\n", input.c_str());
+	if (Config::verbose) fprintf(stderr, "OPENING <%s> for NGRAM parsing...\n", input.c_str());
 
 	if (exists(boost::filesystem::path(input))) {
-		if (Config::verbose > 1) fprintf(stderr, "reading <%s>\n", input.c_str());
+		if (Config::verbose) fprintf(stderr, "reading <%s>\n", input.c_str());
 
 	    ifstream input_file(input.c_str());
 	    ofstream output_file(output.c_str());
@@ -123,7 +123,7 @@ void NGRAM::computeNGRAM(string opt, string ref, string out, int issrcbased, map
 	NGRAM_f_create_doc(out, outRND);
 	NGRAM_f_create_doc(ref, refRND);
 
-	if (Config::verbose > 1) fprintf(stderr, "building %s...\n", reportNGRAM.c_str());
+	if (Config::verbose) fprintf(stderr, "building %s...\n", reportNGRAM.c_str());
 
 	string pwd = boost::filesystem::current_path().string();
 
@@ -245,7 +245,7 @@ void NGRAM::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 
 	// reference-based measures
 	if (GO) {
-		if (Config::verbose == 1) fprintf(stderr, "%s\n", NGRAM::NGRAMEXT.c_str());
+		if (Config::verbose) fprintf(stderr, "%s\n", NGRAM::NGRAMEXT.c_str());
 
 		stringstream ss2cos, ss3cos, ss4cos, ss5cos, ss2jac, ss3jac, ss4jac, ss5jac;
 		ss2cos << Common::DATA_PATH << "/" << Common::REPORTS << "/" << TGT << "/" << REF << "/" << prefix << NGRAM::NGRAMEXT << "-cosTok2ngrams." << Common::XMLEXT;
@@ -322,7 +322,7 @@ void NGRAM::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 	}
 
 	if (GO) {
-		if (Config::verbose == 1) fprintf(stderr, "%s\n", NGRAM::CENGRAMEXT.c_str());
+		if (Config::verbose) fprintf(stderr, "%s\n", NGRAM::CENGRAMEXT.c_str());
 
 		stringstream ss2cos, ss3cos, ss4cos, ss5cos, ss2jac, ss3jac, ss4jac, ss5jac, ssCjac, ssLen;
 		ss2cos << Common::DATA_PATH << "/" << Common::REPORTS << "/" << TGT << "/" << REF << "/" << prefix << NGRAM::NGRAMEXT << "-cosChar2ngrams." << Common::XMLEXT;
