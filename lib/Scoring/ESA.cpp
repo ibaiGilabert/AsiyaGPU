@@ -129,9 +129,13 @@ vector<double> ESA::read_ESA_segments(string reportESA) {
 	return aESA;
 }
 
-void ESA::computeESA(string metric, string out, string ref, vector<double> &SEG) {
-	string outRND = out+"."+ESA::ESAEXT+"."+Config::CASE;
-	string refRND = ref+"."+ESA::ESAEXT+"."+Config::CASE;
+void ESA::computeESA(string metric, string TGT, string ref, vector<double> &SEG) {
+	string out = TESTBED::Hsystems[TGT];
+	string t_id;
+    if (Config::serialize) t_id = "_" + TGT;//TB_FORMAT::get_formated_thread(TGT);
+
+	string outRND = out+"."+ESA::ESAEXT+t_id+"."+Config::CASE;
+	string refRND = ref+"."+ESA::ESAEXT+t_id+"."+Config::CASE;
 
 	ESA_f_create_doc(out, outRND);
 	ESA_f_create_doc(ref, refRND);
@@ -150,7 +154,7 @@ void ESA::computeESA(string metric, string out, string ref, vector<double> &SEG)
 
 	srand(time(NULL));
 	stringstream ssReport;
-	ssReport << Common::DATA_PATH << "/" << Common::TMP << "/" << rand()%(Common::NRAND + 1) << "." << ESA::ESAEXT << "." << Common::REPORTEXT;
+	ssReport << Common::DATA_PATH << "/" << Common::TMP << "/" << rand()%(Common::NRAND + 1) << "." << ESA::ESAEXT << t_id << "." << Common::REPORTEXT;
 	string reportESA = ssReport.str();
 
 	if (Config::verbose) fprintf(stderr, "building %s...\n", reportESA.c_str());
@@ -174,8 +178,10 @@ void ESA::computeESA(string metric, string out, string ref, vector<double> &SEG)
 
 	string toolESA = ESA::TESA_java[metric]+" -Dfile.encoding=UTF-8 "+ESA::TESA_mem[metric]+" -jar "+Config::tools+"/"+ESA::TESA[metric];
 
-	string sc = "cd "+Config::tools+"/"+ESA::TESAdir+"; "+toolESA+" -w "+Config::tools+"/"+ESA::TESAindex[metric]+" -i "+outRND+" -j "+refRND+" -o "+reportESA+" 2>"+reportESA+".err; cd "+pwd+";";
-    cout << "[ESA] execute: " << sc << "|" << endl;
+	//string sc = "cd "+Config::tools+"/"+ESA::TESAdir+"; "+toolESA+" -w "+Config::tools+"/"+ESA::TESAindex[metric]+" -i "+outRND+" -j "+refRND+" -o "+reportESA+" 2>"+reportESA+".err; cd "+pwd+";";
+	string sc = toolESA+" -w "+Config::tools+"/"+ESA::TESAindex[metric]+" -i "+outRND+" -j "+refRND+" -o "+reportESA+" 2>"+reportESA+".err;";
+
+    cout << "[ESA] execute: " << sc << endl;
 
 	Common::execute_or_die(sc, "[ERROR] problems running ESA...");
 
@@ -190,12 +196,12 @@ void ESA::computeESA(string metric, string out, string ref, vector<double> &SEG)
 	sysaux = "rm -f "+reportESA+".err";		system(sysaux.c_str());
 }
 
-void ESA::computeMultiESA(string metric, string out, double &MAXSYS, vector<double> &MAXSEG) {
+void ESA::computeMultiESA(string metric, string TGT, double &MAXSYS, vector<double> &MAXSEG) {
 	// description _ computes ESA score (multiple references)
     map<int, double> max_seg;
     for (map<string, string>::const_iterator it = TESTBED::Hrefs.begin(); it != TESTBED::Hrefs.end(); ++it) {
     	vector<double> hSEGS;
-    	computeESA(metric, out, it->second, hSEGS);
+    	computeESA(metric, TGT, it->second, hSEGS);
 
     	for (int i = 0; i < hSEGS.size(); ++i) {
     		if (max_seg.find(i) != max_seg.end()) max_seg[i] = hSEGS[i];
@@ -215,26 +221,28 @@ void ESA::computeMultiESA(string metric, string out, double &MAXSYS, vector<doub
 
 void ESA::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 	// description _ computes ESA score (multiple references)
-	vector<string> mESA(ESA::rESA.size());
+	vector<string> mESA(ESA::rLANG[Config::LANG].size());
 
 	int GO, i;
 	GO = i = 0;
 	for (set<string>::const_iterator it = ESA::rLANG[Config::LANG].begin(); it != ESA::rLANG[Config::LANG].end(); ++it, ++i)
 		mESA[i] = *it;
 
-cout << "[ESA] Haviam el metric_set aquest si xuta..." << endl;
-cout << "\t[ESA] mESA: ";
-for (int k = 0; k < mESA.size(); ++k) cout << mESA[k] << ", ";
-cout << endl;
 
 	for (i = 0; i < mESA.size() and !GO; ++i) {
 		if (Config::Hmetrics.find(mESA[i]) != Config::Hmetrics.end()) GO = 1;
 	}
-
+	/*for(map<string, set<string> >::const_iterator it = ESA::rLANG.begin(); it != ESA::rLANG.end(); ++it) {
+	        cout << "\t" << it->first << " -> " << endl;
+	        set<string> aux = it->second;
+	        for(set<string>::const_iterator is = aux.begin(); is != aux.end(); ++is) {
+	                cout << "\t\t[" << *is << "]" << endl;
+	        }
+	}*/
 	if (GO) {
 		if (Config::verbose) fprintf(stderr, "%s...\n", ESA::ESAEXT.c_str());
 
-		for (i = 0; i < mESA.size() and !GO; ++i) {
+		for (i = 0; i < mESA.size(); ++i) {
 			string reportESAxml = Common::DATA_PATH+"/"+Common::REPORTS+"/"+TGT+"/"+REF+"/"+prefix+mESA[i]+"."+Common::XMLEXT;
 		    boost::filesystem::path reportESAxml_path(reportESAxml);
 	   		boost::filesystem::path reportESAxml_gz(reportESAxml+"."+Common::GZEXT);
@@ -242,7 +250,7 @@ cout << endl;
 	   			double SYS;
 	   			vector<double> SEG, d_scores, s_scores;
 
-	   			computeMultiESA(mESA[i], TESTBED::Hsystems[TGT], SYS, SEG);
+	   			computeMultiESA(mESA[i], TGT, SYS, SEG);
 				TESTBED::get_seg_doc_scores(SEG, 0, TGT, d_scores, s_scores);
 
 				SC_ASIYA sc_asiya;

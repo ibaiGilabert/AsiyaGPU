@@ -23,26 +23,35 @@ const string NGRAM::TNGRAM = "ComputeSimilaritiesQE.jar";
 const string NGRAM::TNGRAMdir = "lengthmodel";
 const string NGRAM::TRANSLITERATOR = "transliterator/Transliterator.jar";
 
-map<string, int> NGRAM::create_rNGRAM() {
-	map<string, int> rNGRAM;
-	rNGRAM[NGRAM::NGRAMEXT + "-cosTok2ngrams"] = 1;	rNGRAM[NGRAM::NGRAMEXT + "-cosTok3ngrams"] = 1;
-	rNGRAM[NGRAM::NGRAMEXT + "-cosTok4ngrams"] = 1;	rNGRAM[NGRAM::NGRAMEXT + "-cosTok5ngrams"] = 1;
-	rNGRAM[NGRAM::NGRAMEXT + "-jacTok2ngrams"] = 1;	rNGRAM[NGRAM::NGRAMEXT + "-jacTok3ngrams"] = 1;
-	rNGRAM[NGRAM::NGRAMEXT + "-jacTok4ngrams"] = 1;	rNGRAM[NGRAM::NGRAMEXT + "-jacTok5ngrams"] = 1;
+set<string> NGRAM::create_rNGRAM() {
+	set<string> rNGRAM;
+	rNGRAM.insert(NGRAM::NGRAMEXT + "-cosTok2ngrams");
+	rNGRAM.insert(NGRAM::NGRAMEXT + "-cosTok3ngrams");
+	rNGRAM.insert(NGRAM::NGRAMEXT + "-cosTok4ngrams");
+	rNGRAM.insert(NGRAM::NGRAMEXT + "-cosTok5ngrams");
+	rNGRAM.insert(NGRAM::NGRAMEXT + "-jacTok2ngrams");
+	rNGRAM.insert(NGRAM::NGRAMEXT + "-jacTok3ngrams");
+	rNGRAM.insert(NGRAM::NGRAMEXT + "-jacTok4ngrams");
+	rNGRAM.insert(NGRAM::NGRAMEXT + "-jacTok5ngrams");
 	return rNGRAM;
 }
-const map<string, int> NGRAM::rNGRAM = create_rNGRAM();
+const set<string> NGRAM::rNGRAM = create_rNGRAM();
 
-map<string, int> NGRAM::create_rCENGRAM() {
-	map<string, int> rCENGRAM;
-	rCENGRAM[NGRAM::NGRAMEXT + "-cosChar2ngrams"] = 1;	rCENGRAM[NGRAM::NGRAMEXT + "-cosChar3ngrams"] = 1;
-	rCENGRAM[NGRAM::NGRAMEXT + "-cosChar4ngrams"] = 1;	rCENGRAM[NGRAM::NGRAMEXT + "-cosChar5ngrams"] = 1;
-	rCENGRAM[NGRAM::NGRAMEXT + "-jacChar2ngrams"] = 1;	rCENGRAM[NGRAM::NGRAMEXT + "-jacChar3ngrams"] = 1;
-	rCENGRAM[NGRAM::NGRAMEXT + "-jacChar4ngrams"] = 1;	rCENGRAM[NGRAM::NGRAMEXT + "-jacChar5ngrams"] = 1;
-	rCENGRAM[NGRAM::NGRAMEXT + "-jacCognates"] = 1;		rCENGRAM[NGRAM::NGRAMEXT + "-lenratio"] = 1;
+set<string> NGRAM::create_rCENGRAM() {
+	set<string> rCENGRAM;
+	rCENGRAM.insert(NGRAM::NGRAMEXT + "-cosChar2ngrams");
+	rCENGRAM.insert(NGRAM::NGRAMEXT + "-cosChar3ngrams");
+	rCENGRAM.insert(NGRAM::NGRAMEXT + "-cosChar4ngrams");
+	rCENGRAM.insert(NGRAM::NGRAMEXT + "-cosChar5ngrams");
+	rCENGRAM.insert(NGRAM::NGRAMEXT + "-jacChar2ngrams");
+	rCENGRAM.insert(NGRAM::NGRAMEXT + "-jacChar3ngrams");
+	rCENGRAM.insert(NGRAM::NGRAMEXT + "-jacChar4ngrams");
+	rCENGRAM.insert(NGRAM::NGRAMEXT + "-jacChar5ngrams");
+	rCENGRAM.insert(NGRAM::NGRAMEXT + "-jacCognates");
+	rCENGRAM.insert(NGRAM::NGRAMEXT + "-lenratio");
 	return rNGRAM;
 }
-const map<string, int> NGRAM::rCENGRAM = create_rCENGRAM();
+const set<string> NGRAM::rCENGRAM = create_rCENGRAM();
 
 
 void NGRAM::NGRAM_f_create_doc(string input, string output) {
@@ -85,7 +94,8 @@ void NGRAM::read_NGRAM_segments(string reportNGRAM, string opt, map<string, vect
 	    istringstream iss_h(str);
 	    for(string token; getline(iss_h, token, ','); ) lheader.push_back(token);
 
-		boost::regex re_t("Tok"), re_ch("Char"), re_co("Cognates"), re_l("lenratio");
+		boost::regex re_t("^.*Tok.*$"), re_ch("^.*Char.*$"), re_co("^.*Cognates.*$"), re_l("^.*lenratio.*$");
+
 		//boost::regex re_c("Char");
 		boost::match_results<string::const_iterator> results;
 
@@ -107,14 +117,19 @@ void NGRAM::read_NGRAM_segments(string reportNGRAM, string opt, map<string, vect
     } else { fprintf(stderr, "couldn't open file: %s\n", reportNGRAM.c_str()); exit(1); }
 }
 
-void NGRAM::computeNGRAM(string opt, string ref, string out, int issrcbased, map<string, vector<double> > &SEGS) {
+void NGRAM::computeNGRAM(string opt, string ref, string TGT, int issrcbased, map<string, vector<double> > &SEGS) {
 	srand(time(NULL));
 	double nr = rand() % (Common::NRAND + 1);	//random number [0, Common::NRAND];
+	string t_id;
+    if (Config::serialize) t_id = "_" + TGT;//TB_FORMAT::get_formated_thread(TGT);
+
+	string out = TESTBED::Hsystems[TGT];
+	string pwd = boost::filesystem::current_path().string();
 
 	stringstream ssOut, ssRef, ssReport;
-	ssOut << Common::DATA_PATH << "/" << Common::TMP << "/" << nr << "." << NGRAM::NGRAMEXT << "." << Common::SYSEXT;
-	ssRef << Common::DATA_PATH << "/" << Common::TMP << "/" << nr << "." << NGRAM::NGRAMEXT << "." << Common::REFEXT;
-	ssReport << Common::DATA_PATH << "/" << Common::TMP << "/" << nr << "." << NGRAM::NGRAMEXT << "." << Common::REPORTEXT;
+	ssOut << pwd << "/" << Common::DATA_PATH << "/" << Common::TMP << "/" << nr << "." << NGRAM::NGRAMEXT << t_id << "." << Common::SYSEXT;
+	ssRef << pwd << "/" << Common::DATA_PATH << "/" << Common::TMP << "/" << nr << "." << NGRAM::NGRAMEXT << t_id << "." << Common::REFEXT;
+	ssReport << pwd << "/" << Common::DATA_PATH << "/" << Common::TMP << "/" << nr << "." << NGRAM::NGRAMEXT << t_id << "." << Common::REPORTEXT;
 
 	string outRND = ssOut.str();
 	string refRND = ssRef.str();
@@ -125,7 +140,7 @@ void NGRAM::computeNGRAM(string opt, string ref, string out, int issrcbased, map
 
 	if (Config::verbose) fprintf(stderr, "building %s...\n", reportNGRAM.c_str());
 
-	string pwd = boost::filesystem::current_path().string();
+/*	string pwd = boost::filesystem::current_path().string();
 
 	boost::regex re("\\.\\/");
     boost::match_results<string::const_iterator> results;
@@ -141,7 +156,7 @@ void NGRAM::computeNGRAM(string opt, string ref, string out, int issrcbased, map
 		boost::regex_replace(reportNGRAM, re, "");
 		reportNGRAM = pwd+"/"+reportNGRAM;
 	}
-
+*/
 	// if language is russian, first transliterate
 	if (Config::LANG == Common::L_RUS) {
 		string transliterator = "/usr/local/jdk1.7.0/bin/java -Xms1024M -Xmx1024M -Dfile.encoding=UTF-8 -jar "+Config::tools+"/"+NGRAM::TRANSLITERATOR+" -l ru -i "+outRND;
@@ -176,13 +191,13 @@ void NGRAM::computeNGRAM(string opt, string ref, string out, int issrcbased, map
 	rm = "rm -f " + reportNGRAM;	system(rm.c_str());
 }
 
-void NGRAM::computeMultiNGRAM(string opt, string out, int issrcbased, map<string, double> &MAXSYS, map<string, vector<double> > &MAXSEG) {
+void NGRAM::computeMultiNGRAM(string opt, string TGT, int issrcbased, map<string, double> &MAXSYS, map<string, vector<double> > &MAXSEG) {
 	// description _ computes NGRAM score (multiple references)
 
 	if (opt == NGRAM::NGRAMREF) {
     	for (map<string, string>::const_iterator it = TESTBED::Hrefs.begin(); it != TESTBED::Hrefs.end(); ++it) {
     		map<string, vector<double> > SEGS;
-    		computeNGRAM(NGRAM::NGRAMREF, it->second, out, issrcbased, SEGS);
+    		computeNGRAM(NGRAM::NGRAMREF, it->second, TGT, issrcbased, SEGS);
     		for (map<string, vector<double> >::const_iterator it = SEGS.begin(); it != SEGS.end(); ++it) {
     			if (MAXSEG[it->first].empty()) MAXSEG[it->first] = vector<double>(it->second.size(), -1);
     			for (int i = 0; i < it->second.size(); ++i) {	// update max scores
@@ -197,8 +212,7 @@ void NGRAM::computeMultiNGRAM(string opt, string out, int issrcbased, map<string
 				maxsys += it->second[i];
 			MAXSYS[it->first] = Common::safe_division(maxsys, it->second.size());
 		}
-
-		cout << "[NGRAM] MAXSEG" << endl;
+		/*cout << "[NGRAM] MAXSEG" << endl;
 		for (map<string, vector<double> >::const_iterator it = MAXSEG.begin(); it != MAXSEG.end(); ++it) {
 			cout << "\t" << it->first << "[" << it->second.size() << "]" << endl;
 			for (int i = 0; i < it->second.size(); ++i) {
@@ -208,12 +222,11 @@ void NGRAM::computeMultiNGRAM(string opt, string out, int issrcbased, map<string
 		cout << "[NGRAM] MAXSYS:" << endl;
 		for (map<string, double>::const_iterator it = MAXSYS.begin(); it != MAXSYS.end(); ++it) {
 			cout << "\t" << it->first << " -> " << it->second << endl;
-		}
-
+		}*/
 	}
 	else if (opt== NGRAM::NGRAMSRC) {
 		map<string, vector<double> > SEGS;
-		computeNGRAM(NGRAM::NGRAMSRC, TESTBED::src, out, issrcbased, SEGS);
+		computeNGRAM(NGRAM::NGRAMSRC, TESTBED::src, TGT, issrcbased, SEGS);
 		for (map<string, vector<double> >::const_iterator it = SEGS.begin(); it != SEGS.end(); ++it) {
 			if (MAXSEG[it->first].empty()) MAXSEG[it->first] = vector<double>(it->second.size(), -1);
 			for (int i = 0; i < it->second.size(); ++i) {	// update max scores
@@ -237,8 +250,8 @@ void NGRAM::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 	int GO , i;
 	GO = i = 0;
 	vector<string> mNGRAM(NGRAM::rNGRAM.size());
-	for (map<string, int>::const_iterator it = NGRAM::rNGRAM.begin(); it != NGRAM::rNGRAM.end(); ++it, ++i)
-		mNGRAM[i] = it->first;
+	for (set<string>::const_iterator it = NGRAM::rNGRAM.begin(); it != NGRAM::rNGRAM.end(); ++it, ++i)
+		mNGRAM[i] = *it;
 	for (i = 0; i < mNGRAM.size() and !GO; ++i) {
 		if (Config::Hmetrics.find(mNGRAM[i]) != Config::Hmetrics.end()) GO = 1;
 	}
@@ -297,7 +310,7 @@ void NGRAM::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 	    	SC_ASIYA sc_asiya;
 	    	map<string, double> SYS;
 	    	map<string, vector<double> > SEG;
-	    	computeMultiNGRAM(NGRAM::NGRAMREF, TESTBED::Hsystems[TGT], 0, SYS, SEG);
+	    	computeMultiNGRAM(NGRAM::NGRAMREF, TGT, 0, SYS, SEG);
 			for (map<string, double>::const_iterator it = SYS.begin(); it != SYS.end(); ++it) {
 				vector<double> d_scores, s_scores;
 		    	TESTBED::get_seg_doc_scores(SEG[it->first], 0, TGT, d_scores, s_scores);
@@ -307,6 +320,7 @@ void NGRAM::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 					fprintf(stderr, "SC_ASIYA DOCUMENT %s CREATED\n", pref.c_str());
 				}
 				hOQ.save_hash_scores(pref, TGT, REF, SYS[it->first], d_scores, s_scores);
+		        if (Config::serialize) hOQ.save_struct_scores(TB_FORMAT::make_serial(NGRAM::NGRAMEXT, TGT, REF));
 
 			}
 	    }
@@ -315,8 +329,8 @@ void NGRAM::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
     // source-based measures (CE)
 	GO = i = 0;
 	mNGRAM.resize(NGRAM::rCENGRAM.size());
-	for (map<string, int>::const_iterator it = NGRAM::rCENGRAM.begin(); it != NGRAM::rCENGRAM.end(); ++it, ++i)
-		mNGRAM[i] = it->first;
+	for (set<string>::const_iterator it = NGRAM::rCENGRAM.begin(); it != NGRAM::rCENGRAM.end(); ++it, ++i)
+		mNGRAM[i] = *it;
 	for (i = 0; i < mNGRAM.size() and !GO; ++i) {
 		if (Config::Hmetrics.find(mNGRAM[i]) != Config::Hmetrics.end()) GO = 1;
 	}
@@ -384,7 +398,7 @@ void NGRAM::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 	    	SC_ASIYA sc_asiya;
 	    	map<string, double> SYS;
 	    	map<string, vector<double> > SEG;
-	    	computeMultiNGRAM(NGRAM::NGRAMSRC, TESTBED::Hsystems[TGT], 0, SYS, SEG);
+	    	computeMultiNGRAM(NGRAM::NGRAMSRC, TGT, 0, SYS, SEG);
 			for (map<string, double>::const_iterator it = SYS.begin(); it != SYS.end(); ++it) {
 				vector<double> d_scores, s_scores;
 		    	TESTBED::get_seg_doc_scores(SEG[it->first], 0, TGT, d_scores, s_scores);

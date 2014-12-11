@@ -131,7 +131,7 @@ string Process::make_run_file(string config_file, string TGT, string REF, int th
         run_file << "#$ -cwd" << endl;
         run_file << "#$ -m eas" << endl;
         run_file << "#$ -M gilabert@cs.upc.edu" << endl;
-        run_file << "#$ -l h_vmem=4G" << endl << endl;          //LA MEMORIA QUE CADA METRICA DEMANI
+        run_file << "#$ -l h_vmem=5G" << endl << endl;          //LA MEMORIA QUE CADA METRICA DEMANI
 
         stringstream s_cmd;
         s_cmd << "./Asiya " << config_file << " -serialize " << (thread-1)*TB_FORMAT::chunk + 1 << " -g seg -eval single -metric_set metrics_" << metric << " > " << string(report_buffer);

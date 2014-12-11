@@ -24,8 +24,8 @@ private:
 
 	vector<double> read_ESA_segments(string reportESA);
 
-	void computeESA(string metric, string out, string ref, vector<double> &SEG);
-	void computeMultiESA(string metric, string out, double &MAXSYS, vector<double> &MAXSEG);
+	void computeESA(string metric, string TGT, string ref, vector<double> &SEG);
+	void computeMultiESA(string metric, string TGT, double &MAXSYS, vector<double> &MAXSEG);
 
 public:
 	void doMetric(string TGT, string REF, string prefix, Scores &hOQ);

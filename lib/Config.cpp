@@ -654,6 +654,8 @@ void Config::validate_configuration() {
             boost::regex re_PER("^PER.*");
             boost::regex re_TER("^TER.*");
             boost::regex re_METEOR("^METEOR.*");
+            boost::regex re_NGRAM("^NGRAM.*");
+            boost::regex re_ESA("^ESA.*");
             boost::regex re_Ol("^Ol.*");
             boost::regex re_Pl("^Pl.*");
             boost::regex re_Fl("^Fl.*");
@@ -674,6 +676,8 @@ void Config::validate_configuration() {
             else if (boost::regex_match(*it, results, re_PER)) Config::Fmetrics.insert("PER");
             else if (boost::regex_match(*it, results, re_TER)) Config::Fmetrics.insert("TER");
             else if (boost::regex_match(*it, results, re_METEOR)) Config::Fmetrics.insert("METEOR");
+            else if (boost::regex_match(*it, results, re_NGRAM)) Config::Fmetrics.insert("NGRAM");
+            else if (boost::regex_match(*it, results, re_ESA)) Config::Fmetrics.insert("ESA");
             else if (boost::regex_match(*it, results, re_Ol)) Config::Fmetrics.insert("Ol");
             else if (boost::regex_match(*it, results, re_Pl)) Config::Fmetrics.insert("Pl");
             else if (boost::regex_match(*it, results, re_Fl)) Config::Fmetrics.insert("Fl");

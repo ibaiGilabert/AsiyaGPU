@@ -6,6 +6,7 @@
 #include "../include/GTM.hpp"
 #include "../include/NGRAM.hpp"
 #include "../include/Overlap.hpp"
+#include "../include/ESA.hpp"
 #include "../include/TER.hpp"
 #include "../include/SC_RAW.hpp"
 #include "../include/TESTBED.hpp"
@@ -213,6 +214,7 @@ void Core::doMultiMetrics(string HYP, const set<string> &Lref, Scores &hOQ) {
 	SingleMetric *pGTM = new GTM;
 	SingleMetric *pNGRAM = new NGRAM;
 	SingleMetric *pOverlap = new Overlap;
+	SingleMetric *pESA = new ESA;
 	SingleMetric *pTER = new TER;
 
 
@@ -224,11 +226,12 @@ void Core::doMultiMetrics(string HYP, const set<string> &Lref, Scores &hOQ) {
 	pGTM->doMetric(HYP, REF, "", hOQ);
 	pNGRAM->doMetric(HYP, REF, "", hOQ);
 	pOverlap->doMetric(HYP, REF, "", hOQ);
+	pESA->doMetric(HYP, REF, "", hOQ);
 	pTER->doMetric(HYP, REF, "", hOQ);
 
-	delete pBLEU, pNIST, pMETEOR, pROUGE, pGTM, pNGRAM, pOverlap, pTER;
+	delete pBLEU, pNIST, pMETEOR, pROUGE, pGTM, pNGRAM, pOverlap, pESA, pTER;
 
-	if (Config::verbose == 1) fprintf(stderr, "]\n");
+	//if (Config::verbose) fprintf(stderr, "]\n");
 
 	/*	cout << "[SCORES] : hOQ" << endl;
 	hOQ.print_sys_scores();
