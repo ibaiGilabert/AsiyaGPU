@@ -8,18 +8,15 @@
 
 class TER : public SingleMetric {
 private:
-	static map<string, int> create_rTER();
+	static set<string> create_rTER();
 
-	MetricScore computeTER(string TGT, string variant, int do_neg);
+	MetricScore computeTER(string TGT, string variant, int do_neg, MetricScore &res);
 
 public:
-	//TER() {}
-	//~TER() {}
-
 	void doMetric(string TGT, string REF, string prefix, Scores &hOQ);
 
 	static const string TEREXT,	TTERp;
-	static const map<string, int> rTER;
+	static const set<string> rTER;
 };
 
 

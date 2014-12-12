@@ -13,27 +13,29 @@
 const string TER::TEREXT = "TER";
 const string TER::TTERp = "terp.v1";	//v1
 
-map<string, int> TER::create_rTER() {
-	map<string, int> rTER;
-	rTER["-" + TER::TEREXT] 			= 1;
-	rTER["-" + TER::TEREXT + "base"]	= 1;
-	rTER["-" + TER::TEREXT + "p"] 		= 1;
-	rTER["-" + TER::TEREXT + "p-A"] 	= 1;
+set<string> TER::create_rTER() {
+	set<string> rTER;
+	rTER.insert("-"+TER::TEREXT);
+	rTER.insert("-"+TER::TEREXT+"base");
+	rTER.insert("-"+TER::TEREXT+"p");
+	rTER.insert("-"+TER::TEREXT+"p-A");
 	return rTER;
 }
-const map<string, int> TER::rTER = create_rTER();
+const set<string> TER::rTER = create_rTER();
 
 
-MetricScore TER::computeTER(string TGT, string variant, int do_neg) {
+MetricScore TER::computeTER(string TGT, string variant, int do_neg, MetricScore &res) {
 	// description _ computes -TERp score (multiple references)
 	srand(time(NULL));
 	double nr = rand() % (Common::NRAND + 1);	//random number [0, Common::NRAND];
 
 	string sysid = TESTBED::IDX[TGT][1][2];
+	string t_id;
+    if (Config::serialize) t_id = "_" + TGT;//TB_FORMAT::get_formated_thread(TGT);
 
 	stringstream ssOut, ssRef;
-	ssOut << Common::DATA_PATH << "/" << Common::TMP << "/" << nr << "." << Common::SYSEXT << "." << TER::TEREXT << "." << Common::XMLEXT;
-	ssRef << Common::DATA_PATH << "/" << Common::TMP << "/" << nr << "." << Common::REFEXT << "." << TER::TEREXT << "." << Common::XMLEXT;
+	ssOut << Common::DATA_PATH << "/" << Common::TMP << "/" << nr << "." << Common::SYSEXT << "." << TER::TEREXT << t_id << "." << Common::XMLEXT;
+	ssRef << Common::DATA_PATH << "/" << Common::TMP << "/" << nr << "." << Common::REFEXT << "." << TER::TEREXT << t_id << "." << Common::XMLEXT;
 
     boost::filesystem::path outNISTxml(ssOut.str());
     boost::filesystem::path refNISTxml(ssRef.str());
@@ -71,11 +73,13 @@ MetricScore TER::computeTER(string TGT, string variant, int do_neg) {
     stringstream sc;
     sc<<"java -Dfile.encoding=UTF-8 -jar "<<mem_options<<" "<<Config::tools<<"/"<<TER::TTERp<<"/dist/lib/terp.jar "<<phrase_db<<" "<<wn_dict<<" "<<caseopt<<" -n "<<Common::DATA_PATH<<"/"<<Common::TMP<<"/"<<nr<<". -o nist -r "<<ssRef.str()<<" -h "<<ssOut.str()<<" "<<param<<" ";
     string ms = "[ERROR] problems running TERp...";
+    cout << "[TER] execute: " << sc << endl;
     Common::execute_or_die(sc.str(), ms);
 
-    stringstream aux;
-    aux << Common::DATA_PATH << "/" << Common::TMP << "/" << nr << "." << sysid;
-    MetricScore m_scores = Scores::read_scores(aux.str(), TGT, do_neg);
+    stringstream basename;
+    basename << Common::DATA_PATH << "/" << Common::TMP << "/" << nr << "." << sysid << t_id;
+
+    res = Scores::read_scores(basename.str(), TGT, do_neg);
 
 	if (exists(refNISTxml)) {
 		string sysaux = "rm -f "; sysaux += ssRef.str();
@@ -85,8 +89,6 @@ MetricScore TER::computeTER(string TGT, string variant, int do_neg) {
 		string sysaux = "rm -f "; sysaux += ssOut.str();
 		system (sysaux.c_str());
 	}
-
-	return m_scores;
 }
 
 void TER::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
@@ -95,36 +97,113 @@ void TER::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 
 	int GO , i;
 	GO = i = 0;
-	for (map<string, int>::const_iterator it = TER::rTER.begin(); it != TER::rTER.end(); ++it, ++i) {
-		//mTER.insert(it->first);
-		mTER[i] = it->first;
-	}
+	for (set<string>::const_iterator it = TER::rTER.begin(); it != TER::rTER.end(); ++it, ++i)
+		mTER[i] = *it;
+
 	for (i = 0; i < mTER.size() and !GO; ++i) {
 		if (Config::Hmetrics.find(mTER[i]) != Config::Hmetrics.end()) GO = 1;
 	}
 
-	cout << "TER ei!" << endl;
 	if (GO) {
-		cout << "GO! TER GO!" << endl;
-		if (Config::verbose == 1) fprintf(stderr, "%sp...\n", TER::TEREXT.c_str());
-		stringstream ssReport;
-		ssReport << Common::DATA_PATH << "/" << Common::REPORTS << "/" << TGT << "/" << REF << "-" << TER::TEREXT << "base." << Common::XMLEXT;
-		string reportTERreport = ssReport.str();
-	    boost::filesystem::path reportTERreport_path(reportTERreport);
-		boost::filesystem::path reportTERreport_gz(reportTERreport + "." + Common::GZEXT);
+		if (Config::verbose) fprintf(stderr, "%sp...\n", TER::TEREXT.c_str());
 
-		string  ter_base = "-" + TER::TEREXT + "base";
+	    SC_ASIYA sc_asiya;
 
-	    if ( ((!exists(reportTERreport_path) and !exists(reportTERreport_gz)) or Config::remake) and Config::Hmetrics[ter_base]) {
-	     	MetricScore res = computeTER(TGT, TER::TEREXT+"base", 1);
+	    string pref_ter = "-"+TER::TEREXT+"base";
+		string reportTERxml = Common::DATA_PATH + "/" + Common::REPORTS + "/" + TGT + "/" + REF + "/" + pref_ter + "." + Common::XMLEXT;
+    	if ( ((!exists(boost::filesystem::path(reportTERxml)) and !exists(boost::filesystem::path(reportTERxml+"."+Common::GZEXT))) or Config::remake) and Config::Hmetrics[pref_ter]) {
+	     	MetricScore res;
+	     	computeTER(TGT, TER::TEREXT+"base", 1, res);
 
-	     	SC_ASIYA sc_asiya;
-	    	if (Config::O_STORAGE == 1) {
-	    		sc_asiya.write_report(TGT, REF, ter_base, res);
-         		cout << "IQXML DOCUMENT " << ter_base << " CREATED" << endl;
+ 			if (Config::O_STORAGE == 1) {
+	    		sc_asiya.write_report(TGT, REF, pref_ter, res);
+         		cout << "SC_ASIYA DOCUMENT " << pref_ter << " CREATED" << endl;
          	}
-         	hOQ.save_hash_scores(ter_base, TGT, REF, res);
+         	hOQ.save_hash_scores(pref_ter, TGT, REF, res);
 	    }
+	    pref_ter = TER::TEREXT + "base";
+    	reportTERxml = Common::DATA_PATH + "/" + Common::REPORTS + "/" + TGT + "/" + REF + "/" + pref_ter + "." + Common::XMLEXT;
+	    if ( ((!exists(boost::filesystem::path(reportTERxml)) and !exists(boost::filesystem::path(reportTERxml+"."+Common::GZEXT))) or Config::remake) and Config::Hmetrics[pref_ter]) {
+	     	MetricScore res;
+	     	computeTER(TGT, TER::TEREXT+"base", 0, res);
 
+	     	if (Config::O_STORAGE == 1) {
+	    		sc_asiya.write_report(TGT, REF, pref_ter, res);
+         		cout << "SC_ASIYA DOCUMENT " << pref_ter << " CREATED" << endl;
+         	}
+         	hOQ.save_hash_scores(pref_ter, TGT, REF, res);
+	    }
+	    pref_ter = "-"+TER::TEREXT;
+	    reportTERxml = Common::DATA_PATH + "/" + Common::REPORTS + "/" + TGT + "/" + REF + "/" + pref_ter + "." + Common::XMLEXT;
+	    if ( ((!exists(boost::filesystem::path(reportTERxml)) and !exists(boost::filesystem::path(reportTERxml+"."+Common::GZEXT))) or Config::remake) and Config::Hmetrics[pref_ter]) {
+	     	MetricScore res;
+	     	computeTER(TGT, TER::TEREXT, 1, res);
+
+	     	if (Config::O_STORAGE == 1) {
+	    		sc_asiya.write_report(TGT, REF, pref_ter, res);
+         		cout << "SC_ASIYA DOCUMENT " << pref_ter << " CREATED" << endl;
+         	}
+         	hOQ.save_hash_scores(pref_ter, TGT, REF, res);
+	    }
+	    pref_ter = TER::TEREXT;
+	    reportTERxml = Common::DATA_PATH + "/" + Common::REPORTS + "/" + TGT + "/" + REF + "/" + pref_ter + "." + Common::XMLEXT;
+	    if ( ((!exists(boost::filesystem::path(reportTERxml)) and !exists(boost::filesystem::path(reportTERxml+"."+Common::GZEXT))) or Config::remake) and Config::Hmetrics[pref_ter]) {
+	     	MetricScore res;
+	     	computeTER(TGT, TER::TEREXT, 0, res);
+
+	     	if (Config::O_STORAGE == 1) {
+	    		sc_asiya.write_report(TGT, REF, pref_ter, res);
+         		cout << "SC_ASIYA DOCUMENT " << pref_ter << " CREATED" << endl;
+         	}
+         	hOQ.save_hash_scores(pref_ter, TGT, REF, res);
+	    }
+	    pref_ter = "-" + TER::TEREXT + "p";
+	    reportTERxml = Common::DATA_PATH + "/" + Common::REPORTS + "/" + TGT + "/" + REF + "/" + pref_ter + "." + Common::XMLEXT;
+	    if ( ((!exists(boost::filesystem::path(reportTERxml)) and !exists(boost::filesystem::path(reportTERxml+"."+Common::GZEXT))) or Config::remake) and Config::Hmetrics[pref_ter]) {
+	     	MetricScore res;
+	     	computeTER(TGT, TER::TEREXT+"p", 1, res);
+
+	     	if (Config::O_STORAGE == 1) {
+	    		sc_asiya.write_report(TGT, REF, pref_ter, res);
+         		cout << "SC_ASIYA DOCUMENT " << pref_ter << " CREATED" << endl;
+         	}
+         	hOQ.save_hash_scores(pref_ter, TGT, REF, res);
+	    }
+	    pref_ter = TER::TEREXT + "p";
+	    reportTERxml = Common::DATA_PATH + "/" + Common::REPORTS + "/" + TGT + "/" + REF + "/" + pref_ter + "." + Common::XMLEXT;
+	    if ( ((!exists(boost::filesystem::path(reportTERxml)) and !exists(boost::filesystem::path(reportTERxml+"."+Common::GZEXT))) or Config::remake) and Config::Hmetrics[pref_ter]) {
+	     	MetricScore res;
+	     	computeTER(TGT, TER::TEREXT+"p", 0, res);
+
+	     	if (Config::O_STORAGE == 1) {
+	    		sc_asiya.write_report(TGT, REF, pref_ter, res);
+         		cout << "SC_ASIYA DOCUMENT " << pref_ter << " CREATED" << endl;
+         	}
+         	hOQ.save_hash_scores(pref_ter, TGT, REF, res);
+	    }
+	    pref_ter = "-" + TER::TEREXT + "p-A";
+	    reportTERxml = Common::DATA_PATH + "/" + Common::REPORTS + "/" + TGT + "/" + REF + "/" + pref_ter + "." + Common::XMLEXT;
+	    if ( ((!exists(boost::filesystem::path(reportTERxml)) and !exists(boost::filesystem::path(reportTERxml+"."+Common::GZEXT))) or Config::remake) and Config::Hmetrics[pref_ter]) {
+	     	MetricScore res;
+	     	computeTER(TGT, TER::TEREXT+"p-A", 1, res);
+
+	     	if (Config::O_STORAGE == 1) {
+	    		sc_asiya.write_report(TGT, REF, pref_ter, res);
+         		cout << "SC_ASIYA DOCUMENT " << pref_ter << " CREATED" << endl;
+         	}
+         	hOQ.save_hash_scores(pref_ter, TGT, REF, res);
+	    }
+	    pref_ter = TER::TEREXT + "p-A";
+	    reportTERxml = Common::DATA_PATH + "/" + Common::REPORTS + "/" + TGT + "/" + REF + "/" + pref_ter + "." + Common::XMLEXT;
+	    if ( ((!exists(boost::filesystem::path(reportTERxml)) and !exists(boost::filesystem::path(reportTERxml+"."+Common::GZEXT))) or Config::remake) and Config::Hmetrics[pref_ter]) {
+	     	MetricScore res;
+	     	computeTER(TGT, TER::TEREXT+"p-A", 0, res);
+
+	     	if (Config::O_STORAGE == 1) {
+	    		sc_asiya.write_report(TGT, REF, pref_ter, res);
+         		cout << "SC_ASIYA DOCUMENT " << pref_ter << " CREATED" << endl;
+         	}
+         	hOQ.save_hash_scores(pref_ter, TGT, REF, res);
+	    }
 	}
 }
