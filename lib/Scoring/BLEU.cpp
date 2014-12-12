@@ -248,7 +248,7 @@ MetricScore BLEU::computeBLEUN(string TGT) {
 		string sysaux = "rm -f "; sysaux += ssSrc.str();
 		system (sysaux.c_str());
 	}
-	MetricScore BLEU_scores = Scores::read_scores(Common::DATA_PATH + "/BLEU", TGT, 0);
+	MetricScore BLEU_scores = Scores::read_scores(Common::DATA_PATH + "/BLEU", TGT, "-", 0);
 
 	return BLEU_scores;
 }

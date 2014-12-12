@@ -45,7 +45,7 @@ MetricScore TER::computeTER(string TGT, string variant, int do_neg, MetricScore 
     if (!exists(refNISTxml) or Config::remake)
     	TB_NIST::f_create_mteval_multidoc(ssRef.str(), Common::CASE_CS, 2);
 
-    string mem_options = " -Xmx1024M ";	//cluster executions, write minimum 1G
+    string mem_options = "-Xmx2G ";	//cluster executions, write minimum 1G
     string phrase_db, stop_words, wn_dict, param, caseopt;
     phrase_db = stop_words = "";
     wn_dict = param = "";
@@ -71,15 +71,17 @@ MetricScore TER::computeTER(string TGT, string variant, int do_neg, MetricScore 
     else { fprintf(stderr, "[ERROR] unknown TERp variant <%s>\n", variant.c_str()); exit(1); }
 
     stringstream sc;
-    sc<<"java -Dfile.encoding=UTF-8 -jar "<<mem_options<<" "<<Config::tools<<"/"<<TER::TTERp<<"/dist/lib/terp.jar "<<phrase_db<<" "<<wn_dict<<" "<<caseopt<<" -n "<<Common::DATA_PATH<<"/"<<Common::TMP<<"/"<<nr<<". -o nist -r "<<ssRef.str()<<" -h "<<ssOut.str()<<" "<<param<<" ";
+    sc<<"java -Dfile.encoding=UTF-8 -jar "<<mem_options<<Config::tools<<"/"<<TER::TTERp<<"/dist/lib/terp.jar "<<phrase_db<<" "<<wn_dict<<" "<<caseopt<<" -n "<<Common::DATA_PATH<<"/"<<Common::TMP<<"/"<<nr<<". -o nist -r "<<ssRef.str()<<" -h "<<ssOut.str()<<" "<<param<<" ";
+
     string ms = "[ERROR] problems running TERp...";
-    cout << "[TER] execute: " << sc << endl;
+    cout << "[TER] execute: " << sc.str() << endl;
     Common::execute_or_die(sc.str(), ms);
 
     stringstream basename;
-    basename << Common::DATA_PATH << "/" << Common::TMP << "/" << nr << "." << sysid << t_id;
+    basename << Common::DATA_PATH << "/" << Common::TMP << "/" << nr << "." << sysid;
+fprintf(stderr, "[TER]: Fuck read! (%s) /TGT: (%s)\n", basename.str().c_str(), TGT.c_str());
 
-    res = Scores::read_scores(basename.str(), TGT, do_neg);
+    res = Scores::read_scores(basename.str(), TGT, ".", do_neg);
 
 	if (exists(refNISTxml)) {
 		string sysaux = "rm -f "; sysaux += ssRef.str();

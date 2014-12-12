@@ -113,7 +113,7 @@ void METEOR::computeMETEOR(string TGT, string variant, MetricScore &res) {
 
 	//cout << "MetricScore BEFORE read <" << basename << "> file" << endl;
     //hOQ.print_MetricScore(res);
-	res = Scores::read_scores(basename, TGT, 0);
+	res = Scores::read_scores(basename, TGT, "-", 0);
 	//cout << "MetricScore AFTER read <" << basename << "> file" << endl;
 
 	if (exists(outMTRsgml_path)) {

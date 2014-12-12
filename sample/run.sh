@@ -3,7 +3,7 @@
 #$ -cwd
 #$ -m eas
 #$ -M gilabert@cs.upc.edu
-#$ -l h_vmem=1G
+#$ -l h_vmem=5G
 
 
 DATAPATH=/home/usuaris/gilabert/PROVA_TESTBED/AsiyaGPU/sample

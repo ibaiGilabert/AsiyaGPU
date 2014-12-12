@@ -46,8 +46,8 @@ public:
 	~Scores();
 
 	//Read
-	static MetricScore read_scores(string basename, string TGT, int do_neg);
-	static vector<double> read_scores_G(string basename, string G, string TGT, int do_neg);
+	static MetricScore read_scores(string basename, string TGT, string sep, int do_neg);
+	static vector<double> read_scores_G(string basename, string G, string TGT, string sep, int do_neg);
 
 	bool exists_sys_score(string METRIC, string TGT, string REF);
 	bool exists_doc_score(string METRIC, string TGT, string REF);

@@ -20,10 +20,10 @@ Scores::Scores() {
 
 Scores::~Scores() {}
 
-vector<double> Scores::read_scores_G(string basename, string G, string TGT, int do_neg) {
+vector<double> Scores::read_scores_G(string basename, string G, string TGT, string sep, int do_neg) {
 	// description _ reads MetricsMaTr format scr file for a given metric and a given granularity
 
-	string file = basename + "-" + G + ".scr";
+	string file = basename+sep+G+".scr";
 
 	//read scr file
 	SC_NIST sc_format;
@@ -48,13 +48,13 @@ vector<double> Scores::read_scores_G(string basename, string G, string TGT, int 
 	return scores;
 }
 
-MetricScore Scores::read_scores(string basename, string TGT, int do_neg) {
+MetricScore Scores::read_scores(string basename, string TGT, string sep, int do_neg) {
 	// description _ read system, document and segment scores (from the corresponding Metrics_MaTR-like format files)
 	MetricScore read_scores;
 
-	read_scores.sys_score = read_scores_G(basename, Common::G_SYS, TGT, do_neg)[0];
-	read_scores.doc_scores = read_scores_G(basename, Common::G_DOC, TGT, do_neg);
-	read_scores.seg_scores = read_scores_G(basename, Common::G_SEG, TGT, do_neg);
+	read_scores.sys_score = read_scores_G(basename, Common::G_SYS, TGT, sep, do_neg)[0];
+	read_scores.doc_scores = read_scores_G(basename, Common::G_DOC, TGT, sep, do_neg);
+	read_scores.seg_scores = read_scores_G(basename, Common::G_SEG, TGT, sep, do_neg);
 
 	return read_scores;
 }

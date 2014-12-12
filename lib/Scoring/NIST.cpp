@@ -261,7 +261,7 @@ MetricScore NIST::computeNISTN(string TGT) {
 		string sysaux = "rm -f "; sysaux += ssSrc.str();
 		system (sysaux.c_str());
 	}
-	MetricScore NIST_scores = Scores::read_scores(Common::DATA_PATH + "/NIST", TGT, 0);
+	MetricScore NIST_scores = Scores::read_scores(Common::DATA_PATH + "/NIST", TGT, "-", 0);
 
 	return NIST_scores;
 }
