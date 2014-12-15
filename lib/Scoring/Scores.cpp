@@ -22,7 +22,6 @@ Scores::~Scores() {}
 
 vector<double> Scores::read_scores_G(string basename, string G, string TGT, string sep, int do_neg) {
 	// description _ reads MetricsMaTr format scr file for a given metric and a given granularity
-
 	string file = basename+sep+G+".scr";
 
 	//read scr file

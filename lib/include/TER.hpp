@@ -10,7 +10,7 @@ class TER : public SingleMetric {
 private:
 	static set<string> create_rTER();
 
-	MetricScore computeTER(string TGT, string variant, int do_neg, MetricScore &res);
+	void computeTER(string TGT, string variant, int do_neg, MetricScore &res);
 
 public:
 	void doMetric(string TGT, string REF, string prefix, Scores &hOQ);

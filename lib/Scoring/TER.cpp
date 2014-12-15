@@ -24,7 +24,7 @@ set<string> TER::create_rTER() {
 const set<string> TER::rTER = create_rTER();
 
 
-MetricScore TER::computeTER(string TGT, string variant, int do_neg, MetricScore &res) {
+void TER::computeTER(string TGT, string variant, int do_neg, MetricScore &res) {
 	// description _ computes -TERp score (multiple references)
 	srand(time(NULL));
 	double nr = rand() % (Common::NRAND + 1);	//random number [0, Common::NRAND];
@@ -53,6 +53,7 @@ MetricScore TER::computeTER(string TGT, string variant, int do_neg, MetricScore 
     if (caseopt == Common::CASE_CS ? "" : "-s");
 
     if (variant == TER::TEREXT+"base") param = Config::tools+"/"+TER::TTERp+"/data/ter.param";
+    else if (variant == TER::TEREXT) {/*no op*/}
     else if (variant == TER::TEREXT+"p") {
     	if (Config::LANG == Common::L_ENG) {
     		phrase_db = "-P "+Config::tools+"/"+TER::TTERp+"/data/phrases.db";
@@ -71,15 +72,14 @@ MetricScore TER::computeTER(string TGT, string variant, int do_neg, MetricScore 
     else { fprintf(stderr, "[ERROR] unknown TERp variant <%s>\n", variant.c_str()); exit(1); }
 
     stringstream sc;
-    sc<<"java -Dfile.encoding=UTF-8 -jar "<<mem_options<<Config::tools<<"/"<<TER::TTERp<<"/dist/lib/terp.jar "<<phrase_db<<" "<<wn_dict<<" "<<caseopt<<" -n "<<Common::DATA_PATH<<"/"<<Common::TMP<<"/"<<nr<<". -o nist -r "<<ssRef.str()<<" -h "<<ssOut.str()<<" "<<param<<" ";
+    sc<<"java -Dfile.encoding=UTF-8 -jar "<<mem_options<<Config::tools<<"/"<<TER::TTERp<<"/dist/lib/terp.jar "<<phrase_db<<" "<<wn_dict<<" "<<caseopt<<" -n "<<Common::DATA_PATH<<"/"<<Common::TMP<<"/"<<nr<<t_id<<". -o nist -r "<<ssRef.str()<<" -h "<<ssOut.str()<<" "<<param<<" ";
 
     string ms = "[ERROR] problems running TERp...";
     cout << "[TER] execute: " << sc.str() << endl;
     Common::execute_or_die(sc.str(), ms);
 
     stringstream basename;
-    basename << Common::DATA_PATH << "/" << Common::TMP << "/" << nr << "." << sysid;
-fprintf(stderr, "[TER]: Fuck read! (%s) /TGT: (%s)\n", basename.str().c_str(), TGT.c_str());
+    basename << Common::DATA_PATH << "/" << Common::TMP << "/" << nr << t_id << "." << sysid;
 
     res = Scores::read_scores(basename.str(), TGT, ".", do_neg);
 
@@ -207,5 +207,6 @@ void TER::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
          	}
          	hOQ.save_hash_scores(pref_ter, TGT, REF, res);
 	    }
+        hOQ.save_struct_scores(TB_FORMAT::make_serial("TER", TGT, REF));
 	}
 }

@@ -652,7 +652,7 @@ void Config::validate_configuration() {
             boost::regex re_ROUGE("^ROUGE.*");
             boost::regex re_WER("^WER.*");
             boost::regex re_PER("^PER.*");
-            boost::regex re_TER("^TER.*");
+            boost::regex re_TER("^.*TER.*");
             boost::regex re_METEOR("^METEOR.*");
             boost::regex re_NGRAM("^NGRAM.*");
             boost::regex re_ESA("^ESA.*");
@@ -660,6 +660,7 @@ void Config::validate_configuration() {
             boost::regex re_Pl("^Pl.*");
             boost::regex re_Fl("^Fl.*");
             boost::regex re_Rl("^Rl.*");
+
             /*boost::regex re_SP("SP");
             boost::regex re_CP("CP");
             boost::regex re_DP("DP");
