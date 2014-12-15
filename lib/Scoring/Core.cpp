@@ -11,6 +11,7 @@
 #include "../include/SC_RAW.hpp"
 #include "../include/TESTBED.hpp"
 #include "../include/Core.hpp"
+#include "../Common.hpp"
 #include "../Config.hpp"
 
 #include <omp.h>
@@ -62,14 +63,51 @@ vector<string> Core::get_sorted_systems() {
 }
 
 
-void Core::find_max_metric_scores(const Scores &hOQ, const set<string> &systems, const set<string> &references) {
+void Core::find_max_metric_scores(Scores &hOQ, const set<string> &systems, const set<string> &references) {
 	// description _ finds maximum score for each metric, so normalized scores for a given metric "i"
 	//               can be later computed as are Xnorm(i) = X(i) / MAX(i)
 	//               (max metric scores are stored onto the configuration object)
 	string REF = Common::join_set(references, '_');
 	for(set<string>::const_iterator it_m = Config::metrics.begin(); it_m != Config::metrics.end(); ++it_m) {
 		string ref_tmp = REF;
-		if (Config::min_score[Common::G_SYS][*it_m] == Config::min_score[Common::G_SYS][*it_m]) Config::min_score[Common::G_SYS][*it_m] = 0;
+
+		if (hOQ.get_min_sys_score(*it_m) == Common::NOT_DEFINED) hOQ.set_min_sys_score(*it_m, 0);
+		if (hOQ.get_min_doc_score(*it_m) == Common::NOT_DEFINED) hOQ.set_min_doc_score(*it_m, 0);
+		if (hOQ.get_min_seg_score(*it_m) == Common::NOT_DEFINED) hOQ.set_min_seg_score(*it_m, 0);
+
+		if (hOQ.get_max_sys_score(*it_m) == Common::NOT_DEFINED) hOQ.set_max_sys_score(*it_m, 0);
+		if (hOQ.get_max_doc_score(*it_m) == Common::NOT_DEFINED) hOQ.set_max_doc_score(*it_m, 0);
+		if (hOQ.get_max_seg_score(*it_m) == Common::NOT_DEFINED) hOQ.set_max_seg_score(*it_m, 0);
+
+		for(set<string>::const_iterator it_s = systems.begin(); it_s != systems.end(); ++it_s) {
+			if (Config::G == Common::G_SYS or Config::G == Common::G_ALL) {
+				if (hOQ.get_sys_scores()[*it_m][*it_s][ref_tmp] < hOQ.get_min_sys_score(*it_m))
+					hOQ.set_min_sys_score(*it_m, hOQ.get_sys_scores()[*it_m][*it_s][ref_tmp]);
+
+				if (hOQ.get_sys_scores()[*it_m][*it_s][ref_tmp] > hOQ.get_max_sys_score(*it_m))
+					hOQ.set_max_sys_score(*it_m, hOQ.get_sys_scores()[*it_m][*it_s][ref_tmp]);
+			}
+			if (Config::G == Common::G_DOC or Config::G == Common::G_ALL) {
+				for (int i = 0; i < hOQ.get_num_doc_scores(); ++i) {
+					if (hOQ.get_doc_scores(i)[*it_m][*it_s][ref_tmp] < hOQ.get_min_doc_score(*it_m))
+						hOQ.set_min_doc_score(*it_m, hOQ.get_doc_scores(i)[*it_m][*it_s][ref_tmp]);
+
+					if (hOQ.get_doc_scores(i)[*it_m][*it_s][ref_tmp] > hOQ.get_max_doc_score(*it_m))
+						hOQ.set_max_doc_score(*it_m, hOQ.get_doc_scores(i)[*it_m][*it_s][ref_tmp]);
+				}
+			}
+			if (Config::G == Common::G_SEG or Config::G == Common::G_ALL) {
+				for (int i = 0; i < hOQ.get_num_seg_scores(); ++i) {
+					if (hOQ.get_seg_scores(i)[*it_m][*it_s][ref_tmp] < hOQ.get_min_seg_score(*it_m))
+						hOQ.set_min_seg_score(*it_m, hOQ.get_seg_scores(i)[*it_m][*it_s][ref_tmp]);
+
+					if (hOQ.get_seg_scores(i)[*it_m][*it_s][ref_tmp] > hOQ.get_max_seg_score(*it_m))
+						hOQ.set_max_seg_score(*it_m, hOQ.get_seg_scores(i)[*it_m][*it_s][ref_tmp]);
+				}
+			}
+		}
+
+		/*if (Config::min_score[Common::G_SYS][*it_m] == Config::min_score[Common::G_SYS][*it_m]) Config::min_score[Common::G_SYS][*it_m] = 0;
 		if (Config::min_score[Common::G_DOC][*it_m] == Config::min_score[Common::G_DOC][*it_m]) Config::min_score[Common::G_DOC][*it_m] = 0;
 		if (Config::min_score[Common::G_SEG][*it_m] == Config::min_score[Common::G_SEG][*it_m]) Config::min_score[Common::G_SEG][*it_m] = 0;
 
@@ -102,13 +140,13 @@ void Core::find_max_metric_scores(const Scores &hOQ, const set<string> &systems,
 						Config::max_score[Common::G_SEG][*it_m] = hOQ.get_seg_scores(i)[*it_m][*it_s][ref_tmp];
 				}
 			}
-		}
+		}*/
 	}
 }
 
-void Core::find_max_scores(const Scores &hOQ) {
+void Core::find_max_scores(Scores &hOQ) {
 	// description _ finds maximum score for each metric (), considering system translations by default.
-	//               If "do_refs" reference ranslations are considered as well.
+	//               If "do_refs" reference translations are considered as well.
 	find_max_metric_scores(hOQ, Config::systems, Config::references);
 
 	if (Config::do_refs) {
@@ -116,9 +154,12 @@ void Core::find_max_scores(const Scores &hOQ) {
 			set<string> all_other_refs;
 			for(set<string>::const_iterator it_r2 = Config::references.begin(); it_r2 != Config::references.end(); ++it_r2)
 				if (*it_r != *it_r2) all_other_refs.insert(*it_r);
+
 			find_max_metric_scores(hOQ, set<string>(it_r, it_r), all_other_refs);
 		}
 	}
+	hOQ.print_min_scores();
+	hOQ.print_max_scores();
 }
 
 

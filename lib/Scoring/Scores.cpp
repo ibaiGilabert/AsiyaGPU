@@ -78,6 +78,29 @@ int Scores::get_num_seg_scores() const {
 	return seg.size();
 }
 
+double Scores::get_min_sys_score(string metric) {
+	return min_sys_score.find(metric) != min_sys_score.end() ? min_sys_score[metric] : Common::NOT_DEFINED;
+}
+
+double Scores::get_min_doc_score(string metric) {
+	return min_doc_score.find(metric) != min_doc_score.end() ? min_doc_score[metric] : Common::NOT_DEFINED;
+}
+double Scores::get_min_seg_score(string metric) {
+	return min_seg_score.find(metric) != min_seg_score.end() ? min_seg_score[metric] : Common::NOT_DEFINED;
+}
+
+double Scores::get_max_sys_score(string metric) {
+	return max_sys_score.find(metric) != max_sys_score.end() ? max_sys_score[metric] : Common::NOT_DEFINED;
+}
+
+double Scores::get_max_doc_score(string metric) {
+	return max_doc_score.find(metric) != max_doc_score.end() ? max_doc_score[metric] : Common::NOT_DEFINED;
+}
+
+double Scores::get_max_seg_score(string metric) {
+	return max_seg_score.find(metric) != max_seg_score.end() ? max_seg_score[metric] : Common::NOT_DEFINED;
+}
+
 bool Scores::exists_sys_score(string METRIC, string TGT, string REF) {
 	return (sys[METRIC][TGT].find(REF) != sys[METRIC][TGT].end());
 }
@@ -104,6 +127,30 @@ void Scores::set_doc_score(int n, string METRIC, string TGT, string REF, double 
 
 void Scores::set_seg_score(int n, string METRIC, string TGT, string REF, double x) {
 	seg[n][METRIC][TGT][REF] = x;
+}
+
+void Scores::set_min_sys_score(string metric, double value) {
+	min_sys_score[metric] = value;
+}
+
+void Scores::set_min_doc_score(string metric, double value) {
+	min_doc_score[metric] = value;
+}
+
+void Scores::set_min_seg_score(string metric, double value) {
+	min_seg_score[metric] = value;
+}
+
+void Scores::set_max_sys_score(string metric, double value) {
+	max_sys_score[metric] = value;
+}
+
+void Scores::set_max_doc_score(string metric, double value) {
+	max_doc_score[metric] = value;
+}
+
+void Scores::set_max_seg_score(string metric, double value) {
+	max_seg_score[metric] = value;
 }
 
 /*void Scores::save_struct_scores(const char* filename) {
@@ -324,6 +371,34 @@ void Scores::print_seg_scores(int n) const {
 	}
 	cout << "}" << endl;
 	cout << "---------------------" << endl;
+}
+
+void Scores::print_min_scores() const {
+	cout << "----- MIN SCORES -----" << endl;
+	cout << "\tmin_sys_scores" << endl;
+	for (map<string, double>::const_iterator it = min_sys_score.begin(); it != min_sys_score.end(); ++it)
+		cout << "\t\t[" << it->first << " -> " << it->second << "]" << endl;
+	cout << "\tmin_doc_scores" << endl;
+	for (map<string, double>::const_iterator it = min_doc_score.begin(); it != min_doc_score.end(); ++it)
+		cout << "\t\t[" << it->first << " -> " << it->second << "]" << endl;
+	cout << "\tmin_seg_scores" << endl;
+	for (map<string, double>::const_iterator it = min_seg_score.begin(); it != min_seg_score.end(); ++it)
+		cout << "\t\t[" << it->first << " -> " << it->second << "]" << endl;
+	cout << "----------------------" << endl;
+}
+
+void Scores::print_max_scores() const {
+	cout << "----- MAX SCORES -----" << endl;
+	cout << "\tmax_sys_scores" << endl;
+	for (map<string, double>::const_iterator it = max_sys_score.begin(); it != max_sys_score.end(); ++it)
+		cout << "\t\t[" << it->first << " -> " << it->second << "]" << endl;
+	cout << "\tmax_doc_scores" << endl;
+	for (map<string, double>::const_iterator it = max_doc_score.begin(); it != max_doc_score.end(); ++it)
+		cout << "\t\t[" << it->first << " -> " << it->second << "]" << endl;
+	cout << "\tmax_seg_scores" << endl;
+	for (map<string, double>::const_iterator it = max_seg_score.begin(); it != max_seg_score.end(); ++it)
+		cout << "\t\t[" << it->first << " -> " << it->second << "]" << endl;
+	cout << "----------------------" << endl;
 }
 
 void Scores::print_MetricScore(const MetricScore &res) const {

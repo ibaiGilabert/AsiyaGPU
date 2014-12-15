@@ -31,12 +31,14 @@ class Scores {
 private:
 	oMap sys, all;
 	vector<oMap> seg, doc;
+    map<string, double> max_sys_score,	max_doc_score, max_seg_score;	//<granularity, [metric, value]>
+	map<string, double> min_sys_score,	min_doc_score, min_seg_score;
 
-    friend class boost::serialization::access;
+    /*friend class boost::serialization::access;
 	template<typename Archive>
 	void serialize(Archive& ar, const unsigned version) {
 		ar & sys & all & seg & doc;  // Simply serialize the data members of Obj
-	}
+	}*/
 
 public:
 
@@ -62,10 +64,24 @@ public:
 	int get_num_doc_scores() const;
 	int get_num_seg_scores() const;
 
+	double get_min_sys_score(string metric);
+	double get_min_doc_score(string metric);
+	double get_min_seg_score(string metric);
+	double get_max_sys_score(string metric);
+	double get_max_doc_score(string metric);
+	double get_max_seg_score(string metric);
+
     //Set
 	void set_sys_score(string METRIC, string TGT, string REF, double score);
 	void set_doc_score(int n, string METRIC, string TGT, string REF, double x);
 	void set_seg_score(int n, string METRIC, string TGT, string REF, double x);
+
+	void set_min_sys_score(string metric, double value);
+	void set_min_doc_score(string metric, double value);
+	void set_min_seg_score(string metric, double value);
+	void set_max_sys_score(string metric, double value);
+	void set_max_doc_score(string metric, double value);
+	void set_max_seg_score(string metric, double value);
 
 	//Save
 	void save_hash_scores(string metric_name, string system_name, string refere_name, const MetricScore &scores);
@@ -81,6 +97,9 @@ public:
 	void print_sys_scores() const;
 	void print_doc_scores(int n) const;
 	void print_seg_scores(int n) const;
+
+	void print_min_scores() const;
+	void print_max_scores() const;
 
 	void print_MetricScore(const MetricScore &res) const;
 };

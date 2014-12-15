@@ -216,6 +216,8 @@ const int Common::SENSIBLE_MAX_N = 1000000;
 const string Common::ID_SEPARATOR = "@@";
 const string Common::CE = "CE";
 const string Common::LeM = "LeM";
+const double Common::NOT_DEFINED = -9999999;
+
 
 void Common::execute_or_die(string command, string message) {
     boost::regex re("\\R");
@@ -227,7 +229,7 @@ void Common::execute_or_die(string command, string message) {
 
 double Common::safe_division(double numerator, double denominator) {
 	// description _ if denominator is different from 0 returns regular division; otherwise returns default value (0 if not specified)
-	double default_value = -999999;
+	double default_value = NOT_DEFINED;
 	return denominator == 0 ? default_value : numerator/denominator;
 }
 

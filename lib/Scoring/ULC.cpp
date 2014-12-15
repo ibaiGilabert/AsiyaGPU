@@ -11,8 +11,8 @@ void ULC::doMetric(Scores &hOQ, const set<string> &systems, const set<string> &r
     	if (Config::G == Common::G_SYS) {
     		double x = 0;
     		for (set<string>::const_iterator it_m = metrics.begin(); it_m != metrics.end(); ++it_m) {
-    			double min_score = Config::min_score[Config::G][*it_m];
-    			double max_score = Config::max_score[Config::G][*it_m];
+    			double min_score = hOQ.get_min_sys_score(*it_m);
+    			double max_score = hOQ.get_max_sys_score(*it_m);
     			if (min_score < 0)
     				x += Common::safe_division( hOQ.get_sys_scores()[*it_m][*it_s][REF]+abs(min_score), max_score+abs(min_score) );
     			else
@@ -24,8 +24,8 @@ void ULC::doMetric(Scores &hOQ, const set<string> &systems, const set<string> &r
     		for (int i = 0; i < hOQ.get_num_doc_scores(); ++i) {
     			double x = 0;
 	    		for (set<string>::const_iterator it_m = metrics.begin(); it_m != metrics.end(); ++it_m) {
-					double min_score = Config::min_score[Config::G][*it_m];
-					double max_score = Config::max_score[Config::G][*it_m];
+					double min_score = hOQ.get_min_doc_score(*it_m);
+					double max_score = hOQ.get_max_doc_score(*it_m);
 	    			if (min_score < 0)
 	    				x += Common::safe_division( hOQ.get_doc_scores(i)[*it_m][*it_s][REF]+abs(min_score), max_score+abs(min_score) );
 	    			else
@@ -38,8 +38,8 @@ void ULC::doMetric(Scores &hOQ, const set<string> &systems, const set<string> &r
     		for (int i = 0; i < hOQ.get_num_seg_scores(); ++i) {
 				double x = 0;
 	    		for (set<string>::const_iterator it_m = metrics.begin(); it_m != metrics.end(); ++it_m) {
-					double min_score = Config::min_score[Config::G][*it_m];
-					double max_score = Config::max_score[Config::G][*it_m];
+					double min_score = hOQ.get_min_seg_score(*it_m);
+					double max_score = hOQ.get_max_seg_score(*it_m);
 	    			if (min_score < 0)
 	    				x += Common::safe_division( hOQ.get_seg_scores(i)[*it_m][*it_s][REF]+abs(min_score), max_score+abs(min_score) );
 	    			else

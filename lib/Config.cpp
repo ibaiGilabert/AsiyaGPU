@@ -43,7 +43,6 @@
     string Config::model;
 
     char* Config::PATH;*/
-    map<string, map<string, double> >                       Config::max_score,          Config::min_score;
     map<string, int>            Config::Hmetrics,           Config::eval_schemes,       Config::metaeval_schemes;
     map<string, int>            Config::optimize_schemes,   Config::metaeval_criteria,  Config::optimize_criteria;
     set<string>                 Config::Fmetrics,           Config::metrics,            Config::systems,            Config::references;

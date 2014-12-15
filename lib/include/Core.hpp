@@ -28,8 +28,8 @@ private:
 	vector<string> get_sorted_metrics();
 	vector<string> get_sorted_systems();
 
-	void find_max_metric_scores(const Scores &hOQ, const set<string> &systems, const set<string> &references);
-	void find_max_scores(const Scores &hOQ);
+	void find_max_metric_scores(Scores &hOQ, const set<string> &systems, const set<string> &references);
+	void find_max_scores(Scores &hOQ);
 
 	//Printing
 	void print_metric_names();

@@ -12,7 +12,7 @@ class Common {
 private:
 
 public:
-	//FILE EXTENSIONS
+	// FILE EXTENSIONS
 	static const string SGMLEXT;
 	static const string REPORTEXT;
 	static const string SRCEXT;
@@ -25,21 +25,21 @@ public:
 	static const string DOCEXT;
 	static const string TOKEXT;
 
-	//compression
+	// compression
 	static const string GZIP;
 	static const string GUNZIP;
 
-	//tools directory
+	// tools directory
 	static const string TOOLS;
 
-	//application details
+	// application details
 	static const string VERSION;
 	static const string appVERSION;
 	static const string appNAME;
 	static const string appYEAR;
 	static const string appAUTHOR;
 
-	//languages
+	// languages
 	static const string L_ARA;
 	static const string L_CAT;
 	static const string L_CHN;
@@ -174,6 +174,7 @@ public:
 	static const string ID_SEPARATOR;
 	static const string CE ;
 	static const string LeM;
+	static const double NOT_DEFINED;
 
 	static void execute_or_die(string command, string message);
 	static double safe_division(double numerator, double denominator);
