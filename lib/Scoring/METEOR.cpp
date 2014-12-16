@@ -176,8 +176,7 @@ void METEOR::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 		bool m_pa = Config::Hmetrics.find(mtr_pa) != Config::Hmetrics.end();
 
 		MetricScore res;
-	    SC_ASIYA sc_asiya;
-		if ( ((!exists(reportMTRexactXML_path) and !exists(reportMTRexactXML_ext)) or Config::remake) and m_ex) {	//exact
+	    if ( ((!exists(reportMTRexactXML_path) and !exists(reportMTRexactXML_ext)) or Config::remake) and m_ex) {	//exact
 			computeMETEOR(TGT, "exact", res);
 	    	if (Config::O_STORAGE == 1) {
 	    		sc_asiya.write_report(TGT, REF, mtr_ex, res);

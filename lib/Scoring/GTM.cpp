@@ -153,10 +153,10 @@ void GTM::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 		if (Config::Hmetrics.find(aux) != Config::Hmetrics.end()) GO = 1;
 	}
 
-	cout << "GTM ei!" << endl;
+	//cout << "GTM ei!" << endl;
 	if (GO) {
-		cout << "GO! GTM GO!" << endl;
-		if (Config::verbose == 1) fprintf(stderr, "%s\n", GTM::GTMEXT.c_str());
+		//cout << "GO! GTM GO!" << endl;
+		if (Config::verbose) fprintf(stderr, "%s\n", GTM::GTMEXT.c_str());
 
 		stringstream ss1, ss2, ss3;
 		ss1 << Common::DATA_PATH << "/" << Common::REPORTS << "/" << TGT << "/" << REF << "/" << prefix << GTM::GTMEXT << "-1." << Common::XMLEXT;
@@ -177,8 +177,7 @@ void GTM::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 
 	    double SYS;
     	vector<double> SEG;
-		SC_ASIYA sc_asiya;
-	    if ( (!exists(reportGTM1xml_path) and !exists(reportGTM1xml_gz)) or Config::remake) {
+		if ( (!exists(reportGTM1xml_path) and !exists(reportGTM1xml_gz)) or Config::remake) {
 			computeGTM(TGT, 1, SYS, SEG);
 	    	vector<double> d_scores, s_scores;
 			TESTBED::get_seg_doc_scores(SEG, 0, TGT, d_scores, s_scores);

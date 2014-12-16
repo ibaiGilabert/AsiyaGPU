@@ -127,7 +127,7 @@ void Core::process_multi_metrics(string HYP, const set<string> &Lref) {
 	string erase = "rm ";
 	// LAUNCH
 	for (int i = 1; i <= Config::num_process; ++i) {
-		fprintf(stderr, "get_split (%s): sys: %s/ ext: %s/ thread: %d\n", HYP.c_str(), TESTBED::Hsystems[HYP].c_str(), Common::TXTEXT.c_str(), i );
+		fprintf(stderr, "get_split (%s): sys: %s/ ext: %s/ thread: %d\n", HYP.c_str(), TESTBED::Hsystems[HYP].c_str(), Common::TXTEXT.c_str(), i);
 		string TGT_split = TB_FORMAT::get_split(TESTBED::Hsystems[HYP], Common::TXTEXT, i);
 
 		/*string config_bleu_file = proc.make_config_file(HYP, REF, "BLEU", i);
@@ -137,24 +137,42 @@ void Core::process_multi_metrics(string HYP, const set<string> &Lref) {
 		for (set<string>::const_iterator it_fm = Config::Fmetrics.begin(); it_fm != Config::Fmetrics.end(); ++it_fm) {
 			string config_file = proc.make_config_file(HYP, REF, *it_fm, i);
 			string run_file = proc.make_run_file(config_file, HYP, REF, i, *it_fm);
-			job_qw.insert(proc.run_job(run_file, *it_fm));
+			fold_qw[thread].insert(proc.run_job(run_file, *it_fm));
 			//file_qw.push(config_file);
 			//file_qw.push(run_file);
 		}
-		/*string run_meteor_file = proc.make_run_file(config_file, HYP, REF, i, "METEOR");
-		job_qw.insert(proc.run_job(run_meteor_file, "METEOR")); */
-
-		// Crear cada config i script, despres llançar-lo iterativament per cada metrica.
-
-		// ELIMINAR scripts
-		//string erase_sh;
-		//erase_sh = erase + run_bleu_file;			    system(erase_sh.c_str());
-		//erase_sh = erase + run_rouge_file;        system(erase_sh.c_str());
-		//erase_sh = erase + run_meteor_file;			  system(erase_sh.c_str());
-
-		//erase_sh = erase + config_bleu_file;				  system(erase_sh.c_str());
-		//erase_sh = erase + config_rouge_file;         system(erase_sh.c_str());
 	}
+
+	// WAIT and LAUNCH COMPLEX
+	if (Config::verbose) fprintf(stderr, "[WAIT FOR COMPLEX]\n");
+	while (!fold_qw.empty()) {
+		for (map<int, set<string> >::const_iterator it_fold = fold_qw.begin(); it_fold != fold_qw.end(); ++it_fold) {
+			int fold = it->first;
+        	set<string> folds = it->second;
+        	for (set<string>::const_iterator it_job = folds.begin(); it_job != folds.end(); ++it_job) {
+		        if (proc.end(*it_job)) folds.erase(it_job);
+		    }
+		    if (folds.empty()) {
+		    	ComplexMetric *pULC = new ULC;
+		    	pULC>doMetric();
+
+		    }
+	}
+	// REBUILD
+	if (Config::verbose) fprintf(stderr, "[REBUILD]\n");
+	for (set<string>::const_iterator it = Config::systems.begin(); it != Config::systems.end(); ++it) {
+        rebuild_hash_scores(*it, Config::references, hOQ);
+	}
+    if (Config::G != Common::G_SEG){
+        fprintf(stderr, "[DOC REBUILD]\n");
+        hOQ.make_doc_scores();
+        if (Config::G == Common::G_SYS) {
+            fprintf(stderr, "[SYS REBUILD]\n");
+            hOQ.make_sys_scores();
+        }
+    }
+
+	if (Config::verbose) fprintf(stderr, "[REBUILD DONE]\n");
 
 	// WAIT IN DO_SCORES
 }
@@ -225,7 +243,11 @@ void Core::doMultiMetrics(string HYP, const set<string> &Lref, Scores &hOQ) {
 	pESA->doMetric(HYP, REF, "", hOQ);
 	pTER->doMetric(HYP, REF, "", hOQ);
 
-	delete pBLEU, pNIST, pMETEOR, pROUGE, pGTM, pNGRAM, pOverlap, pESA, pTER;
+
+	ComplexMetric *pULC = new ULC;
+	//pULC->doMetric();
+
+	delete pBLEU, pNIST, pMETEOR, pROUGE, pGTM, pNGRAM, pOverlap, pESA, pTER, pULC;
 
 	//if (Config::verbose) fprintf(stderr, "]\n");
 

@@ -344,7 +344,6 @@ void NIST::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
          	string prefN = prefix;	prefN += NIST::NISTEXT;	prefN += "-1";
 	    	vector<double> d_scores, s_scores;
 	    	TESTBED::get_seg_doc_scores(SEG[0], 0, TGT, d_scores, s_scores);
-	    	SC_ASIYA sc_asiya;
 
 	    	if (Config::O_STORAGE == 1) {
 	    		sc_asiya.write_report(TGT, REF, prefN, SYS[0], d_scores, s_scores);

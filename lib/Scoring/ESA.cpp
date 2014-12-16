@@ -253,8 +253,7 @@ void ESA::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 	   			computeMultiESA(mESA[i], TGT, SYS, SEG);
 				TESTBED::get_seg_doc_scores(SEG, 0, TGT, d_scores, s_scores);
 
-				SC_ASIYA sc_asiya;
-		    	string pref = prefix + mESA[i];
+				string pref = prefix + mESA[i];
 		    	if (Config::O_STORAGE == 1) {
 					sc_asiya.write_report(TGT, REF, pref, SYS, d_scores, s_scores);
 					fprintf(stderr, "SC_ASIYA DOCUMENT %s CREATED\n", pref.c_str());

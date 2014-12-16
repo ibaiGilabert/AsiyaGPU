@@ -4,29 +4,24 @@
 #include "SingleMetric.hpp"
 
 #include <vector>
-#include <map>
+#include <set>
 
 class WER : public SingleMetric {
 private:
-	static map<string, int> create_rWER();
+	static set<string> create_rWER();
 
 	static const string WEREXT, TWER;
-	static const map<string, int> rWER;
+	static const set<string> rWER;
 
 	void WER_f_create_doc(string input, string output);
+	void read_WER(string report, int do_neg, double &WER, vector<double> &lWER);
 
-	pair<double, vector<double> > read_WER(string report, int do_neg);
-
-	pair<double, vector<double> > computeWER(string TGT, int do_neg);
+	void computeWER(string TGT, int do_neg, double &MAXSYS, vector<double> &MAXSEG);
 
 public:
-	WER() {}
-	~WER() {}
-
 	void doMetric(string TGT, string REF, string prefix, Scores &hOQ);
 
 };
-
 
 
 #endif

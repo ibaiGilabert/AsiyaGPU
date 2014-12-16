@@ -7,10 +7,11 @@
 
 class ULC : public ComplexMetric {
 private:
-	static const string ULC_NAME;
 
 public:
 	void doMetric(Scores &hOQ, const set<string> &systems, const set<string> &references, const set<string> &metrics);	// compute_normalize_ULC
+
+	static const string ULC_NAME;
 
 };
 

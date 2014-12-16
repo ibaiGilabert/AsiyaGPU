@@ -15,6 +15,7 @@
 
 class SingleMetric {
 protected:
+	SC_ASIYA sc_asiya;
 
 public:
 	//SingleMetric() {}

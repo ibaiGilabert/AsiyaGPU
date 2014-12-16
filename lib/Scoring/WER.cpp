@@ -1,4 +1,4 @@
-#include "WER.hpp"
+#include "../include/WER.hpp"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -16,116 +16,113 @@
 const string WER::WEREXT = "WER";
 const string WER::TWER = "wer/WER.pl";
 
-map<string, int> WER::create_rWER() {
-	map<string, int> rWER;
-	rWER["-" + WER::WEREXT] = 1;
+set<string> WER::create_rWER() {
+	set<string> rWER;
+	rWER.insert("-"+WER::WEREXT);
 	return rWER;
 }
-const map<string, int> WER::rWER = create_rWER;
+const set<string> WER::rWER = create_rWER();
 
 
 void WER::WER_f_create_doc(string input, string output) {
 	// description _ creation of a RAW evaluation document
 	if (Config::verbose > 1) fprintf(stderr, "OPENING <%s> for WER parsing...\n", input.c_str());
 
-    boost::filesystem::path input_path(input);
-    if (exists(input_path)) {
-    	if (Config::verbose > 1) fprintf(stderr, "reading <%s>\n", input.c_str());
+    if (exists(boost::filesystem::path(input))) {
+    	if (Config::verbose ) fprintf(stderr, "reading <%s>\n", input.c_str());
 
     	ifstream input_file(input.c_str());
     	ofstream output_file(output.c_str());
-    	string str;
-    	while(getline(input_file, str)) {
-        	boost::regex re("\\s+$");
+	    if (!output_file) { fprintf(stderr, "couldn't open output file: %s\n", output.c_str()); exit(1); }
+    	if (input_file) {
+	    	string str;
+	    	boost::regex re("\\s+$");
         	boost::regex re2("\r");
-            str = boost::regex_replace(str, re, "");
-            str = boost::regex_replace(str, re2, "");
-            if (Config::CASE == Common::CASE_CI) boost::to_lower(str);
-    		output_file << str << endl;
-    	}
-    	output_file.close();
-    	input_file.close();
-    } else printf("\n[ERROR] UNAVAILABLE file <%s>!!!\n", input.c_str());
+            while(getline(input_file, str)) {
+	        	str = boost::regex_replace(str, re, "");
+	            str = boost::regex_replace(str, re2, "");
+	            if (Config::CASE == Common::CASE_CI) boost::to_lower(str);
+	    		output_file << str << endl;
+	    	}
+		    output_file.close();
+	    	input_file.close();
+    	} else { fprintf(stderr, "couldn't open input file: %s\n", input.c_str()); exit(1); }
+	} else { printf("\n[ERROR] UNAVAILABLE file <%s>!!!\n", input.c_str()); exit(1); }
 }
 
-pair<double, vector<double> > WER::read_WER(string report, int do_neg) {
+void WER::read_WER(string report, int do_neg, double &WER, vector<double> &lWER) {
 	// description _ read WER (system and segment scores) from report file
-    double WER = 0;
-    vector<double> lWER;
-
-    string str;
     ifstream file(report.c_str());
     if (file) {
-		while (getline(file, str)) {
-			vector<std::string> v;
-	    	std::string s = "Hello How Are You Today Man";
+		string str;
+    	while (getline(file, str)) {
+			vector<string> v;
 	    	istringstream buf(str);
-	    	for (string token; getline(buf, token, ' '); )
-	     		v.push_back(token);
+	    	for (string token; getline(buf, token, ' '); ) v.push_back(token);
 
 	     	if (do_neg) {
-	     		if (v.size() == 3) lWER.push_back(-v[2]);
-	     		else if (v.size() == 1) WER = -;
+	     		if (v.size() == 3) lWER.push_back( -atof(v[2].c_str()) );
+	     		else if (v.size() == 1) WER = -atof(str.c_str());
 	     	}
 	     	else {
-	     		if (v.size() == 3) lWER.push_back(v[2]);
-	     		else if (v.size() == 1) WER = ;
+	     		if (v.size() == 3) lWER.push_back( atof(v[2].c_str()) );
+	     		else if (v.size() == 1) WER = atof(str.c_str());
 	     	}
 	    }
 	    file.close();
 	} else { fprintf(stderr, "couldn't open file: report\n", report.c_str()); exit(1); }
-
-	return make_pair(WER, lWER);
 }
 
-pair<double, vector<double> > WER::computeWER(string TGT, int do_neg) {
+void WER::computeWER(string TGT, int do_neg, double &MAXSYS, vector<double> &MAXSEG) {
 	// description _ computes -WER score (multiple references)
-	stringstream ssReport;
-	ssReport << Common::DATA_PATH << "/" << Common::TMP << "/" << rand() % (Common::NRAND + 1) << "." << WER::WEREXT << "." << Common::REPORTEXT;
-	ssOut << Common::DATA_PATH << "/" << Common::TMP << "/" << rand() % (Common::NRAND + 1) << "." << WER::WEREXT << "." << Common::SYSEXT;
+	string t_id;
+    if (Config::serialize) t_id = "_" + TGT;//TB_FORMAT::get_formated_thread(TGT);
+	stringstream ssOut, ssReport;
+	ssReport << Common::DATA_PATH << "/" << Common::TMP << "/" << rand()%(Common::NRAND+1) << "." << WER::WEREXT << t_id << "." << Common::REPORTEXT;
+	ssOut << Common::DATA_PATH << "/" << Common::TMP << "/" << rand()%(Common::NRAND+1) << "." << WER::WEREXT << t_id << "." << Common::SYSEXT;
 
 	string outRND = ssOut.str();
 	string reportWER = ssReport.str();
 	string toolWER = "perl "+Config::tools+"/"+WER::TWER;
+	cout << "[WER] toolWER: " << toolWER << endl;
 
 	if (Config::verbose) fprintf(stderr, "building %s...\n", reportWER.c_str());
 	WER_f_create_doc(TESTBED::Hsystems[TGT], outRND);
 
-	double maxSYS = -999999;
-	vector<double> maxSEGscores;
+	MAXSYS = Common::NOT_DEFINED;
+	//vector<double> maxSEGscores;
     for (map<string, string>::const_iterator it = TESTBED::Hrefs.begin(); it != TESTBED::Hrefs.end(); ++it) {
-    	string ref = it->second;
+    	//string ref = it->second;
     	stringstream ssRef;
-		ssRef << Common::DATA_PATH << "/" << Common::TMP << "/" << rand() % (Common::NRAND + 1) << "." << WER::WEREXT << "." << Common::REFEXT;
+		ssRef << Common::DATA_PATH << "/" << Common::TMP << "/" << rand()%(Common::NRAND+1) << "." << WER::WEREXT << t_id << "." << Common::REFEXT;
 		string refRND = ssRef.str();
 
-		WER_f_create_doc(ref, refRND);
+		WER_f_create_doc(it->second, refRND);
 
-		stringstream sc;
-		sc << toolWER << " -s -t " << outRND << " -r " << refRND << " > " << reportWER;
-		Common::execute_or_die(sc.str(), "[ERROR] probles running WER...");
+		string sc = toolWER + " -s -t " + outRND + " -r " + refRND + " > " + reportWER;
+		Common::execute_or_die(sc, "[ERROR] probles running WER...");
 
-		pair<double, vector<double> res = read_WER(reportWER, do_neg);
+		double sys;
+		vector<double> segs;
+		read_WER(reportWER, do_neg, sys, segs);
 
-		if (maxSYS != -999999) {
-			if (res.first > maxSYS) maxSYS = res.first;
+		if (MAXSYS != Common::NOT_DEFINED) {
+			if (sys > MAXSYS) MAXSYS = sys;
 		}
-		else maxSYS = res.first;
+		else MAXSYS = sys;
 
-		for (int i = 0; i < res.second; ++i) {
-			if (i < maxSEGscores.size()) {	//defined($maxSEGscores[$i]);
-				if (res.second[i] > maxSEGscores[i]) maxSEGscores[i] = res.second[i];
+		for (int i = 0; i < segs.size(); ++i) {
+			if (i < MAXSEG.size()) {	//defined($maxSEGscores[$i]);
+				if (segs[i] > MAXSEG[i]) MAXSEG[i] = segs[i];
 			}
-			else maxSEGscores[i] = res.second[i];
+			else MAXSEG[i] = segs[i];
 		}
 
 		string sysaux;
-		sysaux = "rm -f " + reportWER;	system(sysaux.c_str());
-		sysaux = "rm -f " + refRND;	system(sysaux.c_str());
+		sysaux = "rm -f "+reportWER;	system(sysaux.c_str());
+		sysaux = "rm -f "+refRND;		system(sysaux.c_str());
     }
-    string sysaux = "rm -f " + outRND;	system(sysaux.c_str());
-
-	return make_pair(maxSYS, maxSEGscores);
+    string sysaux = "rm -f "+outRND;	system(sysaux.c_str());
 }
 
 void WER::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
@@ -134,48 +131,40 @@ void WER::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 
 	int GO, i;
 	GO = i = 0;
-	for (map<string, int>::const_iterator it = WER::rWER[Config::LANG].begin(); it != WER::rWER[Config::LANG].end(); ++it, ++i) {
-		mWER[i] = it->first;
-	}
+	for (set<string>::const_iterator it = WER::rWER.begin(); it != WER::rWER.end(); ++it, ++i)
+		mWER[i] = *it;
 	for (i = 0; i < mWER.size() and !GO; ++i) {
 		if (Config::Hmetrics.find(mWER[i]) != Config::Hmetrics.end()) GO = 1;
 	}
 
-	cout << "WER ei!" << endl;
 	if (GO) {
-		cout << "GO! WER GO!" << endl;
-		if (Config::verbose == 1) fprintf(stderr, "%s...\n", WER::WEREXT.c_str());
+		if (Config::verbose ) fprintf(stderr, "%s...\n", WER::WEREXT.c_str());
+
 		for (i = 0; i < mWER.size() and !GO; ++i) {
-
-			ss << Common::DATA_PATH << "/" << Common::REPORTS << "/" << TGT << "/" << REF << "/-" << WER::WEREXT << "." << Common::XMLEXT;
-			string reportWERxml = ss.string();
-		    boost::filesystem::path reportWERxml_path(reportWERxml);
-	   		boost::filesystem::path reportWERxml_gz(reportWERxml + "." + Common::GZEXT);
-
-	   		if ( (!exists(reportWERxml_path) and !exists(reportWERxml_gz)) or Config::remake) {
-	    		pair<double, vector<double> > res = computeWER(TGT, 1);
-				pair<vector<double>, vector<double> > doc_seg =  Core::get_seg_doc_scores(res.second, 0, TGT);
+			string reportWERxml = Common::DATA_PATH+"/"+Common::REPORTS+"/"+TGT+"/"+REF+"/-"+WER::WEREXT+"."+Common::XMLEXT;
+			if ( (!exists(boost::filesystem::path(reportWERxml)) and !exists(boost::filesystem::path(reportWERxml+"."+Common::GZEXT))) or Config::remake) {
+	    		double SYS;
+	    		vector<double> SEG, d_scores, s_scores;
+	    		computeWER(TGT, 1, SYS, SEG);
+				TESTBED::get_seg_doc_scores(SEG, 0, TGT, d_scores, s_scores);
 				if (Config::O_STORAGE == 1) {
-		    		IQXML::write_report(TGT, REF, "-WER", res.first, doc_seg.first, doc_seg.second);
-	         		cout << "IQXML DOCUMENT -WER CREATED" << endl;
+		    		sc_asiya.write_report(TGT, REF, "-WER", SYS, d_scores, s_scores);
+	         		cout << "SC_ASIYA DOCUMENT -WER CREATED" << endl;
 	         	}
-	         	hOQ.save_hash_scores("-WER", TGT, REF, res.first, doc_seg.first, doc_seg.second);
+	         	hOQ.save_hash_scores("-WER", TGT, REF, SYS, d_scores, s_scores);
 	   		}
 
-			ss << Common::DATA_PATH << "/" << Common::REPORTS << "/" << TGT << "/" << REF << "/" << WER::WEREXT << "." << Common::XMLEXT;
-			reportWERxml = ss.string();
-		    reportWERxml_path(reportWERxml);
-	   		reportWERxml_gz(reportWERxml + "." + Common::GZEXT);
-
-	   		if ( (!exists(reportWERxml_path) and !exists(reportWERxml_gz)) or Config::remake) {
-	    		pair<double, vector<double> > res = computeWER(TGT, 0);
-				pair<vector<double>, vector<double> > doc_seg =  Core::get_seg_doc_scores(res.second, 0, TGT);
-				SC_ASIYA sc_asiya;
+			reportWERxml = Common::DATA_PATH+"/"+Common::REPORTS+"/"+TGT+"/"+REF+"/"+WER::WEREXT+"."+Common::XMLEXT;
+			if ( (!exists(boost::filesystem::path(reportWERxml)) and !exists(boost::filesystem::path(reportWERxml+"."+Common::GZEXT))) or Config::remake) {
+	    		double SYS;
+	    		vector<double> SEG, d_scores, s_scores;
+	    		computeWER(TGT, 0, SYS, SEG);
+				TESTBED::get_seg_doc_scores(SEG, 0, TGT, d_scores, s_scores);
 				if (Config::O_STORAGE == 1) {
-		    		sc_asiya.write_report(TGT, REF, "WER", res.first, doc_seg.first, doc_seg.second);
-	         		cout << "IQXML DOCUMENT WER CREATED" << endl;
+		    		sc_asiya.write_report(TGT, REF, "WER", SYS, d_scores, s_scores);
+	         		cout << "SC_ASIYA DOCUMENT WER CREATED" << endl;
 	         	}
-	         	hOQ.save_hash_scores("WER", TGT, REF, res.first, doc_seg.first, doc_seg.second);
+	         	hOQ.save_hash_scores("WER", TGT, REF, SYS, d_scores, s_scores);
 	   		}
 
 		}

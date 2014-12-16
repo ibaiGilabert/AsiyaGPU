@@ -346,7 +346,6 @@ void BLEU::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
          	string prefB = prefix;	prefB += BLEU::BLEUEXT;	prefB += "-1";
 			vector<double> d_scores, s_scores;
 			TESTBED::get_seg_doc_scores(SEG[0], 0, TGT, d_scores, s_scores);
-			SC_ASIYA sc_asiya;
 
 	            /*fprintf(stderr, "res.second[0]: [");
 	            for(int i = 0; i < res.second[0].size(); ++i) fprintf(stderr, "%f,", res.second[0][i]);

@@ -307,7 +307,6 @@ void NGRAM::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 			(!exists(reportNGRAMjac4_path) and !exists(reportNGRAMjac4_gz)) or \
 			(!exists(reportNGRAMjac5_path) and !exists(reportNGRAMjac5_gz)) or Config::remake) {
 
-	    	SC_ASIYA sc_asiya;
 	    	map<string, double> SYS;
 	    	map<string, vector<double> > SEG;
 	    	computeMultiNGRAM(NGRAM::NGRAMREF, TGT, 0, SYS, SEG);
@@ -395,7 +394,6 @@ void NGRAM::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 			(!exists(reportNGRAMjac5_path) and !exists(reportNGRAMjac5_gz)) or \
 			(!exists(reportNGRAMlen_path) and !exists(reportNGRAMlen_gz)) or Config::remake) {
 
-	    	SC_ASIYA sc_asiya;
 	    	map<string, double> SYS;
 	    	map<string, vector<double> > SEG;
 	    	computeMultiNGRAM(NGRAM::NGRAMSRC, TGT, 0, SYS, SEG);

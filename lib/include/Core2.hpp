@@ -15,7 +15,9 @@ using namespace std;
 class Core {
 private:
     Process proc;
-	set<string> job_qw;      								// set de job_ids
+	map<int, set<string> > split_qw;      								// set de job_ids
+	set<string> job_qw;
+    //stack<string> file_qw;
 
 	//Compute scores
 	void doMultiMetrics(string HYP, const set<string> &Lref, Scores &hOQ);

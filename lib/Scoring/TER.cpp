@@ -109,8 +109,6 @@ void TER::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 	if (GO) {
 		if (Config::verbose) fprintf(stderr, "%sp...\n", TER::TEREXT.c_str());
 
-	    SC_ASIYA sc_asiya;
-
 	    string pref_ter = "-"+TER::TEREXT+"base";
 		string reportTERxml = Common::DATA_PATH + "/" + Common::REPORTS + "/" + TGT + "/" + REF + "/" + pref_ter + "." + Common::XMLEXT;
     	if ( ((!exists(boost::filesystem::path(reportTERxml)) and !exists(boost::filesystem::path(reportTERxml+"."+Common::GZEXT))) or Config::remake) and Config::Hmetrics[pref_ter]) {

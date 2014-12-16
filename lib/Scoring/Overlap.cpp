@@ -416,8 +416,7 @@ void Overlap::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 				computeMultiOl(TESTBED::Hsystems[TGT], SYS, SEG);
 				vector<double> d_scores, s_scores;
 		    	TESTBED::get_seg_doc_scores(SEG, 0, TGT, d_scores, s_scores);
-		    	SC_ASIYA sc_asiya;
-				if (Config::O_STORAGE == 1) {
+		    	if (Config::O_STORAGE == 1) {
 					sc_asiya.write_report(TGT, REF, Overlap::OlEXT, SYS, d_scores, s_scores);
 					fprintf(stderr, "SC_ASIYA DOCUMENT %s CREATED\n", Overlap::OlEXT.c_str());
 				}
@@ -436,8 +435,7 @@ void Overlap::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 	    		computeMultiPl(TESTBED::Hsystems[TGT], SYS, SEG);
 				vector<double> d_scores, s_scores;
 		    	TESTBED::get_seg_doc_scores(SEG, 0, TGT, d_scores, s_scores);
-		    	SC_ASIYA sc_asiya;
-				if (Config::O_STORAGE == 1) {
+		    	if (Config::O_STORAGE == 1) {
 					sc_asiya.write_report(TGT, REF, Overlap::PlEXT, SYS, d_scores, s_scores);
 					fprintf(stderr, "SC_ASIYA DOCUMENT %s CREATED\n", Overlap::PlEXT.c_str());
 				}
@@ -457,8 +455,7 @@ void Overlap::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 	    		computeMultiRl(TESTBED::Hsystems[TGT], SYS, SEG);
 				vector<double> d_scores, s_scores;
 		    	TESTBED::get_seg_doc_scores(SEG, 0, TGT, d_scores, s_scores);
-		    	SC_ASIYA sc_asiya;
-				if (Config::O_STORAGE == 1) {
+		    	if (Config::O_STORAGE == 1) {
 					sc_asiya.write_report(TGT, REF, Overlap::PlEXT, SYS, d_scores, s_scores);
 					fprintf(stderr, "SC_ASIYA DOCUMENT %s CREATED\n", Overlap::RlEXT.c_str());
 				}
@@ -478,8 +475,7 @@ void Overlap::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 	    		computeMultiFl(TESTBED::Hsystems[TGT], SYS, SEG);
 				vector<double> d_scores, s_scores;
 		    	TESTBED::get_seg_doc_scores(SEG, 0, TGT, d_scores, s_scores);
-		    	SC_ASIYA sc_asiya;
-				if (Config::O_STORAGE == 1) {
+		    	if (Config::O_STORAGE == 1) {
 					sc_asiya.write_report(TGT, REF, Overlap::FlEXT, SYS, d_scores, s_scores);
 					fprintf(stderr, "SC_ASIYA DOCUMENT %s CREATED\n", Overlap::FlEXT.c_str());
 				}
