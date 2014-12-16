@@ -199,7 +199,7 @@ void NGRAM::computeMultiNGRAM(string opt, string TGT, int issrcbased, map<string
     		map<string, vector<double> > SEGS;
     		computeNGRAM(NGRAM::NGRAMREF, it->second, TGT, issrcbased, SEGS);
     		for (map<string, vector<double> >::const_iterator it = SEGS.begin(); it != SEGS.end(); ++it) {
-    			if (MAXSEG[it->first].empty()) MAXSEG[it->first] = vector<double>(it->second.size(), -1);
+    			if (MAXSEG[it->first].empty()) MAXSEG[it->first] = vector<double>(it->second.size(), Common::NOT_DEFINED);
     			for (int i = 0; i < it->second.size(); ++i) {	// update max scores
     				//if (MAXSEGS[key][i] == -1) MAXSEGS[key][i] = it->second[i];
 					if (it->second[i] > MAXSEG[it->first][i]) MAXSEG[it->first][i] = it->second[i];
@@ -228,7 +228,7 @@ void NGRAM::computeMultiNGRAM(string opt, string TGT, int issrcbased, map<string
 		map<string, vector<double> > SEGS;
 		computeNGRAM(NGRAM::NGRAMSRC, TESTBED::src, TGT, issrcbased, SEGS);
 		for (map<string, vector<double> >::const_iterator it = SEGS.begin(); it != SEGS.end(); ++it) {
-			if (MAXSEG[it->first].empty()) MAXSEG[it->first] = vector<double>(it->second.size(), -1);
+			if (MAXSEG[it->first].empty()) MAXSEG[it->first] = vector<double>(it->second.size(), Common::NOT_DEFINED);
 			for (int i = 0; i < it->second.size(); ++i) {	// update max scores
 				//if (MAXSEGS[key][i] == -1) MAXSEGS[key][i] = it->second[i];
 				if (it->second[i] > MAXSEG[it->first][i]) MAXSEG[it->first][i] = it->second[i];

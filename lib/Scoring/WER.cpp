@@ -106,16 +106,13 @@ void WER::computeWER(string TGT, int do_neg, double &MAXSYS, vector<double> &MAX
 		vector<double> segs;
 		read_WER(reportWER, do_neg, sys, segs);
 
-		if (MAXSYS != Common::NOT_DEFINED) {
-			if (sys > MAXSYS) MAXSYS = sys;
-		}
-		else MAXSYS = sys;
+		if (MAXSYS == Common::NOT_DEFINED) MAXSYS = sys;
+		else if (sys > MAXSYS) MAXSYS = sys;
 
+		if (MAXSEG.empty()) MAXSEG = vector<double>(segs.size(), Common::NOT_DEFINED);
 		for (int i = 0; i < segs.size(); ++i) {
-			if (i < MAXSEG.size()) {	//defined($maxSEGscores[$i]);
-				if (segs[i] > MAXSEG[i]) MAXSEG[i] = segs[i];
-			}
-			else MAXSEG[i] = segs[i];
+			if (MAXSEG[i] == Common::NOT_DEFINED) MAXSEG[i] = segs[i];
+			else if (segs[i] > MAXSEG[i]) MAXSEG[i] = segs[i];
 		}
 
 		string sysaux;
@@ -140,7 +137,7 @@ void WER::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 	if (GO) {
 		if (Config::verbose ) fprintf(stderr, "%s...\n", WER::WEREXT.c_str());
 
-		for (i = 0; i < mWER.size() and !GO; ++i) {
+		for (i = 0; i < mWER.size(); ++i) {
 			string reportWERxml = Common::DATA_PATH+"/"+Common::REPORTS+"/"+TGT+"/"+REF+"/-"+WER::WEREXT+"."+Common::XMLEXT;
 			if ( (!exists(boost::filesystem::path(reportWERxml)) and !exists(boost::filesystem::path(reportWERxml+"."+Common::GZEXT))) or Config::remake) {
 	    		double SYS;
@@ -166,7 +163,8 @@ void WER::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 	         	}
 	         	hOQ.save_hash_scores("WER", TGT, REF, SYS, d_scores, s_scores);
 	   		}
-
 		}
+        if (Config::serialize) hOQ.save_struct_scores(TB_FORMAT::make_serial(WER::WEREXT, TGT, REF));
+
 	}
 }

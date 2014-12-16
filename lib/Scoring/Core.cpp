@@ -8,6 +8,7 @@
 #include "../include/Overlap.hpp"
 #include "../include/ESA.hpp"
 #include "../include/TER.hpp"
+#include "../include/WER.hpp"
 #include "../include/ULC.hpp"
 #include "../include/SC_RAW.hpp"
 #include "../include/TESTBED.hpp"
@@ -212,7 +213,7 @@ void Core::doMultiMetrics(string HYP, const set<string> &Lref, Scores &hOQ) {
 	SingleMetric *pOverlap = new Overlap;
 	SingleMetric *pESA = new ESA;
 	SingleMetric *pTER = new TER;
-
+	SingleMetric *pWER = new WER;
 
 	pBLEU->doMetric(HYP, REF, "", hOQ);
 	pNIST->doMetric(HYP, REF, "", hOQ);
@@ -224,8 +225,9 @@ void Core::doMultiMetrics(string HYP, const set<string> &Lref, Scores &hOQ) {
 	pOverlap->doMetric(HYP, REF, "", hOQ);
 	pESA->doMetric(HYP, REF, "", hOQ);
 	pTER->doMetric(HYP, REF, "", hOQ);
+	pWER->doMetric(HYP, REF, "", hOQ);
 
-	delete pBLEU, pNIST, pMETEOR, pROUGE, pGTM, pNGRAM, pOverlap, pESA, pTER;
+	delete pBLEU, pNIST, pMETEOR, pROUGE, pGTM, pNGRAM, pOverlap, pESA, pTER, pWER;
 
 	//if (Config::verbose) fprintf(stderr, "]\n");
 
