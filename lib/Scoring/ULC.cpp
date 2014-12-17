@@ -5,10 +5,10 @@ const string ULC::ULC_NAME = "ULC";
 
 void ULC::doMetric(const set<string> &systems, const set<string> &references, const set<string> &metrics, Scores &hOQ) {
 	// description _ computes normalized ULC (i.e., normalized arithmetic mean) of metric scores (ULC scores are in the [0..1] range)
-    string REF = Common::join_set(references, '_');
+	string REF = Common::join_set(references, '_');
 
     for (set<string>::const_iterator it_s = systems.begin(); it_s != systems.end(); ++it_s) {
-    	if (Config::G == Common::G_SYS) {
+    	if (Config::G == Common::G_SYS or Config::G == Common::G_ALL) {
     		double x = 0;
     		for (set<string>::const_iterator it_m = metrics.begin(); it_m != metrics.end(); ++it_m) {
     			double min_score = hOQ.get_min_sys_score(*it_m);
@@ -20,7 +20,7 @@ void ULC::doMetric(const set<string> &systems, const set<string> &references, co
     		}
     		hOQ.set_sys_score(ULC::ULC_NAME, *it_s, REF, Common::safe_division(x, metrics.size()));
     	}
-    	else if (Config::G == Common::G_DOC) {
+    	if (Config::G == Common::G_DOC or Config::G == Common::G_ALL) {
     		for (int i = 0; i < hOQ.get_num_doc_scores(); ++i) {
     			double x = 0;
 	    		for (set<string>::const_iterator it_m = metrics.begin(); it_m != metrics.end(); ++it_m) {
@@ -34,7 +34,7 @@ void ULC::doMetric(const set<string> &systems, const set<string> &references, co
 	    		hOQ.set_doc_score(i, ULC::ULC_NAME, *it_s, REF, Common::safe_division(x, metrics.size()));
     		}
     	}
-    	else {		//G_SEG
+    	if (Config::G == Common::G_SEG or Config::G == Common::G_ALL) {
     		for (int i = 0; i < hOQ.get_num_seg_scores(); ++i) {
 				double x = 0;
 	    		for (set<string>::const_iterator it_m = metrics.begin(); it_m != metrics.end(); ++it_m) {

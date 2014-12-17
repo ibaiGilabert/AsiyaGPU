@@ -9,6 +9,7 @@
 #include "../include/ESA.hpp"
 #include "../include/TER.hpp"
 #include "../include/WER.hpp"
+#include "../include/PER.hpp"
 #include "../include/ULC.hpp"
 #include "../include/SC_RAW.hpp"
 #include "../include/TESTBED.hpp"
@@ -111,7 +112,8 @@ void Core::find_max_scores(Scores &hOQ) {
 			for(set<string>::const_iterator it_r2 = Config::references.begin(); it_r2 != Config::references.end(); ++it_r2)
 				if (*it_r != *it_r2) all_other_refs.insert(*it_r);
 
-			find_max_metric_scores(hOQ, set<string>(it_r, it_r), all_other_refs);
+            set<string> ref_s;        ref_s.insert(*it_r);
+			find_max_metric_scores(hOQ, ref_s, all_other_refs);
 		}
 	}
 	hOQ.print_min_scores();
@@ -121,13 +123,17 @@ void Core::find_max_scores(Scores &hOQ) {
 void Core::compute_metrics_combination(Scores &hOQ) {
 	// description _ computes the combination of metrics
 	//               -> all systems (system, document, segment levels) into the corresponding output files
-	for (map<string, int>::const_iterator it_m = Config::Hmetrics.begin(); it_m != Config::Hmetrics.end(); ++it_m) {
+	//for (map<string, int>::const_iterator it_m = Config::Hmetrics.begin(); it_m != Config::Hmetrics.end(); ++it_m) {
+	vector<string> sorted_metrics = get_sorted_metrics();
+	for (int i = 0; i < sorted_metrics.size(); ++i) {
 		ComplexMetric *pULC = new ULC;
 
 		// for each system
 		for (set<string>::const_iterator it = Config::systems.begin(); it != Config::systems.end(); ++it) {
-			if (it_m->first == ULC::ULC_NAME)
-				pULC->doMetric(set<string>(it,it), Config::references, Config::metrics, hOQ);
+			if (sorted_metrics[i] == ULC::ULC_NAME) {
+				set<string> sys;	sys.insert(*it);
+				pULC->doMetric(sys, Config::references, Config::metrics, hOQ);
+			}
 			//else if (Config::Hmetrics.find(QARLA::QUEEN_NAME) != Config::Hmetrics.end()) {}
 			//else read_report????
 		}
@@ -141,7 +147,7 @@ void Core::compute_metrics_combination(Scores &hOQ) {
 
 				if (!all_other_refs.size()) {
 					string other_refs = Common::join_set(all_other_refs, '_');
-					if (it_m->first == ULC::ULC_NAME){
+					if (sorted_metrics[i] == ULC::ULC_NAME){
 						set<string> s_other_refs;	s_other_refs.insert(other_refs);
 						pULC->doMetric(s_other_refs, all_other_refs, Config::metrics, hOQ);
 					}
@@ -248,6 +254,7 @@ void Core::doMultiMetrics(string HYP, const set<string> &Lref, Scores &hOQ) {
 	SingleMetric *pESA = new ESA;
 	SingleMetric *pTER = new TER;
 	SingleMetric *pWER = new WER;
+	SingleMetric *pPER = new PER;
 
 	pBLEU->doMetric(HYP, REF, "", hOQ);
 	pNIST->doMetric(HYP, REF, "", hOQ);
@@ -260,8 +267,9 @@ void Core::doMultiMetrics(string HYP, const set<string> &Lref, Scores &hOQ) {
 	pESA->doMetric(HYP, REF, "", hOQ);
 	pTER->doMetric(HYP, REF, "", hOQ);
 	pWER->doMetric(HYP, REF, "", hOQ);
+	pPER->doMetric(HYP, REF, "", hOQ);
 
-	delete pBLEU, pNIST, pMETEOR, pROUGE, pGTM, pNGRAM, pOverlap, pESA, pTER, pWER;
+	delete pBLEU, pNIST, pMETEOR, pROUGE, pGTM, pNGRAM, pOverlap, pESA, pTER, pWER, pPER;
 
 	//if (Config::verbose) fprintf(stderr, "]\n");
 
@@ -362,7 +370,7 @@ if (Config::num_process) {
     if (Config::G != Common::G_SEG){
         fprintf(stderr, "[DOC REBUILD]\n");
         hOQ.make_doc_scores();
-        if (Config::G == Common::G_SYS) {
+        if (Config::G == Common::G_SYS or Config::G == Common::G_ALL) {
             fprintf(stderr, "[SYS REBUILD]\n");
             hOQ.make_sys_scores();
         }
