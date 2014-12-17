@@ -29,6 +29,7 @@ private:
 
 	void find_max_metric_scores(Scores &hOQ, const set<string> &systems, const set<string> &references);
 	void find_max_scores(Scores &hOQ);
+	void compute_metrics_combination(Scores &hOQ);
 
 	//Printing
 	void print_metric_names();

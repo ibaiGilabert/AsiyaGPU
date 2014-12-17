@@ -118,6 +118,42 @@ void Core::find_max_scores(Scores &hOQ) {
 	hOQ.print_max_scores();
 }
 
+void Core::compute_metrics_combination(Scores &hOQ) {
+	// description _ computes the combination of metrics
+	//               -> all systems (system, document, segment levels) into the corresponding output files
+	for (map<string, int>::const_iterator it_m = Config::Hmetrics.begin(); it_m != Config::Hmetrics.end(); ++it_m) {
+		ComplexMetric *pULC = new ULC;
+
+		// for each system
+		for (set<string>::const_iterator it = Config::systems.begin(); it != Config::systems.end(); ++it) {
+			if (it_m->first == ULC::ULC_NAME)
+				pULC->doMetric(set<string>(it,it), Config::references, Config::metrics, hOQ);
+			//else if (Config::Hmetrics.find(QARLA::QUEEN_NAME) != Config::Hmetrics.end()) {}
+			//else read_report????
+		}
+
+		// for each reference
+		if (Config::do_refs and Config::references.size() > 1) {
+			for (set<string>::const_iterator it = Config::references.begin(); it != Config::references.end(); ++it) {
+				set<string> all_other_refs;
+				for (set<string>::const_iterator itr = Config::references.begin(); itr != Config::references.end(); ++itr)
+					if (*it != *itr) all_other_refs.insert(*itr);
+
+				if (!all_other_refs.size()) {
+					string other_refs = Common::join_set(all_other_refs, '_');
+					if (it_m->first == ULC::ULC_NAME){
+						set<string> s_other_refs;	s_other_refs.insert(other_refs);
+						pULC->doMetric(s_other_refs, all_other_refs, Config::metrics, hOQ);
+					}
+					//else if (it->first == QARLA::QUEEN_NAME)
+					//else read_report¿?
+				}
+			}
+		}
+
+		delete pULC;
+	}
+}
 
 void Core::process_multi_metrics(string HYP, const set<string> &Lref) {
 	// read reports and build hOQ Scores structure
@@ -159,8 +195,6 @@ void Core::process_multi_metrics(string HYP, const set<string> &Lref) {
 
 	// WAIT IN DO_SCORES
 }
-
-
 
 void Core::rebuild_hash_scores(string TGT, const set<string> &Lref, Scores &hOQ) {
 	string REF = Common::join_set(Lref, '_');
@@ -379,7 +413,7 @@ if (Config::num_process) {
 			for (set<string>::const_iterator itr = Config::references.begin(); itr != Config::references.end(); ++itr) {
 				if (*it != *itr) all_other_refs.insert(*itr);
 			}
-			if (all_other_refs.size() > 1) {
+			if (!all_other_refs.empty()) {
 				doMultiMetrics(*it, all_other_refs, hOQ);
 
 				if (Config::metaeval_criteria.find(Common::C_KING) != Config::metaeval_criteria.end() or \
@@ -408,15 +442,14 @@ if (Config::num_process) {
 	if (Config::do_time) fprintf(stderr, "TOTAL TIME = %f\n", TIME);
 
 	// required for normalized ULC computation (it can be very slow!)
-	/*if (Config::eval_schemes.find(Common::S_ULC) != Config::eval_schemes.end() or \
+	if (Config::eval_schemes.find(Common::S_ULC) != Config::eval_schemes.end() or \
 	Config::metaeval_schemes.find(Common::S_ULC) != Config::metaeval_schemes.end() or \
 	Config::optimize_schemes.find(Common::S_ULC) != Config::optimize_schemes.end()) {
-
 		if (Config::verbose) fprintf(stderr, "[METRICS] finding max metric scores (for normalization)...\n");
 		find_max_scores(hOQ);
-		ComplexMetri pULC = new ULC;
-		pULC.doMetric(Config::systems, Config::references, Conº);
-	}*/
+	}
+
+	compute_metrics_combination(hOQ);
 
 	return TIME;
 }

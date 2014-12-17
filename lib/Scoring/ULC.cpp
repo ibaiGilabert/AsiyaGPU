@@ -3,7 +3,7 @@
 const string ULC::ULC_NAME = "ULC";
 
 
-void ULC::doMetric(Scores &hOQ, const set<string> &systems, const set<string> &references, const set<string> &metrics) {
+void ULC::doMetric(const set<string> &systems, const set<string> &references, const set<string> &metrics, Scores &hOQ) {
 	// description _ computes normalized ULC (i.e., normalized arithmetic mean) of metric scores (ULC scores are in the [0..1] range)
     string REF = Common::join_set(references, '_');
 

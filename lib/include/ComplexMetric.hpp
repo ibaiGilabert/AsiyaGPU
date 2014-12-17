@@ -18,7 +18,7 @@ class ComplexMetric {
 protected:
 
 public:
-	virtual void doMetric(Scores &hOQ, const set<string> &systems, const set<string> &references, const set<string> &metrics) {}
+	virtual void doMetric(const set<string> &systems, const set<string> &references, const set<string> &metrics, Scores &hOQ) {}
 
 };
 
