@@ -13,7 +13,7 @@ private:
 	static const string LeMEXT, TLeM;
 	static const set<string> rLeM;
 
-	void LeM_f_create_doc(string input, string output, string TGT, string G);
+	void LeM_f_create_doc(string input, string output, string G, const vector<vector<string> > &idx);
 	void read_LeM(string report, double &SYS, vector<double> &DOC, vector<double> &SEG);
 
 	void computeLeM(string TGT, string langpair, double &SYS, vector<double> &DOC, vector<double> &SEG);

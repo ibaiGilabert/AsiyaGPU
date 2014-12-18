@@ -23,7 +23,7 @@ set<string> LeM::create_rLeM() {
 const set<string> LeM::rLeM = create_rLeM();
 
 
-void LeM::LeM_f_create_doc(string input, string output, string TGT, string G) {
+void LeM::LeM_f_create_doc(string input, string output, string G, const vector<vector<string> > &idx) {
 	// description _ creation of a RAW evaluation document
 	if (Config::verbose > 1) fprintf(stderr, "OPENING <%s> for LeM parsing...\n", input.c_str());
 
@@ -35,24 +35,25 @@ void LeM::LeM_f_create_doc(string input, string output, string TGT, string G) {
 	    if (!output_file) { fprintf(stderr, "couldn't open output file: %s\n", output.c_str()); exit(1); }
     	if (input_file) {
     		int i = 1;
-    		string docid = TESTBED::IDX[TGT][i][0];
+    		string docid = idx[i][0];
 	    	string str;
 	    	boost::regex re("\\s+$");
         	boost::regex re2("\r");
             while(getline(input_file, str)) {
 	        	str = boost::regex_replace(str, re, "");
 	            str = boost::regex_replace(str, re2, "");
-	            if (G == Common::G_SEG) 				// seg-level
+	            if (G == Common::G_SEG) { 				// seg-level
 	            	output_file << str << endl;
-	            else if (G == Common::G_DOC) {			// doc-level
-	            	if (TESTBED::IDX[TGT][i][0] != docid) {
-	            		output_file << endl << str << " ";
-	            		docid = TESTBED::IDX[TGT][i][0];
-	            	}
-	            	else output_file << str << " ";
 	            }
-	            else 									// sys-level
+	            else if (G == Common::G_DOC) {			// doc-level
+	            	if (idx[i][0] != docid) {
+	            		output_file << endl << str << " ";
+	            		docid = idx[i][0];
+	            	} else output_file << str << " ";
+	            }
+	            else { 									// sys-level
 	            	output_file << str << " ";
+	            }
 	            ++i;
 			}
 		    output_file.close();
@@ -110,22 +111,22 @@ void LeM::computeLeM(string TGT, string langpair, double &SYS, vector<double> &D
 	if (Config::verbose) fprintf(stderr, "building %s...\n", reportLeM.c_str());
 
 	// SEG LEVEL
-	LeM_f_create_doc(TESTBED::Hsystems[TGT], outRND, TGT, Common::G_SEG);
-	LeM_f_create_doc(TESTBED::src, srcRND, TGT, Common::G_SEG);
+	LeM_f_create_doc(TESTBED::Hsystems[TGT], outRND, Common::G_SEG, TESTBED::IDX[TGT]);
+	LeM_f_create_doc(TESTBED::src, srcRND, Common::G_SEG, TESTBED::IDX[TGT]);
 
 	string sc = toolLeM+" -s "+srcRND+" -t "+outRND+" -p "+langpair+" > "+reportLeM+"."+Common::G_SEG+" 2> /dev/null";
 	Common::execute_or_die(sc, "[ERROR] problems running LeM...");
 
 	// DOC LEVEL
-	LeM_f_create_doc(TESTBED::Hsystems[TGT], TGT, outRND, Common::G_DOC);
-	LeM_f_create_doc(TESTBED::src, srcRND, TGT, Common::G_DOC);
+	LeM_f_create_doc(TESTBED::Hsystems[TGT], outRND, Common::G_DOC, TESTBED::IDX[TGT]);
+	LeM_f_create_doc(TESTBED::src, srcRND, Common::G_DOC, TESTBED::IDX[TGT]);
 
 	sc = toolLeM+" -s "+srcRND+" -t "+outRND+" -p "+langpair+" > "+reportLeM+"."+Common::G_DOC+" 2> /dev/null";
 	Common::execute_or_die(sc, "[ERROR] problems running LeM...");
 
 	// SYS LEVEL
-	LeM_f_create_doc(TESTBED::Hsystems[TGT], outRND, TGT, Common::G_SEG);
-	LeM_f_create_doc(TESTBED::src, srcRND, TGT, Common::G_SEG);
+	LeM_f_create_doc(TESTBED::Hsystems[TGT], outRND, Common::G_SYS, TESTBED::IDX[TGT]);
+	LeM_f_create_doc(TESTBED::src, srcRND, Common::G_SYS, TESTBED::IDX[TGT]);
 
 	sc = toolLeM+" -s "+srcRND+" -t "+outRND+" -p "+langpair+" > "+reportLeM+"."+Common::G_SYS+" 2> /dev/null";
 	Common::execute_or_die(sc, "[ERROR] problems running LeM...");

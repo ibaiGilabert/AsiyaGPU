@@ -230,73 +230,45 @@ void Core::doMultiMetrics(string HYP, const set<string> &Lref, Scores &hOQ) {
 	//                              * computes CP-based (Full Parsing)
 	//                              * computes SR-based (Semantic Role Labeling)
 	//                              * computes DR-based (Discourse Representation - Semantics)
-	// param2  _ candidate hypothesis (KEY)
-	// param3  _ candidate filename (string)
-	// param4  _ reference list (KEY LIST)		(Config::references)
-	// param5  _ reference filenames (hash ref)		(Config::Hrefs)
-	// param2  _ hash of scores
-
-
-	string HYP_file = TESTBED::Hsystems[HYP];
 	string REF = Common::join_set(Lref, '_');
 
-	//if (Config::verbose > 1)
 	if (Config::verbose) fprintf(stderr, "computing similarities [%s - %s]...\n", HYP.c_str(), REF.c_str());
-	//else if (Config::verbose == 1) fprintf(stderr, "%s - %s [", HYP.c_str(), REF.c_str());
 
-	SingleMetric *pBLEU = new BLEU;
-	SingleMetric *pNIST = new NIST;
-	//SingleMetric *pBLEUNIST = new BLEUNIST;
-	SingleMetric *pMETEOR = new METEOR;
-	SingleMetric *pROUGE = new ROUGE;
-	SingleMetric *pGTM = new GTM;
-	SingleMetric *pNGRAM = new NGRAM;
-	SingleMetric *pOverlap = new Overlap;
-	SingleMetric *pESA = new ESA;
-	SingleMetric *pTER = new TER;
-	SingleMetric *pWER = new WER;
-	SingleMetric *pPER = new PER;
 	SingleMetric *pLeM = new LeM;
-
-	pBLEU->doMetric(HYP, REF, "", hOQ);
-	pNIST->doMetric(HYP, REF, "", hOQ);
-	//pBLEUNIST->doMetric(HYP, REF, "", hOQ);
-	pMETEOR->doMetric(HYP, REF, "", hOQ);
-	pROUGE->doMetric(HYP, REF, "", 1, hOQ);
-	pGTM->doMetric(HYP, REF, "", hOQ);
-	pNGRAM->doMetric(HYP, REF, "", hOQ);
-	pOverlap->doMetric(HYP, REF, "", hOQ);
-	pESA->doMetric(HYP, REF, "", hOQ);
-	pTER->doMetric(HYP, REF, "", hOQ);
-	pWER->doMetric(HYP, REF, "", hOQ);
-	pPER->doMetric(HYP, REF, "", hOQ);
 	pLeM->doMetric(HYP, REF, "", hOQ);
+	delete pLeM;
 
-	delete pBLEU, pNIST, pMETEOR, pROUGE, pGTM, pNGRAM, pOverlap, pESA, pTER, pWER, pPER, pLeM;
+	if (!Lref.empty()) {
+		SingleMetric *pBLEU = new BLEU;
+		SingleMetric *pNIST = new NIST;
+		//SingleMetric *pBLEUNIST = new BLEUNIST;
+		SingleMetric *pMETEOR = new METEOR;
+		SingleMetric *pROUGE = new ROUGE;
+		SingleMetric *pGTM = new GTM;
+		SingleMetric *pNGRAM = new NGRAM;
+		SingleMetric *pOverlap = new Overlap;
+		SingleMetric *pESA = new ESA;
+		SingleMetric *pTER = new TER;
+		SingleMetric *pWER = new WER;
+		SingleMetric *pPER = new PER;
+		SingleMetric *pLeM = new LeM;
 
-	//if (Config::verbose) fprintf(stderr, "]\n");
+		pBLEU->doMetric(HYP, REF, "", hOQ);
+		pNIST->doMetric(HYP, REF, "", hOQ);
+		//pBLEUNIST->doMetric(HYP, REF, "", hOQ);
+		pMETEOR->doMetric(HYP, REF, "", hOQ);
+		pROUGE->doMetric(HYP, REF, "", 1, hOQ);
+		pGTM->doMetric(HYP, REF, "", hOQ);
+		pNGRAM->doMetric(HYP, REF, "", hOQ);
+		pOverlap->doMetric(HYP, REF, "", hOQ);
+		pESA->doMetric(HYP, REF, "", hOQ);
+		pTER->doMetric(HYP, REF, "", hOQ);
+		pWER->doMetric(HYP, REF, "", hOQ);
+		pPER->doMetric(HYP, REF, "", hOQ);
+		pLeM->doMetric(HYP, REF, "", hOQ);
 
-	/*	cout << "[SCORES] : hOQ" << endl;
-	hOQ.print_sys_scores();
-	hOQ.print_doc_scores(2);
-
-	string filename = "serialized_hOQ";
-
-	hOQ.save_struct_scores(filename.c_str());
-
-	Scores new_hOQ;
-	new_hOQ.load_struct_scores(filename.c_str());
-
-	cout << "[SCORES] : new_hOQ" << endl;
-	new_hOQ.print_sys_scores();
-	new_hOQ.print_doc_scores(2);
-
-	cout << "[SCORES] serialized done. FILE < " << filename << endl;
-
-	string rm_filename = "rm " + filename;
-	system(rm_filename.c_str());
-
-	exit(1);*/
+		delete pBLEU, pNIST, pMETEOR, pROUGE, pGTM, pNGRAM, pOverlap, pESA, pTER, pWER, pPER, pLeM;
+	}
 }
 
 double Core::do_scores(Scores &hOQ) {
