@@ -10,6 +10,7 @@
 #include "../include/TER.hpp"
 #include "../include/WER.hpp"
 #include "../include/PER.hpp"
+#include "../include/LeM.hpp"
 #include "../include/ULC.hpp"
 #include "../include/SC_RAW.hpp"
 #include "../include/TESTBED.hpp"
@@ -255,6 +256,7 @@ void Core::doMultiMetrics(string HYP, const set<string> &Lref, Scores &hOQ) {
 	SingleMetric *pTER = new TER;
 	SingleMetric *pWER = new WER;
 	SingleMetric *pPER = new PER;
+	SingleMetric *pLeM = new LeM;
 
 	pBLEU->doMetric(HYP, REF, "", hOQ);
 	pNIST->doMetric(HYP, REF, "", hOQ);
@@ -268,8 +270,9 @@ void Core::doMultiMetrics(string HYP, const set<string> &Lref, Scores &hOQ) {
 	pTER->doMetric(HYP, REF, "", hOQ);
 	pWER->doMetric(HYP, REF, "", hOQ);
 	pPER->doMetric(HYP, REF, "", hOQ);
+	pLeM->doMetric(HYP, REF, "", hOQ);
 
-	delete pBLEU, pNIST, pMETEOR, pROUGE, pGTM, pNGRAM, pOverlap, pESA, pTER, pWER, pPER;
+	delete pBLEU, pNIST, pMETEOR, pROUGE, pGTM, pNGRAM, pOverlap, pESA, pTER, pWER, pPER, pLeM;
 
 	//if (Config::verbose) fprintf(stderr, "]\n");
 

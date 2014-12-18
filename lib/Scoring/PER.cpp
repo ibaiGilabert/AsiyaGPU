@@ -84,7 +84,7 @@ void PER::computePER(string TGT, int do_neg, double &MAXSYS, vector<double> &MAX
 	string outRND = ssOut.str();
 	string reportPER = ssReport.str();
 	string toolPER = "perl "+Config::tools+"/"+PER::TPER;
-	cout << "[PER] toolPER: " << toolPER << endl;
+	//cout << "[PER] toolPER: " << toolPER << endl;
 
 	if (Config::verbose) fprintf(stderr, "building %s...\n", reportPER.c_str());
 	PER_f_create_doc(TESTBED::Hsystems[TGT], outRND);

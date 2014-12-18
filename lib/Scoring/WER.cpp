@@ -84,7 +84,7 @@ void WER::computeWER(string TGT, int do_neg, double &MAXSYS, vector<double> &MAX
 	string outRND = ssOut.str();
 	string reportWER = ssReport.str();
 	string toolWER = "perl "+Config::tools+"/"+WER::TWER;
-	cout << "[WER] toolWER: " << toolWER << endl;
+	//cout << "[WER] toolWER: " << toolWER << endl;
 
 	if (Config::verbose) fprintf(stderr, "building %s...\n", reportWER.c_str());
 	WER_f_create_doc(TESTBED::Hsystems[TGT], outRND);

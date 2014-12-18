@@ -652,6 +652,7 @@ void Config::validate_configuration() {
             boost::regex re_WER("^.*WER.*");
             boost::regex re_PER("^.*PER.*");
             boost::regex re_TER("^.*TER.*");
+            boost::regex re_LEM("^LEM$");
             boost::regex re_METEOR("^METEOR.*");
             boost::regex re_NGRAM("^NGRAM.*");
             boost::regex re_ESA("^ESA.*");
@@ -675,6 +676,7 @@ void Config::validate_configuration() {
             else if (boost::regex_match(*it, results, re_WER)) Config::Fmetrics.insert("WER");
             else if (boost::regex_match(*it, results, re_PER)) Config::Fmetrics.insert("PER");
             else if (boost::regex_match(*it, results, re_TER)) Config::Fmetrics.insert("TER");
+            else if (boost::regex_match(*it, results, re_LEM)) Config::Fmetrics.insert("LEM");
             else if (boost::regex_match(*it, results, re_METEOR)) Config::Fmetrics.insert("METEOR");
             else if (boost::regex_match(*it, results, re_NGRAM)) Config::Fmetrics.insert("NGRAM");
             else if (boost::regex_match(*it, results, re_ESA)) Config::Fmetrics.insert("ESA");
