@@ -15,13 +15,13 @@ using namespace std;
 class Core {
 private:
     Process proc;
-	set<string> job_qw;      								// set de job_ids
+	map<string, pair<string,double> > job_qw;      								// <job_id, <sys_name, init_time> >
 
 	//Compute scores
 	void doMultiMetrics(string HYP, const set<string> &Lref, Scores &hOQ);
 
 	//Compute scores multi-threading
-	void process_multi_metrics(string HYP, const set<string> &Lref);
+	void process_multi_metrics(string HYP, const set<string> &Lref, double init_time);
 	void rebuild_hash_scores(string TGT, const set<string> &Lref, Scores &hOQ);
 
 	vector<string> get_sorted_metrics();

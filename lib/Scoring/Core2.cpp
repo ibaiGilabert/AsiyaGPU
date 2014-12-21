@@ -8,6 +8,9 @@
 #include "../include/Overlap.hpp"
 #include "../include/ESA.hpp"
 #include "../include/TER.hpp"
+#include "../include/WER.hpp"
+#include "../include/PER.hpp"
+#include "../include/LeM.hpp"
 #include "../include/ULC.hpp"
 #include "../include/SC_RAW.hpp"
 #include "../include/TESTBED.hpp"
@@ -110,13 +113,54 @@ void Core::find_max_scores(Scores &hOQ) {
 			for(set<string>::const_iterator it_r2 = Config::references.begin(); it_r2 != Config::references.end(); ++it_r2)
 				if (*it_r != *it_r2) all_other_refs.insert(*it_r);
 
-			find_max_metric_scores(hOQ, set<string>(it_r, it_r), all_other_refs);
+            set<string> ref_s;        ref_s.insert(*it_r);
+			find_max_metric_scores(hOQ, ref_s, all_other_refs);
 		}
 	}
 	hOQ.print_min_scores();
 	hOQ.print_max_scores();
 }
 
+void Core::compute_metrics_combination(Scores &hOQ) {
+	// description _ computes the combination of metrics
+	//               -> all systems (system, document, segment levels) into the corresponding output files
+	//for (map<string, int>::const_iterator it_m = Config::Hmetrics.begin(); it_m != Config::Hmetrics.end(); ++it_m) {
+	vector<string> sorted_metrics = get_sorted_metrics();
+	for (int i = 0; i < sorted_metrics.size(); ++i) {
+		ComplexMetric *pULC = new ULC;
+
+		// for each system
+		for (set<string>::const_iterator it = Config::systems.begin(); it != Config::systems.end(); ++it) {
+			if (sorted_metrics[i] == ULC::ULC_NAME) {
+				set<string> sys;	sys.insert(*it);
+				pULC->doMetric(sys, Config::references, Config::metrics, hOQ);
+			}
+			//else if (Config::Hmetrics.find(QARLA::QUEEN_NAME) != Config::Hmetrics.end()) {}
+			//else read_report????
+		}
+
+		// for each reference
+		if (Config::do_refs and Config::references.size() > 1) {
+			for (set<string>::const_iterator it = Config::references.begin(); it != Config::references.end(); ++it) {
+				set<string> all_other_refs;
+				for (set<string>::const_iterator itr = Config::references.begin(); itr != Config::references.end(); ++itr)
+					if (*it != *itr) all_other_refs.insert(*itr);
+
+				if (!all_other_refs.size()) {
+					string other_refs = Common::join_set(all_other_refs, '_');
+					if (sorted_metrics[i] == ULC::ULC_NAME){
+						set<string> s_other_refs;	s_other_refs.insert(other_refs);
+						pULC->doMetric(s_other_refs, all_other_refs, Config::metrics, hOQ);
+					}
+					//else if (it->first == QARLA::QUEEN_NAME)
+					//else read_report¿?
+				}
+			}
+		}
+
+		delete pULC;
+	}
+}
 
 void Core::process_multi_metrics(string HYP, const set<string> &Lref) {
 	// read reports and build hOQ Scores structure
@@ -127,7 +171,7 @@ void Core::process_multi_metrics(string HYP, const set<string> &Lref) {
 	string erase = "rm ";
 	// LAUNCH
 	for (int i = 1; i <= Config::num_process; ++i) {
-		fprintf(stderr, "get_split (%s): sys: %s/ ext: %s/ thread: %d\n", HYP.c_str(), TESTBED::Hsystems[HYP].c_str(), Common::TXTEXT.c_str(), i);
+		fprintf(stderr, "get_split (%s): sys: %s/ ext: %s/ thread: %d\n", HYP.c_str(), TESTBED::Hsystems[HYP].c_str(), Common::TXTEXT.c_str(), i );
 		string TGT_split = TB_FORMAT::get_split(TESTBED::Hsystems[HYP], Common::TXTEXT, i);
 
 		/*string config_bleu_file = proc.make_config_file(HYP, REF, "BLEU", i);
@@ -137,47 +181,27 @@ void Core::process_multi_metrics(string HYP, const set<string> &Lref) {
 		for (set<string>::const_iterator it_fm = Config::Fmetrics.begin(); it_fm != Config::Fmetrics.end(); ++it_fm) {
 			string config_file = proc.make_config_file(HYP, REF, *it_fm, i);
 			string run_file = proc.make_run_file(config_file, HYP, REF, i, *it_fm);
-			fold_qw[thread].insert(proc.run_job(run_file, *it_fm));
+			job_qw.insert(proc.run_job(run_file, *it_fm));
 			//file_qw.push(config_file);
 			//file_qw.push(run_file);
 		}
-	}
+		/*string run_meteor_file = proc.make_run_file(config_file, HYP, REF, i, "METEOR");
+		job_qw.insert(proc.run_job(run_meteor_file, "METEOR")); */
 
-	// WAIT and LAUNCH COMPLEX
-	if (Config::verbose) fprintf(stderr, "[WAIT FOR COMPLEX]\n");
-	while (!fold_qw.empty()) {
-		for (map<int, set<string> >::const_iterator it_fold = fold_qw.begin(); it_fold != fold_qw.end(); ++it_fold) {
-			int fold = it->first;
-        	set<string> folds = it->second;
-        	for (set<string>::const_iterator it_job = folds.begin(); it_job != folds.end(); ++it_job) {
-		        if (proc.end(*it_job)) folds.erase(it_job);
-		    }
-		    if (folds.empty()) {
-		    	ComplexMetric *pULC = new ULC;
-		    	pULC>doMetric();
+		// Crear cada config i script, despres llançar-lo iterativament per cada metrica.
 
-		    }
-	}
-	// REBUILD
-	if (Config::verbose) fprintf(stderr, "[REBUILD]\n");
-	for (set<string>::const_iterator it = Config::systems.begin(); it != Config::systems.end(); ++it) {
-        rebuild_hash_scores(*it, Config::references, hOQ);
-	}
-    if (Config::G != Common::G_SEG){
-        fprintf(stderr, "[DOC REBUILD]\n");
-        hOQ.make_doc_scores();
-        if (Config::G == Common::G_SYS) {
-            fprintf(stderr, "[SYS REBUILD]\n");
-            hOQ.make_sys_scores();
-        }
-    }
+		// ELIMINAR scripts
+		//string erase_sh;
+		//erase_sh = erase + run_bleu_file;			    system(erase_sh.c_str());
+		//erase_sh = erase + run_rouge_file;        system(erase_sh.c_str());
+		//erase_sh = erase + run_meteor_file;			  system(erase_sh.c_str());
 
-	if (Config::verbose) fprintf(stderr, "[REBUILD DONE]\n");
+		//erase_sh = erase + config_bleu_file;				  system(erase_sh.c_str());
+		//erase_sh = erase + config_rouge_file;         system(erase_sh.c_str());
+	}
 
 	// WAIT IN DO_SCORES
 }
-
-
 
 void Core::rebuild_hash_scores(string TGT, const set<string> &Lref, Scores &hOQ) {
 	string REF = Common::join_set(Lref, '_');
@@ -206,72 +230,45 @@ void Core::doMultiMetrics(string HYP, const set<string> &Lref, Scores &hOQ) {
 	//                              * computes CP-based (Full Parsing)
 	//                              * computes SR-based (Semantic Role Labeling)
 	//                              * computes DR-based (Discourse Representation - Semantics)
-	// param2  _ candidate hypothesis (KEY)
-	// param3  _ candidate filename (string)
-	// param4  _ reference list (KEY LIST)		(Config::references)
-	// param5  _ reference filenames (hash ref)		(Config::Hrefs)
-	// param2  _ hash of scores
-
-
-	string HYP_file = TESTBED::Hsystems[HYP];
 	string REF = Common::join_set(Lref, '_');
 
-	//if (Config::verbose > 1)
 	if (Config::verbose) fprintf(stderr, "computing similarities [%s - %s]...\n", HYP.c_str(), REF.c_str());
-	//else if (Config::verbose == 1) fprintf(stderr, "%s - %s [", HYP.c_str(), REF.c_str());
 
-	SingleMetric *pBLEU = new BLEU;
-	SingleMetric *pNIST = new NIST;
-	//SingleMetric *pBLEUNIST = new BLEUNIST;
-	SingleMetric *pMETEOR = new METEOR;
-	SingleMetric *pROUGE = new ROUGE;
-	SingleMetric *pGTM = new GTM;
-	SingleMetric *pNGRAM = new NGRAM;
-	SingleMetric *pOverlap = new Overlap;
-	SingleMetric *pESA = new ESA;
-	SingleMetric *pTER = new TER;
+	SingleMetric *pLeM = new LeM;
+	pLeM->doMetric(HYP, REF, "", hOQ);
+	delete pLeM;
 
+	if (!Lref.empty()) {
+		SingleMetric *pBLEU = new BLEU;
+		SingleMetric *pNIST = new NIST;
+		//SingleMetric *pBLEUNIST = new BLEUNIST;
+		SingleMetric *pMETEOR = new METEOR;
+		SingleMetric *pROUGE = new ROUGE;
+		SingleMetric *pGTM = new GTM;
+		SingleMetric *pNGRAM = new NGRAM;
+		SingleMetric *pOverlap = new Overlap;
+		SingleMetric *pESA = new ESA;
+		SingleMetric *pTER = new TER;
+		SingleMetric *pWER = new WER;
+		SingleMetric *pPER = new PER;
+		SingleMetric *pLeM = new LeM;
 
-	pBLEU->doMetric(HYP, REF, "", hOQ);
-	pNIST->doMetric(HYP, REF, "", hOQ);
-	//pBLEUNIST->doMetric(HYP, REF, "", hOQ);
-	pMETEOR->doMetric(HYP, REF, "", hOQ);
-	pROUGE->doMetric(HYP, REF, "", 1, hOQ);
-	pGTM->doMetric(HYP, REF, "", hOQ);
-	pNGRAM->doMetric(HYP, REF, "", hOQ);
-	pOverlap->doMetric(HYP, REF, "", hOQ);
-	pESA->doMetric(HYP, REF, "", hOQ);
-	pTER->doMetric(HYP, REF, "", hOQ);
+		pBLEU->doMetric(HYP, REF, "", hOQ);
+		pNIST->doMetric(HYP, REF, "", hOQ);
+		//pBLEUNIST->doMetric(HYP, REF, "", hOQ);
+		pMETEOR->doMetric(HYP, REF, "", hOQ);
+		pROUGE->doMetric(HYP, REF, "", 1, hOQ);
+		pGTM->doMetric(HYP, REF, "", hOQ);
+		pNGRAM->doMetric(HYP, REF, "", hOQ);
+		pOverlap->doMetric(HYP, REF, "", hOQ);
+		pESA->doMetric(HYP, REF, "", hOQ);
+		pTER->doMetric(HYP, REF, "", hOQ);
+		pWER->doMetric(HYP, REF, "", hOQ);
+		pPER->doMetric(HYP, REF, "", hOQ);
+		pLeM->doMetric(HYP, REF, "", hOQ);
 
-
-	ComplexMetric *pULC = new ULC;
-	//pULC->doMetric();
-
-	delete pBLEU, pNIST, pMETEOR, pROUGE, pGTM, pNGRAM, pOverlap, pESA, pTER, pULC;
-
-	//if (Config::verbose) fprintf(stderr, "]\n");
-
-	/*	cout << "[SCORES] : hOQ" << endl;
-	hOQ.print_sys_scores();
-	hOQ.print_doc_scores(2);
-
-	string filename = "serialized_hOQ";
-
-	hOQ.save_struct_scores(filename.c_str());
-
-	Scores new_hOQ;
-	new_hOQ.load_struct_scores(filename.c_str());
-
-	cout << "[SCORES] : new_hOQ" << endl;
-	new_hOQ.print_sys_scores();
-	new_hOQ.print_doc_scores(2);
-
-	cout << "[SCORES] serialized done. FILE < " << filename << endl;
-
-	string rm_filename = "rm " + filename;
-	system(rm_filename.c_str());
-
-	exit(1);*/
+		delete pBLEU, pNIST, pMETEOR, pROUGE, pGTM, pNGRAM, pOverlap, pESA, pTER, pWER, pPER, pLeM;
+	}
 }
 
 double Core::do_scores(Scores &hOQ) {
@@ -332,40 +329,40 @@ double Core::do_scores(Scores &hOQ) {
 		}
 	}
 
-if (Config::num_process) {
-	// WAIT
-	if (Config::verbose) fprintf(stderr, "[WAIT]\n");
-	while (!job_qw.empty()) {
-        for (set<string>::const_iterator it_job = job_qw.begin(); it_job != job_qw.end(); ++it_job) {
-            if (proc.end(*it_job)) job_qw.erase(it_job);
-        }
+	if (Config::num_process) {
+		// WAIT
+		if (Config::verbose) fprintf(stderr, "[WAIT]\n");
+		while (!job_qw.empty()) {
+	        for (set<string>::const_iterator it_job = job_qw.begin(); it_job != job_qw.end(); ++it_job) {
+	            if (proc.end(*it_job)) job_qw.erase(it_job);
+	        }
+		}
+		// REBUILD
+		if (Config::verbose) fprintf(stderr, "[REBUILD]\n");
+		for (set<string>::const_iterator it = Config::systems.begin(); it != Config::systems.end(); ++it) {
+	        rebuild_hash_scores(*it, Config::references, hOQ);
+		}
+	    if (Config::G != Common::G_SEG){
+	        fprintf(stderr, "[DOC REBUILD]\n");
+	        hOQ.make_doc_scores();
+	        if (Config::G == Common::G_SYS or Config::G == Common::G_ALL) {
+	            fprintf(stderr, "[SYS REBUILD]\n");
+	            hOQ.make_sys_scores();
+	        }
+    	}
+
+		if (Config::verbose) fprintf(stderr, "[REBUILD DONE]\n");
+
+		// DELETE GARBAGE
+		/*string rm = "rm ";
+		while(!file_qw.empty()) {
+			string rm_aux = rm + file_qw.top();
+			system(rm_aux.c_str());
+			file_qw.pop();
+		}*/
+
+	    //for (int i = 0; i < hOQ.get_num_doc_scores(); ++i) hOQ.print_doc_scores(i);
 	}
-	// REBUILD
-	if (Config::verbose) fprintf(stderr, "[REBUILD]\n");
-	for (set<string>::const_iterator it = Config::systems.begin(); it != Config::systems.end(); ++it) {
-        rebuild_hash_scores(*it, Config::references, hOQ);
-	}
-    if (Config::G != Common::G_SEG){
-        fprintf(stderr, "[DOC REBUILD]\n");
-        hOQ.make_doc_scores();
-        if (Config::G == Common::G_SYS) {
-            fprintf(stderr, "[SYS REBUILD]\n");
-            hOQ.make_sys_scores();
-        }
-    }
-
-	if (Config::verbose) fprintf(stderr, "[REBUILD DONE]\n");
-
-	// DELETE GARBAGE
-	/*string rm = "rm ";
-	while(!file_qw.empty()) {
-		string rm_aux = rm + file_qw.top();
-		system(rm_aux.c_str());
-		file_qw.pop();
-	}*/
-
-    //for (int i = 0; i < hOQ.get_num_doc_scores(); ++i) hOQ.print_doc_scores(i);
-}
 
 	if (Config::eval_schemes.find(Common::S_QUEEN) != Config::eval_schemes.end() or \
 	Config::metaeval_schemes.find(Common::S_QUEEN) != Config::metaeval_schemes.end() or \
@@ -399,7 +396,7 @@ if (Config::num_process) {
 			for (set<string>::const_iterator itr = Config::references.begin(); itr != Config::references.end(); ++itr) {
 				if (*it != *itr) all_other_refs.insert(*itr);
 			}
-			if (all_other_refs.size() > 1) {
+			if (!all_other_refs.empty()) {
 				doMultiMetrics(*it, all_other_refs, hOQ);
 
 				if (Config::metaeval_criteria.find(Common::C_KING) != Config::metaeval_criteria.end() or \
@@ -428,15 +425,14 @@ if (Config::num_process) {
 	if (Config::do_time) fprintf(stderr, "TOTAL TIME = %f\n", TIME);
 
 	// required for normalized ULC computation (it can be very slow!)
-	/*if (Config::eval_schemes.find(Common::S_ULC) != Config::eval_schemes.end() or \
+	if (Config::eval_schemes.find(Common::S_ULC) != Config::eval_schemes.end() or \
 	Config::metaeval_schemes.find(Common::S_ULC) != Config::metaeval_schemes.end() or \
 	Config::optimize_schemes.find(Common::S_ULC) != Config::optimize_schemes.end()) {
-
 		if (Config::verbose) fprintf(stderr, "[METRICS] finding max metric scores (for normalization)...\n");
 		find_max_scores(hOQ);
-		ComplexMetri pULC = new ULC;
-		pULC.doMetric(Config::systems, Config::references, Conº);
-	}*/
+	}
+
+	compute_metrics_combination(hOQ);
 
 	return TIME;
 }

@@ -15,9 +15,7 @@ using namespace std;
 class Core {
 private:
     Process proc;
-	map<int, set<string> > split_qw;      								// set de job_ids
-	set<string> job_qw;
-    //stack<string> file_qw;
+	set<string> job_qw;      								// set de job_ids
 
 	//Compute scores
 	void doMultiMetrics(string HYP, const set<string> &Lref, Scores &hOQ);
@@ -31,6 +29,7 @@ private:
 
 	void find_max_metric_scores(Scores &hOQ, const set<string> &systems, const set<string> &references);
 	void find_max_scores(Scores &hOQ);
+	void compute_metrics_combination(Scores &hOQ);
 
 	//Printing
 	void print_metric_names();

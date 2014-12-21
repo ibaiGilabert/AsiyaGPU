@@ -162,7 +162,7 @@ void Core::compute_metrics_combination(Scores &hOQ) {
 	}
 }
 
-void Core::process_multi_metrics(string HYP, const set<string> &Lref) {
+void Core::process_multi_metrics(string HYP, const set<string> &Lref, double init_time) {
 	// read reports and build hOQ Scores structure
 	// List of Metrics
 	string REF = Common::join_set(Lref, '_');
@@ -181,9 +181,7 @@ void Core::process_multi_metrics(string HYP, const set<string> &Lref) {
 		for (set<string>::const_iterator it_fm = Config::Fmetrics.begin(); it_fm != Config::Fmetrics.end(); ++it_fm) {
 			string config_file = proc.make_config_file(HYP, REF, *it_fm, i);
 			string run_file = proc.make_run_file(config_file, HYP, REF, i, *it_fm);
-			job_qw.insert(proc.run_job(run_file, *it_fm));
-			//file_qw.push(config_file);
-			//file_qw.push(run_file);
+			job_qw[proc.run_job(run_file, *it_fm)] = make_pair(HYP, init_time);
 		}
 		/*string run_meteor_file = proc.make_run_file(config_file, HYP, REF, i, "METEOR");
 		job_qw.insert(proc.run_job(run_meteor_file, "METEOR")); */
@@ -304,12 +302,22 @@ double Core::do_scores(Scores &hOQ) {
 
 		for (set<string>::const_iterator it = Config::systems.begin(); it != Config::systems.end(); ++it) {	//systems Vs. references
 			double time1 = omp_get_wtime();
-			//doMultiMetrics($config, $sys, $config->{Hsystems}->{$sys}, $config->{references}, $config->{Hrefs}, $hOQ);
-			if (Config::num_process)
-				process_multi_metrics(*it, Config::references);						//read report files
-			else
-				doMultiMetrics(*it, Config::references, hOQ);
 
+			if (Config::num_process) {
+				process_multi_metrics(*it, Config::references, time1);						//read report files
+
+			}
+			else {
+				doMultiMetrics(*it, Config::references, hOQ);
+				double time2 = omp_get_wtime();
+
+				double t = time2 - time1;	//= Common::get_raw_Benchmark;
+				TIME += t;
+				fprintf(stderr, "time1: %f\n", time1);
+				fprintf(stderr, "time2: %f\n", time2);
+				fprintf(stderr, "time: %f\n", t);
+				if (Config::do_time) fprintf(stderr, "t(%s) = %f\n", it->c_str(), t);
+			}
 			/*if (Config::eval_schemes.find(Common::S_QUEEN) != Config::eval_schemes.end() or \
 			Config::metaeval_schemes.find(Common::S_QUEEN) != Config::metaeval_schemes.end() or \
 			Config::optimize_schemes.find(Common::S_QUEEN) != Config::optimize_schemes.end()) {
@@ -318,51 +326,53 @@ double Core::do_scores(Scores &hOQ) {
 			doMultiMetrics(*it, set<string>(itr, itr), hOQ);
 			}
 			}*/
+		}
 
-			double time2 = omp_get_wtime();
-			double t = time2 - time1;	//= Common::get_raw_Benchmark;
-			TIME += t;
-			fprintf(stderr, "time1: %f\n", time1);
-			fprintf(stderr, "time2: %f\n", time2);
-			fprintf(stderr, "time: %f\n", t);
-			if (Config::do_time) fprintf(stderr, "t(%s) = %f\n", it->c_str(), t);
+		if (Config::num_process) {
+			// WAIT
+			if (Config::verbose) fprintf(stderr, "[WAIT]\n");
+
+			map<string, double>	max_split_time;			// <system, max_time_split>
+			while (!job_qw.empty()) {
+				for (map<string, pair<string,double> >::iterator it_job = job_qw.begin(); it_job != job_qw.end(); ++it_job) {
+		        	string sys_name = it_job->second.first;
+		        	double init_time = it_job->second.second;
+		        	if (proc.end(it_job->first)) {
+		            	double time2 = omp_get_wtime();
+    					if ((time2-init_time) > max_split_time[sys_name]) max_split_time[sys_name] = time2-init_time;
+		            	job_qw.erase(it_job);
+					}
+		        }
+			}
+			// REBUILD
+			if (Config::verbose) fprintf(stderr, "[REBUILD]\n");
+			for (set<string>::const_iterator it = Config::systems.begin(); it != Config::systems.end(); ++it) {
+		        rebuild_hash_scores(*it, Config::references, hOQ);
+			}
+		    if (Config::G != Common::G_SEG){
+		        fprintf(stderr, "[DOC REBUILD]\n");
+		        hOQ.make_doc_scores();
+		        if (Config::G == Common::G_SYS or Config::G == Common::G_ALL) {
+		            fprintf(stderr, "[SYS REBUILD]\n");
+		            hOQ.make_sys_scores();
+		        }
+	    	}
+
+			if (Config::verbose) fprintf(stderr, "[REBUILD DONE]\n");
+
+			double max_time = 0;
+			cout << "----- MAX_SPLIT_TIME -----" << endl;
+    		for (map<string, double>::const_iterator itt = max_split_time.begin(); itt != max_split_time.end(); ++itt) {
+    			cout << "\t[" << itt->first << " -> " << itt->second;
+		    	if (itt->second > max_time) max_time = itt->second;
+		    }
+		    cout << "--------------------------" << endl;
+
+			TIME += max_time;
+			fprintf(stderr, "time: %f\n", max_time);
+			if (Config::do_time) fprintf(stderr, "t(max_split) = %f\n", max_time);
 		}
 	}
-
-if (Config::num_process) {
-	// WAIT
-	if (Config::verbose) fprintf(stderr, "[WAIT]\n");
-	while (!job_qw.empty()) {
-        for (set<string>::const_iterator it_job = job_qw.begin(); it_job != job_qw.end(); ++it_job) {
-            if (proc.end(*it_job)) job_qw.erase(it_job);
-        }
-	}
-	// REBUILD
-	if (Config::verbose) fprintf(stderr, "[REBUILD]\n");
-	for (set<string>::const_iterator it = Config::systems.begin(); it != Config::systems.end(); ++it) {
-        rebuild_hash_scores(*it, Config::references, hOQ);
-	}
-    if (Config::G != Common::G_SEG){
-        fprintf(stderr, "[DOC REBUILD]\n");
-        hOQ.make_doc_scores();
-        if (Config::G == Common::G_SYS or Config::G == Common::G_ALL) {
-            fprintf(stderr, "[SYS REBUILD]\n");
-            hOQ.make_sys_scores();
-        }
-    }
-
-	if (Config::verbose) fprintf(stderr, "[REBUILD DONE]\n");
-
-	// DELETE GARBAGE
-	/*string rm = "rm ";
-	while(!file_qw.empty()) {
-		string rm_aux = rm + file_qw.top();
-		system(rm_aux.c_str());
-		file_qw.pop();
-	}*/
-
-    //for (int i = 0; i < hOQ.get_num_doc_scores(); ++i) hOQ.print_doc_scores(i);
-}
 
 	if (Config::eval_schemes.find(Common::S_QUEEN) != Config::eval_schemes.end() or \
 	Config::metaeval_schemes.find(Common::S_QUEEN) != Config::metaeval_schemes.end() or \
