@@ -42,6 +42,21 @@ bool Process::end(string id) {
 	return ended;
 }
 
+double Process::get_s_time(string id) {
+    // get the ru_stime of a <id> job
+    string qacct = "/usr/local/sge/bin/linux-x64/qacct -j "+id;
+    string qacct_r = exec(qacct.c_str());
+
+    boost::algorithm::trim(qacct_r);
+    vector<string> v;
+    istringstream buf(qacct_r);
+    for (string token; getline(buf, token, ' '); ) v.push_back(token);
+    for (int j = 0; j < v.size(); ++j) cout << "v[" << j << "]: " << v[j] << "\t";
+    cout << endl;
+exit(1);
+    //return atog()
+}
+
 string Process::getJobID(string cmd) {
 	// get the id job from qsub's return value
 	boost::algorithm::trim(cmd);

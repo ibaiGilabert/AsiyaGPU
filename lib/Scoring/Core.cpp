@@ -162,7 +162,7 @@ void Core::compute_metrics_combination(Scores &hOQ) {
 	}
 }
 
-void Core::process_multi_metrics(string HYP, const set<string> &Lref, double init_time) {
+void Core::process_multi_metrics(string HYP, const set<string> &Lref) {
 	// read reports and build hOQ Scores structure
 	// List of Metrics
 	string REF = Common::join_set(Lref, '_');
@@ -174,31 +174,16 @@ void Core::process_multi_metrics(string HYP, const set<string> &Lref, double ini
 		fprintf(stderr, "get_split (%s): sys: %s/ ext: %s/ thread: %d\n", HYP.c_str(), TESTBED::Hsystems[HYP].c_str(), Common::TXTEXT.c_str(), i );
 		string TGT_split = TB_FORMAT::get_split(TESTBED::Hsystems[HYP], Common::TXTEXT, i);
 
-		/*string config_bleu_file = proc.make_config_file(HYP, REF, "BLEU", i);
-		string run_bleu_file = proc.make_run_file(config_bleu_file, HYP, REF, i, "BLEU");
-		job_qw.insert(proc.run_job(run_bleu_file, "BLEU"));*/
-
 		for (set<string>::const_iterator it_fm = Config::Fmetrics.begin(); it_fm != Config::Fmetrics.end(); ++it_fm) {
 			string config_file = proc.make_config_file(HYP, REF, *it_fm, i);
 			string run_file = proc.make_run_file(config_file, HYP, REF, i, *it_fm);
-			job_qw[proc.run_job(run_file, *it_fm)] = make_pair(HYP, init_time);
+			job_qw[proc.run_job(run_file, *it_fm)] = HYP;
 		}
 		/*string run_meteor_file = proc.make_run_file(config_file, HYP, REF, i, "METEOR");
 		job_qw.insert(proc.run_job(run_meteor_file, "METEOR")); */
 
 		// Crear cada config i script, despres llançar-lo iterativament per cada metrica.
-
-		// ELIMINAR scripts
-		//string erase_sh;
-		//erase_sh = erase + run_bleu_file;			    system(erase_sh.c_str());
-		//erase_sh = erase + run_rouge_file;        system(erase_sh.c_str());
-		//erase_sh = erase + run_meteor_file;			  system(erase_sh.c_str());
-
-		//erase_sh = erase + config_bleu_file;				  system(erase_sh.c_str());
-		//erase_sh = erase + config_rouge_file;         system(erase_sh.c_str());
 	}
-
-	// WAIT IN DO_SCORES
 }
 
 void Core::rebuild_hash_scores(string TGT, const set<string> &Lref, Scores &hOQ) {
@@ -301,13 +286,12 @@ double Core::do_scores(Scores &hOQ) {
 		if (Config::verbose) fprintf(stderr, "[METRICS] computing 'system vs. reference' scores (one vs. all)...\n");
 
 		for (set<string>::const_iterator it = Config::systems.begin(); it != Config::systems.end(); ++it) {	//systems Vs. references
-			double time1 = omp_get_wtime();
-
 			if (Config::num_process) {
-				process_multi_metrics(*it, Config::references, time1);						//read report files
+				process_multi_metrics(*it, Config::references);						//read report files
 
 			}
 			else {
+				double time1 = omp_get_wtime();
 				doMultiMetrics(*it, Config::references, hOQ);
 				double time2 = omp_get_wtime();
 
@@ -331,15 +315,21 @@ double Core::do_scores(Scores &hOQ) {
 		if (Config::num_process) {
 			// WAIT
 			if (Config::verbose) fprintf(stderr, "[WAIT]\n");
+	        /*cout << "JOB QUEUE" << endl;
+	        for (map<string, pair<string,double> >::iterator it_job = job_qw.begin(); it_job != job_qw.end(); ++it_job) {
+	                cout << "\t<job: " << it_job->first << ", [" << it_job->second.first << ", " << it_job->second.second << "]>" << endl;
+	        }*/
 
 			map<string, double>	max_split_time;			// <system, max_time_split>
 			while (!job_qw.empty()) {
-				for (map<string, pair<string,double> >::iterator it_job = job_qw.begin(); it_job != job_qw.end(); ++it_job) {
-		        	string sys_name = it_job->second.first;
-		        	double init_time = it_job->second.second;
+				for (map<string, string>::iterator it_job = job_qw.begin(); it_job != job_qw.end(); ++it_job) {
+		        	string sys_name = it_job->second;
+
 		        	if (proc.end(it_job->first)) {
-		            	double time2 = omp_get_wtime();
-    					if ((time2-init_time) > max_split_time[sys_name]) max_split_time[sys_name] = time2-init_time;
+		            	double job_time = proc.get_s_time(it_job->first);
+		            	//double time2 = omp_get_wtime();
+    					//if ((time2-init_time) > max_split_time[sys_name]) max_split_time[sys_name] = time2-init_time;
+		            	if (job_time > max_split_time[sys_name]) max_split_time[sys_name] = job_time;
 		            	job_qw.erase(it_job);
 					}
 		        }
@@ -363,7 +353,7 @@ double Core::do_scores(Scores &hOQ) {
 			double max_time = 0;
 			cout << "----- MAX_SPLIT_TIME -----" << endl;
     		for (map<string, double>::const_iterator itt = max_split_time.begin(); itt != max_split_time.end(); ++itt) {
-    			cout << "\t[" << itt->first << " -> " << itt->second;
+    			cout << "\t[" << itt->first << " -> " << itt->second << "]" << endl;
 		    	if (itt->second > max_time) max_time = itt->second;
 		    }
 		    cout << "--------------------------" << endl;
