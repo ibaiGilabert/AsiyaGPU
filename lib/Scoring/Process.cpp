@@ -48,13 +48,18 @@ double Process::get_s_time(string id) {
     string qacct_r = exec(qacct.c_str());
 
     boost::algorithm::trim(qacct_r);
-    vector<string> v;
     istringstream buf(qacct_r);
-    for (string token; getline(buf, token, ' '); ) v.push_back(token);
-    for (int j = 0; j < v.size(); ++j) cout << "v[" << j << "]: " << v[j] << "\t";
-    cout << endl;
-exit(1);
-    //return atog()
+    for (string token; getline(buf, token, '\n'); ) {
+        string ru_time;
+        istringstream sru(token);
+        getline(sru, ru_time, ' ');
+
+        if (ru_time == "ru_stime") {
+            vector<string> strs;
+            boost::split(strs, token, boost::is_any_of("\t "));
+            return atof(strs[5].c_str());
+        }
+    }
 }
 
 string Process::getJobID(string cmd) {

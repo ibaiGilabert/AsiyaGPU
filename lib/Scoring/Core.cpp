@@ -315,10 +315,6 @@ double Core::do_scores(Scores &hOQ) {
 		if (Config::num_process) {
 			// WAIT
 			if (Config::verbose) fprintf(stderr, "[WAIT]\n");
-	        /*cout << "JOB QUEUE" << endl;
-	        for (map<string, pair<string,double> >::iterator it_job = job_qw.begin(); it_job != job_qw.end(); ++it_job) {
-	                cout << "\t<job: " << it_job->first << ", [" << it_job->second.first << ", " << it_job->second.second << "]>" << endl;
-	        }*/
 
 			map<string, double>	max_split_time;			// <system, max_time_split>
 			while (!job_qw.empty()) {
