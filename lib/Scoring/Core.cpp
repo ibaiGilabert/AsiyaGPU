@@ -322,7 +322,7 @@ double Core::do_scores(Scores &hOQ) {
 		        	string sys_name = it_job->second;
 
 		        	if (proc.end(it_job->first)) {
-		            	double job_time = proc.get_s_time(it_job->first);
+		            	double job_time;	proc.get_s_time(it_job->first, job_time);
 		            	//double time2 = omp_get_wtime();
     					//if ((time2-init_time) > max_split_time[sys_name]) max_split_time[sys_name] = time2-init_time;
 		            	if (job_time > max_split_time[sys_name]) max_split_time[sys_name] = job_time;

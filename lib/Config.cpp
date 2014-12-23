@@ -204,7 +204,7 @@ void Config::process_command_line_options(map<string, string> Options, vector<st
     if (Options.find("paralel") != Options.end() and !atoi(Options["paralel"].c_str())) {
         fprintf(stderr, "[ERROR] Enter a valid number of processes.\n"); exit(1);
     }
-    else if (atoi(Options["paralel"].c_str()) <= 1) {
+    else if (atoi(Options["paralel"].c_str()) < 1) {
         fprintf(stderr, "Paralel (%s) -> No paralelism\n", Options["paralel"].c_str());
     }
     else Config::num_process = atoi(Options["paralel"].c_str());

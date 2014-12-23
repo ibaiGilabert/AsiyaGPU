@@ -42,10 +42,14 @@ bool Process::end(string id) {
 	return ended;
 }
 
-double Process::get_s_time(string id) {
+void Process::get_s_time(string id, double &time) {
     // get the ru_stime of a <id> job
-    string qacct = "/usr/local/sge/bin/linux-x64/qacct -j "+id;
+    //string qacct = "/usr/local/sge/bin/linux-x64/qacct -j "+id;
+    string qacct = "qacct -j "+id;
+    //fprintf(stderr, "[Pr] to execute: |%s|\n", qacct.c_str());
     string qacct_r = exec(qacct.c_str());
+    //fprintf(stderr, "[Pr]: qacct_r: |%s|\n", qacct_r.c_str());
+    if (qacct_r == "") get_s_time(id, time);
 
     boost::algorithm::trim(qacct_r);
     istringstream buf(qacct_r);
@@ -54,13 +58,16 @@ double Process::get_s_time(string id) {
         istringstream sru(token);
         getline(sru, ru_time, ' ');
 
+        //cout << "\tru_time: |" << ru_time << "|" << endl;
         if (ru_time == "ru_stime") {
             vector<string> strs;
             boost::split(strs, token, boost::is_any_of("\t "));
-            return atof(strs[5].c_str());
+            time = atof(strs[5].c_str());
+            //return atof(strs[5].c_str());
         }
     }
 }
+
 
 string Process::getJobID(string cmd) {
 	// get the id job from qsub's return value
@@ -81,7 +88,8 @@ string Process::run_job(string run_file, string metric) {
     strcat(qsub, " ");
     strcat(qsub, metric);*/
 
-    string qsub = "/usr/local/sge/bin/linux-x64/qsub -q \\!gpu " + run_file + " " + metric;
+    //string qsub = "/usr/local/sge/bin/linux-x64/qsub -q \\!gpu " + run_file + " " + metric;
+    string qsub = "qsub -q \\!gpu " + run_file + " " + metric;
     string qsub_r = exec(qsub.c_str());
 
     return getJobID(qsub_r);
@@ -95,7 +103,8 @@ string Process::run_job_dep(string run_file, string metric, string dep) {
     strcat(qsub, " ");
     strcat(qsub, metric);*/
 
-    string qsub = "/usr/local/sge/bin/linux-x64/qsub -q \\!gpu -hold_jid " + dep + " " + run_file + " " + metric;
+    //string qsub = "/usr/local/sge/bin/linux-x64/qsub -q \\!gpu -hold_jid " + dep + " " + run_file + " " + metric;
+    string qsub = "qsub -q \\!gpu -hold_jid " + dep + " " + run_file + " " + metric;
     string qsub_r = exec(qsub.c_str());
 
     return getJobID(qsub_r);

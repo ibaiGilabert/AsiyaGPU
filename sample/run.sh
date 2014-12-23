@@ -17,4 +17,4 @@ die () {
 
 i=$1
 
-./Asiya Asiya.config -p 4 -v -time -eval single,ulc -g sys -metric_set metrics_$i -data_path $DATAPATH > $i.report
+./Asiya Asiya.config -v -time -eval single,ulc -g sys -metric_set metrics_$i -data_path $DATAPATH > $i.report

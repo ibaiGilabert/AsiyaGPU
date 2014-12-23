@@ -127,9 +127,9 @@ void NGRAM::computeNGRAM(string opt, string ref, string TGT, int issrcbased, map
 	string pwd = boost::filesystem::current_path().string();
 
 	stringstream ssOut, ssRef, ssReport;
-	ssOut << pwd << "/" << Common::DATA_PATH << "/" << Common::TMP << "/" << nr << "." << NGRAM::NGRAMEXT << t_id << "." << Common::SYSEXT;
-	ssRef << pwd << "/" << Common::DATA_PATH << "/" << Common::TMP << "/" << nr << "." << NGRAM::NGRAMEXT << t_id << "." << Common::REFEXT;
-	ssReport << pwd << "/" << Common::DATA_PATH << "/" << Common::TMP << "/" << nr << "." << NGRAM::NGRAMEXT << t_id << "." << Common::REPORTEXT;
+	ssOut << Common::DATA_PATH << "/" << Common::TMP << "/" << nr << "." << NGRAM::NGRAMEXT << t_id << "." << Common::SYSEXT;
+	ssRef << Common::DATA_PATH << "/" << Common::TMP << "/" << nr << "." << NGRAM::NGRAMEXT << t_id << "." << Common::REFEXT;
+	ssReport << Common::DATA_PATH << "/" << Common::TMP << "/" << nr << "." << NGRAM::NGRAMEXT << t_id << "." << Common::REPORTEXT;
 
 	string outRND = ssOut.str();
 	string refRND = ssRef.str();
