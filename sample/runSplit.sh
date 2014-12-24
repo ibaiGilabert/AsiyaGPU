@@ -6,12 +6,12 @@
 #$ -l h_vmem=5G
 
 
-DATAPATH=/home/usuaris/gilabert/PROVA_sTIME/AsiyaGPU/sample
+DATAPATH=/home/usuaris/gilabert/PROVA_TESTBED/AsiyaGPU/sample
 
 die () {
     echo >&2 "$@"
     exit 1
-}p
+}
 
 [ "$#" -eq 2 ] || die "2 argument required: name of the metric family (i.e., BLEU, NIST, TER, PER, ..) and #folds, $# provided."
 
