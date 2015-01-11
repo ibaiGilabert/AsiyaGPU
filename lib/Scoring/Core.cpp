@@ -332,6 +332,8 @@ double Core::do_scores(Scores &hOQ) {
 			}
 			// REBUILD
 			if (Config::verbose) fprintf(stderr, "[REBUILD]\n");
+
+			double time_ri = omp_get_wtime();
 			for (set<string>::const_iterator it = Config::systems.begin(); it != Config::systems.end(); ++it) {
 		        rebuild_hash_scores(*it, Config::references, hOQ);
 			}
@@ -343,7 +345,10 @@ double Core::do_scores(Scores &hOQ) {
 		            hOQ.make_sys_scores();
 		        }
 	    	}
-
+	    	double time_re = omp_get_wtime();
+	    	double t_r = time_re - time_ri;
+	    	TIME += t_r;
+	    	fprintf(stderr, "Time rebuild dedicated: %f\n", t_r);
 			if (Config::verbose) fprintf(stderr, "[REBUILD DONE]\n");
 
 			double max_time = 0;
@@ -355,64 +360,67 @@ double Core::do_scores(Scores &hOQ) {
 		    cout << "--------------------------" << endl;
 
 			TIME += max_time;
-			fprintf(stderr, "time: %f\n", max_time);
-			if (Config::do_time) fprintf(stderr, "t(max_split) = %f\n", max_time);
+			//fprintf(stderr, "T(max_metric): %f\n", max_time);
+			if (Config::do_time) {
+				fprintf(stderr, "T(max_split) = %f\n", max_time);
+	    		fprintf(stderr, "T(metric) + T(rebuild) = %f + %f = %f\n", max_time, t_r, TIME);
+	    	}
 		}
 	}
 
-	if (Config::eval_schemes.find(Common::S_QUEEN) != Config::eval_schemes.end() or \
-	Config::metaeval_schemes.find(Common::S_QUEEN) != Config::metaeval_schemes.end() or \
-	Config::optimize_schemes.find(Common::S_QUEEN) != Config::optimize_schemes.end()) {
+		/*if (Config::eval_schemes.find(Common::S_QUEEN) != Config::eval_schemes.end() or \
+		Config::metaeval_schemes.find(Common::S_QUEEN) != Config::metaeval_schemes.end() or \
+		Config::optimize_schemes.find(Common::S_QUEEN) != Config::optimize_schemes.end()) {
 
-		if (Config::verbose) fprintf(stderr, "[METRICS] computing 'reference vs. reference' scores (pairwise)...\n");
+			if (Config::verbose) fprintf(stderr, "[METRICS] computing 'reference vs. reference' scores (pairwise)...\n");
 
-		for (set<string>::const_iterator it = Config::references.begin(); it != Config::references.end(); ++it) {	//references Vs. references
-			double time1 = omp_get_wtime();
-			for (set<string>::const_iterator itr = Config::references.begin(); itr != Config::references.end(); ++itr) {	//references Vs. references
-				if (*it != *itr) doMultiMetrics(*it, set<string> (itr, itr), hOQ);
+			for (set<string>::const_iterator it = Config::references.begin(); it != Config::references.end(); ++it) {	//references Vs. references
+				double time1 = omp_get_wtime();
+				for (set<string>::const_iterator itr = Config::references.begin(); itr != Config::references.end(); ++itr) {	//references Vs. references
+					if (*it != *itr) doMultiMetrics(*it, set<string> (itr, itr), hOQ);
+				}
+				double time2 = omp_get_wtime();
+				double t = time2 - time1;	//Common::get_raw_Benchmark;
+				TIME += t;
+				if (Config::do_time) fprintf(stderr, "t(%s) = %f\n", it->c_str(), t);
 			}
-			double time2 = omp_get_wtime();
-			double t = time2 - time1;	//Common::get_raw_Benchmark;
-			TIME += t;
-			if (Config::do_time) fprintf(stderr, "t(%s) = %f\n", it->c_str(), t);
 		}
-	}
 
-	if ( (Config::references.size() > 1 and Config::do_refs) or \
-	Config::metaeval_criteria.find(Common::C_KING) != Config::metaeval_criteria.end() or \
-	Config::optimize_criteria.find(Common::C_KING) != Config::optimize_criteria.end() or \
-	Config::metaeval_criteria.find(Common::C_ORANGE) != Config::metaeval_criteria.end() or \
-	Config::optimize_criteria.find(Common::C_ORANGE) != Config::optimize_criteria.end()) {
+		if ( (Config::references.size() > 1 and Config::do_refs) or \
+		Config::metaeval_criteria.find(Common::C_KING) != Config::metaeval_criteria.end() or \
+		Config::optimize_criteria.find(Common::C_KING) != Config::optimize_criteria.end() or \
+		Config::metaeval_criteria.find(Common::C_ORANGE) != Config::metaeval_criteria.end() or \
+		Config::optimize_criteria.find(Common::C_ORANGE) != Config::optimize_criteria.end()) {
 
-		if (Config::verbose) fprintf(stderr, "[METRICS] computing 'reference vs. reference' scores (one vs. all)...\n");
+			if (Config::verbose) fprintf(stderr, "[METRICS] computing 'reference vs. reference' scores (one vs. all)...\n");
 
-		for (set<string>::const_iterator it = Config::references.begin(); it != Config::references.end(); ++it) {	//references Vs. all other references
-			double time1 = omp_get_wtime();
-			set<string> all_other_refs;
-			for (set<string>::const_iterator itr = Config::references.begin(); itr != Config::references.end(); ++itr) {
-				if (*it != *itr) all_other_refs.insert(*itr);
-			}
-			if (!all_other_refs.empty()) {
-				doMultiMetrics(*it, all_other_refs, hOQ);
+			for (set<string>::const_iterator it = Config::references.begin(); it != Config::references.end(); ++it) {	//references Vs. all other references
+				double time1 = omp_get_wtime();
+				set<string> all_other_refs;
+				for (set<string>::const_iterator itr = Config::references.begin(); itr != Config::references.end(); ++itr) {
+					if (*it != *itr) all_other_refs.insert(*itr);
+				}
+				if (!all_other_refs.empty()) {
+					doMultiMetrics(*it, all_other_refs, hOQ);
 
-				if (Config::metaeval_criteria.find(Common::C_KING) != Config::metaeval_criteria.end() or \
-				Config::optimize_criteria.find(Common::C_KING) != Config::optimize_criteria.end() or \
-				Config::metaeval_criteria.find(Common::C_ORANGE) != Config::metaeval_criteria.end() or \
-				Config::optimize_criteria.find(Common::C_ORANGE) != Config::optimize_criteria.end()) {
+					if (Config::metaeval_criteria.find(Common::C_KING) != Config::metaeval_criteria.end() or \
+					Config::optimize_criteria.find(Common::C_KING) != Config::optimize_criteria.end() or \
+					Config::metaeval_criteria.find(Common::C_ORANGE) != Config::metaeval_criteria.end() or \
+					Config::optimize_criteria.find(Common::C_ORANGE) != Config::optimize_criteria.end()) {
 
-					for (set<string>::const_iterator it = Config::systems.begin(); it != Config::systems.end(); ++it) {	//systems Vs. all other references
-						doMultiMetrics(*it, all_other_refs, hOQ);
+						for (set<string>::const_iterator it = Config::systems.begin(); it != Config::systems.end(); ++it) {	//systems Vs. all other references
+							doMultiMetrics(*it, all_other_refs, hOQ);
+						}
 					}
 				}
-			}
-			else Config::do_refs = 0;
+				else Config::do_refs = 0;
 
-			double time2 = omp_get_wtime();
-			double t = time2 - time1;	//Common::get_raw_Benchmark;
-			TIME += t;
-			if (Config::do_time) fprintf(stderr, "t(%s) = %f\n", it->c_str(), t);
-		}
-	}
+				double time2 = omp_get_wtime();
+				double t = time2 - time1;	//Common::get_raw_Benchmark;
+				TIME += t;
+				if (Config::do_time) fprintf(stderr, "t(%s) = %f\n", it->c_str(), t);
+			}
+		}*/
 
 	// --- finalize the tsearch
 	if (Config::tsearch == 1) {}

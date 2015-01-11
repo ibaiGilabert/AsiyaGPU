@@ -186,7 +186,6 @@ SHORTCUTS
 TODO LIST
 
 	-	LOCAL
-				->	Mirar què passa amb "-p 1". En qualsevol cas, paral·lelitzar els systemes.
 				->	Completar el CE.
 
 	-	CLUSTER

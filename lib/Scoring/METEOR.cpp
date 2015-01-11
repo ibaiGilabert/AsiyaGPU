@@ -140,9 +140,9 @@ void METEOR::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 		if (Config::Hmetrics.find(mMETEOR[i]) != Config::Hmetrics.end()) GO = 1;
 	}
 
-	cout << "METEOR ei!" << endl;
+	//cout << "METEOR ei!" << endl;
 	if (GO) {
-		cout << "GO! METEOR GO!" << endl;
+		//cout << "GO! METEOR GO!" << endl;
 		if (Config::verbose == 1) fprintf(stderr, "%s\n", METEOR::MTREXT.c_str());
 		stringstream ss1, ss2, ss3, ss4;
 		ss1 << Common::DATA_PATH << "/" << Common::REPORTS << "/" << TGT << "/" << REF << "/" << METEOR::MTREXT << "-ex." << Common::XMLEXT;

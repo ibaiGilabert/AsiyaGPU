@@ -43,7 +43,7 @@ bool Process::end(string id) {
 }
 
 void Process::get_s_time(string id, double &time) {
-    // get the ru_stime of a <id> job
+    // get the ru_ru_wallclock  of a <id> job
     //string qacct = "/usr/local/sge/bin/linux-x64/qacct -j "+id;
     string qacct = "qacct -j "+id;
     //fprintf(stderr, "[Pr] to execute: |%s|\n", qacct.c_str());
@@ -59,11 +59,11 @@ void Process::get_s_time(string id, double &time) {
         getline(sru, ru_time, ' ');
 
         //cout << "\tru_time: |" << ru_time << "|" << endl;
-        if (ru_time == "ru_stime") {
+        if (ru_time == "ru_wallclock") {
             vector<string> strs;
             boost::split(strs, token, boost::is_any_of("\t "));
-            time = atof(strs[5].c_str());
-            //return atof(strs[5].c_str());
+            time = atof(strs[1].c_str());
+            //return atof(strs[5].c_str()); (s_time)
         }
     }
 }

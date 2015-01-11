@@ -295,9 +295,9 @@ void ROUGE::doMetric(string TGT, string REF, string prefix, int stemming, Scores
 		if (Config::Hmetrics.find(aux) != Config::Hmetrics.end()) GO = 1;
 	}
 
-	cout << "ROUGE ei!" << endl;
+	//cout << "ROUGE ei!" << endl;
 	if (GO) {
-		cout << "GO! ROUGE GO!" << endl;
+		//cout << "GO! ROUGE GO!" << endl;
 		if (Config::verbose == 1) fprintf(stderr, "%s\n", ROUGE::ROUGEXT.c_str());
 		stringstream ss1, ss2, ss3, ss4, ssL, ssS, ssSU, ssW;
 		ss1 << Common::DATA_PATH << "/" << Common::REPORTS << "/" << TGT << "/" << REF << "/" << prefix << ROUGE::ROUGEXT << "-1." << Common::XMLEXT;
