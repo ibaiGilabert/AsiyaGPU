@@ -251,6 +251,8 @@ SP::initialize_svmt() {
 }
 void SP::start_parser(int which) {
 	// description _ responsible for starting the shallow parser  [allowing for loading individual components]
+	//               (WORD + PoS + LEMMA) tagging
+
 	if (Config::verbose) fprintf(stderr, "\n[PARSER] starting parser...\n");
     // ------------------------------------------------------------------
     // initializing pos-tagger
