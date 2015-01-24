@@ -19,11 +19,14 @@ private:
 	static map<string, string> create_rLANGTOK();
 
 	static const set<string> rSPeng, rSPspacat, rSPfrench, rSPgerman;
-	static const map<string, string> rLANGBIOS, rLANGSVM, rLANGBKLY, rLANGTOK;
+	static map<string, string> rLANGBIOS, rLANGSVM, rLANGBKLY, rLANGTOK;
 
-	static const string SPEXT, POSSEP, CSEP;
-	static const string SVMT, DICTS, BIOS, TOK;
+	static const string SPEXT,	POSSEP, CSEP;
+	static const string SVMT, 	BIOS,	TOK;
 	int USE_LEMMAS, USE_DICTS, USE_CHUNKS;
+
+	void FILE_merge_BIOS(string input1, string input2, string output);
+
 
 	void FILE_parse_BIOS(string input);
 	int FILE_parse_BKLY(string input);

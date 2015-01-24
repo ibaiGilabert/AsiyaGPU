@@ -60,6 +60,11 @@ cout << "chunk: " << chunk << endl;*/
         }
         output_file.close();
         input_file.close();
+
+        if (c_file != Config::num_process) {
+            Config::num_process = c_file;
+            fprintf(stderr, "--- NUM_PROCESS UNIFORMED TO CORPUS SIZE (%d) ---\n", Config::num_process);
+        }
     } else { fprintf(stderr, "couldn't open file: %s\n", file); exit(1); }
     //cout << "-----------------------------" << endl;
 }

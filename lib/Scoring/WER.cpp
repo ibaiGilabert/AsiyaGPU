@@ -70,7 +70,7 @@ void WER::read_WER(string report, int do_neg, double &WER, vector<double> &lWER)
 	     	}
 	    }
 	    file.close();
-	} else { fprintf(stderr, "couldn't open file: report\n", report.c_str()); exit(1); }
+	} else { fprintf(stderr, "couldn't open file: %s\n", report.c_str()); exit(1); }
 }
 
 void WER::computeWER(string TGT, int do_neg, double &MAXSYS, vector<double> &MAXSEG) {

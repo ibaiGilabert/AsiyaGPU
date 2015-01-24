@@ -70,7 +70,7 @@ void PER::read_PER(string report, int do_neg, double &PER, vector<double> &lPER)
 	     	}
 	    }
 	    file.close();
-	} else { fprintf(stderr, "couldn't open file: report\n", report.c_str()); exit(1); }
+	} else { fprintf(stderr, "couldn't open file: %s\n", report.c_str()); exit(1); }
 }
 
 void PER::computePER(string TGT, int do_neg, double &MAXSYS, vector<double> &MAXSEG) {

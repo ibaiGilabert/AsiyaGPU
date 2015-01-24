@@ -107,7 +107,7 @@ void TER::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 	}
 
 	if (GO) {
-		if (Config::verbose) fprintf(stderr, "%sp...\n", TER::TEREXT.c_str());
+		if (Config::verbose) fprintf(stderr, "%s...\n", TER::TEREXT.c_str());
 
 	    string pref_ter = "-"+TER::TEREXT+"base";
 		string reportTERxml = Common::DATA_PATH + "/" + Common::REPORTS + "/" + TGT + "/" + REF + "/" + pref_ter + "." + Common::XMLEXT;
@@ -205,6 +205,6 @@ void TER::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
          	}
          	hOQ.save_hash_scores(pref_ter, TGT, REF, res);
 	    }
-        hOQ.save_struct_scores(TB_FORMAT::make_serial("TER", TGT, REF));
+	    if (Config::serialize) hOQ.save_struct_scores(TB_FORMAT::make_serial("TER", TGT, REF));
 	}
 }

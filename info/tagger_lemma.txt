@@ -1,0 +1,34 @@
+He creat un script que fa la feina de lematitzar i etiquetar a la vegada.
+
+Es troba al directori d'Asiya /home/soft/asiya/tools/svmtool-1.3.1/scripts/doSVMTtagger.sh
+
+Es crida amb els següents paràmetres:
+
+Usage: ./doSVMTtagger.sh <inputformat> <inputfile> <outputfile> <model> <strategy> <direction> <epsilon> <omega> <blexicon> <verbose>
+
+- inputformat: Hi ha dos formats possibles:
+    0) el fitxer ".tok" generat per Asiya, i
+    1) un fitxer amb un token (paraula) per linia, i deixant una línia buida per separar frases.
+ 
+    En el cas 1) d'una paraula per línia, és possible que altres processadors també vulguin l'entrada així, llavors ptser val la pena fer aquesta conversió una vegada i reaprofitar-la. La setmana vinent si vols en parlem. Hi ha de fet uns fitxers amb extensió "wp", "wlp", "wl", "wpc" i "wlpc" que tenen aquest format.
+
+- inputfile: es el fitxer d'entrada en el format que toqui 0/1. T'envio adjunt un exemple de fitxer d'entrada 1)
+
+- outputfile: el fitxer de sortida que tindrà la pinta del que t'envio adjunt.
+
+- model: el model del tagger. Es troben al directori /home/soft/asiya/tools/svmtool-1.3.1/models. S'ha d'usar el que toqui en funció de la llengua (en,es,ca,fr) i el paràmetre case_sensitive (ci/cs).
+  Al fitxer SP.pm de l'Asiya trobaràs la funció initialize_svmt que té quin model li correspon a cada combinació de llengua/ci. Per exemple, castellà (es) amb case_sensitive (cs) és el model "Ancora_es".
+
+- strategy: 4
+
+- direction: LRL
+
+- epsilon: 0
+
+- omega: 0
+
+- blexicon: es el diccionari pel lematizador. També depèn de la llengüa. Es troben al directori /home/soft/asiya/tools/svmtool-1.3.1/dicts. Igual que abans, hi ha un directori per cada llengua: en,ca,es,fr. El fitxer que s'ha d'indicar és en tots els casos "lemmas.txt".
+
+- verbose: 0
+
+Exemple: ./doSVMTtagger.sh 0 input.tok output.wl ../models/es/ci/Ancora_es_lc 4 LRL 0 0 ../dicts/es/lemmas.txt 

@@ -18,37 +18,38 @@ const string SP::SPEXT = "SP";
 const string SP::POSSEP = "##";
 const string SP::CSEP = "__";
 const string SP::SVMT = "svmtool-1.3.1";
-const string SP::DICTS = "svmtool-1.3.1/dicts";	//fr
+	//const string SP::DICTS = "svmtool-1.3.1/dicts";	//fr
 const string SP::BIOS = "bios-1.1.0";
 const string SP::TOK = "tokenizer";
+
 
 map<string, string> SP::create_rLANGBIOS() {
 	map<string, string> rLANGBIOS;
 	rLANGBIOS[Common::L_ENG] = "en";	rLANGBIOS[Common::L_SPA] = "es";	rLANGBIOS[Common::L_CAT] = "ca";
 	return rLANGBIOS;
 }
-const map<string, string> SP::rLANGBIOS = create_rLANGBIOS();
+map<string, string> SP::rLANGBIOS = create_rLANGBIOS();
 
 map<string, string> SP::create_rLANGSVM() {
 	map<string, string> rLANGSVM;
 	rLANGSVM[Common::L_ENG] = "en";	rLANGSVM[Common::L_SPA] = "es";	rLANGSVM[Common::L_CAT] = "ca";	rLANGSVM[Common::L_FRN] = "fr";
 	return rLANGSVM;
 }
-const map<string, string> SP::rLANGSVM = create_rLANGSVM();
+map<string, string> SP::rLANGSVM = create_rLANGSVM();
 
 map<string, string> SP::create_rLANGBKLY() {
 	map<string, string> rLANGBKLY;
 	rLANGBKLY[Common::L_GER] = "de";
 	return rLANGBKLY;
 }
-const map<string, string> SP::rLANGBKLY = create_rLANGBKLY();
+map<string, string> SP::rLANGBKLY = create_rLANGBKLY();
 
 map<string, string> SP::create_rLANGTOK() {
 	map<string, string> rLANGTOK;
 	rLANGTOK[Common::L_ENG] = "en";	rLANGTOK[Common::L_GER] = "de";	rLANGTOK[Common::L_SPA] = "es";	rLANGTOK[Common::L_CAT] = "ca";
 	return rLANGTOK;
 }
-const map<string, string> SP::rLANGTOK = create_rLANGTOK();
+map<string, string> SP::rLANGTOK = create_rLANGTOK();
 
 
 // SPA / CAT ---------------------------------------------------------
@@ -221,9 +222,87 @@ SP::SP() {
 
 SP::~SP() {}
 
-void SP::FILE_parse_BIOS(string input) {
+void SP::FILE_merge_BIOS(string input1, string input2, string output) {
+	// description _ merges tokens in two files so they conform the tokenization of the first file 
+    ofstream o_file;
+    if (!o_file.is_open()) { fprintf(stderr, "couldn't open output file <%s>\n", output.c_str()); exit(1); }
 
+    ifstream in2_file(input2.c_str());
+    if (!in2_file.is_open()) { fprintf(stderr, "couldn't open input file <%s>\n", input2.c_str()); exit(1); }
+    
+    ifstream in1_file(input1.c_str());
+    if (in1_file) {
+    	string str1, str2;
+    	int empty = 1;
+        boost::regex re("^$");
+        while( getline(in1_file, str1) ) {
+            boost::match_results<string::const_iterator> results;
+            if (boost::regex_match(str1, results, re)) {
+            	if (empty) empty = 0;	// empty sentence
+            	else empty = 1;			// sentence separator
+            	o_file << endl;
+			}
+			else {
+				getline(in2_file, str2);
+	            if (boost::regex_match(str2, results, re))
+					getline(in2_file, str2);		// line 2 is empty
+				vector<string> l1, l2;
+				istringstream buf1(str1), buf2(str2);
+			    for(string token; getline(buf1, token, ' '); ) {
+			    	l1.push_back(token);
+			    	o_file << token;
+			    }
+			    for(string token; getline(buf2, token, ' '); ) {
+			    	l2.push_back(token);
+		    		o_file << token;
+			    }
+			    empty = 0;
+			}
+		}
+		o_file.close();
+		in1_file.close();
+		in2_file.close();
+	}
+    else { fprintf(stderr, "couldn't open input file <%s>\n", input1.c_str()); exit(1); }
 }
+
+void SP::FILE_parse_BIOS(string input) {
+	// description _ performs the shallow parsing and writes a several files (using SVMTool)
+	string wplc_file = input+"."+SP::SPEXT+".wplc";
+	string wpl_file = input+"."+SP::SPEXT+".wpl";
+	string wp_file = input+"."+SP::SPEXT+".wp";
+	string wc_file = input+"."+SP::SPEXT+".wc";
+
+	//string L = Config::LANG;
+	//string C = Config::CASE;
+
+	if ( !exists(boost::filesystem::path(wc_file)) and !exists(boost::filesystem::path(wc_file+"."+Common::GZEXT)) ) {
+		if ( !exists(boost::filesystem::path(wp_file)) and !exists(boost::filesystem::path(wp_file+"."+Common::GZEXT)) ) {
+			string sys_aux = Common::GUNZIP+" "+wp_file+"."+Common::GZEXT;
+			system(sys_aux.c_str());
+		}
+		string command = "cat "+ wp_file+" | java -Dfile.encoding=UTF-8 -Xmx1024m -cp "+Config::tools+"/"+SP::BIOS+"/output/classes/:"+ 
+                             Config::tools+"/mill/output/classes:"+Config::tools+"/"+SP::BIOS+"/jars/maxent-2.3.0.jar:"+
+                             Config::tools+"/"+SP::BIOS+"/jars/trove.jar:"+Config::tools+"/"+SP::BIOS+"/jars/antlr-2.7.5.jar:"+
+                             Config::tools+"/$BIOS/jars/log4j.jar bios.chunker.Chunker"+
+                             " --predict --data="+Config::tools+"/"+SP::BIOS+"/data/chunker/"+SP::rLANGBIOS[Config::LANG]+
+                             " --model=conll.paum."+((Config::CASE == Common::CASE_CI)? "ci" : "cs")+".model"+
+                             " --type=paum --case-sensitive="+((Config::CASE == Common::CASE_CI)? "false" : "true")+
+                             " --log4j="+Config::tools+"/"+SP::BIOS+"/log4j.properties > "+wc_file+" 2> "+wc_file+".err";
+        Common::execute_or_die(command, "[ERROR] problems running BIOS...");
+
+        system( ("rm -f"+wc_file+".err").c_str() );
+        string wpc_file = input+"."+SP::SPEXT+".wpc";
+        // merging tagging + chunking
+      	FILE_merge_BIOS(wp_file, wc_file, wpc_file);
+		// merging tagging + lemma + chunking
+		if ( !exists(boost::filesystem::path(wpl_file)) and !exists(boost::filesystem::path(wpl_file+"."+Common::GZEXT)) ) {
+			system( (Common::GUNZIP+" "+wpl_file+"."+Common::GZEXT).c_str() );
+		}
+		FILE_merge_BIOS(wpl_file, wc_file, wpl_file);
+	}
+}
+
 int SP::FILE_parse_BKLY(string input) {
 
 }
@@ -231,16 +310,92 @@ int SP::FILE_parse_BKLY(string input) {
 int SP::FILE_parse_SVM(string input) {
 	// description _ performs the shallow parsing and writes a several files (using SVMTool)
 	//               (wplc -> TOKEN PoS LEMMA CHUNK)
+	string L = Config::LANG;
+	string C = Config::CASE;
+	string lblex;
+	string lpath = Config::tools+"/"+SP::SVMT+"/models"+L+"/"+C+"/";
+    string wlp_file = input+"."+SP::SPEXT+".wlp";
+
+    boost::regex re("^"+Common::L_SPA+".*");
+    boost::match_results<string::const_iterator> results;
+    if (boost::regex_match(L, results, re)) {
+    	if (C == Common::CASE_CI) lpath += "Ancora_es_lc";
+    	else lpath += "Ancora_es";
+    }
+    else if (L == Common::L_CAT) {
+    	if (C == Common::CASE_CI) lpath += "Ancora_ca_lc";
+    	else lpath += "Ancora_ca";
+    }
+    else if (L == Common::L_ENG) {
+    	if (C == Common::CASE_CI) lpath += "WSJQB_en_lc";
+    	else lpath += "WSJQB_en";
+    }
+    else if (L == Common::L_FRN) {
+    	USE_DICTS = 0;
+    	if (C == Common::CASE_CI) lpath += "FTB_fr_lc";
+    	else lpath += "FTB_fr";
+    }
+    else { fprintf(stderr, "SVMTool for '%s' LANGUAGE NOT AVAILABLE!!\n", L.c_str()); exit(1); }
+
+    if (USE_DICTS) {
+    	//string l = L.substr(0, 2);
+    	//lblex = Config::tools+"/"+SP::SVMT+"/dicts/"+l+"/backup_lexicon.DICT";
+    		//cout << "[SP]initialize-> l:" << l << " lblex:" << lblex << " L:" << L << " C:" << C << endl;
+
+    	lblex = Config::tools+"/"+SP::SVMT+"/dicts/"+L+"/lemmas.txt";
+    }
+    //if (verbose) fprintf(stderr, "<[SVMTool] and [Pos-tagger] %s>\n", L.c_str());
 
 
-   /*if (!keys %{$parser}) {
-      SP::start_parser($tools, $L, $C, $parser, 0, (($verbose > 0)? $verbose - 1 : 0));
-   }*/
+	string command = Config::tools+"/"+SP::SVMT+"/scripts/doSVMTagger.sh 1 "+input+" "+wlp_file+" "+lpath+" 4 LRL 0 0 "+lblex+" 0";
+		cout << "[SP]doSVMTagger: " << command << endl;
 
+exit(1);
 
+	string conll_file = input+"."+SP::SPEXT+".conll";
+	//string wpl_file = input+"."+SP::SPEXT+".wpl";
+	string wp_file = input+"."+SP::SPEXT+".wp";
+
+	ofstream wp_out_file(wp_file.c_str());
+    if (!wp_out_file.is_open()) { fprintf(stderr, "couldn't open output file <%s>\n", wp_file.c_str()); exit(1); }
+
+	//ofstream wpl_out_file(wpl_file.c_str());
+    //if (!wpl_out_file.is_open()) { fprintf(stderr, "couldn't open output file <%s>\n", wpl_file.c_str()); exit(1); }
+
+	ofstream conll_out_file(conll_file.c_str());
+    if (!conll_out_file.is_open()) { fprintf(stderr, "couldn't open output file <%s>\n", conll_file.c_str()); exit(1); }
+
+	int iter = 0;
+	ifstream out_file(wlp_file.c_str());
+	if (out_file) {
+		string str;
+		int line = 0;
+		while ( getline(out_file, str) ) {
+			istringstream iss(str);
+			string w, l, p;
+			iss >> w >> l >> p;
+				cout << "line[" << line++ << "]: " << w << " " << l << " " << p << endl;
+			wp_out_file << w << " " << p << endl;
+			//conll_file << wcount << "\t" << w << "\t" << l << "\t" << p.substr(0, 1) << "\t" << p << "\t_" << endl;
+
+			if (Config::verbose) {
+				if ( (iter%10) == 0) fprintf(stderr, ".");
+				if ( (iter%100) == 0) fprintf(stderr, "%d", iter);
+			}
+
+			++iter;
+		}
+		out_file.close();
+	}
+	else { fprintf(stderr, "couldn't open input file <%s>\n", wlp_file.c_str()); exit(1); }
+
+	conll_out_file.close();
+	wp_out_file.close();
+
+	return iter;
 }
 
-SP::initialize_svmt() {
+/*SP::initialize_svmt() {
 	// description _ initializes the SVMTool models for languages involved
 	int mode = 0;
 	string direction = "LRL";
@@ -264,7 +419,7 @@ void SP::start_parser(int which) {
     // ------------------------------------------------------------------
 	parser["svmt"] = svmtool;
 	parser["LANG"] = Config::LANG;
-}
+}*/
 
 void SP::FILE_parse(string input) {
 	// description _ performs the shallow parsing and writes a several files (using SVMTool and BIOS)
@@ -310,7 +465,7 @@ void SP::FILE_parse(string input) {
 
 		}
 	}
-	else { fprintf(stderr, "[ERROR] Shallow parser not available for '%s' language!!\n", Config::LANG); exit(1); }
+	else { fprintf(stderr, "[ERROR] Shallow parser not available for '%s' language!!\n", Config::LANG.c_str()); exit(1); }
 }
 
 void SP::FILE_parse_and_read(string input) {

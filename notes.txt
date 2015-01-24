@@ -196,6 +196,8 @@ NOTES:
 		->	Canviar el path del tools a Config.cpp
 		->	Canviar el data_path del fitxer d'entrada Asiya.config al directori actual (pwd).
 		->	Si s'executa interactivament (qlogin) ha de ser en bash.
+		
+		->	Si l'execució es fa amb el runAsiya.sh (sense el runAll.sh) s'ha de copiar l'executable i el fitxer .config a les carpetes corresponents de cada corpus.
 
 	Execucions al cluster (perl):
 		->	Copiar el ASIYA12.04.PATH editant les variables d'entorn que facin falta.
