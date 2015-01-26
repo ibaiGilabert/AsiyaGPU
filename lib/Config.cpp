@@ -660,6 +660,7 @@ void Config::validate_configuration() {
             boost::regex re_Pl("^Pl.*");
             boost::regex re_Fl("^Fl.*");
             boost::regex re_Rl("^Rl.*");
+            boost::regex re_ŜP("^SP.*");
 
             /*boost::regex re_SP("SP");
             boost::regex re_CP("CP");
@@ -684,6 +685,7 @@ void Config::validate_configuration() {
             else if (boost::regex_match(*it, results, re_Pl)) Config::Fmetrics.insert("Pl");
             else if (boost::regex_match(*it, results, re_Fl)) Config::Fmetrics.insert("Fl");
             else if (boost::regex_match(*it, results, re_Rl)) Config::Fmetrics.insert("Rl");
+            else if (boost::regex_match(*it, results, re_SP)) Config::Fmetrics.insert("SP");
         }
 
         fprintf(stderr, "METRICS (families): ");

@@ -44,7 +44,21 @@ set<string> Align::create_rA() {
 }
 const set<string> Align::rA = create_rA();
 
-Align::readAlignments(string report) {
+
+pair<string, strin> Align::string2Align(string strar) {
+	// description _ converts the alignmenst string into an array 
+	vector<string> v;
+    istringstream buf(strar);
+    for (string token; getline(buf, token, ' '); ) v.push_back(token);
+    for (int = 0; i < v.size(); ++i) {
+    	// form of the items: i-j
+
+    	strin
+    }
+
+}
+
+void Align::readAlignments(string report, vector<string> &a, vector<string, &b) {
 	// description _ read alignments from the file (for all segments) 
 	if ( !exists(boost::filesystem::path(report)) and !exists(boost::filesystem::path(report+"."+Common::GZEXT)) )
 		fprintf(stderr, "Unable to open alignments file %s for reading\n", report.c_str());
@@ -56,8 +70,12 @@ Align::readAlignments(string report) {
 	ifstream align_file(report.c_str());
 	if (align_file) {
 		int segid = 1;
-		
-		a[] = 		
+		string str;
+		while ( getline(align_file, str) ){
+			pair<string, string> string2Align(str);
+			a. =
+				
+		}
 	}
 	else { fprintf(stderr, "unable to open alignments file %s for reading\n", report.c_str()); exit(1); }
 
@@ -122,8 +140,7 @@ void Align::do_parse_align(string TGT, string src_rel) {
 	// description _ create and read the alignments between the candidate and multiple references
 
 	// calculating reference vs. source
-	LSrcRefAligns;
-	LRefSrcAligns;
+	map<string, vector<string> > LSrcRefAligns, LRefSrcAligns;
 
 	for (map<string, string>::const_iterator it = TESTBED::Hrefs.begin(); it != TESTBED::Hrefs.end(); ++it) {
 		// check if already calculated
@@ -132,7 +149,8 @@ void Align::do_parse_align(string TGT, string src_rel) {
 			//int reverse = rev_rep.first;
 			//string reportALIGN = rev_rep.second;
 		// read the alignments
-		= readAlignments(rev_rep.second);
+		vector<string> a, b;
+		readAlignments(rev_rep.second, a, b);
 		// mgb it seems that thje alignments has the reverse form. Check the reasons of this behaviour!!
 		if (rev_rep.first) {	LSrcRefAligns[it->first] = b;	LRefSrcAligns[it->first] = a; }
 		else {					LSrcRefAligns[it->first] = a;	LRefSrcAligns[it->first] = b; }

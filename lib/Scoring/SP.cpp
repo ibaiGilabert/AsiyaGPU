@@ -222,6 +222,12 @@ SP::SP() {
 
 SP::~SP() {}
 
+void SP::tokenize_file(string input) {
+	// description _ tokenizes the given file
+	string aux_file = Common::DATA_PATH+"/"+Common
+}
+
+
 void SP::FILE_merge_BIOS(string input1, string input2, string output) {
 	// description _ merges tokens in two files so they conform the tokenization of the first file 
     ofstream o_file;
@@ -347,8 +353,10 @@ int SP::FILE_parse_SVM(string input) {
     //if (verbose) fprintf(stderr, "<[SVMTool] and [Pos-tagger] %s>\n", L.c_str());
 
 
-	string command = Config::tools+"/"+SP::SVMT+"/scripts/doSVMTagger.sh 1 "+input+" "+wlp_file+" "+lpath+" 4 LRL 0 0 "+lblex+" 0";
+	string command = Config::tools+"/"+SP::SVMT+"/scripts/doSVMTtagger.sh 1 "+input+" "+wlp_file+" "+lpath+" 4 LRL 0 0 "+lblex+" 0";
 		cout << "[SP]doSVMTagger: " << command << endl;
+    Common::execute_or_die(command, "[ERROR] problems running SVMTtagger...");
+
 
 exit(1);
 

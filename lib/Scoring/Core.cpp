@@ -11,6 +11,7 @@
 #include "../include/WER.hpp"
 #include "../include/PER.hpp"
 #include "../include/LeM.hpp"
+#include "../include/SP.hpp"
 #include "../include/ULC.hpp"
 #include "../include/SC_RAW.hpp"
 #include "../include/TESTBED.hpp"
@@ -217,9 +218,9 @@ void Core::doMultiMetrics(string HYP, const set<string> &Lref, Scores &hOQ) {
 
 	if (Config::verbose) fprintf(stderr, "computing similarities [%s - %s]...\n", HYP.c_str(), REF.c_str());
 
-	SingleMetric *pLeM = new LeM;
+	/*SingleMetric *pLeM = new LeM;
 	pLeM->doMetric(HYP, REF, "", hOQ);
-	delete pLeM;
+	delete pLeM;*/
 
 	if (!Lref.empty()) {
 		SingleMetric *pBLEU = new BLEU;
@@ -235,6 +236,7 @@ void Core::doMultiMetrics(string HYP, const set<string> &Lref, Scores &hOQ) {
 		SingleMetric *pWER = new WER;
 		SingleMetric *pPER = new PER;
 		SingleMetric *pLeM = new LeM;
+		SingleMetric *pSP = new SP;
 
 		pBLEU->doMetric(HYP, REF, "", hOQ);
 		pNIST->doMetric(HYP, REF, "", hOQ);
@@ -249,8 +251,9 @@ void Core::doMultiMetrics(string HYP, const set<string> &Lref, Scores &hOQ) {
 		pWER->doMetric(HYP, REF, "", hOQ);
 		pPER->doMetric(HYP, REF, "", hOQ);
 		pLeM->doMetric(HYP, REF, "", hOQ);
+		pSP->doMetric(HYP, REF, "", hOQ);
 
-		delete pBLEU, pNIST, pMETEOR, pROUGE, pGTM, pNGRAM, pOverlap, pESA, pTER, pWER, pPER, pLeM;
+		delete pBLEU, pNIST, pMETEOR, pROUGE, pGTM, pNGRAM, pOverlap, pESA, pTER, pWER, pPER, pLeM, pSP;
 	}
 }
 
