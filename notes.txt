@@ -183,6 +183,13 @@ SHORTCUTS
         print "---------------------\n";
 
 
+     --> BASENAME, RELATIVE NAME, etc
+
+     	PERL basename($filename) =>	C++ boost::filesystem::path p(filename); 
+     									p.filename().string();				// with extension
+     									p.stem();							// without extension
+
+
 TODO LIST
 
 	-	LOCAL

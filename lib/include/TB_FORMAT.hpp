@@ -15,8 +15,16 @@ struct FileInfo {
 };
 
 class TB_FORMAT {
+private:
+	static map<string, string> create_rLANGTOK();
+	
 protected:
     void split_file(const char* file, const char* ext);
+
+	static void tokenize_file(string file, string lang);
+
+	static map<string, string> rLANGTOK;
+	static const string TOK;
 
 public:
 	//TB_FORMAT();

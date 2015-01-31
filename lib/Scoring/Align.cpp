@@ -45,26 +45,46 @@ set<string> Align::create_rA() {
 const set<string> Align::rA = create_rA();
 
 
-pair<string, strin> Align::string2Align(string strar) {
+void Align::string2Align(string strar, map<string, string arr1, map<string, string> arr2) {
 	// description _ converts the alignmenst string into an array 
 	vector<string> v;
     istringstream buf(strar);
-    for (string token; getline(buf, token, ' '); ) v.push_back(token);
+    string token;
+    while (getline(buf, token, ' ')) v.push_back(token);
     for (int = 0; i < v.size(); ++i) {
     	// form of the items: i-j
-
-    	strin
+    	vector<string> strsp(2);
+    	istringstream bufsp(v[i]);
+		getline(bufsp, token, '-');	strsp[0] = token;
+		getline(bufsp, token, '-');	strsp[1] = token;
+		arr1[strsp[0]] = strsp[1];
+		arr1[strsp[1]] = strsp[0];
     }
+}
+
+void Align::Align2string() {
+	// description _ converts into a string the alignments array
 
 }
 
-void Align::readAlignments(string report, vector<string> &a, vector<string, &b) {
+void Align::writeAlignDoc(string filename, const map< string, map<string,string> > &ARRALIGNS) {
+	// description _ writes alignments into the file
+	ifstream alignfile(filename.c_str());
+	if (alginfile) {
+		for (const map< string, map<string,string> >::const_iterator it = ARRALIGNS.begin(); it != ARRALIGNS.end(); ++it) {
+			Align2string(it->);
+		}
+
+	}
+	else { fprintf(stderr, "unable to open alignments file %s for writing\n", filename.c_str()); exit(1); }
+}
+
+void Align::readAlignments(string report, vector< map<string,string> > &a, vector< map<string, string> > &b) {
 	// description _ read alignments from the file (for all segments) 
 	if ( !exists(boost::filesystem::path(report)) and !exists(boost::filesystem::path(report+"."+Common::GZEXT)) )
 		fprintf(stderr, "Unable to open alignments file %s for reading\n", report.c_str());
 	if ( !exists(boost::filesystem::path(report)) and exists(boost::filesystem::path(report+"."+Common::GZEXT)) ) {
-		string sys_aux = Common::GUNZIP+" "+report+"."+Common::GZEXT;
-		system(sys_aux.c_str());
+		string sys_aux = Common::GUNZIP+" "+report+"."+Common::GZEXT;	system(sys_aux.c_str());
 	}
 
 	ifstream align_file(report.c_str());
@@ -72,13 +92,14 @@ void Align::readAlignments(string report, vector<string> &a, vector<string, &b) 
 		int segid = 1;
 		string str;
 		while ( getline(align_file, str) ){
-			pair<string, string> string2Align(str);
-			a. =
-				
+			//map<string, string> arr1, arr2;
+			string2Align(str, a[i], b[i]);
+			++segid;
 		}
+		align_file.close();
+		string sys_aux = Common::GZIP + " " + report;	system(sys_aux.c_str());
 	}
 	else { fprintf(stderr, "unable to open alignments file %s for reading\n", report.c_str()); exit(1); }
-
 }
 
 pair<int, string> Align::run_align(string trg, string trgname) {
@@ -136,20 +157,20 @@ pair<int, string> Align::run_align(string trg, string trgname) {
 	}
 }
 
-void Align::do_parse_align(string TGT, string src_rel) {
+void Align::do_parse_align(string TGT/*== cand*/, string src_rel, map< string, map<string,string> > &LSrcRefAligns, vector< map<string, string> > &SrcCandAlign, map< string, map<string,string> > &LCandRefAligns) {
 	// description _ create and read the alignments between the candidate and multiple references
 
 	// calculating reference vs. source
 	map<string, vector<string> > LSrcRefAligns, LRefSrcAligns;
 
+
+	map< string, map<string,string> > /*LSrcRefAligns, */LRefSrcAligns;
 	for (map<string, string>::const_iterator it = TESTBED::Hrefs.begin(); it != TESTBED::Hrefs.end(); ++it) {
 		// check if already calculated
 		string ref_file = it->second;
 		pair<int, string> rev_rep = run_align(src_rel, ref_file, it->first);
-			//int reverse = rev_rep.first;
-			//string reportALIGN = rev_rep.second;
 		// read the alignments
-		vector<string> a, b;
+		vector< map<string, string> > a, b;
 		readAlignments(rev_rep.second, a, b);
 		// mgb it seems that thje alignments has the reverse form. Check the reasons of this behaviour!!
 		if (rev_rep.first) {	LSrcRefAligns[it->first] = b;	LRefSrcAligns[it->first] = a; }
@@ -157,16 +178,37 @@ void Align::do_parse_align(string TGT, string src_rel) {
 	}
 
 	// calculating candidate vs. source
+	pair<int, string> rev_rep = run_align(src_rel, ref_file, TGT);
+	vector< map<string, string> > /*SrcCandAlign, */CandSrcAlign;
+	readAlignments(rev_rep.second, SrcCandAlign, CandSrcAlign);
+	// mgb it seems that the alignments has the reverse form. Check the reasons of this behaviour!!
+	if (rev_rep.first) {
+		vector< map<string, string> > temp = CandSrcAlign;
+		CandSrcAlign = SrcCandAlign;
+		SrcCandAlign = temp;
+	}
 
+	// calculating candidate vs. reference(s)
+	map< string, map<string,string> > /*LCandRefAligns, */LRefCandAligns;
+	for (map<string, string>::const_iterator it = TESTBED::Hrefs.begin(); it != TESTBED::Hrefs.end(); ++it) {
+    	//format of alignments array[seg_num][word_num] = (list of aligns)
+		computeBiAlign(LRefSrcAligns[it->first], SrcCandAlign, LRefCandAligns[it->first]);
+		computeBiAlign(CandSrcAlign, LSrcRefAligns[it->first], LCandRefAligns);
+
+		string outAlign = TESTBED::Hsystems[TGT] + "." + it->first + "." + ALIGN::ALIGNEXT;
+		writeAlignDoc(outAlign, LRefCandAligns[it->first]);
+		string sys_aux = Common::GZIP + " " + outAlign;		system(sys_aux.c_str());
+	}
 }
 
-void Align::doMultiAlign(string TGT) {
+void Align::doMultiAlign(string TGT, map< string, map<string,string> > &LSrcRefAligns, vector< map<string, string> > &SrcCandAlign, map< string, map<string,string> > &LCandRefAligns) {
 	// description _ computes the Alignments between the source and the candidate/references. 
 	//               Then, it also infers the alignment between the candidate and the references
 	// mgb				This function is called TWICE. From here and from Metrics when the $config->{alignments} flag is active
 	// 					Reconfigure it!!
 	string src_rel = TESTBED::give_relative_name(TESBED::src);
-	() = do_parse_align(TGT, src_rel);
+
+	do_parse_align(TGT, src_rel, LSrcRefAligns, SrcCandAlign, LCandRefAligns);
 
 }
 
@@ -185,7 +227,9 @@ void Align::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 
 	if (GO) {
 		if (Config::verbose) fprintf(stderr, "%s...\n", Align::AlignEXT.c_str());
-		doMultiAlign(TGT);
+		map< string, map<string,string> > 	LSrcRefAligns, LCandRefAligns;
+		vector< map<string, string> > 		SrcCandAlign;
+		doMultiAlign(TGT, LSrcRefAligns, SrcCandAlign, LCandRefAligns);
 
 
 	    string pref_Align = "-"+Align::AlignEXT+"base";

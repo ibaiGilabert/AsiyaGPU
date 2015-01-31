@@ -16,13 +16,12 @@ private:
 	static map<string, string> create_rLANGBIOS();
 	static map<string, string> create_rLANGSVM();
 	static map<string, string> create_rLANGBKLY();
-	static map<string, string> create_rLANGTOK();
 
 	static const set<string> rSPeng, rSPspacat, rSPfrench, rSPgerman;
-	static map<string, string> rLANGBIOS, rLANGSVM, rLANGBKLY, rLANGTOK;
+	static map<string, string> rLANGBIOS, rLANGSVM, rLANGBKLY;
 
 	static const string SPEXT,	POSSEP, CSEP;
-	static const string SVMT, 	BIOS,	TOK;
+	static const string SVMT, 	BIOS;
 	int USE_LEMMAS, USE_DICTS, USE_CHUNKS;
 
 	void FILE_merge_BIOS(string input1, string input2, string output);

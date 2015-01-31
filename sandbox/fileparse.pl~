@@ -5,8 +5,6 @@ srand();
 my $r = rand(10000);
 
 my $fullname = "/home/ibai/Escriptori/AsiyaGPU/sandbox/boost_ip.cc";
-print "fullname: $fullname\n";
-
 my $basename_isolated = basename("$fullname.$r");
 my $basename_isolated_tok = basename("$fullname.$r.tok");
 

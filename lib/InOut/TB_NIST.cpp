@@ -53,6 +53,7 @@ pair<string, FileInfo> TB_NIST::read_file(const char* file) {    // amb un pair 
             string sysaux = Common::GUNZIP + " " + file_gz;
             system(sysaux.c_str());
         }
+        string lang, name_txt, name_idx;
 
         xmlDocPtr doc = xmlReadFile(file, NULL, 0);
         if (doc == NULL) { fprintf(stderr, "[ERROR] Failed to parse %s\n", file); exit(1); }
@@ -69,8 +70,8 @@ pair<string, FileInfo> TB_NIST::read_file(const char* file) {    // amb un pair 
         if (type == "srcset") {
             //cout << "OPEN file as <" << type << "> type" << endl;
             string basename = dir + "/" + "source";
-            string name_txt = basename + ".txt"; //Common::SOURCEID; + ".txt";
-            string name_idx = basename + ".idx";
+            name_txt = basename + ".txt"; //Common::SOURCEID; + ".txt";
+            name_idx = basename + ".idx";
             out_txt.open(name_txt.c_str());
             out_idx.open(name_idx.c_str());
 
@@ -87,6 +88,7 @@ pair<string, FileInfo> TB_NIST::read_file(const char* file) {    // amb un pair 
             //m["source"].wc = m["source"].idx.size() - 1;
             m.second.txt = name_txt;
             m.second.wc = m.second.idx.size() - 1;
+            lang = srclang;
 
             //fprintf(stderr, "wc: %d\n", m["source"].wc);
         }
@@ -96,8 +98,8 @@ pair<string, FileInfo> TB_NIST::read_file(const char* file) {    // amb un pair 
             else id = string( (char*)xmlGetProp(root_node->children->next, (const xmlChar*)"sysid") );
 
             string basename = dir + "/";
-            string name_txt = basename + id + ".txt";
-            string name_idx = basename + id + ".idx";
+            name_txt = basename + id + ".txt";
+            name_idx = basename + id + ".idx";
             out_txt.open(name_txt.c_str());
             out_idx.open(name_idx.c_str());
 
@@ -115,12 +117,21 @@ pair<string, FileInfo> TB_NIST::read_file(const char* file) {    // amb un pair 
             //m[id].wc = m[id].idx.size() - 1;
             m.second.txt = name_txt;
             m.second.wc = m.second.idx.size() - 1;
+            lang = trglang;
 
             //fprintf(stderr, "wc: %d\n", m[id].wc);
         }
         out_idx.close();
         out_txt.close();
         xmlFreeDoc(doc);
+
+            if (Config::tokenize) {
+                string l = lang;
+                if (TB_FORMAT::rLANGTOK.find(lang) != TB_FORMAT::rLANGTOK.end())
+                    l = TB_FORMAT::rLANGTOK[lang];
+                tokenize_file(name_txt, l);
+
+            }
 
     } else { fprintf(stderr, "[ERROR] unavailable file <%s>\n", file); exit(1); }
 

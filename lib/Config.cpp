@@ -660,7 +660,7 @@ void Config::validate_configuration() {
             boost::regex re_Pl("^Pl.*");
             boost::regex re_Fl("^Fl.*");
             boost::regex re_Rl("^Rl.*");
-            boost::regex re_ŜP("^SP.*");
+            boost::regex re_SP("^SP.*");
 
             /*boost::regex re_SP("SP");
             boost::regex re_CP("CP");

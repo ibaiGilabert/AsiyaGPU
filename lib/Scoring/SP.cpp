@@ -20,7 +20,6 @@ const string SP::CSEP = "__";
 const string SP::SVMT = "svmtool-1.3.1";
 	//const string SP::DICTS = "svmtool-1.3.1/dicts";	//fr
 const string SP::BIOS = "bios-1.1.0";
-const string SP::TOK = "tokenizer";
 
 
 map<string, string> SP::create_rLANGBIOS() {
@@ -43,13 +42,6 @@ map<string, string> SP::create_rLANGBKLY() {
 	return rLANGBKLY;
 }
 map<string, string> SP::rLANGBKLY = create_rLANGBKLY();
-
-map<string, string> SP::create_rLANGTOK() {
-	map<string, string> rLANGTOK;
-	rLANGTOK[Common::L_ENG] = "en";	rLANGTOK[Common::L_GER] = "de";	rLANGTOK[Common::L_SPA] = "es";	rLANGTOK[Common::L_CAT] = "ca";
-	return rLANGTOK;
-}
-map<string, string> SP::rLANGTOK = create_rLANGTOK();
 
 
 // SPA / CAT ---------------------------------------------------------
@@ -221,11 +213,6 @@ SP::SP() {
 }
 
 SP::~SP() {}
-
-void SP::tokenize_file(string input) {
-	// description _ tokenizes the given file
-	string aux_file = Common::DATA_PATH+"/"+Common
-}
 
 
 void SP::FILE_merge_BIOS(string input1, string input2, string output) {

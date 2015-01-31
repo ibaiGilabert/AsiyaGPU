@@ -7,10 +7,22 @@
 #include <libgen.h>
 
 #include <fstream>
+#include <sstream>
 
+#include <boost/regex.hpp>
 #include <boost/filesystem.hpp>
 
 int TB_FORMAT::chunk = -1;
+
+const string TB_FORMAT::TOK = "tokenizer";
+
+map<string, string> TB_FORMAT::create_rLANGTOK() {
+    map<string, string> rLANGTOK;
+    rLANGTOK[Common::L_ENG] = "en"; rLANGTOK[Common::L_GER] = "de"; rLANGTOK[Common::L_SPA] = "es"; rLANGTOK[Common::L_CAT] = "ca";
+    return rLANGTOK;
+}
+map<string, string> TB_FORMAT::rLANGTOK = create_rLANGTOK();
+
 
 void TB_FORMAT::split_file(const char* file, const char* ext) {
     // split file for s processes
@@ -123,3 +135,50 @@ int TB_FORMAT::get_thread(string file) {
 /*string TB_FORMAT::get_formated_thread(string file) {
     return file.substr(file.find_last_of(".") + 1);
 }*/
+
+
+void TB_FORMAT::tokenize_file(string file, string lang) {
+    // description _ tokenizes the given file
+    srand(time(NULL));
+    double nr = rand() % (Common::NRAND + 1);       // random number [0, Common::NRAND];
+    string basename = boost::filesystem::path(file).filename().string();
+    
+    stringstream auxF, auxFT;
+    auxF << Common::DATA_PATH << "/" << Common::TMP << "/" << basename << "." << nr;
+    auxFT << Common::DATA_PATH << "/" << Common::TMP << "/" << basename << "." << nr << ".tok";
+
+    string aux_file = auxF.str();
+    string aux_file_tok = auxFT.str();
+
+    ofstream o_file(aux_file.c_str());
+    if (!o_file.is_open()) { fprintf(stderr, "couldn't open output aux file: %s\n", aux_file.c_str()); exit(1); }
+
+    ifstream i_file(file.c_str());
+    if (i_file) {
+        string str;
+        while ( getline(i_file, str) ) {
+            if (lang == Common::L_ENG) {     // special cases
+                boost::regex re("");
+                str = boost::regex_replace(str, re, "");
+                // ...
+
+            }
+            o_file << str << endl;
+            
+        }
+        o_file.close();
+        i_file.close();
+    } else { fprintf(stderr, "couldn't open input file: %s\n", file.c_str()); exit(1); }
+
+    string lang_opt = "";
+    if (TB_FORMAT::rLANGTOK.find(lang) != TB_FORMAT::rLANGTOK.end())
+        lang_opt = "-l " + rLANGTOK[lang];
+
+    string cmd = "cat "+aux_file+" | "+Config::tools+"/"+TB_FORMAT::TOK+"/tokenizer.pl "+lang_opt+" > "+aux_file_tok+" 2> "+aux_file_tok+".err";
+    Common::execute_or_die(cmd, "[ERROR] problems running tokenizer...");
+
+    string sys_aux;
+    sys_aux = "mv "+aux_file_tok+" "+file;  system(sys_aux.c_str());
+    sys_aux = "rm "+aux_file;               system(sys_aux.c_str());
+    sys_aux = "rm -f "+aux_file_tok+".err"; system(sys_aux.c_str());
+}
