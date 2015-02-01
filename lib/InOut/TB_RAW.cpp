@@ -120,7 +120,7 @@ string TB_RAW::process_file(string file, string type) {
     else write_fake_idx_file(file, rIDX);
 
     if (type == "source" or type == "src") {
-        TESTBED::src = file; //tokfile;
+        TESTBED::src = tokfile;
         TESTBED::IDX["source"] = rIDX;
         TESTBED::wc["source"] = rIDX.size() - 1;
         lang = Config::SRCLANG;
@@ -134,7 +134,7 @@ string TB_RAW::process_file(string file, string type) {
             fprintf(stderr, "[ERROR] reference name '%s' duplicated!\n", R.c_str()); exit(1);
         }
         TESTBED::wc[R] = rIDX.size()-1;
-        TESTBED::Hrefs[R] = file; //tokfile;
+        TESTBED::Hrefs[R] = tokfile;
         lang = Config::LANG;
     }
     else if (type == "system" or type =="sys") {
@@ -144,7 +144,7 @@ string TB_RAW::process_file(string file, string type) {
             fprintf(stderr, "[ERROR] system name '%s' duplicated!\n", S.c_str()); exit(1);
         }
         TESTBED::wc[S] = rIDX.size()-1;
-        TESTBED::Hsystems[S] = file; //tokfile;
+        TESTBED::Hsystems[S] = tokfile;
         lang = Config::LANG;
     }
     else { fprintf(stderr, "[ERROR] unkown file type <%s>!!\n", type.c_str()); exit(1); }

@@ -53,7 +53,7 @@ pair<string, FileInfo> TB_NIST::read_file(const char* file) {    // amb un pair 
             string sysaux = Common::GUNZIP + " " + file_gz;
             system(sysaux.c_str());
         }
-        string lang, name_txt, name_idx;
+        string lang, name_txt, name_idx; //name_tok;
 
         xmlDocPtr doc = xmlReadFile(file, NULL, 0);
         if (doc == NULL) { fprintf(stderr, "[ERROR] Failed to parse %s\n", file); exit(1); }
@@ -70,8 +70,10 @@ pair<string, FileInfo> TB_NIST::read_file(const char* file) {    // amb un pair 
         if (type == "srcset") {
             //cout << "OPEN file as <" << type << "> type" << endl;
             string basename = dir + "/" + "source";
-            name_txt = basename + ".txt"; //Common::SOURCEID; + ".txt";
-            name_idx = basename + ".idx";
+            name_txt = basename + "." + Common::TXTEXT; //Common::SOURCEID; + ".txt";
+            name_idx = basename + "." + Common::IDXEXT;
+            //name_tok = basename + "." + Common::TOKEXT;
+
             out_txt.open(name_txt.c_str());
             out_idx.open(name_idx.c_str());
 
@@ -98,8 +100,12 @@ pair<string, FileInfo> TB_NIST::read_file(const char* file) {    // amb un pair 
             else id = string( (char*)xmlGetProp(root_node->children->next, (const xmlChar*)"sysid") );
 
             string basename = dir + "/";
-            name_txt = basename + id + ".txt";
-            name_idx = basename + id + ".idx";
+            name_txt = basename + id + "." + Common::TXTEXT;
+            name_idx = basename + id + "." + Common::IDXEXT;
+            //name_tok = basename + id + "." + Common::TOKEXT;
+            
+            //name_txt = TESTBED::replace_extension(file, Common::TXTEXT); 
+            //name_idx = TESTBED::replace_extension(file, Common::IDXEXT); 
             out_txt.open(name_txt.c_str());
             out_idx.open(name_idx.c_str());
 
@@ -125,12 +131,14 @@ pair<string, FileInfo> TB_NIST::read_file(const char* file) {    // amb un pair 
         out_txt.close();
         xmlFreeDoc(doc);
 
+        /*string cmd = "cp -f "+name_txt+" "+name_tok;
+        string err = "[ERROR] could not copy <"+name_txt+"> into <"+name_tok+">";
+        Common::execute_or_die(cmd, err);*/
         if (Config::tokenize) {
             string l = lang;
             if (TB_FORMAT::rLANGTOK.find(lang) != TB_FORMAT::rLANGTOK.end())
                 l = TB_FORMAT::rLANGTOK[lang];
-            tokenize_file(name_txt, l);
-
+            tokenize_file(name_txt/*name_tok*/, l);
         }
 
     } else { fprintf(stderr, "[ERROR] unavailable file <%s>\n", file); exit(1); }

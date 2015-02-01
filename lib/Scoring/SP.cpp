@@ -306,7 +306,7 @@ int SP::FILE_parse_SVM(string input) {
 	string L = Config::LANG;
 	string C = Config::CASE;
 	string lblex;
-	string lpath = Config::tools+"/"+SP::SVMT+"/models"+L+"/"+C+"/";
+	string lpath = Config::tools+"/"+SP::SVMT+"/models/"+L+"/"+C+"/";
     string wlp_file = input+"."+SP::SPEXT+".wlp";
 
     boost::regex re("^"+Common::L_SPA+".*");
@@ -340,7 +340,7 @@ int SP::FILE_parse_SVM(string input) {
     //if (verbose) fprintf(stderr, "<[SVMTool] and [Pos-tagger] %s>\n", L.c_str());
 
 
-	string command = Config::tools+"/"+SP::SVMT+"/scripts/doSVMTtagger.sh 0 "+input+" "+wlp_file+" "+lpath+" 4 LRL 0 0 "+lblex+" 0";
+	string command = Config::tools+"/"+SP::SVMT+"/scripts/doSVMTtagger.sh "+input+" "+wlp_file+" 0 "+lpath+" 4 LRL 0 0 "+lblex+" 0";
 cout << "[SP]doSVMTagger: " << command << endl;
     Common::execute_or_die(command, "[ERROR] problems running SVMTtagger...");
 exit(1);
