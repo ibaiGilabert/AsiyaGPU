@@ -164,7 +164,7 @@ void LeM::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
     		computeLeM(TGT, langpair, SYS, DOC, SEG);
 			if (Config::O_STORAGE == 1) {
 	    		sc_asiya.write_report(TGT, LeM::LeMEXT, LeM::LeMEXT, SYS, DOC, SEG);
-         		cout << "SC_ASIYA DOCUMENT " << LeM::LeMEXT << " CREATED" << endl;
+         		fprintf(stderr, "SC_ASIYA DOCUMENT %s CREATED\n", LeM::LeMEXT.c_str());
          	}
          	hOQ.save_hash_scores(LeM::LeMEXT, TGT, REF, SYS, DOC, SEG);
    		}

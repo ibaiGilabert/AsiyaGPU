@@ -125,13 +125,13 @@ pair<string, FileInfo> TB_NIST::read_file(const char* file) {    // amb un pair 
         out_txt.close();
         xmlFreeDoc(doc);
 
-            if (Config::tokenize) {
-                string l = lang;
-                if (TB_FORMAT::rLANGTOK.find(lang) != TB_FORMAT::rLANGTOK.end())
-                    l = TB_FORMAT::rLANGTOK[lang];
-                tokenize_file(name_txt, l);
+        if (Config::tokenize) {
+            string l = lang;
+            if (TB_FORMAT::rLANGTOK.find(lang) != TB_FORMAT::rLANGTOK.end())
+                l = TB_FORMAT::rLANGTOK[lang];
+            tokenize_file(name_txt, l);
 
-            }
+        }
 
     } else { fprintf(stderr, "[ERROR] unavailable file <%s>\n", file); exit(1); }
 

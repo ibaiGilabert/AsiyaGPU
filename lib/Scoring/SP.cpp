@@ -340,11 +340,9 @@ int SP::FILE_parse_SVM(string input) {
     //if (verbose) fprintf(stderr, "<[SVMTool] and [Pos-tagger] %s>\n", L.c_str());
 
 
-	string command = Config::tools+"/"+SP::SVMT+"/scripts/doSVMTtagger.sh 1 "+input+" "+wlp_file+" "+lpath+" 4 LRL 0 0 "+lblex+" 0";
-		cout << "[SP]doSVMTagger: " << command << endl;
+	string command = Config::tools+"/"+SP::SVMT+"/scripts/doSVMTtagger.sh 0 "+input+" "+wlp_file+" "+lpath+" 4 LRL 0 0 "+lblex+" 0";
+cout << "[SP]doSVMTagger: " << command << endl;
     Common::execute_or_die(command, "[ERROR] problems running SVMTtagger...");
-
-
 exit(1);
 
 	string conll_file = input+"."+SP::SPEXT+".conll";

@@ -149,15 +149,15 @@ string TB_RAW::process_file(string file, string type) {
     }
     else { fprintf(stderr, "[ERROR] unkown file type <%s>!!\n", type.c_str()); exit(1); }
 
-        string cmd = "cp -f "+file+" "+tokfile;
-        string err = "[ERROR] could not copy <"+file+"> into <"+tokfile+">";
-        Common::execute_or_die(cmd, err);
-        if (Config::tokenize) {
-            string l = lang;
-            if (TB_FORMAT::rLANGTOK.find(lang) != TB_FORMAT::rLANGTOK.end())
-                l = TB_FORMAT::rLANGTOK[lang];
-            tokenize_file(tokfile, l);
-        }
+    string cmd = "cp -f "+file+" "+tokfile;
+    string err = "[ERROR] could not copy <"+file+"> into <"+tokfile+">";
+    Common::execute_or_die(cmd, err);
+    if (Config::tokenize) {
+        string l = lang;
+        if (TB_FORMAT::rLANGTOK.find(lang) != TB_FORMAT::rLANGTOK.end())
+            l = TB_FORMAT::rLANGTOK[lang];
+        tokenize_file(tokfile, l);
+    }
 
     return file;
 }

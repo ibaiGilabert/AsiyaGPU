@@ -98,7 +98,7 @@ void METEOR::computeMETEOR(string TGT, string variant, MetricScore &res) {
 
 	string toolMETEOR = "java -Dfile.encoding=UTF-8 "+mem_options+" -jar "+Config::tools+"/"+METEOR::TMETEOR+"/"+METEOR::METEORSCRIPT;
 
-	cout << "toolMETEOR ->" << toolMETEOR << endl << endl;
+	//fprintf(stderr, "toolMETEOR -> %s\n", toolMETEOR);
 
 	/*stringstream ssBase;
 	ssBase << Common::DATA_PATH << "/" << Common::TMP << "/" << nr << TGT;	//sysid;
@@ -180,7 +180,7 @@ void METEOR::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 			computeMETEOR(TGT, "exact", res);
 	    	if (Config::O_STORAGE == 1) {
 	    		sc_asiya.write_report(TGT, REF, mtr_ex, res);
-         		cout << "SC_ASIYA DOCUMENT " << mtr_ex << " CREATED" << endl;
+         		fprintf(stderr, "SC_ASIYA DOCUMENT %s\n", mtr_ex.c_str());
          	}
          	hOQ.save_hash_scores(mtr_ex, TGT, REF, res);
 		}
@@ -189,7 +189,7 @@ void METEOR::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 				computeMETEOR(TGT, "stem", res);
 		    	if (Config::O_STORAGE == 1) {
 		    		sc_asiya.write_report(TGT, REF, mtr_st, res);
-	         		cout << "SC_ASIYA DOCUMENT " << mtr_st << " CREATED" << endl;
+         			fprintf(stderr, "SC_ASIYA DOCUMENT %s\n", mtr_st.c_str());
 	         	}
 	         	hOQ.save_hash_scores(mtr_st, TGT, REF, res);
 			}
@@ -201,7 +201,7 @@ void METEOR::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 				computeMETEOR(TGT, "syn", res);
 		    	if (Config::O_STORAGE == 1) {
 		    		sc_asiya.write_report(TGT, REF, mtr_sy, res);
-	         		cout << "SC_ASIYA DOCUMENT " << mtr_sy << " CREATED" << endl;
+         			fprintf(stderr, "SC_ASIYA DOCUMENT %s\n", mtr_sy.c_str());
 	         	}
 	         	hOQ.save_hash_scores(mtr_sy, TGT, REF, res);
 	        }
@@ -212,7 +212,7 @@ void METEOR::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 				computeMETEOR(TGT, "para", res);
 		    	if (Config::O_STORAGE == 1) {
 		    		sc_asiya.write_report(TGT, REF, mtr_pa, res);
-	         		cout << "SC_ASIYA DOCUMENT " << mtr_pa << " CREATED" << endl;
+         			fprintf(stderr, "SC_ASIYA DOCUMENT %s\n", mtr_pa.c_str());
 	         	}
 	         	hOQ.save_hash_scores(mtr_pa, TGT, REF, res);
 	        }
