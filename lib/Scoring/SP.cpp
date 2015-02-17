@@ -217,7 +217,9 @@ SP::~SP() {}
 
 void SP::FILE_merge_BIOS(string input1, string input2, string output) {
 	// description _ merges tokens in two files so they conform the tokenization of the first file 
-    ofstream o_file;
+fprintf(stderr, "[SP] to merge_BIOS (input1:%s, input2:%s, output: %s)\n", input1.c_str(), input2.c_str(), output.c_str());
+
+    ofstream o_file(output.c_str());
     if (!o_file.is_open()) { fprintf(stderr, "couldn't open output file <%s>\n", output.c_str()); exit(1); }
 
     ifstream in2_file(input2.c_str());
@@ -261,8 +263,8 @@ void SP::FILE_merge_BIOS(string input1, string input2, string output) {
 
 void SP::FILE_parse_BIOS(string input) {
 	// description _ performs the shallow parsing and writes a several files (using SVMTool)
-	string wplc_file = input+"."+SP::SPEXT+".wplc";
-	string wpl_file = input+"."+SP::SPEXT+".wpl";
+	string wlpc_file = input+"."+SP::SPEXT+".wlpc";
+	string wlp_file = input+"."+SP::SPEXT+".wlp";
 	string wp_file = input+"."+SP::SPEXT+".wp";
 	string wc_file = input+"."+SP::SPEXT+".wc";
 
@@ -277,22 +279,23 @@ void SP::FILE_parse_BIOS(string input) {
 		string command = "cat "+ wp_file+" | java -Dfile.encoding=UTF-8 -Xmx1024m -cp "+Config::tools+"/"+SP::BIOS+"/output/classes/:"+ 
                              Config::tools+"/mill/output/classes:"+Config::tools+"/"+SP::BIOS+"/jars/maxent-2.3.0.jar:"+
                              Config::tools+"/"+SP::BIOS+"/jars/trove.jar:"+Config::tools+"/"+SP::BIOS+"/jars/antlr-2.7.5.jar:"+
-                             Config::tools+"/$BIOS/jars/log4j.jar bios.chunker.Chunker"+
+                             Config::tools+"/"+SP::BIOS+"/jars/log4j.jar bios.chunker.Chunker"+
                              " --predict --data="+Config::tools+"/"+SP::BIOS+"/data/chunker/"+SP::rLANGBIOS[Config::LANG]+
                              " --model=conll.paum."+((Config::CASE == Common::CASE_CI)? "ci" : "cs")+".model"+
                              " --type=paum --case-sensitive="+((Config::CASE == Common::CASE_CI)? "false" : "true")+
                              " --log4j="+Config::tools+"/"+SP::BIOS+"/log4j.properties > "+wc_file+" 2> "+wc_file+".err";
         Common::execute_or_die(command, "[ERROR] problems running BIOS...");
 
-        system( ("rm -f"+wc_file+".err").c_str() );
+        system( ("rm -f "+wc_file+".err").c_str() );
+
         string wpc_file = input+"."+SP::SPEXT+".wpc";
         // merging tagging + chunking
       	FILE_merge_BIOS(wp_file, wc_file, wpc_file);
 		// merging tagging + lemma + chunking
-		if ( !exists(boost::filesystem::path(wpl_file)) and !exists(boost::filesystem::path(wpl_file+"."+Common::GZEXT)) ) {
-			system( (Common::GUNZIP+" "+wpl_file+"."+Common::GZEXT).c_str() );
+		if ( !exists(boost::filesystem::path(wlp_file)) and exists(boost::filesystem::path(wlp_file+"."+Common::GZEXT)) ) {
+			system( (Common::GUNZIP+" "+wlp_file+"."+Common::GZEXT).c_str() );
 		}
-		FILE_merge_BIOS(wpl_file, wc_file, wpl_file);
+		FILE_merge_BIOS(wlp_file, wc_file, wlpc_file);
 	}
 }
 
@@ -341,9 +344,8 @@ int SP::FILE_parse_SVM(string input) {
 
 
 	string command = Config::tools+"/"+SP::SVMT+"/scripts/doSVMTtagger.sh "+input+" "+wlp_file+" 0 "+lpath+" 4 LRL 0 0 "+lblex+" 0";
-cout << "[SP]doSVMTagger: " << command << endl;
+fprintf(stderr, "[SP]doSVMTagger: %s\n", command.c_str());
     Common::execute_or_die(command, "[ERROR] problems running SVMTtagger...");
-exit(1);
 
 	string conll_file = input+"."+SP::SPEXT+".conll";
 	//string wpl_file = input+"."+SP::SPEXT+".wpl";
@@ -352,9 +354,6 @@ exit(1);
 	ofstream wp_out_file(wp_file.c_str());
     if (!wp_out_file.is_open()) { fprintf(stderr, "couldn't open output file <%s>\n", wp_file.c_str()); exit(1); }
 
-	//ofstream wpl_out_file(wpl_file.c_str());
-    //if (!wpl_out_file.is_open()) { fprintf(stderr, "couldn't open output file <%s>\n", wpl_file.c_str()); exit(1); }
-
 	ofstream conll_out_file(conll_file.c_str());
     if (!conll_out_file.is_open()) { fprintf(stderr, "couldn't open output file <%s>\n", conll_file.c_str()); exit(1); }
 
@@ -362,20 +361,21 @@ exit(1);
 	ifstream out_file(wlp_file.c_str());
 	if (out_file) {
 		string str;
-		int line = 0;
+		int line = 1;
 		while ( getline(out_file, str) ) {
 			istringstream iss(str);
 			string w, l, p;
 			iss >> w >> l >> p;
-				cout << "line[" << line++ << "]: " << w << " " << l << " " << p << endl;
+			
 			wp_out_file << w << " " << p << endl;
-			//conll_file << wcount << "\t" << w << "\t" << l << "\t" << p.substr(0, 1) << "\t" << p << "\t_" << endl;
+			conll_out_file << line << "\t" << w << "\t" << l << "\t" << p.substr(0, 1) << "\t" << p << "\t_" << endl;
+			cout << "[conll]line: " << line << "\t" << w << "\t" << l << "\t" << p.substr(0, 1) << "\t" << p << "\t_" << endl;
 
 			if (Config::verbose) {
 				if ( (iter%10) == 0) fprintf(stderr, ".");
 				if ( (iter%100) == 0) fprintf(stderr, "%d", iter);
 			}
-
+			++line;
 			++iter;
 		}
 		out_file.close();
@@ -420,11 +420,12 @@ void SP::FILE_parse(string input) {
 	int use_chunks = SP::rLANGBIOS.find(Config::LANG) != SP::rLANGBIOS.end() ? 1 : 0;
 
 	if (SP::rLANGSVM.find(Config::LANG) != SP::rLANGSVM.end() or SP::rLANGBKLY.find(Config::LANG) != SP::rLANGBKLY.end()) {
-		string spfile = use_chunks ? input+"."+SP::SPEXT+".wplc" : input+"."+SP::SPEXT+".wpl";
+		string spfile = use_chunks ? input+"."+SP::SPEXT+".wlpc" : input+"."+SP::SPEXT+".wlp";
 
 		if ( !exists(boost::filesystem::path(spfile)) and !exists(boost::filesystem::path(spfile+"."+Common::GZEXT)) ) {
 			string wpfile = input+"."+SP::SPEXT+".wp";
-			string wplfile = input+"."+SP::SPEXT+".wpl";
+			//string wplfile = input+"."+SP::SPEXT+".wpl";
+			string wlpfile = input+"."+SP::SPEXT+".wlp";
 			string conllfile = input+"."+SP::SPEXT+".conll";
 			if (!exists(boost::filesystem::path(wpfile)) and !exists(boost::filesystem::path(wpfile+"."+Common::GZEXT))) {
 	            //tokenizing + tagging via SVMTool (en, ca, es) or Berkeley (fr, de)
@@ -432,11 +433,15 @@ void SP::FILE_parse(string input) {
 
 				int iter = 0;
 				if (SP::rLANGSVM.find(Config::LANG) != SP::rLANGSVM.end()) {
+					fprintf(stderr, " - to FILE_parse_SVM <intput:%s>\n", input.c_str());
 					iter = FILE_parse_SVM(input);
+					fprintf(stderr, " - iter: %d\n", iter);
 				}
 				else if (SP::rLANGBKLY.find(Config::LANG) != SP::rLANGBKLY.end()) {
 					USE_LEMMAS = 0;
+					fprintf(stderr, " - to FILE_parse_BKLY <intput:%s>\n", input.c_str());
 					iter = FILE_parse_BKLY(input);
+					fprintf(stderr, " - iter: %d\n", iter);
 				}
 				if (Config::verbose) fprintf(stderr, ".. %d segments [DONE]\n", iter);
 			}
@@ -453,7 +458,7 @@ void SP::FILE_parse(string input) {
 			//end - gzip the files, DON'T zip before because bios use them!
 			string gz_aux;
 			gz_aux = Common::GZIP+" "+wpfile;		system(gz_aux.c_str());
-			gz_aux = Common::GZIP+" "+wplfile;		system(gz_aux.c_str());
+			gz_aux = Common::GZIP+" "+wlpfile;		system(gz_aux.c_str());
 			gz_aux = Common::GZIP+" "+conllfile;	system(gz_aux.c_str());
 
 		}

@@ -1,0 +1,43 @@
+#!/bin/bash
+# Author      : Meritxell Gonz�lez
+# Date        : December 19, 2014
+# Description : SVMT tagger
+#
+# Usage: doSVMTtagger.sh <inputfile> <outputfile> <inputformat> <model> <strategy> <direction> <epsilon> <omega> <blexicon> <verbose>
+# ($lpath, $mode, $direction, 0, 0, $lblex, $verbose);
+
+
+TOKENIZER=$ASIYA_HOMEtools/svmtool-1.3.1/TOK/tokenizer_nolang.pl
+TAGGER=$ASIYA_HOMEtools/svmtool-1.3.1/bin/SVMTagger.pl
+
+INPUTFILE=$1
+OUTPUTFILE=$2
+INPUTFORMAT=$3
+MODEL=$4
+STRATEGY=$5
+DIRECTION=$6
+EPSILON=$7
+OMEGA=$8
+LEXICON=$9
+VERBOSE=$10
+
+TAGGERCALL="$TAGGER -T $STRATEGY -S $DIRECTION -K $EPSILON -U $OMEGA -L $LEXICON -V $VERBOSE $MODEL"
+
+if [ $# -eq 10 ]  
+then
+        if [ $INPUTFORMAT -eq "0" ] 
+        then
+                perl $TOKENIZER < $INPUTFILE | perl $TAGGERCALL > $OUTPUTFILE
+        else
+                perl $TAGGERCALL  < $INPUTFILE > $OUTPUTFILE
+        fi      
+else
+  echo "Usage: $0 <inputfile> <outputfile> <inputformat> <model> <strategy> <direction> <epsilon> <omega> <blexicon> <verbose>"
+fi
+
+
+
+
+
+
+

@@ -53,7 +53,7 @@ pair<string, FileInfo> TB_NIST::read_file(const char* file) {    // amb un pair 
             string sysaux = Common::GUNZIP + " " + file_gz;
             system(sysaux.c_str());
         }
-        string lang, name_txt, name_idx; //name_tok;
+        string lang, name_txt, name_idx, name_tok;
 
         xmlDocPtr doc = xmlReadFile(file, NULL, 0);
         if (doc == NULL) { fprintf(stderr, "[ERROR] Failed to parse %s\n", file); exit(1); }
@@ -138,7 +138,7 @@ pair<string, FileInfo> TB_NIST::read_file(const char* file) {    // amb un pair 
             string l = lang;
             if (TB_FORMAT::rLANGTOK.find(lang) != TB_FORMAT::rLANGTOK.end())
                 l = TB_FORMAT::rLANGTOK[lang];
-            tokenize_file(name_txt/*name_tok*/, l);
+            tokenize_file(name_txt, l);
         }
 
     } else { fprintf(stderr, "[ERROR] unavailable file <%s>\n", file); exit(1); }
@@ -150,6 +150,8 @@ string TB_NIST::process_file(string file, string type) {
     // description _ read the contents of a NIST xml and generate txt and idx files
     //              (idx structure is also stored onto memory)
     //              return name of processed file (path)
+    //string tokfile = TESTBED::replace_extension(file, Common::TOKEXT);
+
     pair<string, FileInfo> contents = TB_NIST::read_file(file.c_str());
     if (type == "source" or type == "src") {
         TESTBED::src = contents.second.txt;
