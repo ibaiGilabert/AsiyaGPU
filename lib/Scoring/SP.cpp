@@ -242,15 +242,24 @@ fprintf(stderr, "[SP] to merge_BIOS (input1:%s, input2:%s, output: %s)\n", input
 	            if (boost::regex_match(str2, results, re))
 					getline(in2_file, str2);		// line 2 is empty
 				vector<string> l1, l2;
-				istringstream buf1(str1), buf2(str2);
-			    for(string token; getline(buf1, token, ' '); ) {
-			    	l1.push_back(token);
-			    	o_file << token;
+				boost::split(l1, str1, boost::is_any_of("\t "));
+				boost::split(l2, str2, boost::is_any_of("\t "));
+				for (int i = 0; i < l1.size(); ++i) {
+					o_file << l1[i] << " ";
+				}
+				for (int i = 1; i < l2.size(); ++i) {
+					o_file << l2[i] << " ";
+				}
+				//istringstream buf1(str1), buf2(str2);
+    			/*for(string token; getline(buf1, token, ' '); ) {
+			    	//l1.push_back(token);
+			    	o_file << token << " ";
 			    }
 			    for(string token; getline(buf2, token, ' '); ) {
-			    	l2.push_back(token);
-		    		o_file << token;
-			    }
+			    	//l2.push_back(token);
+		    		o_file << token << " ";
+			    }*/
+			    o_file << endl;
 			    empty = 0;
 			}
 		}
@@ -364,19 +373,26 @@ fprintf(stderr, "[SP]doSVMTagger: %s\n", command.c_str());
 		int line = 1;
 		while ( getline(out_file, str) ) {
 			istringstream iss(str);
-			string w, l, p;
-			iss >> w >> l >> p;
-			
-			wp_out_file << w << " " << p << endl;
-			conll_out_file << line << "\t" << w << "\t" << l << "\t" << p.substr(0, 1) << "\t" << p << "\t_" << endl;
-			cout << "[conll]line: " << line << "\t" << w << "\t" << l << "\t" << p.substr(0, 1) << "\t" << p << "\t_" << endl;
-
-			if (Config::verbose) {
-				if ( (iter%10) == 0) fprintf(stderr, ".");
-				if ( (iter%100) == 0) fprintf(stderr, "%d", iter);
+			if (str.empty()) { 
+				wp_out_file << endl;
+				conll_out_file << endl;
+				line = 1;
 			}
-			++line;
-			++iter;
+			else {
+				string w, l, p;
+				iss >> w >> l >> p;
+				
+				wp_out_file << w << " " << p << endl;
+				conll_out_file << line << "\t" << w << "\t" << l << "\t" << p.substr(0, 1) << "\t" << p << "\t_" << endl;
+				cout << "[conll]line: " << line << "\t" << w << "\t" << l << "\t" << p.substr(0, 1) << "\t" << p << "\t_" << endl;
+
+				if (Config::verbose) {
+					if ( (iter%10) == 0) fprintf(stderr, ".");
+					if ( (iter%100) == 0) fprintf(stderr, "%d", iter);
+				}
+				++line;
+				++iter;
+			}
 		}
 		out_file.close();
 	}
