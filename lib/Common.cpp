@@ -1,6 +1,7 @@
 #include "Common.hpp"
 
 #include <sstream>
+#include <cfloat>
 
 #include <boost/regex.hpp>
 
@@ -216,7 +217,7 @@ const int Common::SENSIBLE_MAX_N = 1000000;
 const string Common::ID_SEPARATOR = "@@";
 const string Common::CE = "CE";
 const string Common::LeM = "LeM";
-const double Common::NOT_DEFINED = -9999999;
+const double Common::NOT_DEFINED = -DBL_MIN;
 
 
 void Common::execute_or_die(string command, string message) {

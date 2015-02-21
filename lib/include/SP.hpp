@@ -31,6 +31,8 @@ private:
 	void SNT_extract_features(const sParsed &snt, bool use_chunks, SNTfeatures &SNTc, SNTfeatures &SNTp);
 	void SNT_compute_overlap_scores(SNTfeatures &Tout_c, SNTfeatures &Tout_p, SNTfeatures &Tref_c, SNTfeatures &Tref_p, map<string, double> &SCORES);
 
+	void get_segment_scores(const vector< map<string, double> > &scores, string feature, int mode, double &SYSscore, vector<double> &SEGscores);
+
 	void FILE_compute_overlap_metrics(const vector<sParsed> &FDout, const vector<sParsed> &FDref, vector< map<string, double> > &SCORES);
 
 	void FILE_merge_BIOS(string input1, string input2, string output);
@@ -40,6 +42,8 @@ private:
 	int FILE_parse_SVM(string input);
 	void FILE_parse(string input);
 	void FILE_parse_and_read(string input, vector<sParsed> &FILE);
+
+	void FILE_parse_split(string input);
 
 public:
 	SP();

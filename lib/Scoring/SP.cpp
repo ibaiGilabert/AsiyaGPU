@@ -479,6 +479,143 @@ void SP::FILE_parse(string input) {
 	else { fprintf(stderr, "[ERROR] Shallow parser not available for '%s' language!!\n", Config::LANG.c_str()); exit(1); }
 }
 
+
+void SP::FILE_parse_split(string input) {
+	// description _ performs the shallow parsing and writes 5 different files (used as input for SP metrics computation)
+	//               (ALL_WLPC, PoS, lemma, chunk label, chunk)
+   
+	//check whether chunks were calculated
+	bool use_chunks = (SP::rLANGBIOS.find(Config::LANG) != SP::rLANGBIOS.end()) ? true : false;
+
+	// wlpc or wlp
+	string spfile = (use_chunks) ? input+"."+SP::SPEXT+".wlpc" : input+"."+SP::SPEXT+".wlp";
+	if (!exists(boost::filesystem::path(spfile))) {
+		if (!exists(boost::filesystem::path(spfile+"."+Common::GZEXT))) {
+			string sys_aux = Common::GUNZIP+" "+spfile+"."+Common::GZEXT;	system(sys_aux.c_str());
+		}
+		else FILE_parse(input);
+	}
+
+	string pfile = input+"."+SP::SPEXT+".P";
+	string lfile = input+"."+SP::SPEXT+".L";
+	string cfile = input+"."+SP::SPEXT+".iob";
+	string Cfile = input+"."+SP::SPEXT+".C";
+
+	if ( (!exists(boost::filesystem::path(pfile)) and !exists(boost::filesystem::path(pfile+"."+Common::GZEXT))) or 
+		 (!exists(boost::filesystem::path(lfile)) and !exists(boost::filesystem::path(lfile+"."+Common::GZEXT))) or
+		 (!exists(boost::filesystem::path(pfile)) and !exists(boost::filesystem::path(pfile+"."+Common::GZEXT)) and use_chunks) or
+		 (!exists(boost::filesystem::path(pfile)) and !exists(boost::filesystem::path(pfile+"."+Common::GZEXT)) and use_chunks) ) {
+
+		// open files
+		ofstream p_file, l_file, c_file, C_file;
+
+		p_file.open(pfile.c_str());
+	    if (!p_file.is_open()) { fprintf(stderr, "couldn't open output pFILE file <%s>\n", pfile.c_str()); exit(1); }
+
+		l_file.open(lfile.c_str());
+	    if (!l_file.is_open()) { fprintf(stderr, "couldn't open output lFILE file <%s>\n", lfile.c_str()); exit(1); }
+
+	    if (use_chunks) {
+			c_file.open(cfile.c_str());
+		    if (!c_file.is_open()) { fprintf(stderr, "couldn't open output cFILE file <%s>\n", cfile.c_str()); exit(1); }
+
+			C_file.open(lfile.c_str());
+		    if (!C_file.is_open()) { fprintf(stderr, "couldn't open output CFILE file <%s>\n", Cfile.c_str()); exit(1); }
+	    }
+
+	    // process SPFILE
+		int EMPTY = 1;
+		boost::regex re("B-.*");
+		vector<string> Lp, Ll, Lc, LC;
+	    ifstream sp_file(spfile.c_str());
+	    if (sp_file) {
+	    	string line;
+	    	while( getline(sp_file, line) ) {
+	    			fprintf(stderr, "line: |%s|\n", line.c_str());
+	    		if (line.empty()) {
+		    		if (EMPTY) {	// empty sentence 
+		    			EMPTY = 0;
+		    		}
+					else {				// sentence separator
+						/*p_file << Lp[0];								// OJU!!!!!
+						for (int j = 1; j < Lp.size(); ++j) p_file << " " << Lp[j];
+						p_file << endl;*/
+						for (int k = 0; k < Lp.size(); ++k) {
+							p_file << Lp[k] << " ";
+							cout << Lp[k] << " ";
+						}
+						p_file << endl;
+						cout << endl;
+
+
+						/*l_file << Ll[0];								// OJU!!!!!
+						for (int j = 1; j < Ll.size(); ++j) l_file << " " << Ll[j];
+						l_file << endl;*/
+						for (int k = 0; k < Ll.size(); ++k) {
+							l_file << Ll[k] << " ";
+							cout << Ll[k] << " ";
+						}
+						l_file << endl;
+						cout << endl;
+
+			exit(1);
+						if (use_chunks) {
+							/*c_file << Lc[0];								// OJU!!!!!
+							for (int j = 1; j < Lc.size(); ++j) c_file << " " << Lc[j];
+							c_file << endl;*/
+							for (int k = 0; k < Lc.size(); ++k) {
+								c_file << Lc[k] << " ";
+								cout << Lc[k] << " ";
+							}
+							c_file << endl;
+							cout << endl;
+
+							/*C_file << LC[0];								// OJU!!!!!
+							for (int j = 1; j < LC.size(); ++j) C_file << " " << LC[j];
+							C_file << endl;*/	
+							for (int k = 0; k < LC.size(); ++k) {
+								C_file << LC[k] << " ";
+								cout << LC[k] << " ";
+							}
+							C_file << endl;
+							cout << endl;
+						}
+						Lp.clear();	Ll.clear();	Lc.clear();	LC.clear();
+						EMPTY = 1;
+					}
+				}
+				else {
+					vector<string> l;
+				    istringstream buf(line);
+				    for(string token; getline(buf, token, ' '); )
+				        l.push_back(token);
+				    Lp.push_back(l[1]);
+				 	Ll.push_back(l[2]);
+				 	boost::match_results<string::const_iterator> results;
+				 	if (use_chunks) Lc.push_back(l[3]);
+				 	if (use_chunks and l[3] == "0") LC.push_back(l[3]);
+				 	else if (use_chunks and boost::regex_match(l[3], results, re)) {
+				 		vector<string> C;
+					 	istringstream bufC(l[3]);
+					    for(string token; getline(buf, token, '-'); )
+					        C.push_back(token);
+					    LC.push_back(C[1]);
+					}
+					EMPTY = 0;
+				}
+	    	}
+	    	// close files
+	    	l_file.close();
+	    	p_file.close();
+	    	sp_file.close();
+	    	if (use_chunks) { c_file.close(); C_file.close(); }
+	    }
+    	else { fprintf(stderr, "couldn't open file <%s>\n", spfile.c_str()); exit(1); }
+	}
+	string sys_aux = Common::GZIP+" "+spfile;	system(sys_aux.c_str());
+}
+
+
 void SP::FILE_parse_and_read(string input, vector<sParsed> &FILE) {
 	// description _ reads "wplc or wpl" file, performing the shallow parsing (using SVMTool and BIOS) only if required
 	//               (wlpc -> TOKEN LEMMA PoS CHUNK)
@@ -506,12 +643,12 @@ void SP::FILE_parse_and_read(string input, vector<sParsed> &FILE) {
 			fprintf(stderr, "\t[%s -> %d]\n", it->first.c_str(), it->second);
 		}*/
 		while ( getline(sp_file, str) ) {
-			istringstream iss(str);
 			if (str.empty()) ++i;
 			else {
 				//if (i >= FILE.size());
 				wParsed word;
-			    for(string token; getline(iss, token, ' '); )
+			    istringstream iss(str);
+				for(string token; getline(iss, token, ' '); )
 			        word.push_back(token);
 				FILE[i].push_back(word); 
 			}
@@ -523,7 +660,8 @@ void SP::FILE_parse_and_read(string input, vector<sParsed> &FILE) {
 
 void SP::SNT_extract_features(const sParsed &snt, bool use_chunks, SNTfeatures &SNTc, SNTfeatures &SNTp) {
 	// description _ extracts features from a given shallow-parsed sentence.
-	for(int i = 0; i < snt.size(); ++i) {
+		boost::regex re("^[BI]-");
+		for(int i = 0; i < snt.size(); ++i) {
 		string word, lemma, pos, chunklabel;
 		if (use_chunks) {
 			word = snt[i][0];	lemma = snt[i][1];	pos = snt[i][2];	chunklabel = snt[i][3];
@@ -534,8 +672,7 @@ void SP::SNT_extract_features(const sParsed &snt, bool use_chunks, SNTfeatures &
 
 		string chunk = chunklabel;
 		if (USE_LEMMAS) {
-		    boost::regex re("^[BI]-");
-				fprintf(stderr, "\n\n chunK(a): %s", chunk.c_str());
+		    	fprintf(stderr, "\n\n chunK(a): %s", chunk.c_str());
 		    chunk = boost::regex_replace(chunk, re, "");
 				fprintf(stderr, "\t -> \t chunk(b): %s\n\n", chunk.c_str());
 			if (USE_LEMMAS) {
@@ -654,7 +791,7 @@ void SP::FILE_compute_overlap_metrics(const vector<sParsed> &FDout, const vector
 	//$LANG = CONFIG::LANG,
 	//$LC = ($CONFIG::CASE ne $Common::CASE_CI), 
 	//$UL = SP::USE_LEMMAS);
-
+	SCORES.resize(FDref.size());
 	bool use_chunks = SP::rLANGBIOS.find(Config::LANG) != SP::rLANGBIOS.end();
 	for (int topic = 0; topic < FDref.size(); ++topic) {
 		SNTfeatures OUTSNTc, OUTSNTp, REFSNTc, REFSNTp;
@@ -662,9 +799,40 @@ void SP::FILE_compute_overlap_metrics(const vector<sParsed> &FDout, const vector
 		SNT_extract_features(FDout[topic], use_chunks, OUTSNTc, OUTSNTp);
 		SNT_extract_features(FDref[topic], use_chunks, REFSNTc, REFSNTp);
 
-		map<string, double> score;
-		SNT_compute_overlap_scores(OUTSNTc, OUTSNTp, REFSNTc, REFSNTp, score);
-		SCORES[topic] = score;
+		//map<string, double> score;
+		SNT_compute_overlap_scores(OUTSNTc, OUTSNTp, REFSNTc, REFSNTp, SCORES[topic]);
+		//SCORES[topic] = score;
+	}
+}
+
+void SP::get_segment_scores(const vector< map<string, double> > &scores, string feature, int mode, double &SYSscore, vector<double> &SEGscores) {
+	// description _ retrieves scores at the segment level for the given feature
+	//               as well as the average system score (dealing with void values
+	//               according to the given 'mode' value)	
+	int N = 0;
+	SYSscore = 0;
+	SEGscores.resize(scores.size());
+	for (int i = 0; i < scores.size(); ++i) {
+		int n = 0;		// feature exists? 0:no, 1:yes
+		double SEGscr = 0;
+		map<string, double> topic = scores[i];
+		if (topic.find(feature) != topic.end()) {
+			SEGscr = topic[feature]; n = 1;
+		}
+
+		SYSscore += SEGscr;		N +=n;
+		if (n == 0) {
+			if (mode == 0) SEGscr = Common::NOT_DEFINED;
+			else if (mode == 1) SEGscr = 1;
+			else if (mode == 2) SEGscr = 0;
+		}
+		SEGscores[i] = SEGscr;
+	}
+
+	if (N == 0) {
+		if (mode == 0) SYSscore = Common::NOT_DEFINED;
+		else if (mode == 1) SYSscore = 1;
+		else if (mode == 2) SYSscore = 0;
 	}
 }
 
@@ -706,20 +874,52 @@ void SP::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 			}
 		}
 		if (DO_METRICS) {
-			vector<sParsed> FDout(TESTBED::wc[TGT]);
+			vector<sParsed> FDout(TESTBED::wc[TGT]);									// OJU!!!!
 			FILE_parse_and_read(TESTBED::Hsystems[TGT], FDout);
+			vector< map<string , double> > maxscores(TESTBED::wc[TGT]);					// OJU!!!!
 
-			for (map<string, string>::const_iterator it = TESTBED::Hrefs.begin(); it != TESTBED::Hrefs.end(); ++it) {
+			for (map<string, string>::const_iterator it_r = TESTBED::Hrefs.begin(); it_r != TESTBED::Hrefs.end(); ++it_r) {
 				//fprintf(stderr, "ref: [%s -> %s]\n", it->first.c_str(), it->second.c_str());
-				vector<sParsed> FDref(TESTBED::wc[it->first]);
-				FILE_parse_and_read(it->second, FDref);
+				vector<sParsed> FDref(TESTBED::wc[it_r->first]);
+				FILE_parse_and_read(it_r->second, FDref);
 				
 				vector< map<string, double> > scores;
 				FILE_compute_overlap_metrics(FDout, FDref, scores);
 
+				for (set<string>::const_iterator it_m = rF.begin(); it_m != rF.end(); ++it_m) {
+					if (Config::Hmetrics.find(*it_m) != Config::Hmetrics.end()) {
+						double MAXSYS, SYS;
+						vector<double> MAXSEGS, SEGS;
+						get_segment_scores(maxscores, *it_m, 0, MAXSYS, MAXSEGS);
+						get_segment_scores(scores, *it_m, 2, SYS, SEGS);
+						for (int i = 0; i < SEGS.size(); ++i) {
+							if (MAXSEGS[i] != Common::NOT_DEFINED) {
+								if (SEGS[i] > MAXSEGS[i]) {
+									if (scores[i].find(*it_m) != scores[i].end()) 
+										maxscores[i][*it_m] = scores[i][*it_m];
+								}
+							}
+							else
+								maxscores[i][*it_m] = scores[i][*it_m];
+						}
+					}
+				}
 
-				//FILE_compute_overlap();
+				if (GO_NIST and DO_NIST_METRICS) {
+					FILE_parse_split(it_r->second);
+				}
+
 			}
+
+
+			/*for (int i = 0; i < scores.size(); ++i) {
+                            fprintf(stderr, "--- SCORES[%d] ---\n", i);
+                            for(map<string, double>::const_iterator it = scores[i].begin(); it != scores[i].end(); ++it) {}
+                                    fprintf(stderr, "\t[%s -> %f]\n", it->first.c_str(), it->second);
+                            }
+                            fprintf(stderr, "-------------------\n");  
+                    }*/
+                    
 			/*fprintf(stderr, "--- FDout ---(%d)\n", (int)FDout.size());
 			for (int i = 0; i < FDout[0].size(); ++i) {
 				wParsed w_aux = FDout[0][i];
