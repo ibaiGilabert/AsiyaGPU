@@ -6,6 +6,10 @@
 #include <vector>
 #include <map>
 
+typedef vector<string> wParsed;
+typedef vector<wParsed> sParsed;
+typedef map<string, map< string, map<string, int> > > SNTfeatures;
+
 class SP : public SingleMetric {
 private:
 	static set<string> create_rSPeng();
@@ -24,14 +28,18 @@ private:
 	static const string SVMT, 	BIOS;
 	int USE_LEMMAS, USE_DICTS, USE_CHUNKS;
 
-	void FILE_merge_BIOS(string input1, string input2, string output);
+	void SNT_extract_features(const sParsed &snt, bool use_chunks, SNTfeatures &SNTc, SNTfeatures &SNTp);
+	void SNT_compute_overlap_scores(SNTfeatures &Tout_c, SNTfeatures &Tout_p, SNTfeatures &Tref_c, SNTfeatures &Tref_p, map<string, double> &SCORES);
 
+	void FILE_compute_overlap_metrics(const vector<sParsed> &FDout, const vector<sParsed> &FDref, vector< map<string, double> > &SCORES);
+
+	void FILE_merge_BIOS(string input1, string input2, string output);
 
 	void FILE_parse_BIOS(string input);
 	int FILE_parse_BKLY(string input);
 	int FILE_parse_SVM(string input);
 	void FILE_parse(string input);
-	void FILE_parse_and_read(string input);
+	void FILE_parse_and_read(string input, vector<sParsed> &FILE);
 
 public:
 	SP();

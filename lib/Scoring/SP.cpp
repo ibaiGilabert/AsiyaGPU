@@ -1,4 +1,5 @@
 #include "../include/SP.hpp"
+#include "../include/Overlap.hpp"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -11,7 +12,6 @@
 #include <boost/regex.hpp>
 #include <boost/filesystem.hpp>
 #include <boost/algorithm/string.hpp>
-
 
 
 const string SP::SPEXT = "SP";
@@ -217,8 +217,8 @@ SP::~SP() {}
 
 void SP::FILE_merge_BIOS(string input1, string input2, string output) {
 	// description _ merges tokens in two files so they conform the tokenization of the first file 
-fprintf(stderr, "[SP] to merge_BIOS (input1:%s, input2:%s, output: %s)\n", input1.c_str(), input2.c_str(), output.c_str());
 
+	//fprintf(stderr, "[SP] to merge_BIOS (input1:%s, input2:%s, output: %s)\n", input1.c_str(), input2.c_str(), output.c_str());
     ofstream o_file(output.c_str());
     if (!o_file.is_open()) { fprintf(stderr, "couldn't open output file <%s>\n", output.c_str()); exit(1); }
 
@@ -276,9 +276,6 @@ void SP::FILE_parse_BIOS(string input) {
 	string wlp_file = input+"."+SP::SPEXT+".wlp";
 	string wp_file = input+"."+SP::SPEXT+".wp";
 	string wc_file = input+"."+SP::SPEXT+".wc";
-
-	//string L = Config::LANG;
-	//string C = Config::CASE;
 
 	if ( !exists(boost::filesystem::path(wc_file)) and !exists(boost::filesystem::path(wc_file+"."+Common::GZEXT)) ) {
 		if ( !exists(boost::filesystem::path(wp_file)) and !exists(boost::filesystem::path(wp_file+"."+Common::GZEXT)) ) {
@@ -353,7 +350,7 @@ int SP::FILE_parse_SVM(string input) {
 
 
 	string command = Config::tools+"/"+SP::SVMT+"/scripts/doSVMTtagger.sh "+input+" "+wlp_file+" 0 "+lpath+" 4 LRL 0 0 "+lblex+" 0";
-fprintf(stderr, "[SP]doSVMTagger: %s\n", command.c_str());
+		fprintf(stderr, "[SP]doSVMTagger: %s\n", command.c_str());
     Common::execute_or_die(command, "[ERROR] problems running SVMTtagger...");
 
 	string conll_file = input+"."+SP::SPEXT+".conll";
@@ -384,7 +381,7 @@ fprintf(stderr, "[SP]doSVMTagger: %s\n", command.c_str());
 				
 				wp_out_file << w << " " << p << endl;
 				conll_out_file << line << "\t" << w << "\t" << l << "\t" << p.substr(0, 1) << "\t" << p << "\t_" << endl;
-				cout << "[conll]line: " << line << "\t" << w << "\t" << l << "\t" << p.substr(0, 1) << "\t" << p << "\t_" << endl;
+				//cout << "[conll]line: " << line << "\t" << w << "\t" << l << "\t" << p.substr(0, 1) << "\t" << p << "\t_" << endl;
 
 				if (Config::verbose) {
 					if ( (iter%10) == 0) fprintf(stderr, ".");
@@ -482,11 +479,195 @@ void SP::FILE_parse(string input) {
 	else { fprintf(stderr, "[ERROR] Shallow parser not available for '%s' language!!\n", Config::LANG.c_str()); exit(1); }
 }
 
-void SP::FILE_parse_and_read(string input) {
+void SP::FILE_parse_and_read(string input, vector<sParsed> &FILE) {
 	// description _ reads "wplc or wpl" file, performing the shallow parsing (using SVMTool and BIOS) only if required
-	//               (wplc -> TOKEN PoS LEMMA CHUNK)
+	//               (wlpc -> TOKEN LEMMA PoS CHUNK)
 	FILE_parse(input);
+
+	// WLPC
+	string spfile = input+"."+SP::SPEXT+".wlpc";
+	if (!exists(boost::filesystem::path(spfile)) and !exists(boost::filesystem::path(spfile+"."+Common::GZEXT))) {
+		// WLP (without C)
+		spfile = input+"."+SP::SPEXT+".wlp";
+	}
+
+	// unzip
+	if (!exists(boost::filesystem::path(spfile)) and exists(boost::filesystem::path(spfile+"."+Common::GZEXT))) {
+		string sys_aux = Common::GUNZIP+" "+spfile+"."+Common::GZEXT;
+		system(sys_aux.c_str());
+	}
+
+	ifstream sp_file(spfile.c_str());
+	if (sp_file) {
+		int i = 0;
+		string str;
+		//fprintf(stderr, "TESTEB::wc[%s]: %d\n", TGT.c_str(), TESTBED::wc[TGT]);
+		/*for (map<string, int>::const_iterator it = TESTBED::wc.begin(); it != TESTBED::wc.end(); ++it) {
+			fprintf(stderr, "\t[%s -> %d]\n", it->first.c_str(), it->second);
+		}*/
+		while ( getline(sp_file, str) ) {
+			istringstream iss(str);
+			if (str.empty()) ++i;
+			else {
+				//if (i >= FILE.size());
+				wParsed word;
+			    for(string token; getline(iss, token, ' '); )
+			        word.push_back(token);
+				FILE[i].push_back(word); 
+			}
+		}
+		sp_file.close();
+	}
+	else { fprintf(stderr, "couldn't open file <%s>\n", spfile.c_str()); exit(1); }
 }
+
+void SP::SNT_extract_features(const sParsed &snt, bool use_chunks, SNTfeatures &SNTc, SNTfeatures &SNTp) {
+	// description _ extracts features from a given shallow-parsed sentence.
+	for(int i = 0; i < snt.size(); ++i) {
+		string word, lemma, pos, chunklabel;
+		if (use_chunks) {
+			word = snt[i][0];	lemma = snt[i][1];	pos = snt[i][2];	chunklabel = snt[i][3];
+		}
+		else {
+			word = snt[i][0];	lemma = snt[i][1];	pos = snt[i][2];	chunklabel = "";
+		}
+
+		string chunk = chunklabel;
+		if (USE_LEMMAS) {
+		    boost::regex re("^[BI]-");
+				fprintf(stderr, "\n\n chunK(a): %s", chunk.c_str());
+		    chunk = boost::regex_replace(chunk, re, "");
+				fprintf(stderr, "\t -> \t chunk(b): %s\n\n", chunk.c_str());
+			if (USE_LEMMAS) {
+				SNTc[chunk]["W"][lemma]++;
+				SNTp[pos]["W"][lemma]++;
+			}
+			else {
+				SNTc[chunk]["W"][word]++;
+				SNTp[pos]["W"][word]++;	
+			}
+		}
+	}
+}
+
+void SP::SNT_compute_overlap_scores(SNTfeatures &Tout_c, SNTfeatures &Tout_p, SNTfeatures &Tref_c, SNTfeatures &Tref_p, map<string, double> &SCORES) {
+	// description _ computes distances between a candidate and a reference sentence (+features)
+	
+	//$LC = ($CONFIG::CASE ne $Common::CASE_CI), 
+
+	double HITS, TOTAL;
+	HITS = TOTAL = 0;
+	//map<string, int> F;
+	set<string> F;
+	for (map<string, map< string, map<string, int> > >::const_iterator it = Tout_c.begin(); it != Tout_c.end(); ++it) {
+		F.insert(it->first);
+	}
+	for (map<string, map< string, map<string, int> > >::const_iterator it = Tref_c.begin(); it != Tref_c.end(); ++it) {
+		F.insert(it->first);
+	}
+	// $SP::SPEXT-Oc(*)  -----------------------------------------------------------------------------
+	/*for (map<string, map< string, map<string, int> > >::const_iterator it = Tout["C"].begin(); it != Tout["C"].end(); ++it)
+		F[it->first] = 1;
+	for (map<string, map< string, map<string, int> > >::const_iterator it = Tref["C"].begin(); it != Tref["C"].end(); ++it)
+		F[it->first] = 1;*/
+	//for (map<string, int>::const_iterator it = F.begin(); it != F.end(); ++it) {
+	Overlap Ov;
+	for (set<string>::const_iterator it = F.begin(); it != F.end(); ++it) {
+		map<string, int> out_c = Tout_c[*it]["W"];
+		map<string, int> ref_c = Tref_c[*it]["W"];
+
+		pair<double, double> hits_total = Ov.compute_overlap(/*Tout_c[*it]["W"], Tref_c[*it]["W"],*/out_c, ref_c, (Config::CASE != Common::CASE_CI));
+		SCORES[SP::SPEXT+"-Oc("+*it+")"] = (hits_total.second == 0) ? 0 : (hits_total.first/hits_total.second);
+		HITS += hits_total.first;	TOTAL += hits_total.second;
+	}
+	SCORES[SP::SPEXT+"-Oc(*)"] = (TOTAL == 0) ? 0 : (HITS / TOTAL);
+
+	// $SP::SPEXT-Op(*)  -----------------------------------------------------------------------------
+	HITS = TOTAL = 0;
+	F.clear();
+	map<string, double> ADD, TADD;
+	for (SNTfeatures::const_iterator it = Tout_p.begin(); it != Tout_p.end(); ++it)
+		F.insert(it->first);
+	for (SNTfeatures::const_iterator it = Tref_p.begin(); it != Tref_p.end(); ++it)
+		F.insert(it->first);
+	for (set<string>::const_iterator it = F.begin(); it != F.end(); ++it) {
+		pair<double, double> hits_total = Ov.compute_overlap(Tout_p[*it]["W"], Tref_p[*it]["W"], (Config::CASE != Common::CASE_CI));
+		SCORES[SP::SPEXT+"-Op("+*it+")"] = (hits_total.second == 0) ? 0 : (hits_total.first/hits_total.second);
+		HITS += hits_total.first;	TOTAL += hits_total.second;
+	
+		// additional --
+		if (Config::LANG == Common::L_SPA or Config::LANG == Common::L_CAT) {
+            boost::regex re_A("^A.*");
+            boost::regex re_C("^C.*");
+            boost::regex re_D("^D.*");
+            boost::regex re_F("^F.*");
+            boost::regex re_I("^I.*");
+            boost::regex re_N("^N.*");
+            boost::regex re_P("^P.*");
+            boost::regex re_S("^S.*");
+            boost::regex re_V("^V.*");
+            boost::regex re_VA("^VA.*");
+            boost::regex re_VS("^VS.*");
+            boost::regex re_VM("^VM.*");
+			boost::match_results<string::const_iterator> results;
+            if (boost::regex_match(*it, results, re_A)) { ADD["A"] += hits_total.first; TADD["A"] += hits_total.second; }
+            else if (boost::regex_match(*it, results, re_C)) { ADD["C"] += hits_total.first; TADD["C"] += hits_total.second; }
+            else if (boost::regex_match(*it, results, re_D)) { ADD["D"] += hits_total.first; TADD["D"] += hits_total.second; }
+            else if (boost::regex_match(*it, results, re_F)) { ADD["F"] += hits_total.first; TADD["F"] += hits_total.second; }
+            else if (boost::regex_match(*it, results, re_I)) { ADD["I"] += hits_total.first; TADD["I"] += hits_total.second; }
+            else if (boost::regex_match(*it, results, re_N)) { ADD["N"] += hits_total.first; TADD["N"] += hits_total.second; }
+            else if (boost::regex_match(*it, results, re_P)) { ADD["P"] += hits_total.first; TADD["P"] += hits_total.second; }
+            else if (boost::regex_match(*it, results, re_S)) { ADD["S"] += hits_total.first; TADD["S"] += hits_total.second; }
+            else if (boost::regex_match(*it, results, re_V)) { ADD["V"] += hits_total.first; TADD["V"] += hits_total.second; }
+            else if (boost::regex_match(*it, results, re_VA)) { ADD["VA"] += hits_total.first; TADD["VA"] += hits_total.second; }
+            else if (boost::regex_match(*it, results, re_VS)) { ADD["VS"] += hits_total.first; TADD["VS"] += hits_total.second; }
+            else if (boost::regex_match(*it, results, re_VM)) { ADD["VM"] += hits_total.first; TADD["VM"] += hits_total.second; }
+		}
+		else if (Config::LANG == Common::L_ENG) {
+            boost::regex re_JJ("^JJ.*");
+            boost::regex re_NN("^NN.*");
+            boost::regex re_PRP("^PRP.*");
+            boost::regex re_RB("^RB.*");
+            boost::regex re_VB("^VB.*");
+            boost::regex re_W("^W.*");
+            boost::regex re_sch("^[\\#\\$\\'\\(\\)\\,\\.\\:\\`].*");
+			boost::match_results<string::const_iterator> results;
+            if (boost::regex_match(*it, results, re_JJ)) { ADD["JJ"] += hits_total.first; TADD["JJ"] += hits_total.second; }
+            else if (boost::regex_match(*it, results, re_NN)) { ADD["NN"] += hits_total.first; TADD["NN"] += hits_total.second; }
+            else if (boost::regex_match(*it, results, re_PRP)) { ADD["PRP"] += hits_total.first; TADD["PRP"] += hits_total.second; }
+            else if (boost::regex_match(*it, results, re_RB)) { ADD["RB"] += hits_total.first; TADD["RB"] += hits_total.second; }
+            else if (boost::regex_match(*it, results, re_VB)) { ADD["VB"] += hits_total.first; TADD["VB"] += hits_total.second; }
+            else if (boost::regex_match(*it, results, re_W)) { ADD["W"] += hits_total.first; TADD["W"] += hits_total.second; }
+            else if (boost::regex_match(*it, results, re_sch)) { ADD["F"] += hits_total.first; TADD["F"] += hits_total.second; }           
+		}
+	}
+	SCORES[SP::SPEXT+"-Op(*)"] = (TOTAL == 0) ? 0 : (HITS / TOTAL);
+
+	for(map<string, double>::const_iterator it = TADD.begin(); it != TADD.end(); ++it) {
+		SCORES[SP::SPEXT+"-Op("+it->first+")"] = (it->second == 0) ? 0 : (ADD[it->first] / it->second);
+	}	
+}
+
+void SP::FILE_compute_overlap_metrics(const vector<sParsed> &FDout, const vector<sParsed> &FDref, vector< map<string, double> > &SCORES) {
+	// description _ computes SP scores (single reference)
+
+	//$LANG = CONFIG::LANG,
+	//$LC = ($CONFIG::CASE ne $Common::CASE_CI), 
+	//$UL = SP::USE_LEMMAS);
+
+	bool use_chunks = SP::rLANGBIOS.find(Config::LANG) != SP::rLANGBIOS.end();
+	for (int topic = 0; topic < FDref.size(); ++topic) {
+		SNTfeatures OUTSNTc, OUTSNTp, REFSNTc, REFSNTp;
+
+		SNT_extract_features(FDout[topic], use_chunks, OUTSNTc, OUTSNTp);
+		SNT_extract_features(FDref[topic], use_chunks, REFSNTc, REFSNTp);
+
+		map<string, double> score;
+		SNT_compute_overlap_scores(OUTSNTc, OUTSNTp, REFSNTc, REFSNTp, score);
+		SCORES[topic] = score;
+	}
+}
+
 
 void SP::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 	// description _ computes SP scores (multiple references)
@@ -525,7 +706,30 @@ void SP::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 			}
 		}
 		if (DO_METRICS) {
-			FILE_parse_and_read(TESTBED::Hsystems[TGT]);
+			vector<sParsed> FDout(TESTBED::wc[TGT]);
+			FILE_parse_and_read(TESTBED::Hsystems[TGT], FDout);
+
+			for (map<string, string>::const_iterator it = TESTBED::Hrefs.begin(); it != TESTBED::Hrefs.end(); ++it) {
+				//fprintf(stderr, "ref: [%s -> %s]\n", it->first.c_str(), it->second.c_str());
+				vector<sParsed> FDref(TESTBED::wc[it->first]);
+				FILE_parse_and_read(it->second, FDref);
+				
+				vector< map<string, double> > scores;
+				FILE_compute_overlap_metrics(FDout, FDref, scores);
+
+
+				//FILE_compute_overlap();
+			}
+			/*fprintf(stderr, "--- FDout ---(%d)\n", (int)FDout.size());
+			for (int i = 0; i < FDout[0].size(); ++i) {
+				wParsed w_aux = FDout[0][i];
+				cout << "FDout[" << i << "]:";
+				fprintf(stderr, "FDout[%d](%d): ", i, (int)w_aux.size());
+				for (int j = 0; j < w_aux.size(); ++j) 
+					fprintf(stderr, " %s", w_aux[j].c_str());
+				fprintf(stderr, "\n");
+			}
+			fprintf(stderr, "-------------\n");*/
 		}
 
 	}
