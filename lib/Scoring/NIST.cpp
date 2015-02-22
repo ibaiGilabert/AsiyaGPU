@@ -164,7 +164,7 @@ vector<vector<double> > NIST::read_nist_segments(string reportNIST) {
 	return SEG;
 }
 
-void NIST::computeNIST(string TGT, string out, vector<double> &SYS, vector<vector<double> > &SEG) {
+void NIST::computeNIST(string TGT, string out, const map<string, string> &HREF, vector<double> &SYS, vector<vector<double> > &SEG) {
 	// description _ computes NIST score (by calling NIST mteval script) -> n = 1..4 (multiple references)
 	stringstream tNIST;
 
@@ -188,7 +188,7 @@ void NIST::computeNIST(string TGT, string out, vector<double> &SYS, vector<vecto
     boost::filesystem::path outNISTsgml(ssOut.str());
     boost::filesystem::path reportNISTsgml(ssReport.str());
 
-	if (!exists(refNISTsgml) or Config::remake) TB_NIST::SGML_f_create_mteval_multidoc(refNISTsgml.string(), 2);
+	if (!exists(refNISTsgml) or Config::remake) TB_NIST::SGML_f_create_mteval_multidoc(HREF, refNISTsgml.string(), 2);
 	if (!exists(srcNISTsgml) or Config::remake) TB_NIST::SGML_f_create_mteval_doc(TESTBED::src, srcNISTsgml.string(), 0);
 	if (!exists(outNISTsgml) or Config::remake) TB_NIST::SGML_f_create_mteval_doc(/*TESTBED::Hsystems[TGT]*/out, outNISTsgml.string(), 1);
 
@@ -218,7 +218,7 @@ void NIST::computeNIST(string TGT, string out, vector<double> &SYS, vector<vecto
 }
 
 
-MetricScore NIST::computeNISTN(string TGT, string out) {
+MetricScore NIST::computeNISTN(string TGT, string out, const map<string, string> &HREF) {
 	// description _ computes smoothed and NIST-5 score (by calling NIST mteval script) (multiple references)
 	stringstream tNISTN;
 
@@ -241,7 +241,7 @@ MetricScore NIST::computeNISTN(string TGT, string out) {
 
     if (!exists(srcXML) or Config::remake) TB_NIST::f_create_mteval_doc(TESTBED::src, srcXML.string(), TGT, Common::CASE_CS, 0);
     if (!exists(outXML) or Config::remake) TB_NIST::f_create_mteval_doc(/*TESTBED::Hsystems[TGT]*/out, outXML.string(), TGT, Common::CASE_CS,  1);
-    if (!exists(refXML) or Config::remake) TB_NIST::f_create_mteval_multidoc(refXML.string(), Common::CASE_CS, 2);
+    if (!exists(refXML) or Config::remake) TB_NIST::f_create_mteval_multidoc(HREF, refXML.string(), Common::CASE_CS, 2);
 
     stringstream sc;
     sc << "cd " << Common::DATA_PATH << "; " << toolNISTN << " -s " << ssSrc.str() << " -t " << ssOut.str() << " -r " << ssRef.str() << " >/dev/null 2>/dev/null";
@@ -266,7 +266,7 @@ MetricScore NIST::computeNISTN(string TGT, string out) {
 	return NIST_scores;
 }
 
-void NIST::doMetric(string TGT, string out, string REF, string prefix, Scores &hOQ) {
+void NIST::doMetric(string TGT, string out, string REF, const map<string, string> &HREF, string prefix, Scores &hOQ) {
    // description _ computes NIST score (by calling NIST mteval script) -> n = 1..4 (multiple references)
     vector<string> mNIST(NIST::rNIST.size());
 
@@ -340,7 +340,7 @@ void NIST::doMetric(string TGT, string out, string REF, string prefix, Scores &h
 			//my ($SYS, $SEGS) = NIST::computeMultiNIST($src, $out, $Href, $remakeREPORTS, $config->{CASE}, $tools, $verbose, $hOQ );
 	    	vector<double> SYS;
 	    	vector<vector<double> > SEG;
-	    	computeNIST(TGT, out, SYS, SEG);
+	    	computeNIST(TGT, out, HREF, SYS, SEG);
 
          	string prefN = prefix;	prefN += NIST::NISTEXT;	prefN += "-1";
 	    	vector<double> d_scores, s_scores;
@@ -424,7 +424,7 @@ void NIST::doMetric(string TGT, string out, string REF, string prefix, Scores &h
          	}
 	    	hOQ.save_hash_scores(prefN, TGT, REF, SYS[9], d_scores, s_scores);
 
-	    	MetricScore m = computeNISTN(TGT, out);
+	    	MetricScore m = computeNISTN(TGT, out, HREF);
 
 	    	if (Config::O_STORAGE == 1) {
 	    		sc_asiya.write_report(TGT, REF, NIST::NISTEXT, m);

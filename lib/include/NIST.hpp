@@ -15,11 +15,11 @@ private:
 	vector<double> read_nist(string reportNIST);
 	vector<vector<double> > read_nist_segments(string reportNIST);
 
-	MetricScore computeNISTN(string TGT, string out);
-	void computeNIST(string TGT, string out, vector<double> &SYS, vector<vector<double> > &SEG);
+	MetricScore computeNISTN(string TGT, string out, const map<string, string> &HREF);
+	void computeNIST(string TGT, string out, const map<string, string> &HREF, vector<double> &SYS, vector<vector<double> > &SEG);
 
 public:
-	void doMetric(string TGT, string out, string REF, string prefix, Scores &hOQ);
+	void doMetric(string TGT, string out, string REF, const map<string, string> &HREF, string prefix, Scores &hOQ);
 
 };
 

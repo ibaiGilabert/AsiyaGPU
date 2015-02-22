@@ -22,7 +22,7 @@ public:
 	//virtual ~SingleMetric() {}
 
 	virtual void doMetric(string TGT, string REF, string prefix, Scores &hOQ) {}
-	virtual void doMetric(string TGT, string out, string REF, string prefix, Scores &hOQ) {}
+	virtual void doMetric(string TGT, string out, string REF, const map<string, string> &HREF, string prefix, Scores &hOQ) {}
 	virtual void doMetric(string TGT, string REF, string prefix, int stemming, Scores &hOQ) {}	//DR i ROUGE
 
 };

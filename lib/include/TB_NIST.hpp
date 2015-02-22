@@ -27,12 +27,12 @@ public:
 
 	// write middle score files
 	static void SGML_f_create_mteval_doc(string input, string output, int type);
-	static void SGML_f_create_mteval_multidoc(string output, int type);
+	static void SGML_f_create_mteval_multidoc(const map<string, string> &HREF, string output, int type);
 
 	static void SGML_GTM_f_create_mteval_doc(string input, string output);
 
 	static void f_create_mteval_doc(string input, string output, string TGT, string cas, int type);
-	static void f_create_mteval_multidoc(string output, string cas, int type);
+	static void f_create_mteval_multidoc(const map<string, string> &HREF, string output, string cas, int type);
 };
 
 #endif

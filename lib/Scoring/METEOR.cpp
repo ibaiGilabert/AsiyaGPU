@@ -86,7 +86,7 @@ void METEOR::computeMETEOR(string TGT, string variant, MetricScore &res) {
     boost::filesystem::path refMTRsgml_path(refMTRsgml);
 
 	if (!exists(outMTRsgml_path) or Config::remake) TB_NIST::f_create_mteval_doc(TESTBED::Hsystems[TGT], outMTRsgml, TGT, Config::CASE, 1);
-    if (!exists(refMTRsgml_path) or Config::remake) TB_NIST::f_create_mteval_multidoc(refMTRsgml, Config::CASE, 2);
+    if (!exists(refMTRsgml_path) or Config::remake) TB_NIST::f_create_mteval_multidoc(TESTBED::Hrefs, refMTRsgml, Config::CASE, 2);
 
     string modules;
     if (variant == "exact") modules = "exact";

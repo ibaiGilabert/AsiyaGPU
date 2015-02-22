@@ -43,7 +43,7 @@ void TER::computeTER(string TGT, string variant, int do_neg, MetricScore &res) {
     if (!exists(outNISTxml) or Config::remake)
     	TB_NIST::f_create_mteval_doc(TESTBED::Hsystems[TGT], ssOut.str(), TGT, Common::CASE_CS, 1);
     if (!exists(refNISTxml) or Config::remake)
-    	TB_NIST::f_create_mteval_multidoc(ssRef.str(), Common::CASE_CS, 2);
+    	TB_NIST::f_create_mteval_multidoc(TESTBED::Hrefs, ssRef.str(), Common::CASE_CS, 2);
 
     string mem_options = "-Xmx2G ";	//cluster executions, write minimum 1G
     string phrase_db, stop_words, wn_dict, param, caseopt;

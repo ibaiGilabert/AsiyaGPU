@@ -385,14 +385,14 @@ void TB_NIST::SGML_f_create_mteval_doc(string input, string output, int type) {
     xmlCleanupParser();
 }
 
-void TB_NIST::SGML_f_create_mteval_multidoc(string output, int type) {
+void TB_NIST::SGML_f_create_mteval_multidoc(const map<string, string> &HREF, string output, int type) {
     // description _ creation of a NIST SGML evaluation document from a "sentence-per-line" format corpus
     //              (multi-document)
     if (Config::verbose) {
-        map<string, string>::const_iterator it = TESTBED::Hrefs.begin();
+        map<string, string>::const_iterator it = HREF.begin(); //TESTBED::Hrefs.begin();
         fprintf(stderr, "OPENING [%s", it->first.c_str());
         ++it;
-        while (it != TESTBED::Hrefs.end()) {
+        while (it != HREF.end() /*TESTBED::Hrefs.end()*/) {
             fprintf(stderr, " %s", it->first.c_str());
             ++it;
         }
@@ -420,7 +420,8 @@ void TB_NIST::SGML_f_create_mteval_multidoc(string output, int type) {
     srand(time(NULL));
     //string randomInput, randomInput2;
 
-    for (map<string, string>::const_iterator it = TESTBED::Hrefs.begin(); it != TESTBED::Hrefs.end(); ++it) {
+    //for (map<string, string>::const_iterator it = TESTBED::Hrefs.begin(); it != TESTBED::Hrefs.end(); ++it) {
+    for (map<string, string>::const_iterator it = HREF.begin(); it != HREF.end(); ++it) {
         SGML_f_create_create_doc(it->second, output, it->first, doc, root_node);
     }
     xmlSaveFormatFileEnc(output.c_str(), doc, "UTF-8", 1);
@@ -623,15 +624,15 @@ void TB_NIST::f_create_mteval_doc(string input, string output, string TGT, strin
     f_create_create_doc(input, output, TGT, cas, type);
 }
 
-void TB_NIST::f_create_mteval_multidoc(string output, string cas, int type) {
+void TB_NIST::f_create_mteval_multidoc(const map<string, string> &HREF, string output, string cas, int type) {
     // description _ creation of a NIST XML evaluation document from a "sentence-per-line" format corpus
     //               (conforming ftp://jaguar.ncsl.nist.gov/mt/resources/mteval-xml-v1.5.dtd)
     //               (multi-document)
     if (Config::verbose) {
-        map<string, string>::const_iterator it = TESTBED::Hrefs.begin();
+        map<string, string>::const_iterator it = HREF.begin(); //TESTBED::Hrefs.begin();
         fprintf(stderr, "OPENING [%s", it->first.c_str());
         ++it;
-        while (it != TESTBED::Hrefs.end()) {
+        while (it != HREF.end() /*TESTBED::Hrefs.end()*/) {
             fprintf(stderr, " %s", it->first.c_str());
             ++it;
         }
@@ -644,7 +645,8 @@ void TB_NIST::f_create_mteval_multidoc(string output, string cas, int type) {
         cout << "\ttype: " << type << endl << ")" << endl;
     */
     srand(time(NULL));
-    for (map<string, string>::const_iterator it = TESTBED::Hrefs.begin(); it != TESTBED::Hrefs.end(); ++it) {
+    //for (map<string, string>::const_iterator it = TESTBED::Hrefs.begin(); it != TESTBED::Hrefs.end(); ++it) {
+    for (map<string, string>::const_iterator it = HREF.begin(); it != HREF.end(); ++it) {
         f_create_create_doc(it->second, output, it->first, cas, type);
     }
 }

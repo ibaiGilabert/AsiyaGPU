@@ -176,7 +176,7 @@ void BLEU::computeBLEU(string TGT, vector<double> &SYS, vector<vector<double> > 
     boost::filesystem::path outBLEUsgml(ssOut.str());
     boost::filesystem::path reportBLEUsgml(ssReport.str());
 
-	if (!exists(refBLEUsgml) or Config::remake) TB_NIST::SGML_f_create_mteval_multidoc(refBLEUsgml.string(), 2);
+	if (!exists(refBLEUsgml) or Config::remake) TB_NIST::SGML_f_create_mteval_multidoc(TESTBED::Hrefs, refBLEUsgml.string(), 2);
 	if (!exists(srcBLEUsgml) or Config::remake) TB_NIST::SGML_f_create_mteval_doc(TESTBED::src, srcBLEUsgml.string(), 0);
 	if (!exists(outBLEUsgml) or Config::remake) TB_NIST::SGML_f_create_mteval_doc(TESTBED::Hsystems[TGT], outBLEUsgml.string(), 1);
 
@@ -228,7 +228,7 @@ MetricScore BLEU::computeBLEUN(string TGT) {
 
     if (!exists(srcXML) or Config::remake) TB_NIST::f_create_mteval_doc(TESTBED::src, srcXML.string(), TGT, Common::CASE_CS, 0);
     if (!exists(outXML) or Config::remake) TB_NIST::f_create_mteval_doc(TESTBED::Hsystems[TGT], outXML.string(), TGT, Common::CASE_CS,  1);
-    if (!exists(refXML) or Config::remake) TB_NIST::f_create_mteval_multidoc(refXML.string(), Common::CASE_CS, 2);
+    if (!exists(refXML) or Config::remake) TB_NIST::f_create_mteval_multidoc(TESTBED::Hrefs, refXML.string(), Common::CASE_CS, 2);
 
     stringstream sc;
     sc << "cd " << Common::DATA_PATH << "; " << toolBLEUN << " -s " << ssSrc.str() << " -t " << ssOut.str() << " -r " << ssRef.str() << " >/dev/null 2>/dev/null";

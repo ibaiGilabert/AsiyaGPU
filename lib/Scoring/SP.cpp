@@ -504,8 +504,8 @@ void SP::FILE_parse_split(string input) {
 
 	if ( (!exists(boost::filesystem::path(pfile)) and !exists(boost::filesystem::path(pfile+"."+Common::GZEXT))) or 
 		 (!exists(boost::filesystem::path(lfile)) and !exists(boost::filesystem::path(lfile+"."+Common::GZEXT))) or
-		 (!exists(boost::filesystem::path(pfile)) and !exists(boost::filesystem::path(pfile+"."+Common::GZEXT)) and use_chunks) or
-		 (!exists(boost::filesystem::path(pfile)) and !exists(boost::filesystem::path(pfile+"."+Common::GZEXT)) and use_chunks) ) {
+		 (!exists(boost::filesystem::path(cfile)) and !exists(boost::filesystem::path(cfile+"."+Common::GZEXT)) and use_chunks) or
+		 (!exists(boost::filesystem::path(Cfile)) and !exists(boost::filesystem::path(Cfile+"."+Common::GZEXT)) and use_chunks) ) {
 
 		// open files
 		ofstream p_file, l_file, c_file, C_file;
@@ -596,7 +596,7 @@ void SP::FILE_parse_split(string input) {
 				 	Lp.push_back(l[2]);
 				 	boost::match_results<string::const_iterator> results;
 				 	if (use_chunks) Lc.push_back(l[3]);
-				 	if (use_chunks and l[3] == "0") LC.push_back(l[3]);
+				 	if (use_chunks and l[3] == "O") LC.push_back(l[3]);
 				 	else if (use_chunks and boost::regex_match(l[3], results, re)) {
 				 		vector<string> C;
 					 	istringstream bufC(l[3]);
@@ -860,12 +860,12 @@ void SP::FILE_compute_MultiNIST_metrics(string TGT, string REF, Scores &hOQ) {
 	}
 
 	NIST nist;
-	nist.doMetric(TGT, pfile_out, REF, SP::SPEXT+"-p", hOQ);
+	nist.doMetric(TGT, pfile_out, REF, pHref, SP::SPEXT+"-p", hOQ);
 	if (USE_LEMMAS)
-		nist.doMetric(TGT, lfile_out, REF, SP::SPEXT+"-l", hOQ);
+		nist.doMetric(TGT, lfile_out, REF, lHref, SP::SPEXT+"-l", hOQ);
 	if (use_chunks) {
-		nist.doMetric(TGT, cfile_out, REF, SP::SPEXT+"-iob", hOQ);
-		nist.doMetric(TGT, Cfile_out, REF, SP::SPEXT+"-c", hOQ);
+		nist.doMetric(TGT, cfile_out, REF, cHref, SP::SPEXT+"-iob", hOQ);
+		nist.doMetric(TGT, Cfile_out, REF, CHref, SP::SPEXT+"-c", hOQ);
 	}
 }
 
