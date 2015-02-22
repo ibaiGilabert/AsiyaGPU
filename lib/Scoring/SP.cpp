@@ -1,5 +1,6 @@
 #include "../include/SP.hpp"
 #include "../include/Overlap.hpp"
+#include "../include/NIST.hpp"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -519,7 +520,7 @@ void SP::FILE_parse_split(string input) {
 			c_file.open(cfile.c_str());
 		    if (!c_file.is_open()) { fprintf(stderr, "couldn't open output cFILE file <%s>\n", cfile.c_str()); exit(1); }
 
-			C_file.open(lfile.c_str());
+			C_file.open(Cfile.c_str());
 		    if (!C_file.is_open()) { fprintf(stderr, "couldn't open output CFILE file <%s>\n", Cfile.c_str()); exit(1); }
 	    }
 
@@ -531,7 +532,7 @@ void SP::FILE_parse_split(string input) {
 	    if (sp_file) {
 	    	string line;
 	    	while( getline(sp_file, line) ) {
-	    			fprintf(stderr, "line: |%s|\n", line.c_str());
+	    			//cout << "line: |" << line << "|" << endl;	//fprintf(stderr, "line: |%s|\n", line.c_str());
 	    		if (line.empty()) {
 		    		if (EMPTY) {	// empty sentence 
 		    			EMPTY = 0;
@@ -540,45 +541,40 @@ void SP::FILE_parse_split(string input) {
 						/*p_file << Lp[0];								// OJU!!!!!
 						for (int j = 1; j < Lp.size(); ++j) p_file << " " << Lp[j];
 						p_file << endl;*/
-						for (int k = 0; k < Lp.size(); ++k) {
+						for (int k = 0; k < Lp.size(); ++k)
 							p_file << Lp[k] << " ";
-							cout << Lp[k] << " ";
-						}
 						p_file << endl;
-						cout << endl;
-
 
 						/*l_file << Ll[0];								// OJU!!!!!
 						for (int j = 1; j < Ll.size(); ++j) l_file << " " << Ll[j];
 						l_file << endl;*/
-						for (int k = 0; k < Ll.size(); ++k) {
+						for (int k = 0; k < Ll.size(); ++k)
 							l_file << Ll[k] << " ";
-							cout << Ll[k] << " ";
-						}
 						l_file << endl;
-						cout << endl;
 
-			exit(1);
+	                        /*fprintf(stderr, "\tLp(after) ->");
+	                        for (int k = 0; k < Lp.size(); ++k) fprintf(stderr, " %s", Lp[k].c_str());
+	                        fprintf(stderr, "\n"); 
+	                        fprintf(stderr, "\tLl(after) ->");
+	                        for (int k = 0; k < Ll.size(); ++k) fprintf(stderr, " %s", Ll[k].c_str());
+	                        fprintf(stderr, "\n");
+	                    	eixt(1);*/
+
+
 						if (use_chunks) {
 							/*c_file << Lc[0];								// OJU!!!!!
 							for (int j = 1; j < Lc.size(); ++j) c_file << " " << Lc[j];
 							c_file << endl;*/
-							for (int k = 0; k < Lc.size(); ++k) {
+							for (int k = 0; k < Lc.size(); ++k)
 								c_file << Lc[k] << " ";
-								cout << Lc[k] << " ";
-							}
 							c_file << endl;
-							cout << endl;
 
 							/*C_file << LC[0];								// OJU!!!!!
 							for (int j = 1; j < LC.size(); ++j) C_file << " " << LC[j];
 							C_file << endl;*/	
-							for (int k = 0; k < LC.size(); ++k) {
+							for (int k = 0; k < LC.size(); ++k)
 								C_file << LC[k] << " ";
-								cout << LC[k] << " ";
-							}
 							C_file << endl;
-							cout << endl;
 						}
 						Lp.clear();	Ll.clear();	Lc.clear();	LC.clear();
 						EMPTY = 1;
@@ -589,15 +585,22 @@ void SP::FILE_parse_split(string input) {
 				    istringstream buf(line);
 				    for(string token; getline(buf, token, ' '); )
 				        l.push_back(token);
-				    Lp.push_back(l[1]);
-				 	Ll.push_back(l[2]);
+
+					    /*fprintf(stderr, "--- l parsed --\n");
+					    for (int k = 0; k < l.size(); ++k) {
+					    	fprintf(stderr, "l[%d]: %s\n", k, l[k].c_str());
+					    }
+					    fprintf(stderr, "---------------\n");*/
+
+				    Ll.push_back(l[1]);
+				 	Lp.push_back(l[2]);
 				 	boost::match_results<string::const_iterator> results;
 				 	if (use_chunks) Lc.push_back(l[3]);
 				 	if (use_chunks and l[3] == "0") LC.push_back(l[3]);
 				 	else if (use_chunks and boost::regex_match(l[3], results, re)) {
 				 		vector<string> C;
 					 	istringstream bufC(l[3]);
-					    for(string token; getline(buf, token, '-'); )
+					    for(string token; getline(bufC, token, '-'); )
 					        C.push_back(token);
 					    LC.push_back(C[1]);
 					}
@@ -672,9 +675,9 @@ void SP::SNT_extract_features(const sParsed &snt, bool use_chunks, SNTfeatures &
 
 		string chunk = chunklabel;
 		if (USE_LEMMAS) {
-		    	fprintf(stderr, "\n\n chunK(a): %s", chunk.c_str());
+		    	//fprintf(stderr, "\n\n chunK(a): %s", chunk.c_str());
 		    chunk = boost::regex_replace(chunk, re, "");
-				fprintf(stderr, "\t -> \t chunk(b): %s\n\n", chunk.c_str());
+				//fprintf(stderr, "\t -> \t chunk(b): %s\n\n", chunk.c_str());
 			if (USE_LEMMAS) {
 				SNTc[chunk]["W"][lemma]++;
 				SNTp[pos]["W"][lemma]++;
@@ -836,6 +839,51 @@ void SP::get_segment_scores(const vector< map<string, double> > &scores, string 
 	}
 }
 
+void SP::FILE_compute_MultiNIST_metrics(string TGT, string REF, Scores &hOQ) {
+	// description _ computes SP scores (single reference) on a NIST basis
+	bool use_chunks = SP::rLANGBIOS.find(Config::LANG) != SP::rLANGBIOS.end();
+	string out = TESTBED::Hsystems[TGT];
+
+	string pfile_out = out+"."+SP::SPEXT+".P";
+	string lfile_out = out+"."+SP::SPEXT+".L";
+	string cfile_out = out+"."+SP::SPEXT+".iob";
+	string Cfile_out = out+"."+SP::SPEXT+".C";
+	
+	map<string, string> lHref, pHref, cHref, CHref;
+	for (map<string, string>::const_iterator it = TESTBED::Hrefs.begin(); it != TESTBED::Hrefs.end(); ++it) {
+		lHref[it->first] = it->second+"."+SP::SPEXT+".L";
+		pHref[it->first] = it->second+"."+SP::SPEXT+".P";
+		if (use_chunks) {
+			cHref[it->first] = it->second+"."+SP::SPEXT+".iob";
+			CHref[it->first] = it->second+"."+SP::SPEXT+".C";
+		}
+	}
+
+	NIST nist;
+	nist.doMetric(TGT, pfile_out, REF, SP::SPEXT+"-p", hOQ);
+	if (USE_LEMMAS)
+		nist.doMetric(TGT, lfile_out, REF, SP::SPEXT+"-l", hOQ);
+	if (use_chunks) {
+		nist.doMetric(TGT, cfile_out, REF, SP::SPEXT+"-iob", hOQ);
+		nist.doMetric(TGT, Cfile_out, REF, SP::SPEXT+"-c", hOQ);
+	}
+}
+
+void SP::remove_parse_plit_file(string input) {
+	// description _ removes auxiliar files created for NERC computation
+	string pfile = input+"."+SP::SPEXT+".P";
+	string lfile = input+"."+SP::SPEXT+".L";
+	string cfile = input+"."+SP::SPEXT+".iob";
+	string Cfile = input+"."+SP::SPEXT+".C";
+
+	if (Config::verbose) fprintf(stderr, "[SP] erasing SP auxiliar file [PLcC]...\n");
+
+	string sys_aux;
+	if ( exists(boost::filesystem::path(pfile)) ) { sys_aux = "rm -f "+pfile; system(sys_aux.c_str()); }
+	if ( exists(boost::filesystem::path(lfile)) ) { sys_aux = "rm -f "+lfile; system(sys_aux.c_str()); }
+	if ( exists(boost::filesystem::path(cfile)) ) { sys_aux = "rm -f "+cfile; system(sys_aux.c_str()); }
+	if ( exists(boost::filesystem::path(Cfile)) ) { sys_aux = "rm -f "+Cfile; system(sys_aux.c_str()); }
+}
 
 void SP::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 	// description _ computes SP scores (multiple references)
@@ -860,6 +908,8 @@ void SP::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 		int DO_METRICS, DO_NIST_METRICS;
 		DO_METRICS = DO_NIST_METRICS = Config::remake;
 
+        boost::regex re(".*NIST.*");
+
 		if (!DO_METRICS) {
 			for (set<string>::const_iterator it = rF.begin(); it != rF.end(); ++it) {
 				string reportXML = Common::DATA_PATH+"/"+Common::REPORTS+"/"+TGT+"/"+REF+"/"+*it+"."+Common::XMLEXT;
@@ -867,7 +917,6 @@ void SP::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 				boost::filesystem::path p_gz(reportXML+"."+Common::GZEXT);
 				if (Config::Hmetrics.find(*it) != Config::Hmetrics.end() and !exists(p) and !exists(p_gz)) {
 					DO_METRICS = 1;
-		            boost::regex re(".*NIST.*");
 		            boost::match_results<string::const_iterator> results;
 		            if (boost::regex_match(*it, results, re)) DO_NIST_METRICS = 1;
 		        }
@@ -877,6 +926,8 @@ void SP::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 			vector<sParsed> FDout(TESTBED::wc[TGT]);									// OJU!!!!
 			FILE_parse_and_read(TESTBED::Hsystems[TGT], FDout);
 			vector< map<string , double> > maxscores(TESTBED::wc[TGT]);					// OJU!!!!
+
+			SC_ASIYA sc_asiya;
 
 			for (map<string, string>::const_iterator it_r = TESTBED::Hrefs.begin(); it_r != TESTBED::Hrefs.end(); ++it_r) {
 				//fprintf(stderr, "ref: [%s -> %s]\n", it->first.c_str(), it->second.c_str());
@@ -908,9 +959,35 @@ void SP::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 				if (GO_NIST and DO_NIST_METRICS) {
 					FILE_parse_split(it_r->second);
 				}
-
 			}
 
+			for (set<string>::const_iterator it_m = rF.begin(); it_m != rF.end(); ++it_m) {
+			    boost::match_results<string::const_iterator> results;
+		        if (Config::Hmetrics.find(*it_m) != Config::Hmetrics.end() and !boost::regex_match(*it_m, results, re)) {
+		        	string report_xml = Common::DATA_PATH+"/"+Common::REPORTS+"/"+TGT+"/"+REF+"/"+*it_m+"."+Common::XMLEXT;
+					if ( (!exists(boost::filesystem::path(report_xml)) and !exists(boost::filesystem::path(report_xml+"."+Common::GZEXT))) or Config::remake) {
+						double SYS;
+						vector<double> SEGS, d_scores, s_scores;
+						get_segment_scores(maxscores, *it_m, 2, SYS, SEGS);
+						TESTBED::get_seg_doc_scores(SEGS, 0, TGT, d_scores, s_scores);
+						if (Config::O_STORAGE == 1) {
+				    		sc_asiya.write_report(TGT, REF, *it_m, SYS, d_scores, s_scores);
+			         		fprintf(stderr, "SC_ASIYA DOCUMENT %s CREATED\n", it_m->c_str());
+			         	}
+					}
+		        }
+			}
+
+			if (GO_NIST and DO_NIST_METRICS) {
+				FILE_parse_split(TESTBED::Hsystems[TGT]);
+				FILE_compute_MultiNIST_metrics(TGT, REF, hOQ);
+				remove_parse_plit_file(TESTBED::Hsystems[TGT]);
+				for (map<string, string>::const_iterator it_r = TESTBED::Hrefs.begin(); it_r != TESTBED::Hrefs.end(); ++it_r)
+					remove_parse_plit_file(it_r->second);
+			}
+		}
+	}
+}
 
 			/*for (int i = 0; i < scores.size(); ++i) {
                             fprintf(stderr, "--- SCORES[%d] ---\n", i);
@@ -930,8 +1007,3 @@ void SP::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 				fprintf(stderr, "\n");
 			}
 			fprintf(stderr, "-------------\n");*/
-		}
-
-	}
-
-}

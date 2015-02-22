@@ -239,7 +239,7 @@ void Core::doMultiMetrics(string HYP, const set<string> &Lref, Scores &hOQ) {
 		SingleMetric *pSP = new SP;
 
 		pBLEU->doMetric(HYP, REF, "", hOQ);
-		pNIST->doMetric(HYP, REF, "", hOQ);
+		pNIST->doMetric(HYP, TESTBED::Hsystems[HYP], REF, "", hOQ);
 		//pBLEUNIST->doMetric(HYP, REF, "", hOQ);
 		pMETEOR->doMetric(HYP, REF, "", hOQ);
 		pROUGE->doMetric(HYP, REF, "", 1, hOQ);

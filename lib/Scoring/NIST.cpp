@@ -164,7 +164,7 @@ vector<vector<double> > NIST::read_nist_segments(string reportNIST) {
 	return SEG;
 }
 
-void NIST::computeNIST(string TGT, vector<double> &SYS, vector<vector<double> > &SEG) {
+void NIST::computeNIST(string TGT, string out, vector<double> &SYS, vector<vector<double> > &SEG) {
 	// description _ computes NIST score (by calling NIST mteval script) -> n = 1..4 (multiple references)
 	stringstream tNIST;
 
@@ -173,7 +173,7 @@ void NIST::computeNIST(string TGT, vector<double> &SYS, vector<vector<double> > 
 	if (Config::CASE == Common::CASE_CS) tNIST << "-c "; //toolBLEU += "-c ";
 	string toolNIST = tNIST.str();
 
-	cout << "toolNIST ->" << toolNIST << endl << endl;
+	//cout << "toolNIST ->" << toolNIST << endl << endl;
 
 	srand(time(NULL));
 	double nr = rand() % (Common::NRAND + 1);	//random number [0, Common::NRAND];
@@ -190,7 +190,7 @@ void NIST::computeNIST(string TGT, vector<double> &SYS, vector<vector<double> > 
 
 	if (!exists(refNISTsgml) or Config::remake) TB_NIST::SGML_f_create_mteval_multidoc(refNISTsgml.string(), 2);
 	if (!exists(srcNISTsgml) or Config::remake) TB_NIST::SGML_f_create_mteval_doc(TESTBED::src, srcNISTsgml.string(), 0);
-	if (!exists(outNISTsgml) or Config::remake) TB_NIST::SGML_f_create_mteval_doc(TESTBED::Hsystems[TGT], outNISTsgml.string(), 1);
+	if (!exists(outNISTsgml) or Config::remake) TB_NIST::SGML_f_create_mteval_doc(/*TESTBED::Hsystems[TGT]*/out, outNISTsgml.string(), 1);
 
 	if (Config::verbose) fprintf(stderr, "building %s\n", reportNISTsgml.string().c_str());
 
@@ -218,7 +218,7 @@ void NIST::computeNIST(string TGT, vector<double> &SYS, vector<vector<double> > 
 }
 
 
-MetricScore NIST::computeNISTN(string TGT) {
+MetricScore NIST::computeNISTN(string TGT, string out) {
 	// description _ computes smoothed and NIST-5 score (by calling NIST mteval script) (multiple references)
 	stringstream tNISTN;
 
@@ -227,7 +227,7 @@ MetricScore NIST::computeNISTN(string TGT) {
 	if (Config::CASE == Common::CASE_CS) tNISTN << "-c ";
 	string toolNISTN = tNISTN.str();
 
-	cout << "toolNISTN ->" << toolNISTN << endl << endl;
+	//cout << "toolNISTN ->" << toolNISTN << endl << endl;
 
 	double nr = rand() % (Common::NRAND + 1);	//random number [0, Common::NRAND];
 	stringstream ssSrc, ssOut, ssRef;
@@ -240,7 +240,7 @@ MetricScore NIST::computeNISTN(string TGT) {
     boost::filesystem::path refXML(ssRef.str());
 
     if (!exists(srcXML) or Config::remake) TB_NIST::f_create_mteval_doc(TESTBED::src, srcXML.string(), TGT, Common::CASE_CS, 0);
-    if (!exists(outXML) or Config::remake) TB_NIST::f_create_mteval_doc(TESTBED::Hsystems[TGT], outXML.string(), TGT, Common::CASE_CS,  1);
+    if (!exists(outXML) or Config::remake) TB_NIST::f_create_mteval_doc(/*TESTBED::Hsystems[TGT]*/out, outXML.string(), TGT, Common::CASE_CS,  1);
     if (!exists(refXML) or Config::remake) TB_NIST::f_create_mteval_multidoc(refXML.string(), Common::CASE_CS, 2);
 
     stringstream sc;
@@ -265,7 +265,8 @@ MetricScore NIST::computeNISTN(string TGT) {
 
 	return NIST_scores;
 }
-void NIST::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
+
+void NIST::doMetric(string TGT, string out, string REF, string prefix, Scores &hOQ) {
    // description _ computes NIST score (by calling NIST mteval script) -> n = 1..4 (multiple references)
     vector<string> mNIST(NIST::rNIST.size());
 
@@ -339,7 +340,7 @@ void NIST::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 			//my ($SYS, $SEGS) = NIST::computeMultiNIST($src, $out, $Href, $remakeREPORTS, $config->{CASE}, $tools, $verbose, $hOQ );
 	    	vector<double> SYS;
 	    	vector<vector<double> > SEG;
-	    	computeNIST(TGT, SYS, SEG);
+	    	computeNIST(TGT, out, SYS, SEG);
 
          	string prefN = prefix;	prefN += NIST::NISTEXT;	prefN += "-1";
 	    	vector<double> d_scores, s_scores;
@@ -423,7 +424,7 @@ void NIST::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
          	}
 	    	hOQ.save_hash_scores(prefN, TGT, REF, SYS[9], d_scores, s_scores);
 
-	    	MetricScore m = computeNISTN(TGT);
+	    	MetricScore m = computeNISTN(TGT, out);
 
 	    	if (Config::O_STORAGE == 1) {
 	    		sc_asiya.write_report(TGT, REF, NIST::NISTEXT, m);
