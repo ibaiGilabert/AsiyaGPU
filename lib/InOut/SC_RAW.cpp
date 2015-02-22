@@ -16,7 +16,7 @@ using namespace std;
 
 void SC_RAW::print_MMATRIX_header(const vector<string> &sorted_metrics) {
     // description _ print matrix score header (on a metric basis)
-    char buffer[512];
+    char buffer[1024];
     if (Config::G == Common::G_SYS) {
         sprintf(buffer, "%-*s %-*s", Config::setid_length, "SET", Config::sysid_length, "SYS");
     } else if (Config::G == Common::G_DOC) {
@@ -26,6 +26,8 @@ void SC_RAW::print_MMATRIX_header(const vector<string> &sorted_metrics) {
     } else if (Config::G == Common::G_ALL) {
         sprintf(buffer, "%-*s %-*s %-*s %-*s", Config::setid_length, "SET", Config::sysid_length, "SYS", Config::docid_length, "DOC", Config::segid_length, "SEG");
     } else { fprintf(stderr, "[ERROR] unknown granularity <%s>!\n", Config::G.c_str()); exit(1); }
+    //fprintf(stderr, "\n\nsetid_length: %d, setid: %s\n", Config::setid_length, setid.c_str());
+    //fprintf(stderr, "\tsysid_length: %d, sysid: %s\n", Config::setid_length, sysid.c_str());
 
     printf("%s", buffer);
     for(int i = 0; i < sorted_metrics.size(); ++i)
@@ -40,7 +42,7 @@ void SC_RAW::print_MMATRIX_header(const vector<string> &sorted_metrics) {
 void SC_RAW::print_system_scores_MMATRIX(string sys, const Scores &hOQ, const vector<string> &sorted_metrics, string ref) {
     // description _ print scores for a given system according to a given metric
     //int doALL =
-    char buffer[512];
+    char buffer[1024];
     string SO = *Config::systems.begin();
     string setid = TESTBED::IDX[SO][0][0];
     string sysid = TESTBED::IDX[sys][1][2];

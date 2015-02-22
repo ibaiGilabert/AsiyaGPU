@@ -837,6 +837,7 @@ void SP::get_segment_scores(const vector< map<string, double> > &scores, string 
 		else if (mode == 1) SYSscore = 1;
 		else if (mode == 2) SYSscore = 0;
 	}
+	else SYSscore /= N;
 }
 
 void SP::FILE_compute_MultiNIST_metrics(string TGT, string REF, Scores &hOQ) {
@@ -961,6 +962,13 @@ void SP::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 				}
 			}
 
+				/*for (int i = 0; i < maxscores.size(); ++i) {
+                        fprintf(stderr, "--- SCORES[%d] ---\n", i);
+                        for(map<string, double>::const_iterator it = maxscores[i].begin(); it != maxscores[i].end(); ++it)
+                            fprintf(stderr, "\t[%s -> %f]\n", it->first.c_str(), it->second);
+                        fprintf(stderr, "-------------------\n");  
+                }*/
+
 			for (set<string>::const_iterator it_m = rF.begin(); it_m != rF.end(); ++it_m) {
 			    boost::match_results<string::const_iterator> results;
 		        if (Config::Hmetrics.find(*it_m) != Config::Hmetrics.end() and !boost::regex_match(*it_m, results, re)) {
@@ -974,6 +982,7 @@ void SP::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 				    		sc_asiya.write_report(TGT, REF, *it_m, SYS, d_scores, s_scores);
 			         		fprintf(stderr, "SC_ASIYA DOCUMENT %s CREATED\n", it_m->c_str());
 			         	}
+         	         	hOQ.save_hash_scores(*it_m, TGT, REF, SYS, d_scores, s_scores);
 					}
 		        }
 			}
@@ -991,9 +1000,8 @@ void SP::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 
 			/*for (int i = 0; i < scores.size(); ++i) {
                             fprintf(stderr, "--- SCORES[%d] ---\n", i);
-                            for(map<string, double>::const_iterator it = scores[i].begin(); it != scores[i].end(); ++it) {}
+                            for(map<string, double>::const_iterator it = scores[i].begin(); it != scores[i].end(); ++it)
                                     fprintf(stderr, "\t[%s -> %f]\n", it->first.c_str(), it->second);
-                            }
                             fprintf(stderr, "-------------------\n");  
                     }*/
                     

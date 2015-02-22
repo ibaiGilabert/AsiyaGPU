@@ -45,14 +45,14 @@ vector<double> NIST::read_nist(string reportNIST) {
 	    while (getline(file, str)) {
 	    	boost::match_results<string::const_iterator> results;
 	        if (boost::regex_match(str, results, re)) {
-	            cout << "\t That was a kind of line" << endl;
+	            //cout << "\t That was a kind of line" << endl;
 	            string s = results[0];
-	            cout << "line: |" << s << "|" << endl;
+	            //cout << "line: |" << s << "|" << endl;
 
 				boost::regex re2("^\\s+NIST:\\s+");	//, boost::regex::perl|boost::regex::icase);
 				s = boost::regex_replace(s, re2, "");
 
-				cout << "\tline1: " << s << endl;
+				//cout << "\tline1: " << s << endl;
 
 	            istringstream iss(s);
 				double value;
@@ -67,19 +67,19 @@ vector<double> NIST::read_nist(string reportNIST) {
         file.close();
     } else { fprintf(stderr, "couldn't open file: %s\n", reportNIST.c_str()); exit(1); }
 
-	    for (int i = 0; i < 5; ++i) cout << "lnist[" << i << "]: " << lnist[i] << endl;
-	    for (int i = 0; i < 5; ++i) cout << "lnisti[" << i << "]: " << lnisti[i] << endl;
+	    //for (int i = 0; i < 5; ++i) cout << "lnist[" << i << "]: " << lnist[i] << endl;
+	    //for (int i = 0; i < 5; ++i) cout << "lnisti[" << i << "]: " << lnisti[i] << endl;
 
     vector<double> l(0);
     l.insert(l.begin(), lnist.begin(), lnist.end());
-	    cout << "l after first insertion: ";
+	    /*cout << "l after first insertion: ";
 	    for (int i = 0; i < l.size(); ++i) cout << l[i] << ", ";
-	    cout << endl;
+	    cout << endl;*/
 
     l.insert(l.begin() + 5, lnisti.begin(), lnisti.end());
-	    cout << "l after second insertion: ";
+	    /*cout << "l after second insertion: ";
 	    for (int i = 0; i < l.size(); ++i) cout << l[i] << ", ";
-	    cout << endl;
+	    cout << endl;*/
 
 	return l;
 }
@@ -102,9 +102,9 @@ vector<vector<double> > NIST::read_nist_segments(string reportNIST) {
 	    	boost::match_results<string::const_iterator> results;
 
 	        if (boost::regex_match(str, results, re1)) {
-	            cout << "\t That was a kind of line" << endl;
+	            //cout << "\t That was a kind of line" << endl;
 	            string s = results[0];
-	            cout << "line: |" << s << "|" << endl;
+	            //cout << "line: |" << s << "|" << endl;
 
 				vector<string> strs;
 				boost::split(strs, s, boost::is_any_of("\t "));
@@ -117,9 +117,9 @@ vector<vector<double> > NIST::read_nist_segments(string reportNIST) {
 	   			//for (int i = 0; i < strs.size(); ++i) cout << "strs[" << i << "]: " << strs[i] << endl;
 			}
 			else if (boost::regex_match(str, results, re2)) {
-	            cout << "\t That was a kind of line" << endl;
+	            //cout << "\t That was a kind of line" << endl;
 	            string s = results[0];
-	            cout << "line: |" << s << "|" << endl;
+	            //cout << "line: |" << s << "|" << endl;
 
 				vector<string> strs;
 				boost::split(strs, s, boost::is_any_of("\t "));
@@ -132,9 +132,9 @@ vector<vector<double> > NIST::read_nist_segments(string reportNIST) {
 	   			//for (int i = 0; i < strs.size(); ++i) cout << "strs[" << i << "]: " << strs[i] << endl;
 			}
 			else if (boost::regex_match(str, results, re3)) {
-	            cout << "\t That was a kind of line" << endl;
+	            //cout << "\t That was a kind of line" << endl;
 	            string s = results[0];
-	            cout << "line: |" << s << "|" << endl;
+	            //cout << "line: |" << s << "|" << endl;
 
 				vector<string> strs;
 	            boost::split(strs, s, boost::is_any_of("\t "));
@@ -348,7 +348,7 @@ void NIST::doMetric(string TGT, string out, string REF, const map<string, string
 
 	    	if (Config::O_STORAGE == 1) {
 	    		sc_asiya.write_report(TGT, REF, prefN, SYS[0], d_scores, s_scores);
-         		cout << "IQXML DOCUMENT " << prefN << " CREATED" << endl;
+         		fprintf(stderr, "SC_ASIYA DOCUMENT %s\n", prefN.c_str());
          	}
          	hOQ.save_hash_scores(prefN, TGT, REF, SYS[0], d_scores, s_scores);
 
@@ -356,7 +356,7 @@ void NIST::doMetric(string TGT, string out, string REF, const map<string, string
 			TESTBED::get_seg_doc_scores(SEG[1], 0, TGT, d_scores, s_scores);
 			if (Config::O_STORAGE == 1) {
 	    		sc_asiya.write_report(TGT, REF, prefN, SYS[1], d_scores, s_scores);
-         		cout << "IQXML DOCUMENT " << prefN << " CREATED" << endl;
+         		fprintf(stderr, "SC_ASIYA DOCUMENT %s\n", prefN.c_str());
          	}
          	hOQ.save_hash_scores(prefN, TGT, REF, SYS[1], d_scores, s_scores);
 
@@ -364,7 +364,7 @@ void NIST::doMetric(string TGT, string out, string REF, const map<string, string
 			TESTBED::get_seg_doc_scores(SEG[2], 0, TGT, d_scores, s_scores);
          	if (Config::O_STORAGE == 1) {
 	    		sc_asiya.write_report(TGT, REF, prefN, SYS[2], d_scores, s_scores);
-         		cout << "IQXML DOCUMENT " << prefN << " CREATED" << endl;
+         		fprintf(stderr, "SC_ASIYA DOCUMENT %s\n", prefN.c_str());
          	}
 	    	hOQ.save_hash_scores(prefN, TGT, REF, SYS[2], d_scores, s_scores);
 
@@ -372,7 +372,7 @@ void NIST::doMetric(string TGT, string out, string REF, const map<string, string
 			TESTBED::get_seg_doc_scores(SEG[3], 0, TGT, d_scores, s_scores);
          	if (Config::O_STORAGE == 1) {
 	    		sc_asiya.write_report(TGT, REF, prefN, SYS[3], d_scores, s_scores);
-         		cout << "IQXML DOCUMENT " << prefN << " CREATED" << endl;
+         		fprintf(stderr, "SC_ASIYA DOCUMENT %s\n", prefN.c_str());
          	}
 	    	hOQ.save_hash_scores(prefN, TGT, REF, SYS[3], d_scores, s_scores);
 
@@ -380,7 +380,7 @@ void NIST::doMetric(string TGT, string out, string REF, const map<string, string
 			TESTBED::get_seg_doc_scores(SEG[4], 0, TGT, d_scores, s_scores);
          	if (Config::O_STORAGE == 1) {
 	    		sc_asiya.write_report(TGT, REF, prefN, SYS[4], d_scores, s_scores);
-         		cout << "IQXML DOCUMENT " << prefN << " CREATED" << endl;
+         		fprintf(stderr, "SC_ASIYA DOCUMENT %s\n", prefN.c_str());
          	}
 	    	hOQ.save_hash_scores(prefN, TGT, REF, SYS[4], d_scores, s_scores);
 
@@ -388,7 +388,7 @@ void NIST::doMetric(string TGT, string out, string REF, const map<string, string
 			TESTBED::get_seg_doc_scores(SEG[5], 0, TGT, d_scores, s_scores);
          	if (Config::O_STORAGE == 1) {
 	    		sc_asiya.write_report(TGT, REF, prefN, SYS[5], d_scores, s_scores);
-         		cout << "IQXML DOCUMENT " << prefN << " CREATED" << endl;
+         		fprintf(stderr, "SC_ASIYA DOCUMENT %s\n", prefN.c_str());
          	}
 	    	hOQ.save_hash_scores(prefN, TGT, REF, SYS[5], d_scores, s_scores);
 
@@ -396,7 +396,7 @@ void NIST::doMetric(string TGT, string out, string REF, const map<string, string
 	    	TESTBED::get_seg_doc_scores(SEG[6], 0, TGT, d_scores, s_scores);
          	if (Config::O_STORAGE == 1) {
 	    		sc_asiya.write_report(TGT, REF, prefN, SYS[6], d_scores, s_scores);
-         		cout << "IQXML DOCUMENT " << prefN << " CREATED" << endl;
+         		fprintf(stderr, "SC_ASIYA DOCUMENT %s\n", prefN.c_str());
          	}
 	    	hOQ.save_hash_scores(prefN, TGT, REF, SYS[6], d_scores, s_scores);
 
@@ -404,7 +404,7 @@ void NIST::doMetric(string TGT, string out, string REF, const map<string, string
 	    	TESTBED::get_seg_doc_scores(SEG[7], 0, TGT, d_scores, s_scores);
          	if (Config::O_STORAGE == 1) {
 	    		sc_asiya.write_report(TGT, REF, prefN, SYS[7], d_scores, s_scores);
-         		cout << "IQXML DOCUMENT " << prefN << " CREATED" << endl;
+         		fprintf(stderr, "SC_ASIYA DOCUMENT %s\n", prefN.c_str());
          	}
 	    	hOQ.save_hash_scores(prefN, TGT, REF, SYS[7], d_scores, s_scores);
 
@@ -412,7 +412,7 @@ void NIST::doMetric(string TGT, string out, string REF, const map<string, string
 	    	TESTBED::get_seg_doc_scores(SEG[8], 0, TGT, d_scores, s_scores);
          	if (Config::O_STORAGE == 1) {
 	    		sc_asiya.write_report(TGT, REF, prefN, SYS[8], d_scores, s_scores);
-         		cout << "IQXML DOCUMENT " << prefN << " CREATED" << endl;
+         		fprintf(stderr, "SC_ASIYA DOCUMENT %s\n", prefN.c_str());
          	}
 	    	hOQ.save_hash_scores(prefN, TGT, REF, SYS[8], d_scores, s_scores);
 
@@ -420,17 +420,17 @@ void NIST::doMetric(string TGT, string out, string REF, const map<string, string
 	    	TESTBED::get_seg_doc_scores(SEG[9], 0, TGT, d_scores, s_scores);
          	if (Config::O_STORAGE == 1) {
 	    		sc_asiya.write_report(TGT, REF, prefN, SYS[9], d_scores, s_scores);
-         		cout << "IQXML DOCUMENT " << prefN << " CREATED" << endl;
+         		fprintf(stderr, "SC_ASIYA DOCUMENT %s\n", prefN.c_str());
          	}
 	    	hOQ.save_hash_scores(prefN, TGT, REF, SYS[9], d_scores, s_scores);
 
 	    	MetricScore m = computeNISTN(TGT, out, HREF);
-
+	    	prefN = prefix + NIST::NISTEXT;
 	    	if (Config::O_STORAGE == 1) {
-	    		sc_asiya.write_report(TGT, REF, NIST::NISTEXT, m);
-         		cout << "IQXML DOCUMENT " << NIST::NISTEXT << " CREATED" << endl;
+	    		sc_asiya.write_report(TGT, REF, prefN, m);
+         		fprintf(stderr, "SC_ASIYA DOCUMENT %s\n", prefN.c_str());
          	}
-         	hOQ.save_hash_scores(NIST::NISTEXT, TGT, REF, m);
+         	hOQ.save_hash_scores(prefN, TGT, REF, m);
 	    }
 
 	}
