@@ -216,6 +216,11 @@ DONE LIST
 	->	BLEU, NIST, ROUGE;	resultats escirts correctament.
 
 
+INSTRUCCIONS PER AFEGIR UNA METRIC
+
+	->	Afegir a la funcio Core::doMultiMetrics la metrica corresponent amb la seva crida al doMetric.
+	->	Afegir a la funció Config::validateConfiguration la identificacio de la metrica a la seva familia.
+
 QUESTIONS
 
 	->	Al executar el gtm-1.4 tinc aquests problemes

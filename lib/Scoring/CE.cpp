@@ -1,4 +1,5 @@
 #include "../include/CE.hpp"
+#include "../include/SP.hpp"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -14,65 +15,9 @@
 
 
 const string CE::CEEXT = Common::CE;
-
-// metric sets
-
-map<string, int> CE::create_rCE() {
-	map<string, int> rCE;
-	rCE[CE::CEEXT + "-srclen"] = 1;		rCE[CE::CEEXT + "-srclogp"] = 1;	rCE[CE::CEEXT + "-srcippl"] = 1;
-	rCE[CE::CEEXT + "-srcoov"] = 1;		rCE[CE::CEEXT + "-logp"] = 1;		rCE[CE::CEEXT + "-ippl"] = 1;
-	rCE[CE::CEEXT + "-oov"] = 1;
-	rCE[CE::CEEXT + "-srclogpP"] = 1;	rCE[CE::CEEXT + "-srcipplP"] = 1;	rCE[CE::CEEXT + "-logpP"] = 1;	rCE[CE::CEEXT + "-ipplP"] = 1;
-	rCE[CE::CEEXT + "-srclogpC"] = 1;	rCE[CE::CEEXT + "-srcipplC"] = 1;	rCE[CE::CEEXT + "-logpC"] = 1;		rCE[CE::CEEXT + "-ipplC"] = 1;
-	rCE[CE::CEEXT + "-length"] = 1;		rCE[CE::CEEXT + "-long"] = 1;		rCE[CE::CEEXT + "-short"] = 1;
-	rCE[CE::CEEXT + "-symbols"] = 1;	rCE[CE::CEEXT + "-Op"] = 1;			rCE[CE::CEEXT + "-Oc"] = 1;
-	rCE[CE::CEEXT + "-Nc"] = 1;			rCE[CE::CEEXT + "-Oe"] = 1;			rCE[CE::CEEXT + "-Ne"] = 1;
-	rCE[CE::CEEXT + "-BiDictA"] = 1;	rCE[CE::CEEXT + "-BiDictO"] = 1;
-	return rCE;
-}
-const map<string, int> CE::rCE = create_rCE();
-
-map<string, int> CE::create_srcENG() {
-	map<string, int> srcENG;
-	srcENG[CE::CEEXT + "-srclen"] = 1;		srcENG[CE::CEEXT + "-srclogp"] = 1;		srcENG[CE::CEEXT + "-srcippl"] = 1;
-	srcENG[CE::CEEXT + "-srcoov"] = 1;
-	srcENG[CE::CEEXT + "-srclogpP"] = 1;	srcENG[CE::CEEXT + "-srcipplP"] = 1;
-	srcENG[CE::CEEXT + "-srclogpC"] = 1;	srcENG[CE::CEEXT + "-srcipplC"] = 1;
-	srcENG[CE::CEEXT + "-BiDictA"] = 1;
-	return srcENG;
-}
-const map<string, int> CE::srcENG = create_srcENG();
-
-map<string, int> CE::create_trgENG() {
-	map<string, int> trgENG;
-	trgENG[CE::CEEXT + "-logp"] = 1;	trgENG[CE::CEEXT + "-ippl"] = 1;	trgENG[CE::CEEXT + "-oov"] = 1;
-	trgENG[CE::CEEXT + "-logpP"] = 1;	trgENG[CE::CEEXT + "-ipplP"] = 1;
-	trgENG[CE::CEEXT + "-logpC"] = 1;	trgENG[CE::CEEXT + "-ipplC"] = 1;
-	return trgENG;
-}
-const map<string, int> CE::trgENG = create_trgENG();
-
-
-map<string, int> CE::create_notENGSPA() {
-	map<string, int> notENGSPA;
-	notENGSPA[CE::CEEXT + "-length"] = 1;	notENGSPA[CE::CEEXT + "-long"] = 1;	notENGSPA[CE::CEEXT + "-short"] = 1;	notENGSPA[CE::CEEXT + "-symbols"] = 1;
-	notENGSPA[CE::CEEXT + "-Op"] = 1;	notENGSPA[CE::CEEXT + "-Oc"] = 1;	notENGSPA[CE::CEEXT + "-Nc"] = 1;
-	notENGSPA[CE::CEEXT + "-Oe"] = 1;	notENGSPA[CE::CEEXT + "-Ne"] = 1;
-	return notENGSPA;
-}
-const map<string, int> CE::notENGSPA = create_notENGSPA();
-
-map<string, string> CE::create_rBIDICT() {
-	map<string, string> rBIDICT;
-	rBIDICT[Common::L_ENG + "-" + Common::L_SPA] = "apertium-dicts/en-es.dict";
-	rBIDICT[Common::L_SPA + "-" + Common::L_ENG] = "apertium-dicts/es-en.dict";
-	return rBIDICT;
-}
-const map<string, string> CE::rBIDICT = create_rBIDICT();
+const string CE::BIDICT_SEPARATOR = "\\|";	// quotemeta("|");
 
 const int CE::BIDICT_MAX_NGRAM_LENGTH = 5;
-
-
 
 const string CE::LM_path = "srilm";
 const string CE::LM_ext = "LM";
@@ -81,292 +26,237 @@ const string CE::raw = "raw";
 const string CE::pos = "pos";
 const string CE::chunk = "chunk";
 
+set<string> CE::create_rCE() {
+	set<string> rCE;
+	rCE.insert(CE::CEEXT+"-srclen");		rCE.insert(CE::CEEXT+"-srclogp");	rCE.insert(CE::CEEXT+"-srcippl");
+	rCE.insert(CE::CEEXT+"-srcoov");		rCE.insert(CE::CEEXT+"-logp");		rCE.insert(CE::CEEXT+"-ippl");
+	rCE.insert(CE::CEEXT+"-oov");
+	rCE.insert(CE::CEEXT+"-srclogpP");		rCE.insert(CE::CEEXT+"-srcipplP");	rCE.insert(CE::CEEXT+"-logpP");		rCE.insert(CE::CEEXT+"-ipplP");
+	rCE.insert(CE::CEEXT+"-srclogpC");		rCE.insert(CE::CEEXT+"-srcipplC");	rCE.insert(CE::CEEXT+"-logpC");		rCE.insert(CE::CEEXT+"-ipplC");
+	rCE.insert(CE::CEEXT+"-length");		rCE.insert(CE::CEEXT+"-long");		rCE.insert(CE::CEEXT+"-short");
+	rCE.insert(CE::CEEXT+"-symbols");		rCE.insert(CE::CEEXT+"-Op");		rCE.insert(CE::CEEXT+"-Oc");
+	rCE.insert(CE::CEEXT+"-Nc");			rCE.insert(CE::CEEXT+"-Oe");		rCE.insert(CE::CEEXT+"-Ne");
+	rCE.insert(CE::CEEXT+"-BiDictA");		rCE.insert(CE::CEEXT+"-BiDictO");
+	return rCE;
+}
+const set<string> CE::rCE = create_rCE();
 
 
-map<string, string> CE::create_LM_name() {
-	map<string, string> LM_name;
-	r[Common::L_ENG + "-" + Common::L_SPA] = "apertium-dicts/en-es.dict";
-	rBIDICT[Common::L_SPA + "-" + Common::L_ENG] = "apertium-dicts/es-en.dict";
+set<string> CE::create_srcENG() {
+	set<string> srcENG;
+	srcENG.insert(CE::CEEXT+"-srclen");
+	srcENG.insert(CE::CEEXT+"-srclogp");		srcENG.insert(CE::CEEXT+"-srcippl");		srcENG.insert(CE::CEEXT+"-srcoov");
+	srcENG.insert(CE::CEEXT+"-srclogpP");		srcENG.insert(CE::CEEXT+"-srcipplP");
+	srcENG.insert(CE::CEEXT+"-srclogpC");		srcENG.insert(CE::CEEXT+"-srcipplC");
+	srcENG.insert(CE::CEEXT+"-BiDictA");
+	return srcENG;
+}
+const set<string> CE::srcENG = create_srcENG();
+
+
+set<string> CE::create_trgENG() {
+	set<string> trgENG;
+	trgENG.insert(CE::CEEXT+"-logp");	trgENG.insert(CE::CEEXT+"-ippl");	trgENG.insert(CE::CEEXT+"-oov");
+	trgENG.insert(CE::CEEXT+"-logpP");	trgENG.insert(CE::CEEXT+"-ipplP");
+	trgENG.insert(CE::CEEXT+"-logpC");	trgENG.insert(CE::CEEXT+"-ipplC");
+	return trgENG;
+}
+const set<string> CE::trgENG = create_trgENG();
+
+
+set<string> CE::create_notENGSPA() {
+	set<string> notENGSPA;
+	notENGSPA.insert(CE::CEEXT+"-length");	notENGSPA.insert(CE::CEEXT+"-long");	notENGSPA.insert(CE::CEEXT+"-short");	notENGSPA.insert(CE::CEEXT+"-symbols");
+	notENGSPA.insert(CE::CEEXT+"-Op");		notENGSPA.insert(CE::CEEXT+"-Oc");		notENGSPA.insert(CE::CEEXT+"-Nc");		notENGSPA.insert(CE::CEEXT+"-Oe");	
+	notENGSPA.insert(CE::CEEXT+"-Ne");
+	return notENGSPA;
+}
+const set<string> CE::notENGSPA = create_notENGSPA();
+
+
+set<string> CE::create_anyLANG() {
+	set<string> any_LANG;
+	any_LANG.insert(CE::CEEXT+"-length");	any_LANG.insert(CE::CEEXT+"-long");	any_LANG.insert(CE::CEEXT+"-short");	any_LANG.insert(CE::CEEXT+"-symbols");
+	return any_LANG;
+}
+const set<string> CE::anyLANG = create_anyLANG();
+
+
+set<string> CE::create_rPUNCT() {
+	set<string> rPUNCT;
+	rPUNCT.insert(".");	 rPUNCT.insert(",");	rPUNCT.insert("!");	rPUNCT.insert("?");	rPUNCT.insert("\'"); rPUNCT.insert("\""); rPUNCT.insert("("); rPUNCT.insert(")");
+	rPUNCT.insert("[");	 rPUNCT.insert("]");	rPUNCT.insert("{");	rPUNCT.insert("}");	rPUNCT.insert("$");	 rPUNCT.insert("%"); rPUNCT.insert("&");  rPUNCT.insert("/");
+	rPUNCT.insert("\\"); rPUNCT.insert("=");	rPUNCT.insert("*");	rPUNCT.insert("-");	rPUNCT.insert("_");  rPUNCT.insert("|"); rPUNCT.insert("<");  rPUNCT.insert(">");
+	rPUNCT.insert("@");	 rPUNCT.insert("€");	rPUNCT.insert("#");
+	rPUNCT.insert("\x00A3");	// pound
+	rPUNCT.insert("\x0060");	rPUNCT.insert("\x00B4");	rPUNCT.insert("\x20""18");	rPUNCT.insert("\x20""19");	rPUNCT.insert("\x02""BC");	// apostrophe
+	rPUNCT.insert("\x00AB");	rPUNCT.insert("\x00BB");	rPUNCT.insert("\x20""1C");	rPUNCT.insert("\x20""1D"); 	// quotation
+	rPUNCT.insert("\x002D");	rPUNCT.insert("\x20""10");	rPUNCT.insert("\x20""11");	rPUNCT.insert("\x20""12");
+	rPUNCT.insert("\x20""13");	rPUNCT.insert("\x20""14");	rPUNCT.insert("\x20""15");	rPUNCT.insert("\x20""7B");
+	rPUNCT.insert("\x20""8B");	rPUNCT.insert("\x22""12");	// hyphen
+	rPUNCT.insert("\x20""26");	// three dots
+	return rPUNCT;
+}
+const set<string> CE::rPUNCT = create_rPUNCT();
+
+
+map<string, string> CE::create_rBIDICT() {
+	map<string, string> rBIDICT;
+	rBIDICT[Common::L_ENG+"-"+Common::L_SPA] = "apertium-dicts/en-es.dict";
+	rBIDICT[Common::L_SPA+"-"+Common::L_ENG] = "apertium-dicts/es-en.dict";
 	return rBIDICT;
 }
 const map<string, string> CE::rBIDICT = create_rBIDICT();
-	             $Common::L_ENG => { $CE::raw => "europarl-v5",
-	             	                 $CE::pos => "europarl-v5",
-	             	                 $CE::chunk => "europarl-v5" },
-	             $Common::L_SPA => { $CE::raw => "europarl-v5",
-	             	                 $CE::pos => "europarl-v5",
-	             	                 $CE::chunk => "europarl-v5" }
 
-vector<double> CE::read_CE(string reportCE) {
-	// description _ read CE value from report file (for all segments)
-	boost::regex re("^X CE-[SLW1-4][^ ]* Average_F.*");
 
-    string str;
-    map<string, double> hCE;
-
-    ifstream file(reportCE.c_str());
-    if (file) {
-	    while (getline(file, str)) {
-	    	boost::match_results<string::const_iterator> results;
-	        if (boost::regex_match(str, results, re)) {
-	            cout << "\t That was a kind of line" << endl;
-
-	            string s = results[0];
-	            cout << "line: |" << s << "|" << endl;
-
-			    vector<string> laux;
-			    istringstream iss(s);
-			    for(std::string token; getline(iss, token, ' '); ) laux.push_back(token);
-
-				hCE[laux[1]] = atof(laux[3].c_str());
-	        }
-	    }
-        file.close();
-    } else { fprintf(stderr, "couldn't open file: %s\n", reportCE.c_str()); exit(1); }
-
-    vector<double> lCE;
-    for (map<string, double>::const_iterator it = hCE.begin(); it != hCE.end(); ++it)
-    	lCE.push_back(it->second);
-
-    return lCE;
+map<string, map<string, double> > CE::create_length_factor() {
+	map<string, map<string, double> > length_factor;
+	length_factor[Common::L_CAT][Common::L_SPA] = ((double)65748722 / 68494845);
+	length_factor[Common::L_ENG][Common::L_SPA] = ((double)272396865 / 244144301);
+	return length_factor;
 }
+const map<string, map<string, double> > CE::length_factor = create_length_factor();
 
-vector<vector<double> > CE::read_CE_segments(string reportCE) {
-    boost::regex re("^X CE-[SLW1-4][^ ]* Eval.*");
+map<string, map<string, string> > CE::create_LM_name() {
+	map<string, map<string, string> > LM_name;
+	map<string, string> LM_name_eng, LM_name_spa;
 
-    vector<double> lCE1, lCE2, lCE3, lCE4;
-    vector<double> lCEL, lCES, lCESU, lCEW;
+	LM_name_eng[CE::raw] = "europarl-v5";
+	LM_name_eng[CE::pos] = "europarl-v5";
+	LM_name_eng[CE::chunk] = "europarl-v5";
+	LM_name[Common::L_ENG] = LM_name_eng;
 
-    vector<vector<double> > SEG(8);
+	LM_name_spa[CE::raw] = "europarl-v5";
+	LM_name_spa[CE::pos] = "europarl-v5";
+	LM_name_spa[CE::chunk] = "europarl-v5";
+	LM_name[Common::L_SPA] = LM_name_spa;
+	return LM_name;
+}
+map<string, map<string, string> > CE::LM_name = create_LM_name();
 
-    string str;
-    ifstream file(reportCE.c_str());
-    if (file) {
-	    while (getline(file, str)) {
-	    	boost::match_results<string::const_iterator> results;
 
-	        if (boost::regex_match(str, results, re)) {
-	            cout << "\t That was a kind of line" << endl;
-	            string s = results[0];
-	            cout << "line: |" << s << "|" << endl;
-
-				vector<string> laux, ll, llF;
-				//istringstream buffer(s);
-				boost::split(laux, s, boost::is_any_of("\t "));
-				boost::split(ll, laux[3], boost::is_any_of("."));
-				boost::split(llF, laux[6], boost::is_any_of(":"));
-
-				if (laux[1] == "CE-1") lCE1.push_back(atof(llF[1].c_str()));
-				else if (laux[1] == "CE-2") lCE2.push_back(atof(llF[1].c_str()));
-				else if (laux[1] == "CE-3") lCE3.push_back(atof(llF[1].c_str()));
-				else if (laux[1] == "CE-4") lCE4.push_back(atof(llF[1].c_str()));
-				else if (laux[1] == "CE-L") lCEL.push_back(atof(llF[1].c_str()));
-				else if (laux[1] == "CE-S*") lCES.push_back(atof(llF[1].c_str()));
-				else if (laux[1] == "CE-SU*") lCESU.push_back(atof(llF[1].c_str()));
-				else if (laux[1] == "CE-W-1.2") lCEW.push_back(atof(llF[1].c_str()));
-			}
-	    }
-        file.close();
-        SEG[0] = lCE1;	SEG[1] = lCE2;	SEG[2] = lCE3;	SEG[3] = lCE4;
-        SEG[4] = lCEL;	SEG[5] = lCES;	SEG[6] = lCESU;	SEG[7] = lCEW;
-	} else { fprintf(stderr, "couldn't open file: reportCE.txt\n"); exit(1); }
 /*
-		cout << "--------------------SEG-----------------" << endl;
-		for (int i = 0; i < SEG.size(); ++i) {
-			for (int j = 0; j < SEG[i].size(); ++j) {
-				cout << "SEG[" << i << "," << j << "]: " << SEG[i][j] << "\t";
-			}
-			cout << endl;
-		}
+    my $src = $config->{src};                    # source file 
+    my $remakeREPORTS = $config->{remake};       # remake reports? (1 - yes :: 0 - no)
+    my $tools = $config->{tools};                # TOOL directory
+    my $SRCLANG = $config->{SRCLANG};            # source language
+    my $TRGLANG = $config->{LANG};               # target language
+    my $SRCCASE = $config->{SRCCASE};            # source case
+    my $TRGCASE = $config->{CASE};               # target case
+    my $M = $config->{Hmetrics};                 # set of metrics
+    my $verbose = $config->{verbose};            # verbosity (0/1)
+    my $debug = $config->{debug};                # verbosity (0/1)
+    my $IDX = $config->{IDX};                    # sys-doc-seg index structure
+    my $SRCparser = $config->{SRCparser};        # source-language shallow parser (object)
+    my $TRGparser = $config->{parser};           # target-language shallow parser (object)
 */
-	return SEG;
-}
+//my ($SYS, $SEGS) = CE::compute_language_modeling_features($src, $SRCLANG, $SRCCASE, $tools, $CE::raw, $debug);
 
 
-pair<vector<double>, vector<vector<double> > > CE::computeCE(string TGT, int stemming) {
-	stringstream tCE;
-	// description _ computes CE scores -> n = 1..4, LCS, S*, SU*, W-1.2 (multiple references)
-	tCE << Config::tools << "/" << CE::TCE << "/" << "CE-1.5.5.pl -e " << Config::tools << "/" << CE::TCE << "/data -z SPL -2 -1 -U -r 1000 -n 4 -w 1.2 -c 95 -d";
-	if (stemming ? " -m" : "");
-
-	string toolCE = tCE.str();
-	cout << "toolCE ->" << toolCE << endl << endl;
-
+void CE::compute_language_modeling_features(string file, string lang, string cs, string variant, double &SYSoov, double &SYSlogp, double &SYSippl, vector<double> &SEGSoov, vector<double> &SEGSlogp, vector<double> &SEGSippl) {
+	// description _ compute language modeling features (logp, inverse perplexity and oov proportion)
+	//               variants -> (raw, pos, chunk) according to the type of linguistic units
 	srand(time(NULL));
-	double nr = rand() % (Common::NRAND + 1);	//random number [0, Common::NRAND];
-	stringstream ssReport, ssConfig;
-	ssReport << Common::DATA_PATH << "/" << Common::TMP << "/" << nr << "." << CE::CEEXT << "." << Common::REPORTEXT;
-	ssConfig << Common::DATA_PATH << "/" << Common::TMP << "/" << nr << "." << CE::CEEXT << "." << CE::CFGEXT;
+	double nr = rand() % (Common::NRAND + 1);
+	stringstream ss_tmp_out;	ss_tmp_out << file << "." << CE::LM_ext << "." << nr;
+	string tmp_out = ss_tmp_out.str();
 
-	string reportCE = ssReport.str();
-	string configCE = ssConfig.str();
-
-	if (Config::verbose > 1) fprintf(stderr, "generating files for CE\n");
-
-	string str;
-	map<string, double> hRAND;
-	for (map<string, string>::const_iterator it = TESTBED::Hrefs.begin(); it != TESTBED::Hrefs.end(); ++it) {
-		string ref = it->second;
-
-		int j = 1;
-		ifstream ref_file(ref.c_str());
-		if (ref_file) {
-			double random = rand() % (Common::NRAND + 1);
-			hRAND[it->first] = random;
-
-		    while (getline(ref_file, str)) {
-				stringstream ssJ;
-				ssJ << Common::DATA_PATH << "/" << Common::TMP << "/" << CE::CEEXT << "." << random << "." << Common::REFEXT << "." << j;
-
-				string ref_j = ssJ.str();
-		 	    boost::filesystem::path refJ_path(ref_j);
-
-				if (!exists(refJ_path) or Config::remake) {
-					ofstream refJ_file(ref_j.c_str());
-					if (refJ_file) {
-				        boost::regex re("\\s*$");	//, boost::regex::perl|boost::regex::icase);
-				        boost::regex re2("^\\s*");	//, boost::regex::perl|boost::regex::icase);
-						boost::regex re3("^[\\?\\!\\.]$");
-				        str = boost::regex_replace(str, re, "");
-				        str = boost::regex_replace(str, re2, "");
-
-		    			boost::match_results<string::const_iterator> results;
-				        if (str == "" or boost::regex_match(str, results, re3)) str = Common::EMPTY_ITEM;
-						refJ_file << str << endl;
-
-				        refJ_file.close();
-					} else { fprintf(stderr, "couldn't open input file: %s\n", ref_j.c_str());   exit(1); }
-				}
-				++j;
-			}
-			ref_file.close();
-		} else { fprintf(stderr, "couldn't open input file: %s\n", ref.c_str());   exit(1); }
-	}
-
-	int i = 1;
-	double random = rand() % (Common::NRAND + 1);
-
-	ofstream cfg_file(configCE.c_str());
-	ifstream out_file(TESTBED::Hsystems[TGT].c_str());
-
-    while (getline(out_file, str)) {
-		stringstream ssOut_i;
-		ssOut_i << Common::DATA_PATH << "/" << Common::TMP << "/" << CE::CEEXT << "." << random << "." << Common::SYSEXT << "." << i;
-
-		string out_i = ssOut_i.str();
-
-		vector<string> cfgline;
-		for (map<string, string>::const_iterator it = TESTBED::Hrefs.begin(); it != TESTBED::Hrefs.end(); ++it) {
-			stringstream ssRef_i;
-			ssRef_i << Common::DATA_PATH << "/" << Common::TMP << "/" << CE::CEEXT << "." << hRAND[it->first] << "." << Common::REFEXT << "." << i;
-
-			string ref_i = ssRef_i.str();
-			cfgline.push_back(ref_i);
-    	}
-
- 	    boost::filesystem::path outI_path(out_i);
-
-    	if (!exists(outI_path) or Config::remake) {
-			ofstream outI_file(out_i.c_str());
-			if (outI_file) {
-				boost::regex re("\\s*$");	//, boost::regex::perl|boost::regex::icase);
-				boost::regex re2("^\\s*");	//, boost::regex::perl|boost::regex::icase);
-				boost::regex re3("^[\\?\\!\\.]$");
-				str = boost::regex_replace(str, re, "");
-				str = boost::regex_replace(str, re2, "");
-
-	    		boost::match_results<string::const_iterator> results;
-				if (str == "" or boost::regex_match(str, results, re3)) str = Common::EMPTY_ITEM;
-				outI_file << str << endl;
-
-				outI_file.close();
-			} else { fprintf(stderr, "couldn't open input file: %s\n", out_i.c_str());   exit(1); }
-    	}
-    	if (Config::verbose > 1) {
-    		if (i%10 == 0) fprintf(stderr, ".");
-    		if (i%100 == 0) fprintf(stderr, "%d\n", i);
-    	}
-    	++i;
-
-    	cfg_file << out_i;
-    	for (int k = 0; k < cfgline.size(); ++k) cfg_file << " " << cfgline[k];
-    	cfg_file << endl;
-    }
-    if (Config::verbose > 1) fprintf(stderr, "..%d segments [DONE]", (i-1));
-
-    out_file.close();
-    cfg_file.close();
-
-    if (Config::verbose > 1) fprintf(stderr, "building %s...\n", reportCE.c_str());
-
-	string sc = toolCE + " " + configCE + " > " + reportCE;
-    string ms = "[ERROR] problems running CE...";
-	Common::execute_or_die(sc, ms);
-
-	string sysaux = "rm -f " + configCE;
-	system(sysaux.c_str());
-
-	int j = 1;
-	while(j < 1) {
-		stringstream ssAux;
-		ssAux << Common::DATA_PATH << "/" << Common::TMP << "/" << CE::CEEXT << "." << random << "." << Common::SYSEXT << "." << j;
-		string ss_aux;
-	    boost::filesystem::path aux_path(ss_aux);
-
-		if (!exists(aux_path)) {
-			string rm_aux = "rm -f " + ss_aux;
-			system(rm_aux.c_str());
-		}
-		++j;
-	}
-
-	for (map<string, string>::const_iterator it = TESTBED::Hrefs.begin(); it != TESTBED::Hrefs.end(); ++it) {
-		string ref = it->second;
-		int j = 1;
-		while (j < 1) {
-			stringstream ssAux;
-			ssAux << Common::DATA_PATH << "/" << Common::TMP << "/" << CE::CEEXT << "." << hRAND[it->first] << "." << Common::REFEXT << "." << j;
-			string ss_aux;
-		    boost::filesystem::path aux_path(ss_aux);
-
-			if (!exists(aux_path)) {
-				string rm_aux = "rm -f " + ss_aux;
-				system(rm_aux.c_str());
-			}
-			++j;
+	map<string, string> lm_name_lang = LM_name[lang];
+	if (lm_name_lang.find(variant) != lm_name_lang.end()) {
+		if (variant == CE::raw) {
+			string exe = "ngram -lm "+Config::tools+"/"+CE::LM_path+"/"+lang+"/"+cs+"/"+lm_name_lang[variant]+"."+CE::lm_ext+" -debug 1"+((cs == Common::CASE_CI) ? " -tolower" : "") + " -ppl "+file+" > "+tmp_out+" 2> /dev/null";
+			Common::execute_or_die(exe, "[ERROR] SRILM - language modeling toolkit not available!!");
+		} 
+		else {
+			string exe = "ngram -lm "+Config::tools+"/"+LM_path+"/"+lang+"/"+lm_name_lang[variant]+"."+variant+"."+CE::lm_ext+" -debug 1 -ppl "+file+" > "+tmp_out+" 2> /dev/null";
+			Common::execute_or_die(exe, "[ERROR] SRILM - language modeling toolkit not available!!");
 		}
 	}
+	else { fprintf(stderr, "[ERROR] unavailable language model for language <%s> - variant <%s>!!\n", lang.c_str(), variant.c_str()); exit(1); }
 
-	vector<double> SYS = read_CE(reportCE);
-	vector<vector<double> > SEG = read_CE_segments(reportCE);
+	//vector<double> SEGoov, SEGlogp, SEGippl;
+	double SUMoov = 0, SUMlogp = 0, SUMippl = 0;
 
-	return make_pair(SYS, SEG);
+	ifstream tmp_out_file(tmp_out.c_str());
+    if (!tmp_out_file.is_open()) { fprintf(stderr, "couldn't open output file: %s\n", tmp_out.c_str()); exit(1); }
+
+	ifstream in_file(file.c_str());
+	if (in_file) {
+		string str;
+		while ( getline(in_file, str) ) {
+			while(str.empty()) {
+				SEGSoov.push_back(0);
+				SEGSlogp.push_back(0);
+				SEGSippl.push_back(0);
+				getline(in_file, str);
+			}
+			string source, info, scores, padding;
+			getline(tmp_out_file, source);
+			getline(tmp_out_file, info);
+			getline(tmp_out_file, scores);
+			getline(tmp_out_file, padding);
+			vector<string> l_info, l_scores;
+			
+			boost::split(l_info, info, boost::is_any_of("\t "));
+			int num_words = atoi(l_info[2].c_str());
+			int num_oov = atoi(l_info[4].c_str());
+			double oov = 1 - Common::safe_division(num_oov, num_words);
+			
+			boost::split(l_scores, scores, boost::is_any_of("\t "));
+			int logp = atoi(l_scores[3].c_str());
+			int ppl = atoi(l_scores[5].c_str());
+			double ippl = 1 / ppl;
+			if (Config::verbose) {
+				fprintf(stderr, "source: %s\n", source.c_str());
+
+				fprintf(stderr, "oov = 1 - %d / %d = %f\n", num_oov, num_words, oov);
+				fprintf(stderr, "logp = %d\n", logp);
+				fprintf(stderr, "ippl = 1 / %d = %f\n", ppl, ippl);
+			}
+			SUMoov += oov;
+			SUMlogp += logp;
+			SUMippl += ippl;
+			SEGSoov.push_back(oov);
+			SEGSlogp.push_back(logp);
+			SEGSippl.push_back(ippl);
+		}
+		tmp_out_file.close();
+		in_file.close();
+	}
+	else { fprintf(stderr, "Couldn't open input file: %s\n", file.c_str()); exit(1); }
+
+	string sys_aux = "rm -rf "+tmp_out;
+	system(sys_aux.c_str());
+
+	SYSoov = Common::safe_division(SUMoov, SEGSoov.size());
+	SYSlogp = Common::safe_division(SUMlogp, SEGSlogp.size());
+	SYSippl = Common::safe_division(SUMippl, SEGSippl.size());
+
+	//SYS["oov"] = SEGoov;
+	//SYS["logp"] = SEGlogp;
+	//SYS["ippl"] = SEGippl
 }
 
-pair<double, vector<double> > CE::computeCE_segment_length() {
+void CE::computeCE_segment_length(double &SYS, vector<double> &SEGS) {
 	// description _ computes segment length scores   (no references)
 	double SUM;
-	vector<double> SEGS;
-    ifstream F(Config::src.c_str());
+	ifstream F(TESTBED::src.c_str());
     if (F) {
         string line;
         while (getline(F, line)) {
-
 			vector<string> l;
 		    istringstream buf(line);
 		    for(string token; getline(buf, token, ' '); ) l.push_back(token);
 
 		    double SEGscore = Common::safe_division(1, l.size());
-			if (Config::verbose) fprintf(stderr, "score = %d\n", SEGscore);
+			if (Config::verbose) fprintf(stderr, "score = 1 / %d = %f\n", (int)l.size(), SEGscore);
             SUM += SEGscore;
             SEGS.push_back(SEGscore);
         }
         F.close();
-    } else { fprintf(stderr, "Couldn't open input file: %s\n", Config::src.c_str());  exit(1); }
+    } else { fprintf(stderr, "Couldn't open input file: %s\n", TESTBED::src.c_str());  exit(1); }
 
-    double SYS = Common::safe_division(SUM, SEGS.size());
-
-    return make_pair(SYS, SEGS);
+    SYS = Common::safe_division(SUM, SEGS.size());
 }
 
 
@@ -378,192 +268,162 @@ void CE::doMetric(string TGT, string REF, string prefix, int stemming, Scores &h
 
 	int GO, i;
 	GO = i = 0;
-	for (map<string, int>::const_iterator it = CE::rCE.begin(); it != CE::rCE.end(); ++it, ++i) {
-		mCE[i] = it->first;
-	}
+	for (set<string>::const_iterator it = CE::rCE.begin(); it != CE::rCE.end(); ++it, ++i)
+		mCE[i] = *it;
 	for (i = 0; i < mCE.size() and !GO; ++i) {
-		string aux = prefix + mCE[i];
-		if (Config::Hmetrics.find(aux) != Config::Hmetrics.end()) GO = 1;
+		//string aux = prefix + mCE[i];
+		if (Config::Hmetrics.find(prefix+mCE[i]) != Config::Hmetrics.end()) GO = 1;
 	}
 
-	cout << "CE ei!" << endl;
 	if (GO) {
-		cout << "GO! CE GO!" << endl;
-		if (Config::verbose == 1) fprintf(stderr, "%s\n", CE::CEEXT.c_str());
-		// TRANSLATION DIFFICULTY ###
-       	// LENGTH
+		if (Config::verbose) fprintf(stderr, "%s\n", CE::CEEXT.c_str());
+		
+		SC_ASIYA sc_asiya;
+		SP sp;
+
 		stringstream ssReportCEsrclen;
 		ssReportCEsrclen << Common::DATA_PATH << "/" << Common::REPORTS << "/" << TGT << "/" << CE::CEEXT << "/" << CE::CEEXT << "-srclen." << Common::XMLEXT;
-		ssReportCEsrclogp << Common::DATA_PATH << "/" << Common::REPORTS << "/" << TGT << "/" << CE::CEEXT << "/" << CE::CEEXT << "-srclogp." << Common::XMLEXT;
-		ssReportCEsrcippl << Common::DATA_PATH << "/" << Common::REPORTS << "/" << TGT << "/" << CE::CEEXT << "/" << CE::CEEXT << "-srcippl." << Common::XMLEXT;
-		ssReportCEsrcoov << Common::DATA_PATH << "/" << Common::REPORTS << "/" << TGT << "/" << CE::CEEXT << "/" << CE::CEEXT << "-srcoov." << Common::XMLEXT;
-
 		string reportCEsrclenXML = ssReportCEsrclen.str();
-		string reporCEsrclogpXML = ssReportCEsrclogp.str();
-		string reportCEsrcipplXML = ssReportCEsrcippl.str(),
-		string reportCEsrcoovXML = ssReportCEsrcoov.str();
-
-	    boost::filesystem::path reportCEsrclenXML_path(reportCEsrclenXML);
-	    boost::filesystem::path reportCEsrclenXML_gz(reportCEsrclenXML_path + "." + Common::GZEXT);
-
+	    
+		// TRANSLATION DIFFICULTY ###
+       	// LENGTH
 	    string ce_srclen = CE::CEEXT + "-srclen";
-	    if ( ((!exists(reportCEsrclenXML_path) and !exists(reportCEsrclenXML_gz)) or Config::remake) and Config::Hmetrics[ce_srclen]) {	//source length ratio
-	    	pair<double, vector<double> > res = computeCE_segment_length();
-	    	pair<vector<double>, vector<double> > doc_seg = Core::get_seg_doc_scores(res.second[0], TGT);
-			//my ($doc_scores, $seg_scores) = Metrics::get_seg_doc_scores($SEGS, 0, $config->{IDX}->{$TGT});
-         	if (Config::O_STORAGE == 1) {
-	    		IQXML::write_report(TGT, CE::CEEXT, ce_srclen, res.first[0], doc_seg.first, doc_seg.second);
-         		cout << "IQXML DOCUMENT " << ce_srclen << " CREATED" << endl;
+	    if ( ((!exists(boost::filesystem::path(reportCEsrclenXML)) and !exists(boost::filesystem::path(reportCEsrclenXML+"."+Common::GZEXT))) or Config::remake) and Config::Hmetrics[ce_srclen] ) {	//source length ratio
+	    	double sys_score;
+	    	vector<double> SEGS, doc_scores, seg_scores;
+	    	
+	    	computeCE_segment_length(sys_score, SEGS);
+			TESTBED::get_seg_doc_scores(SEGS, 0, TGT, doc_scores, seg_scores);
+	    	if (Config::O_STORAGE == 1) {
+	    		sc_asiya.write_report(TGT, REF, ce_srclen, sys_score, doc_scores, seg_scores);
+         		fprintf(stderr, "SC_ASIYA DOCUMENT %s CREATED\n", ce_srclen.c_str());
          	}
-         	hOQ.save_hash_scores(ce_srclen, TGT, REF, res.first[0], doc_seg.first, doc_seg.second);
+         	hOQ.save_hash_scores(ce_srclen, TGT, REF, sys_score, doc_scores, seg_scores);
 	    }
+
 	    // LANGUAGE MODELING
 	    stringstream ssReportCEsrclogp, ssReportCEsrcippl, ssReportCEsrcoov;
 		ssReportCEsrclogp << Common::DATA_PATH << "/" << Common::REPORTS << "/" << TGT << "/" << CE::CEEXT << "/" << CE::CEEXT << "-srclogp." << Common::XMLEXT;
 		ssReportCEsrcippl << Common::DATA_PATH << "/" << Common::REPORTS << "/" << TGT << "/" << CE::CEEXT << "/" << CE::CEEXT << "-srcippl." << Common::XMLEXT;
 		ssReportCEsrcoov << Common::DATA_PATH << "/" << Common::REPORTS << "/" << TGT << "/" << CE::CEEXT << "/" << CE::CEEXT << "-srcoov." << Common::XMLEXT;
-
-		string reporCEsrclogpXML = ssReportCEsrclogp.str();
-		string reportCEsrcipplXML = ssReportCEsrcippl.str(),
+		string reportCEsrclogpXML = ssReportCEsrclogp.str();
+		string reportCEsrcipplXML = ssReportCEsrcippl.str();
 		string reportCEsrcoovXML = ssReportCEsrcoov.str();
 
-	    boost::filesystem::path reportCEsrclogpXML_path(reportCEsrclogpXML);
-	    boost::filesystem::path reportCEsrcipplXML_path(reportCEsrcipplXML);
-	    boost::filesystem::path reportCEsrcoovXML_path(reportCEsrcoovXML);
+	    if (((!exists(boost::filesystem::path(reportCEsrclogpXML)) and !exists(boost::filesystem::path(reportCEsrclogpXML+"."+Common::GZEXT))) or
+	    	 (!exists(boost::filesystem::path(reportCEsrcipplXML)) and !exists(boost::filesystem::path(reportCEsrcipplXML+"."+Common::GZEXT))) or
+    		 (!exists(boost::filesystem::path(reportCEsrcoovXML)) and !exists(boost::filesystem::path(reportCEsrcoovXML+"."+Common::GZEXT))) or Config::remake) and
+    		 (Config::Hmetrics[CE::CEEXT+"-srclogp"] or Config::Hmetrics[CE::CEEXT+"-srcippl"] or Config::Hmetrics[CE::CEEXT+"-srcoov"])) {	//source language modeling
 
-	    boost::filesystem::path reportCEsrclogpXML_gz(reportCEsrclogpXML_path + "." + Common::GZEXT);
-	    boost::filesystem::path reportCEsrcipplXML_gz(reportCEsrcipplXML_path + "." + Common::GZEXT);
-	    boost::filesystem::path reportCEsrcoovXML_gz(reportCEsrcoovXML_path + "." + Common::GZEXT);
+	    	double SYSoov, SYSlogp, SYSippl;
+	    	vector<double> SEGSoov, SEGSlogp, SEGSippl;
+	    	compute_language_modeling_features(TESTBED::src, Config::SRCLANG, Config::SRCCASE, CE::raw, SYSoov, SYSlogp, SYSippl, SEGSoov, SEGSlogp, SEGSippl);
 
-	    string ce_srclogp = CE::CEEXT + "-srclogp";
-	    string ce_srcippl = CE::CEEXT + "-srcippl";
-	    string ce_srcoov = CE::CEEXT + "-srcoov";
-	    if ( (!exists(reporCEsrclogpXML_path) and !exists(reporCEsrclogpXML_gz)) or \
-	    	(!exists(reporCEsrcipplXML_path) and !exists(reporCEsrcipplXML_gz)) or \
-    		(!exists(reporCEsrcoovXML_path) and !exists(reporCEsrcoovXML_gz)) or Config::remake and \
-    		(Config::Hmetrics[ce_srclogp]) or Config::Hmetrics[ce_srcippl] or Config::Metrics[ce_srcoov] ) {	//source language modeling
+	    	// log probabilities
+	    	string pref = CE::CEEXT+"-srclogp";
+	    	vector<double> d_scores, s_scores;
+			TESTBED::get_seg_doc_scores(SEGSlogp, 0, TGT, d_scores, s_scores);
+	    	if (Config::O_STORAGE == 1) {
+	    		sc_asiya.write_report(TGT, CE::CEEXT, pref, SYSlogp, d_scores, s_scores);
+         		fprintf(stderr, "SC_ASIYA DOCUMENT %s CREATED\n", pref.c_str());
+         	}	
+         	hOQ.save_hash_scores(pref, TGT, REF, SYSlogp, d_scores, s_scores);
 
-	    	pair< > res = compute_language_modeling_features();
+         	// inverse perplexities
+			pref = CE::CEEXT+"-srcippl";
+	    	TESTBED::get_seg_doc_scores(SEGSippl, 0, TGT, d_scores, s_scores);
+	    	if (Config::O_STORAGE == 1) {
+	    		sc_asiya.write_report(TGT, CE::CEEXT, pref, SYSippl, d_scores, s_scores);
+         		fprintf(stderr, "SC_ASIYA DOCUMENT %s CREATED\n", pref.c_str());
+         	}	
+         	hOQ.save_hash_scores(pref, TGT, REF, SYSippl, d_scores, s_scores);
 
+         	// proportion of Out-of-vocabulary (oov) tokens
+			pref = CE::CEEXT+"-srclogp";
+	    	TESTBED::get_seg_doc_scores(SEGSlogp, 0, TGT, d_scores, s_scores);
+	    	if (Config::O_STORAGE == 1) {
+	    		sc_asiya.write_report(TGT, CE::CEEXT, pref, SYSlogp, d_scores, s_scores);
+         		fprintf(stderr, "SC_ASIYA DOCUMENT %s CREATED\n", pref.c_str());
+         	}	
+         	hOQ.save_hash_scores(pref, TGT, REF, SYSlogp, d_scores, s_scores);
 	    }
 
-	    s
-		ss2 << Common::DATA_PATH << "/" << Common::REPORTS << "/" << TGT << "/" << REF << prefix << CE::CEEXT << "-2." << Common::XMLEXT;
-		ss3 << Common::DATA_PATH << "/" << Common::REPORTS << "/" << TGT << "/" << REF << prefix << CE::CEEXT << "-3." << Common::XMLEXT;
-		ss4 << Common::DATA_PATH << "/" << Common::REPORTS << "/" << TGT << "/" << REF << prefix << CE::CEEXT << "-4." << Common::XMLEXT;
-		ssL << Common::DATA_PATH << "/" << Common::REPORTS << "/" << TGT << "/" << REF << prefix << CE::CEEXT << "-L." << Common::XMLEXT;
-		ssS << Common::DATA_PATH << "/" << Common::REPORTS << "/" << TGT << "/" << REF << prefix << CE::CEEXT << "-S*." << Common::XMLEXT;
-		ssSU << Common::DATA_PATH << "/" << Common::REPORTS << "/" << TGT << "/" << REF << prefix << CE::CEEXT << "-SU*." << Common::XMLEXT;
-		ssW << Common::DATA_PATH << "/" << Common::REPORTS << "/" << TGT << "/" << REF << prefix << CE::CEEXT << "-W." << Common::XMLEXT;
+	    stringstream reportCEsrclogp_pos, reportCEsrcippl_pos;
+	    reportCEsrclogp_pos << Common::DATA_PATH << "/" << Common::REPORTS << "/" << TGT << "/" << CE::CEEXT << "/" << CE::CEEXT << "-srclogpP." << Common::XMLEXT;
+		reportCEsrcippl_pos << Common::DATA_PATH << "/" << Common::REPORTS << "/" << TGT << "/" << CE::CEEXT << "/" << CE::CEEXT << "-srcipplP." << Common::XMLEXT;
+		string reportCEsrclogp_posXML = reportCEsrclogp_pos.str();
+		string reportCEsrcippl_posXML = reportCEsrcippl_pos.str();
 
-		string reportCE1xml = ss1.str();
-		string reportCE2xml = ss2.str();
-		string reportCE3xml = ss3.str();
-		string reportCE4xml = ss4.str();
-		string reportCELxml = ssL.str();
-		string reportCESxml = ssS.str();
-		string reportCESUxml = ssSU.str();
-		string reportCEWxml = ssW.str();
+	    if (((!exists(boost::filesystem::path(reportCEsrclogp_posXML)) and !exists(boost::filesystem::path(reportCEsrclogp_posXML+"."+Common::GZEXT))) or
+    		 (!exists(boost::filesystem::path(reportCEsrcippl_posXML)) and !exists(boost::filesystem::path(reportCEsrcippl_posXML+"."+Common::GZEXT))) or Config::remake) and
+    		 (Config::Hmetrics[CE::CEEXT+"-srclogpP"] or Config::Hmetrics[CE::CEEXT+"-srcipplP"])) {	//source PoS language modeling
 
-	    boost::filesystem::path reportCE1xml_path(reportCE1xml);
-		boost::filesystem::path reportCE2xml_path(reportCE2xml);
-	    boost::filesystem::path reportCE3xml_path(reportCE3xml);
-	    boost::filesystem::path reportCE4xml_path(reportCE4xml);
-	    boost::filesystem::path reportCELxml_path(reportCELxml);
-	    boost::filesystem::path reportCESxml_path(reportCESxml);
-	    boost::filesystem::path reportCESUxml_path(reportCESUxml);
-	    boost::filesystem::path reportCEWxml_path(reportCEWxml);
+	    	string src_posfile = sp.create_PoS_file(TESTBED::src, Config::SRCLANG, Config::SRCCASE);
+			double SYSoov, SYSlogp, SYSippl;
+	    	vector<double> SEGSoov, SEGSlogp, SEGSippl;
+	    	compute_language_modeling_features(src_posfile, Config::SRCLANG, Config::SRCCASE, CE::pos, SYSoov, SYSlogp, SYSippl, SEGSoov, SEGSlogp, SEGSippl);
+	    	string sys_aux = Common::GZIP+" "+src_posfile;	system(sys_aux.c_str());
 
-	    boost::filesystem::path reportCE1xml_gz(reportCE1xml + "." + Common::GZEXT);
-		boost::filesystem::path reportCE2xml_gz(reportCE2xml + "." + Common::GZEXT);
-	    boost::filesystem::path reportCE3xml_gz(reportCE3xml + "." + Common::GZEXT);
-	    boost::filesystem::path reportCE4xml_gz(reportCE4xml + "." + Common::GZEXT);
-	    boost::filesystem::path reportCELxml_gz(reportCELxml + "." + Common::GZEXT);
-	    boost::filesystem::path reportCESxml_gz(reportCESxml + "." + Common::GZEXT);
-	    boost::filesystem::path reportCESUxml_gz(reportCESUxml + "." + Common::GZEXT);
-	    boost::filesystem::path reportCEWxml_gz(reportCEWxml + "." + Common::GZEXT);
-
-	    if ( (!exists(reportCE1xml_path) and !exists(reportCE1xml_gz)) or \
-	    (!exists(reportCE2xml_path) and !exists(reportCE2xml_gz)) or \
-	    (!exists(reportCE3xml_path) and !exists(reportCE3xml_gz)) or \
-	    (!exists(reportCE4xml_path) and !exists(reportCE4xml_gz)) or \
-	    (!exists(reportCELxml_path) and !exists(reportCELxml_gz)) or \
-	    (!exists(reportCESxml_path) and !exists(reportCESxml_gz)) or \
-	    (!exists(reportCESUxml_path) and !exists(reportCESUxml_gz)) or \
-	    (!exists(reportCEWxml_path) and !exists(reportCEWxml_gz)) or Config::remake) {
-        	//my ($SYS, $SEGS) = CE::computeMultiCE($src, $out, $Href, $remakeREPORTS, $TGT, $REF, $tools, $stemming, $verbose);
-	    	pair<vector<double>, vector<vector<double> > > res = computeCE(TGT, stemming);
-
-         	string prefR = prefix + CE::CEEXT + "-1";
-			pair<vector<double>, vector<double> > doc_seg =  Core::get_seg_doc_scores(res.second[0], 0, TGT);
+	    	// log probabilities
+	    	string pref = CE::CEEXT+"-srclogpP";
+	    	vector<double> d_scores, s_scores;
+			TESTBED::get_seg_doc_scores(SEGSlogp, 0, TGT, d_scores, s_scores);
 	    	if (Config::O_STORAGE == 1) {
-	    		IQXML::write_report(TGT, REF, prefR, res.first[0], doc_seg.first, doc_seg.second);
-         		cout << "IQXML DOCUMENT " << prefR << " CREATED" << endl;
-         	}
-         	hOQ.save_hash_scores(prefR, TGT, REF, res.first[0], doc_seg.first, doc_seg.second);
+	    		sc_asiya.write_report(TGT, CE::CEEXT, pref, SYSlogp, d_scores, s_scores);
+         		fprintf(stderr, "SC_ASIYA DOCUMENT %s CREATED\n", pref.c_str());
+         	}	
+         	hOQ.save_hash_scores(pref, TGT, REF, SYSlogp, d_scores, s_scores);
 
-			prefR = prefix + CE::CEEXT + "-2";
-			doc_seg = Core::get_seg_doc_scores(res.second[1], 0, TGT);
-         	if (Config::O_STORAGE == 1) {
-	    		IQXML::write_report(TGT, REF, prefR, res.first[1], doc_seg.first, doc_seg.second);
-         		cout << "IQXML DOCUMENT " << prefR << " CREATED" << endl;
-         	}
-	    	hOQ.save_hash_scores(prefR, TGT, REF, res.first[1], doc_seg.first, doc_seg.second);
-
-	    	prefR = prefix + CE::CEEXT + "-3";
-			doc_seg = Core::get_seg_doc_scores(res.second[2], 0, TGT);
-         	if (Config::O_STORAGE == 1) {
-	    		IQXML::write_report(TGT, REF, prefR, res.first[2], doc_seg.first, doc_seg.second);
-         		cout << "IQXML DOCUMENT " << prefR << " CREATED" << endl;
-         	}
-         	hOQ.save_hash_scores(prefR, TGT, REF, res.first[2], doc_seg.first, doc_seg.second);
-
-	    	prefR = prefix + CE::CEEXT + "-4";
-			doc_seg = Core::get_seg_doc_scores(res.second[3], 0, TGT);
-         	if (Config::O_STORAGE == 1) {
-	    		IQXML::write_report(TGT, REF, prefR, res.first[3], doc_seg.first, doc_seg.second);
-         		cout << "IQXML DOCUMENT " << prefR << " CREATED" << endl;
-         	}
-	    	hOQ.save_hash_scores(prefR, TGT, REF, res.first[3], doc_seg.first, doc_seg.second);
-
-	    	prefR = prefix + CE::CEEXT + "-L";
-			doc_seg = Core::get_seg_doc_scores(res.second[4], 0, TGT);
-         	if (Config::O_STORAGE == 1) {
-	    		IQXML::write_report(TGT, REF, prefR, res.first[4], doc_seg.first, doc_seg.second);
-         		cout << "IQXML DOCUMENT " << prefR << " CREATED" << endl;
-         	}
-	    	hOQ.save_hash_scores(prefR, TGT, REF, res.first[4], doc_seg.first, doc_seg.second);
-
-			prefR = prefix + CE::CEEXT + "-S*";
-			doc_seg = Core::get_seg_doc_scores(res.second[5], 0, TGT);
-         	if (Config::O_STORAGE == 1) {
-	    		IQXML::write_report(TGT, REF, prefR, res.first[5], doc_seg.first, doc_seg.second);
-         		cout << "IQXML DOCUMENT " << prefR << " CREATED" << endl;
-         	}
-         	hOQ.save_hash_scores(prefR, TGT, REF, res.first[5], doc_seg.first, doc_seg.second);
-
-	    	prefR = prefix + CE::CEEXT + "-SU*";
-	    	doc_seg = Core::get_seg_doc_scores(res.second[6], 0, TGT);
-         	if (Config::O_STORAGE == 1) {
-	    		IQXML::write_report(TGT, REF, prefR, res.first[6], doc_seg.first, doc_seg.second);
-         		cout << "IQXML DOCUMENT " << prefR << " CREATED" << endl;
-         	}
-	    	hOQ.save_hash_scores(prefR, TGT, REF, res.first[6], doc_seg.first, doc_seg.second);
-
-	    	prefR = prefix + CE::CEEXT + "-W";
-	    	doc_seg = Core::get_seg_doc_scores(res.second[7], 0, TGT);
+         	// inverse perplexities
+			pref = CE::CEEXT+"-srcipplP";
+	    	TESTBED::get_seg_doc_scores(SEGSippl, 0, TGT, d_scores, s_scores);
 	    	if (Config::O_STORAGE == 1) {
-	    		IQXML::write_report(TGT, REF, prefR, res.first[7], doc_seg.first, doc_seg.second);
-         		cout << "IQXML DOCUMENT " << prefR << " CREATED" << endl;
-         	}
-	    	hOQ.save_hash_scores(prefR, TGT, REF, res.first[7], doc_seg.first, doc_seg.second);
-                /*cout << "-----------------------------------------CE-SCORES---------------------------------" << endl;
-                hOQ.print_scores();
-                cout << "-------------------------------------------------------------------------------------" << endl;
-                exit(1);*/
+	    		sc_asiya.write_report(TGT, CE::CEEXT, pref, SYSippl, d_scores, s_scores);
+         		fprintf(stderr, "SC_ASIYA DOCUMENT %s CREATED\n", pref.c_str());
+         	}	
+         	hOQ.save_hash_scores(pref, TGT, REF, SYSippl, d_scores, s_scores);
+		}
 
-	    }
+	    stringstream reportCEsrclogp_chunk, reportCEsrcippl_chunk;
+	    reportCEsrclogp_chunk << Common::DATA_PATH << "/" << Common::REPORTS << "/" << TGT << "/" << CE::CEEXT << "/" << CE::CEEXT << "-srclogpC." << Common::XMLEXT;
+		reportCEsrcippl_chunk << Common::DATA_PATH << "/" << Common::REPORTS << "/" << TGT << "/" << CE::CEEXT << "/" << CE::CEEXT << "-srcipplC." << Common::XMLEXT;
+		string reportCEsrclogp_chunkXML = reportCEsrclogp_chunk.str();
+		string reportCEsrcippl_chunkXML = reportCEsrcippl_chunk.str();
+
+	    if (((!exists(boost::filesystem::path(reportCEsrclogp_chunkXML)) and !exists(boost::filesystem::path(reportCEsrclogp_chunkXML+"."+Common::GZEXT))) or
+    		 (!exists(boost::filesystem::path(reportCEsrcippl_chunkXML)) and !exists(boost::filesystem::path(reportCEsrcippl_chunkXML+"."+Common::GZEXT))) or Config::remake) and
+    		 (Config::Hmetrics[CE::CEEXT+"-srclogpC"] or Config::Hmetrics[CE::CEEXT+"-srcipplC"])) {	//source Chunk language modeling
+
+	    	string src_chunkfile = sp.create_chunk_file(TESTBED::src, Config::SRCLANG, Config::SRCCASE);
+			double SYSoov, SYSlogp, SYSippl;
+	    	vector<double> SEGSoov, SEGSlogp, SEGSippl;
+	    	compute_language_modeling_features(src_chunkfile, Config::SRCLANG, Config::SRCCASE, CE::chunk, SYSoov, SYSlogp, SYSippl, SEGSoov, SEGSlogp, SEGSippl);
+	    	string sys_aux = Common::GZIP+" "+src_chunkfile;	system(sys_aux.c_str());
+
+	    	// log probabilities
+	    	string pref = CE::CEEXT+"-srclogpC";
+	    	vector<double> d_scores, s_scores;
+			TESTBED::get_seg_doc_scores(SEGSlogp, 0, TGT, d_scores, s_scores);
+	    	if (Config::O_STORAGE == 1) {
+	    		sc_asiya.write_report(TGT, CE::CEEXT, pref, SYSlogp, d_scores, s_scores);
+         		fprintf(stderr, "SC_ASIYA DOCUMENT %s CREATED\n", pref.c_str());
+         	}	
+         	hOQ.save_hash_scores(pref, TGT, REF, SYSlogp, d_scores, s_scores);
+
+         	// inverse perplexities
+			pref = CE::CEEXT+"-srcipplC";
+	    	TESTBED::get_seg_doc_scores(SEGSippl, 0, TGT, d_scores, s_scores);
+	    	if (Config::O_STORAGE == 1) {
+	    		sc_asiya.write_report(TGT, CE::CEEXT, pref, SYSippl, d_scores, s_scores);
+         		fprintf(stderr, "SC_ASIYA DOCUMENT %s CREATED\n", pref.c_str());
+         	}	
+         	hOQ.save_hash_scores(pref, TGT, REF, SYSippl, d_scores, s_scores);
+
+		}
+       // FLUENCY ###
+       // LANGUAGE MODELING
+
+
 
 	}
-
 }

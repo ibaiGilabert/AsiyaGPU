@@ -4,30 +4,34 @@
 #include "SingleMetric.hpp"
 
 #include <vector>
-#include <map>
+#include <set>
 
 class CE : public SingleMetric {
 private:
-	static map<string, int> create_rCE();
-	static map<string, int> create_srcENG();
-	static map<string, int> create_trgENG();
-	static map<string, int> create_notENGSPA();
+	static set<string> create_rCE();
+	static set<string> create_srcENG();
+	static set<string> create_trgENG();
+	static set<string> create_notENGSPA();
+	static set<string> create_anyLANG();
+	static set<string> create_rPUNCT();
 	static map<string, string> create_rBIDICT();
+	static map<string, map<string, double> > create_length_factor();
+	static map<string, map<string, string> > create_LM_name();
 
-	static const string CEEXT;
-	static const map<string, int> rCE, srcENG, trgENG, notENGSPA;
-	static const map<string, string> rBIDICT;
 	static const int BIDICT_MAX_NGRAM_LENGTH;
+	static const string CEEXT, BIDICT_SEPARATOR, LM_path, LM_ext, lm_ext, raw, pos, chunk;
 
-	vector<double> read_CE(string reportCE);
-	vector<vector<double> > read_CE_segments(string reportCE);
+	static const set<string> rCE, srcENG, trgENG, notENGSPA, anyLANG, rPUNCT;
+	static const map<string, string> rBIDICT;
+	static const map<string, map<string, double> > length_factor;
+	static map<string, map<string, string> > LM_name;
 
-	pair<vector<double>, vector<vector<double> > > computeCE(string TGT, int stemming);
+
+
+	void compute_language_modeling_features(string file, string lang, string cs, string variant, double &SYSoov, double &SYSlogp, double &SYSippl, vector<double> &SEGSoov, vector<double> &SEGSlogp, vector<double> &SEGSippl);
+	void computeCE_segment_length(double &SYS, vector<double> &SEGS);
 
 public:
-	CE() {}
-	~CE() {}
-
 	void doMetric(string TGT, string REF, string prefix, int stemming, Scores &hOQ);
 
 };

@@ -14,7 +14,7 @@ print "tools.a: $TOOLS|\n";
 $TOOLS =~ s/\/+/\//g;
 print "tools.b: $TOOLS|\n";
 
-$TOOLS = "/home/ibai/Escriptori/AsiyaGPU/";
+$TOOLS = "/home/ibai/AsiyaGPU/";
 if (!(-d $TOOLS)) { die "[$Common::appNAME] directory <$TOOLS> does not exist!\n"; }
 
 $command = "[$Common::appNAME\n] directory <$TOOLS> does not exist!\n";

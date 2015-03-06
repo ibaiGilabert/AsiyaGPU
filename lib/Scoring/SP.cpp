@@ -216,6 +216,131 @@ SP::SP() {
 SP::~SP() {}
 
 
+string SP::create_PoS_file(string input, string L, string C) {
+	// description _ creates a one-sentence per line PoS file, and returns its name
+	string wlpcfile = input+"."+SP::SPEXT+".wlpc";
+	string pfile = input+"."+SP::SPEXT+".pos";
+
+	if (!exists(boost::filesystem::path(pfile))) {
+		if (exists(boost::filesystem::path(pfile+"."+Common::GZEXT))) {
+			string sys_aux = Common::GUNZIP+" "+pfile+"."+Common::GZEXT;
+			system(sys_aux.c_str());
+		}
+		else {
+			FILE_parse(input, L, C);
+
+			if (!exists(boost::filesystem::path(wlpcfile)) and exists(boost::filesystem::path(wlpcfile+"."+Common::GZEXT))) {
+				string sys_aux = Common::GUNZIP+" "+wlpcfile+"."+Common::GZEXT;
+				system(sys_aux.c_str());
+			}
+
+			ofstream P(pfile.c_str());
+		    if (!P.is_open()) { fprintf(stderr, "couldn't open file: %s\n", pfile.c_str()); exit(1); }
+
+		    ifstream WLPC(wlpcfile.c_str());
+		    if (WLPC) {
+		    	int i = 0;
+		    	int EMPTY = 1;
+		    	vector<string> sentence;
+		    	string str;
+		    	while ( getline(WLPC, str) ) {
+		    		if (str.empty()) {	// sentence separator
+		    			if (EMPTY)		// empty sentence	
+	    					EMPTY = 0;
+		    			else {
+		    				P << sentence[0];				// OJU!!!!!!
+		    				for (int j = 1; j < sentence.size(); ++j)
+		    					P << " " << sentence[j];
+		    				P << endl;
+		    				sentence.clear();
+		    				EMPTY = 1;
+		    			}
+
+	    			}
+	    			else {
+	    				vector<string> elem;
+						boost::split(elem, str, boost::is_any_of("\t "));
+						sentence.push_back(elem[1]);
+						EMPTY = 0;
+	    			}
+		    	}
+		    	P.close();
+		    	WLPC.close();
+		    	string sys_aux = Common::GZIP+" "+wlpcfile;
+		    	system(sys_aux.c_str());
+		    }
+		    else { fprintf(stderr, "couldn't open file: %s\n", wlpcfile.c_str()); exit(1); }
+		}
+	}
+	return pfile;
+}
+
+string SP::create_chunk_file(string input, string L, string C) {
+	// description _ creates a one-sentence per line Chunk file, and returns its name
+	string wlpcfile = input+"."+SP::SPEXT+".wlpc";
+	string cfile = input+"."+SP::SPEXT+".chunks";
+
+	if (!exists(boost::filesystem::path(cfile))) {
+		if (exists(boost::filesystem::path(cfile+"."+Common::GZEXT))) {
+			string sys_aux = Common::GUNZIP+" "+cfile+"."+Common::GZEXT;
+			system(sys_aux.c_str());
+		}
+		else {
+			FILE_parse(input, L, C);
+
+			if (!exists(boost::filesystem::path(wlpcfile)) and exists(boost::filesystem::path(wlpcfile+"."+Common::GZEXT))) {
+				string sys_aux = Common::GUNZIP+" "+wlpcfile+"."+Common::GZEXT;
+				system(sys_aux.c_str());
+			}
+
+			ofstream C(cfile.c_str());
+		    if (!C.is_open()) { fprintf(stderr, "couldn't open file: %s\n", cfile.c_str()); exit(1); }
+
+		    ifstream WLPC(wlpcfile.c_str());
+		    if (WLPC) {
+		    	int i = 0;
+		    	int EMPTY = 1;
+    			boost::regex re("B-.*");
+		    	vector<string> sentence;
+		    	string str;
+		    	while ( getline(WLPC, str) ) {
+		    		if (str.empty()) {	// sentence separator
+		    			if (EMPTY)		// empty sentence	
+	    					EMPTY = 0;
+		    			else {
+		    				C << sentence[0];				// OJU!!!!!!
+		    				for (int j = 1; j < sentence.size(); ++j)
+		    					C << " " << sentence[j];
+		    				C << endl;
+		    				sentence.clear();
+		    				EMPTY = 1;
+		    			}
+
+	    			}
+	    			else {
+	    				vector<string> l;
+						boost::split(l, str, boost::is_any_of("\t "));
+					 	boost::match_results<string::const_iterator> results;
+					 	if (boost::regex_match(l[3], results, re)) {
+					 		vector<string> c;
+							boost::split(c, l[3], boost::is_any_of("-"));
+							sentence.push_back(c[1]);
+					 	}
+						EMPTY = 0;
+	    			}
+		    	}
+		    	C.close();
+		    	WLPC.close();
+		    	string sys_aux = Common::GZIP+" "+wlpcfile;
+		    	system(sys_aux.c_str());
+		    }
+		    else { fprintf(stderr, "couldn't open file: %s\n", wlpcfile.c_str()); exit(1); }
+		}
+	}
+	return cfile;
+}
+
+
 void SP::FILE_merge_BIOS(string input1, string input2, string output) {
 	// description _ merges tokens in two files so they conform the tokenization of the first file 
 
@@ -230,17 +355,19 @@ void SP::FILE_merge_BIOS(string input1, string input2, string output) {
     if (in1_file) {
     	string str1, str2;
     	int empty = 1;
-        boost::regex re("^$");
+        //boost::regex re("^$");
         while( getline(in1_file, str1) ) {
-            boost::match_results<string::const_iterator> results;
-            if (boost::regex_match(str1, results, re)) {
+            //boost::match_results<string::const_iterator> results;
+            //if (boost::regex_match(str1, results, re)) {
+            if (str1.empty()) {
             	if (empty) empty = 0;	// empty sentence
             	else empty = 1;			// sentence separator
             	o_file << endl;
 			}
 			else {
 				getline(in2_file, str2);
-	            if (boost::regex_match(str2, results, re))
+	            //if (boost::regex_match(str2, results, re))
+				if (str2.empty())
 					getline(in2_file, str2);		// line 2 is empty
 				vector<string> l1, l2;
 				boost::split(l1, str1, boost::is_any_of("\t "));
@@ -271,7 +398,7 @@ void SP::FILE_merge_BIOS(string input1, string input2, string output) {
     else { fprintf(stderr, "couldn't open input file <%s>\n", input1.c_str()); exit(1); }
 }
 
-void SP::FILE_parse_BIOS(string input) {
+void SP::FILE_parse_BIOS(string input, string L, string C) {
 	// description _ performs the shallow parsing and writes a several files (using SVMTool)
 	string wlpc_file = input+"."+SP::SPEXT+".wlpc";
 	string wlp_file = input+"."+SP::SPEXT+".wlp";
@@ -287,9 +414,9 @@ void SP::FILE_parse_BIOS(string input) {
                              Config::tools+"/mill/output/classes:"+Config::tools+"/"+SP::BIOS+"/jars/maxent-2.3.0.jar:"+
                              Config::tools+"/"+SP::BIOS+"/jars/trove.jar:"+Config::tools+"/"+SP::BIOS+"/jars/antlr-2.7.5.jar:"+
                              Config::tools+"/"+SP::BIOS+"/jars/log4j.jar bios.chunker.Chunker"+
-                             " --predict --data="+Config::tools+"/"+SP::BIOS+"/data/chunker/"+SP::rLANGBIOS[Config::LANG]+
-                             " --model=conll.paum."+((Config::CASE == Common::CASE_CI)? "ci" : "cs")+".model"+
-                             " --type=paum --case-sensitive="+((Config::CASE == Common::CASE_CI)? "false" : "true")+
+                             " --predict --data="+Config::tools+"/"+SP::BIOS+"/data/chunker/"+SP::rLANGBIOS[L]+
+                             " --model=conll.paum."+((C == Common::CASE_CI)? "ci" : "cs")+".model"+
+                             " --type=paum --case-sensitive="+((C == Common::CASE_CI)? "false" : "true")+
                              " --log4j="+Config::tools+"/"+SP::BIOS+"/log4j.properties > "+wc_file+" 2> "+wc_file+".err";
         Common::execute_or_die(command, "[ERROR] problems running BIOS...");
 
@@ -306,15 +433,17 @@ void SP::FILE_parse_BIOS(string input) {
 	}
 }
 
-int SP::FILE_parse_BKLY(string input) {
+int SP::FILE_parse_BKLY(string input, string L, string C) {
+	// description _ performs the constituency parsing with berkeleyparser and then extracts the shallow parsing informations and writes a several files
+	//               (wlpc -> TOKEN LEMMA PoS CHUNK)
+
+	//CP::parse_FULL(input, L, C);
 
 }
 
-int SP::FILE_parse_SVM(string input) {
+int SP::FILE_parse_SVM(string input, string L, string C) {
 	// description _ performs the shallow parsing and writes a several files (using SVMTool)
-	//               (wplc -> TOKEN PoS LEMMA CHUNK)
-	string L = Config::LANG;
-	string C = Config::CASE;
+	//               (wlpc -> TOKEN LEMMA PoS CHUNK)
 	string lblex;
 	string lpath = Config::tools+"/"+SP::SVMT+"/models/"+L+"/"+C+"/";
     string wlp_file = input+"."+SP::SPEXT+".wlp";
@@ -428,12 +557,12 @@ void SP::start_parser(int which) {
 	parser["LANG"] = Config::LANG;
 }*/
 
-void SP::FILE_parse(string input) {
+void SP::FILE_parse(string input, string L, string C) {
 	// description _ performs the shallow parsing and writes a several files (using SVMTool and BIOS)
 	//               (wplc -> TOKEN PoS LEMMA CHUNK)
-	int use_chunks = SP::rLANGBIOS.find(Config::LANG) != SP::rLANGBIOS.end() ? 1 : 0;
+	int use_chunks = SP::rLANGBIOS.find(L) != SP::rLANGBIOS.end() ? 1 : 0;
 
-	if (SP::rLANGSVM.find(Config::LANG) != SP::rLANGSVM.end() or SP::rLANGBKLY.find(Config::LANG) != SP::rLANGBKLY.end()) {
+	if (SP::rLANGSVM.find(L) != SP::rLANGSVM.end() or SP::rLANGBKLY.find(L) != SP::rLANGBKLY.end()) {
 		string spfile = use_chunks ? input+"."+SP::SPEXT+".wlpc" : input+"."+SP::SPEXT+".wlp";
 
 		if ( !exists(boost::filesystem::path(spfile)) and !exists(boost::filesystem::path(spfile+"."+Common::GZEXT)) ) {
@@ -446,15 +575,15 @@ void SP::FILE_parse(string input) {
 				if (Config::verbose) fprintf(stderr, "Running shallow-parsing [%s -> %s]\n", wpfile.c_str(), wpfile.c_str());
 
 				int iter = 0;
-				if (SP::rLANGSVM.find(Config::LANG) != SP::rLANGSVM.end()) {
+				if (SP::rLANGSVM.find(L) != SP::rLANGSVM.end()) {
 					fprintf(stderr, " - to FILE_parse_SVM <intput:%s>\n", input.c_str());
-					iter = FILE_parse_SVM(input);
+					iter = FILE_parse_SVM(input, L, C);
 					fprintf(stderr, " - iter: %d\n", iter);
 				}
-				else if (SP::rLANGBKLY.find(Config::LANG) != SP::rLANGBKLY.end()) {
+				else if (SP::rLANGBKLY.find(L) != SP::rLANGBKLY.end()) {
 					USE_LEMMAS = 0;
 					fprintf(stderr, " - to FILE_parse_BKLY <intput:%s>\n", input.c_str());
-					iter = FILE_parse_BKLY(input);
+					iter = FILE_parse_BKLY(input, L, C);
 					fprintf(stderr, " - iter: %d\n", iter);
 				}
 				if (Config::verbose) fprintf(stderr, ".. %d segments [DONE]\n", iter);
@@ -463,7 +592,7 @@ void SP::FILE_parse(string input) {
 			if (use_chunks) {
 				string wcfile = input+"."+SP::SPEXT+".wc";
 				string wpcfile = input+"."+SP::SPEXT+".wpc";
-				FILE_parse_BIOS(input);
+				FILE_parse_BIOS(input, L, C);
 				//end - gzip the files
 				string gz_aux;
 				gz_aux = Common::GZIP+" "+wpcfile;	system(gz_aux.c_str());
@@ -477,16 +606,16 @@ void SP::FILE_parse(string input) {
 
 		}
 	}
-	else { fprintf(stderr, "[ERROR] Shallow parser not available for '%s' language!!\n", Config::LANG.c_str()); exit(1); }
+	else { fprintf(stderr, "[ERROR] Shallow parser not available for '%s' language!!\n", L.c_str()); exit(1); }
 }
 
 
-void SP::FILE_parse_split(string input) {
+void SP::FILE_parse_split(string input, string L, string C) {
 	// description _ performs the shallow parsing and writes 5 different files (used as input for SP metrics computation)
 	//               (ALL_WLPC, PoS, lemma, chunk label, chunk)
    
 	//check whether chunks were calculated
-	bool use_chunks = (SP::rLANGBIOS.find(Config::LANG) != SP::rLANGBIOS.end()) ? true : false;
+	bool use_chunks = (SP::rLANGBIOS.find(L) != SP::rLANGBIOS.end()) ? true : false;
 
 	// wlpc or wlp
 	string spfile = (use_chunks) ? input+"."+SP::SPEXT+".wlpc" : input+"."+SP::SPEXT+".wlp";
@@ -494,7 +623,7 @@ void SP::FILE_parse_split(string input) {
 		if (!exists(boost::filesystem::path(spfile+"."+Common::GZEXT))) {
 			string sys_aux = Common::GUNZIP+" "+spfile+"."+Common::GZEXT;	system(sys_aux.c_str());
 		}
-		else FILE_parse(input);
+		else FILE_parse(input, L, C);
 	}
 
 	string pfile = input+"."+SP::SPEXT+".P";
@@ -619,10 +748,10 @@ void SP::FILE_parse_split(string input) {
 }
 
 
-void SP::FILE_parse_and_read(string input, vector<sParsed> &FILE) {
+void SP::FILE_parse_and_read(string input, string L, string C, vector<sParsed> &FILE) {
 	// description _ reads "wplc or wpl" file, performing the shallow parsing (using SVMTool and BIOS) only if required
 	//               (wlpc -> TOKEN LEMMA PoS CHUNK)
-	FILE_parse(input);
+	FILE_parse(input, L, C);
 
 	// WLPC
 	string spfile = input+"."+SP::SPEXT+".wlpc";
@@ -925,7 +1054,7 @@ void SP::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 		}
 		if (DO_METRICS) {
 			vector<sParsed> FDout(TESTBED::wc[TGT]);									// OJU!!!!
-			FILE_parse_and_read(TESTBED::Hsystems[TGT], FDout);
+			FILE_parse_and_read(TESTBED::Hsystems[TGT], Config::LANG, Config::CASE, FDout);
 			vector< map<string , double> > maxscores(TESTBED::wc[TGT]);					// OJU!!!!
 
 			SC_ASIYA sc_asiya;
@@ -933,7 +1062,7 @@ void SP::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 			for (map<string, string>::const_iterator it_r = TESTBED::Hrefs.begin(); it_r != TESTBED::Hrefs.end(); ++it_r) {
 				//fprintf(stderr, "ref: [%s -> %s]\n", it->first.c_str(), it->second.c_str());
 				vector<sParsed> FDref(TESTBED::wc[it_r->first]);
-				FILE_parse_and_read(it_r->second, FDref);
+				FILE_parse_and_read(it_r->second, Config::LANG, Config::CASE, FDref);
 				
 				vector< map<string, double> > scores;
 				FILE_compute_overlap_metrics(FDout, FDref, scores);
@@ -958,7 +1087,7 @@ void SP::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 				}
 
 				if (GO_NIST and DO_NIST_METRICS) {
-					FILE_parse_split(it_r->second);
+					FILE_parse_split(it_r->second, Config::LANG, Config::CASE);
 				}
 			}
 
@@ -988,7 +1117,7 @@ void SP::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 			}
 
 			if (GO_NIST and DO_NIST_METRICS) {
-				FILE_parse_split(TESTBED::Hsystems[TGT]);
+				FILE_parse_split(TESTBED::Hsystems[TGT], Config::LANG, Config::CASE);
 				FILE_compute_MultiNIST_metrics(TGT, REF, hOQ);
 				remove_parse_plit_file(TESTBED::Hsystems[TGT]);
 				for (map<string, string>::const_iterator it_r = TESTBED::Hrefs.begin(); it_r != TESTBED::Hrefs.end(); ++it_r)
