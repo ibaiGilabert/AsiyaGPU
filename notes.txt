@@ -189,11 +189,19 @@ SHORTCUTS
      									p.filename().string();				// with extension
      									p.stem();							// without extension
 
+     --> FIND ELEMENT IN A MAP
+
+     	if (mymap.find(elem) != mymap.end())	// and get the iterator to the element;
+
+     		or
+
+     	if (mymap.count(elem) > 0)	// only can return 1 (if element is found) or 0 (otherwise)
+
 
 TODO LIST
 
 	-	LOCAL
-				->	Completar el CE.
+				->	Completar els BiDict de CE. (amb les mètriques de nist_xml no ho puc provar [no hi ha dict] [i actualment NO FUNCIONA])
 
 	-	CLUSTER
 

@@ -245,6 +245,17 @@ string Common::join_set(const set<string> st, char c) {
     s = s.substr(0, s.size()-1);  //remove last 'c' char
     return s;
 }
+
+/*string Common::trim_string(string s) {
+	// description _ trim string (remove blank characters in start/end)
+	regex re_start_space("^ ");
+	regex re_end_space(" $");
+    s = boost::regex_replace(s, re_start_space, "");
+    s = boost::regex_replace(s, re_end_space, "");
+    return s;
+}*/
+
+
 /*
 sub safe_division {
     #description _ if denominator is different from 0 returns regular division; otherwise returns default value (0 if not specified)

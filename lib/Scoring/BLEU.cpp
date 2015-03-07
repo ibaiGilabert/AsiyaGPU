@@ -271,9 +271,7 @@ void BLEU::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 		if (Config::Hmetrics.find(aux) != Config::Hmetrics.end()) { GO = 1; }
 	}
 
-	fprintf(stderr, "BLEU ei!\n");
 	if (GO) {
-		fprintf(stderr, "GO! BLEU GO!\n");
 		if (Config::verbose) fprintf(stderr, "%s\n", BLEU::BLEUEXT.c_str());
 		stringstream ss1, ss2, ss3, ss4, ss2i, ss3i, ss4i, ssB;
 		ss1 << Common::DATA_PATH << "/" << Common::REPORTS << "/" << TGT << "/" << REF << "/" << prefix << BLEU::BLEUEXT << "-1." << Common::XMLEXT;

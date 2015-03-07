@@ -182,6 +182,7 @@ public:
 
 	static string join_set(const set<string> st, char c);
 
+	//static string trim_string(string s);
 	//static double trunk_and_trim_number(double n, int l, int p);
 
 	//static vector<int> reorder_scores(map<string, int> &hscores, string TGT, string G);

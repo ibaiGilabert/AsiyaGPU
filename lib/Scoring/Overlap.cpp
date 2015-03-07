@@ -308,6 +308,46 @@ void Overlap::computeFl(string out, string ref, double &SYS, vector<double> &SEG
 	} else { fprintf(stderr, "\n[ERROR] couldn't open input file: %s\n", out.c_str()); exit(1); }
 }
 
+void Overlap::computeOn(string out, string ref, double &SYS, vector<double> &SEG) {
+	// description _ computes overlap ratio (single reference)
+	double N_numerator = 0, N_denominator = 0;
+
+    ifstream ref_file(ref.c_str());
+    ifstream out_file(out.c_str());
+	if (!ref_file) { fprintf(stderr, "couldn't open input file: %s\n", ref.c_str()); exit(1); }
+	if (out_file) {
+		bool STOP = false;
+
+		string o;
+		while( getline(out_file, o) and !STOP ) {
+			double SEGscore;
+			string r;
+			if (getline(ref_file, r)) {
+				vector<string> lO, lR;
+				istringstream iss_o(o);
+				for (string token; getline(iss_o, token, ' '); )
+					lO.push_back(token);
+				istringstream iss_r(r);
+				for (string token; getline(iss_r, token, ' '); )
+					lR.push_back(token);
+
+				double numerator = min(lO.size(), lR.size());
+				double denominator = max(lO.size(), lR.size());
+
+				SEGscore = Common::safe_division(numerator, denominator);
+				N_numerator += numerator;
+				N_denominator += denominator;
+			}
+			else { fprintf(stderr, "[ERROR] number of lines differs <%s> Vs <%s>\n", out.c_str(), ref.c_str()); STOP = true; }
+			SEG.push_back(SEGscore);
+		}
+		out_file.close();
+		ref_file.close();
+	} else { fprintf(stderr, "\n[ERROR] couldn't open input file: %s\n", out.c_str()); exit(1); }
+
+	SYS = Common::safe_division(N_numerator, N_denominator);
+}
+
 
 void Overlap::computeMultiOl(string out, double &MAXSYS, vector<double> &MAXSEG) {
  	// description _ computes lexical overlap (multiple reference)
@@ -391,6 +431,40 @@ void Overlap::computeMultiFl(string out, double &MAXSYS, vector<double> &MAXSEG)
 		MAXSYS += it->second;
 	}
 	MAXSYS /= MAXSEG.size();
+}
+
+void Overlap::get_segment_scores(vector< map<string, double> > &scores, string feature, int mode, double &SYSscore, vector<double> &SEGSscore) {
+	// description _ retrieves scores at the segment level for the given feature
+	//               as well as the average system score (dealing with void values
+	//               according to the given 'mode' value)
+	SYSscore = 0;
+	int N = 0;
+	for (int topic = 0; topic < scores.size(); ++topic) {
+		int n = 0;		// feature exists? 0:no, 1:yes
+		double seg_score = 0;
+
+		if (scores[topic].count(feature)) {
+			if (scores[topic][feature] != Common::NOT_DEFINED) {
+				seg_score = scores[topic][feature];
+				n = 1;
+			}
+		}
+
+		SYSscore += seg_score;
+		N += n;
+		if (n == 0) {
+			if (mode == 0) seg_score = Common::NOT_DEFINED;
+			else if (mode == 1) seg_score = 1;
+			else if (mode == 2) seg_score = 0;
+		}
+		SEGSscore.push_back(seg_score);
+	}
+
+	if (N == 0) {
+		if (mode == 0 or mode == 2) SYSscore = 0;
+		else if (mode == 1) SYSscore = 1;
+	}
+	else SYSscore /= N;
 }
 
 void Overlap::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {

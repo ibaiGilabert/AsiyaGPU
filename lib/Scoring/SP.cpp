@@ -260,7 +260,7 @@ string SP::create_PoS_file(string input, string L, string C) {
 	    			else {
 	    				vector<string> elem;
 						boost::split(elem, str, boost::is_any_of("\t "));
-						sentence.push_back(elem[1]);
+						sentence.push_back(elem[2]);
 						EMPTY = 0;
 	    			}
 		    	}
@@ -338,6 +338,65 @@ string SP::create_chunk_file(string input, string L, string C) {
 		}
 	}
 	return cfile;
+}
+
+string SP::create_lemma_file(string input, string L, string C) {
+	// description _ creates a one-sentence per line lemma file, and returns its name
+	string wlpcfile = input+"."+SP::SPEXT+".wlpc";
+	string lfile = input+"."+SP::SPEXT+".lemma";
+
+	if (!exists(boost::filesystem::path(lfile))) {
+		if (exists(boost::filesystem::path(lfile+"."+Common::GZEXT))) {
+			string sys_aux = Common::GUNZIP+" "+lfile+"."+Common::GZEXT;
+			system(sys_aux.c_str());
+		}
+		else {
+			FILE_parse(input, L, C);
+
+			if (!exists(boost::filesystem::path(wlpcfile)) and exists(boost::filesystem::path(wlpcfile+"."+Common::GZEXT))) {
+				string sys_aux = Common::GUNZIP+" "+wlpcfile+"."+Common::GZEXT;
+				system(sys_aux.c_str());
+			}
+
+			ofstream L(lfile.c_str());
+		    if (!L.is_open()) { fprintf(stderr, "couldn't open file: %s\n", lfile.c_str()); exit(1); }
+
+		    ifstream WLPC(wlpcfile.c_str());
+		    if (WLPC) {
+		    	int i = 0;
+		    	int EMPTY = 1;
+    			vector<string> sentence;
+    			string str;
+		    	while ( getline(WLPC, str) ) {
+		    		if (str.empty()) {	// sentence separator
+		    			if (EMPTY)		// empty sentence	
+	    					EMPTY = 0;
+		    			else {
+		    				L << sentence[0];				// OJU!!!!!!
+		    				for (int j = 1; j < sentence.size(); ++j)
+		    					L << " " << sentence[j];
+		    				L << endl;
+		    				sentence.clear();
+		    				EMPTY = 1;
+		    			}
+
+	    			}
+	    			else {
+	    				vector<string> elem;
+						boost::split(elem, str, boost::is_any_of("\t "));
+						sentence.push_back(elem[1]);
+						EMPTY = 0;
+	    			}
+		    	}
+		    	L.close();
+		    	WLPC.close();
+		    	string sys_aux = Common::GZIP+" "+wlpcfile;
+		    	system(sys_aux.c_str());
+		    }
+		    else { fprintf(stderr, "couldn't open file: %s\n", wlpcfile.c_str()); exit(1); }
+		}
+	}
+	return lfile;
 }
 
 
