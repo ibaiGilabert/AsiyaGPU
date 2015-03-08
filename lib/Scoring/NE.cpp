@@ -24,7 +24,7 @@ map<string, string> NE::create_rLANG() {
 	rLANG[Common::L_SPA] = "es";
 	return rLANG;
 }
-const map<string, string> NE::rLANG = create_rLANG();
+map<string, string> NE::rLANG = create_rLANG();
 
 set<string> NE::create_rNEeng() {
 	set<string> rNEeng;
@@ -83,14 +83,14 @@ void NE::SNT_extract_features(const sParsed &snt, SNTfeatures &sntEXT) {
 		// exact matches -----------------------
 	 	boost::match_results<string::const_iterator> results;
 	 	if (ne == "O" or boost::regex_match(ne, results, reB)) {
-	 		if (lne.size() and type != "") {
-	 			string lne_aux = lne[0];
-	 			for (int j = 1; j < lne.size(); ++j) lne_aux += " " + lne[i];
+	 		if (lne.size() > 0 and type != "") {
+	 			string lne_aux = lne[0];	for (int k = 1; k < lne.size(); ++k) lne_aux += " "+lne[k];
 	 			++sntEXT["exact"][type][lne_aux];
-	 			type = NE[1];
-	 			lne.clear();
-	 			if (boost::regex_match(ne, results, reB)) lne.push_back(word);
 	 		}
+ 			if (NE.size() > 1) type = NE[1];
+ 			else type = "";
+ 			lne.clear();
+ 			if (boost::regex_match(ne, results, reB)) lne.push_back(word);
 	 	}
 	 	else if (boost::regex_match(ne, results, reI))
 	 		lne.push_back(word);
@@ -128,7 +128,7 @@ void NE::SNT_compute_overlap_scores(SNTfeatures &Tout, SNTfeatures &Tref, map<st
 
 	for (set<string>::const_iterator it = F.begin(); it != F.end(); ++it) {
 		pair<double, double> hits_total = Ov.compute_overlap(Tout["bow"][*it], Tref["bow"][*it], (Config::CASE != Common::CASE_CI));
-		SCORES[ NE::NEEXT+"Oe-("+(*it)+")" ] = (hits_total.second == 0) ? 0 : (hits_total.first / hits_total.second);
+		SCORES[ NE::NEEXT+"-Oe("+(*it)+")" ] = (hits_total.second == 0) ? 0 : (hits_total.first / hits_total.second);
 		HITS += hits_total.first;
 		TOTAL += hits_total.second;
 		if (*it != "O") {
@@ -139,7 +139,6 @@ void NE::SNT_compute_overlap_scores(SNTfeatures &Tout, SNTfeatures &Tref, map<st
 	SCORES[ NE::NEEXT+"-Oe(*)" ] = (TOTALb == 0) ? 0 : (HITSb / TOTALb);
 	SCORES[ NE::NEEXT+"-Oe(**)" ] = (TOTAL == 0) ? 0 : (HITS / TOTAL);
 }
-	void SNT_extract_features(const sParsed &snt, SNTfeatures &sntEXT);
 
 void NE::FILE_compute_overlap_metrics(const vector<sParsed> &FDout, const vector<sParsed> &FDref, vector< map<string, double> > &SCORES) {
 	// description _ computes NE scores (single reference)
@@ -153,6 +152,93 @@ void NE::FILE_compute_overlap_metrics(const vector<sParsed> &FDout, const vector
 		SNT_compute_overlap_scores(outSNT, refSNT, scores);
 		SCORES[topic] = scores;
 	}
+}
+
+void NE::FILE_parse(string input, string L, string C) {
+	// description _ responsible for NERC
+	//               (WORD + PoS)  ->  (WORD + NE)
+	string wpfile   = input+"."+SP::SPEXT+".wp";
+	string wcfile   = input+"."+SP::SPEXT+".wc";
+	string wlpfile  = input+"."+SP::SPEXT+".wlp";
+	string wpcfile  = input+"."+SP::SPEXT+".wpc";
+	string wlpcfile = input+"."+SP::SPEXT+".wlpc";
+
+	string nercfile = input+"."+NE::NEEXT;
+	string wlpcnercfile = input+"."+NE::NEEXT+".wlpcn";
+
+	SP sp;
+	string sys_aux;
+	if (NE::rLANG.count(L)) {
+		if ( !exists(boost::filesystem::path(wlpcnercfile)) and !exists(boost::filesystem::path(wlpcnercfile+"."+Common::GZEXT)) ) {
+			//SP (shallow parsing)
+			sp.FILE_parse(input, L, C);
+			//NERC (named entitity recognition and classification)
+			if (!exists(boost::filesystem::path(nercfile))) {
+				if (!exists(boost::filesystem::path(nercfile+"."+Common::GZEXT))) {
+					if ( !exists(boost::filesystem::path(wpcfile)) and exists(boost::filesystem::path(wpcfile+"."+Common::GZEXT)) ) {
+						sys_aux = Common::GUNZIP+" "+wpcfile+"."+Common::GZEXT;
+						system(sys_aux.c_str());
+					}
+					string toolBIOS = Config::tools+"/"+NE::BIOS;
+					string exe = "cat "+wpcfile+" | java -Dfile.encoding=UTF-8 -Xmx1024m -cp "+toolBIOS+"/output/classes/:"+Config::tools+"/mill/output/classes:"+toolBIOS+
+						"/jars/maxent-2.3.0.jar:"+toolBIOS+"/jars/trove.jar:"+toolBIOS+"/jars/antlr-2.7.5.jar:"+toolBIOS+"/jars/log4j.jar bios.nerc.Nerc --predict --namex="+
+						toolBIOS+"/data/nerc/"+NE::rLANG[L]+"/namex --numex="+toolBIOS+"/data/nerc/"+NE::rLANG[L]+"/numex --model=conll.paum."+((C == Common::CASE_CI)? "ci" : "cs")+
+						".model --type=paum --case-sensitive="+((C == Common::CASE_CI)? "false" : "true")+" --log4j=log4j.properties > "+nercfile+" 2> /dev/null";
+
+					Common::execute_or_die(exe, "[ERROR] problems running BIOS...");
+
+					sys_aux = Common::GZIP+" "+wpcfile;
+					system(sys_aux.c_str());
+				}
+				else {
+					sys_aux = Common::GUNZIP+" "+nercfile+"."+Common::GZEXT;
+					system(sys_aux.c_str());
+				}
+			}
+
+			//merging tagging + chunking + nerc
+			if ( !exists(boost::filesystem::path(wlpcfile)) and exists(boost::filesystem::path(wlpcfile+"."+Common::GZEXT)) ) {
+				sys_aux = Common::GUNZIP+" "+wlpcfile+"."+Common::GZEXT;
+				system(sys_aux.c_str());
+			}
+			sp.FILE_merge_BIOS(wlpcfile, nercfile, wlpcnercfile);
+
+			sys_aux = Common::GZIP+" "+wlpcfile;	system(sys_aux.c_str());
+			sys_aux = "rm -f "+nercfile;			system(sys_aux.c_str());
+		}
+	}
+	else { fprintf(stderr, "[NE] tool for <%s> unavailable!!!\n", L.c_str()); exit(1); }
+}
+
+void NE::FILE_parse_and_read(string input, string L, string C, vector<sParsed> &FILE) {
+	// description _ responsible for NERC
+	//               (WORD + PoS)  ->  (WORD + NE)
+	string wlpcnercfile = input+"."+NE::NEEXT+".wlpcn";
+	FILE_parse(input, L, C);
+
+	if ( !exists(boost::filesystem::path(wlpcnercfile)) and exists(boost::filesystem::path(wlpcnercfile+"."+Common::GZEXT)) ) {
+		string sys_aux = Common::GUNZIP+" "+wlpcnercfile+"."+Common::GZEXT;
+		system(sys_aux.c_str());
+	}
+
+	ifstream file(wlpcnercfile.c_str());
+	if (file) {
+		int i = 0;
+		string str;
+		while ( getline(file, str) ) {
+			if (str.empty()) ++i;
+			else {
+				vector<string> snt;
+				boost::split(snt, str, boost::is_any_of("\t "));
+				FILE[i].push_back(snt); 
+			}
+		}
+		file.close();
+	}
+	else { fprintf(stderr, "couldn't open file <%s>\n", wlpcnercfile.c_str()); exit(1); }
+	
+	string sys_aux = Common::GZIP+" "+wlpcnercfile;
+	system(sys_aux.c_str());
 }
 
 void NE::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
@@ -181,19 +267,29 @@ void NE::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 		}
 
 		if (DO_METRICS) {
-			SP sp;
+			//SP sp;
 			Overlap ov;
-			vector<sParsed> FDout;
-			sp.FILE_parse_and_read(TESTBED::Hsystems[TGT], Config::LANG, Config::CASE, FDout);
+			vector<sParsed> FDout(TESTBED::wc[TGT]);
+			FILE_parse_and_read(TESTBED::Hsystems[TGT], Config::LANG, Config::CASE, FDout);
+//cout << "-> parsed " << TESTBED::Hsystems[TGT] << " (" << TESTBED::wc[TGT] << ")" << endl;
 
 			vector< map<string, double> > max_scores(FDout.size());		// Assume size of FDout == FDref 
 			for (map<string, string>::const_iterator itr = TESTBED::Hrefs.begin(); itr != TESTBED::Hrefs.end(); ++itr) {
-				vector<sParsed> FDref;
-				sp.FILE_parse_and_read(itr->second, Config::LANG, Config::CASE, FDref);
+				vector<sParsed> FDref(TESTBED::wc[itr->first]);
+				FILE_parse_and_read(itr->second, Config::LANG, Config::CASE, FDref);
+//cout << "-> parsed " << itr->second << " (" << TESTBED::wc[itr->first] << ")" << endl;
 
 				vector< map<string, double> > scores;
 				FILE_compute_overlap_metrics(FDout, FDref, scores);
-
+/*cout << "-> scores:" << endl;
+for (int k = 0; k < scores.size(); ++k) {
+        cout << "\tSCORES[" << k << "]" << endl;
+        map<string, double> score_k = scores[k];
+        for(map<string, double>::const_iterator itk = score_k.begin(); itk != score_k.end(); ++itk) {
+                cout << "\t\t[" << itk->first << " -> " << itk->second << "]" << endl;
+        }
+}
+exit(1);*/
 				for (set<string>::const_iterator itf = rF.begin(); itf != rF.end(); ++itf) {
 					if (Config::Hmetrics.count(*itf)) {
 						double MAXSYS, SYS;
@@ -238,3 +334,38 @@ void NE::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 		}
 	}
 }
+
+/*SNT_extract_features
+        cout << "------ EXTRACTION OF the sParsed ------" << endl;
+        for (int i = 0; i < snt.size(); ++i) {
+                cout << "[ |";
+                for (int j = 0; j < snt[i].size(); ++j) cout  << snt[i][j] << "|";
+                cout << " ]" << endl;
+        }
+        cout << "---------------------------------------" << endl;
+        exit(1);
+
+SNT_compute_overlap_scores
+                cout << "Tout[bow]:" << endl;
+        for (map<string, map<string, int> >::const_iterator it = Tout["bow"].begin(); it != Tout["bow"].end(); ++it) {
+
+                        cout << "\t" << it->first << endl;
+                        map<string, int> aux = it->second;
+                        for(map<string, int>::const_iterator itt = aux.begin(); itt != aux.end(); ++itt) {
+                                cout << "\t\t[" << itt->first << ", " << itt->second << "]" << endl;
+                        }
+
+                F.insert(it->first);
+        }
+                cout << "Tref[bow]:" << endl;
+        for (map<string, map<string, int> >::const_iterator it = Tref["bow"].begin(); it != Tref["bow"].end(); ++it) {
+
+                        cout << "\t" << it->first << endl;
+                        map<string, int> aux = it->second;
+                        for(map<string, int>::const_iterator itt = aux.begin(); itt != aux.end(); ++itt) {
+                                cout << "\t\t[" << itt->first << ", " << itt->second << "]" << endl;
+                        }
+
+                F.insert(it->first);
+        }
+exit(1);*/

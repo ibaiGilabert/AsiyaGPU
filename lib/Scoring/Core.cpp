@@ -13,6 +13,7 @@
 #include "../include/LeM.hpp"
 #include "../include/SP.hpp"
 #include "../include/CE.hpp"
+#include "../include/NE.hpp"
 #include "../include/ULC.hpp"
 #include "../include/SC_RAW.hpp"
 #include "../include/TESTBED.hpp"
@@ -239,6 +240,7 @@ void Core::doMultiMetrics(string HYP, const set<string> &Lref, Scores &hOQ) {
 		SingleMetric *pLeM = new LeM;
 		SingleMetric *pSP = new SP;
 		SingleMetric *pCE = new CE;
+		SingleMetric *pNE = new NE;
 
 		pBLEU->doMetric(HYP, REF, "", hOQ);
 		pNIST->doMetric(HYP, TESTBED::Hsystems[HYP], REF, TESTBED::Hrefs, "", hOQ);
@@ -255,8 +257,9 @@ void Core::doMultiMetrics(string HYP, const set<string> &Lref, Scores &hOQ) {
 		pLeM->doMetric(HYP, REF, "", hOQ);
 		pSP->doMetric(HYP, REF, "", hOQ);
 		pCE->doMetric(HYP, REF, "", hOQ);
+		pNE->doMetric(HYP, REF, "", hOQ);
 
-		delete pBLEU, pNIST, pMETEOR, pROUGE, pGTM, pNGRAM, pOverlap, pESA, pTER, pWER, pPER, pLeM, pSP, pCE;
+		delete pBLEU, pNIST, pMETEOR, pROUGE, pGTM, pNGRAM, pOverlap, pESA, pTER, pWER, pPER, pLeM, pSP, pCE, pNE;
 	}
 }
 

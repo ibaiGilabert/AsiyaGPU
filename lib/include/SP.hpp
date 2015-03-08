@@ -31,10 +31,7 @@ private:
 	int FILE_parse_BKLY(string input, string L, string C);
 	int FILE_parse_SVM(string input, string L, string C);
 
-	void FILE_parse(string input, string L, string C);
-
 	void FILE_parse_BIOS(string input, string L, string C);
-	void FILE_merge_BIOS(string input1, string input2, string output);
 	
 	void get_segment_scores(const vector< map<string, double> > &scores, string feature, int mode, double &SYSscore, vector<double> &SEGscores);
 
@@ -53,6 +50,9 @@ public:
 
 	void doMetric(string TGT, string REF, string prefix, Scores &hOQ);
 
+	void FILE_merge_BIOS(string input1, string input2, string output);		// NE
+	
+	void FILE_parse(string input, string L, string C);		// NE
 	void FILE_parse_and_read(string input, string L, string C, vector<sParsed> &FILE);	// NE
 	
 	string create_PoS_file(string input, string L, string C);		// CE

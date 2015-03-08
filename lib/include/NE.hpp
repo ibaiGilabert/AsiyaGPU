@@ -20,7 +20,10 @@ private:
 
 	static const string NEEXT, BIOS;
 	static const set<string> rNEeng, rNEengSmall, rNEespcat;
-	static const map<string, string> rLANG;
+	static map<string, string> rLANG;
+
+	void FILE_parse(string input, string L, string C);
+	void FILE_parse_and_read(string input, string L, string C, vector<sParsed> &FILE);
 
 	void SNT_extract_features(const sParsed &snt, SNTfeatures &sntEXT);
 	void SNT_compute_overlap_scores(SNTfeatures &Tout, SNTfeatures &Tref, map<string, double> &SCORES);

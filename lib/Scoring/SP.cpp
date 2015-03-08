@@ -431,11 +431,12 @@ void SP::FILE_merge_BIOS(string input1, string input2, string output) {
 				vector<string> l1, l2;
 				boost::split(l1, str1, boost::is_any_of("\t "));
 				boost::split(l2, str2, boost::is_any_of("\t "));
-				for (int i = 0; i < l1.size(); ++i) {
+				for (int i = 0; i < l1.size()-1; ++i) {
 					o_file << l1[i] << " ";
 				}
+				o_file << l1[l1.size()-1];
 				for (int i = 1; i < l2.size(); ++i) {
-					o_file << l2[i] << " ";
+					o_file << " " << l2[i];
 				}
 				//istringstream buf1(str1), buf2(str2);
     			/*for(string token; getline(buf1, token, ' '); ) {
