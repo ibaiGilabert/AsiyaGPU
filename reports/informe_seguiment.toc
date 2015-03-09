@@ -4,10 +4,13 @@
 \contentsline {subsection}{\numberline {1.2}Abast}{4}
 \contentsline {section}{\numberline {2}Estat de l'Art}{6}
 \contentsline {section}{\numberline {3}Planificaci\IeC {\'o}}{7}
-\contentsline {subsection}{\numberline {3.1}Fase 1}{7}
-\contentsline {subsection}{\numberline {3.2}Fase 2}{7}
-\contentsline {subsection}{\numberline {3.3}Fase 3}{7}
-\contentsline {subsection}{\numberline {3.4}fase puta}{7}
-\contentsline {section}{\numberline {4}An\IeC {\`a}lisi d'alternatives}{8}
-\contentsline {section}{\numberline {5}Metodologia}{9}
-\contentsline {section}{\numberline {6}Estat actual}{10}
+\contentsline {subsection}{\numberline {3.1}Prototipatge}{7}
+\contentsline {subsubsection}{\numberline {3.1.1}Conceptualitzaci\IeC {\'o}}{7}
+\contentsline {subsubsection}{\numberline {3.1.2}Desenvolupar el primer prototip}{7}
+\contentsline {subsubsection}{\numberline {3.1.3}Validaci\IeC {\'o} del primer prototip}{7}
+\contentsline {subsubsection}{\numberline {3.1.4}Desenvolupar el segon prototip}{7}
+\contentsline {subsubsection}{\numberline {3.1.5}Validaci\IeC {\'o} del segon prototip}{8}
+\contentsline {subsubsection}{\numberline {3.1.6}Experimentaci\IeC {\'o} i comparativa}{8}
+\contentsline {section}{\numberline {4}An\IeC {\`a}lisi d'alternatives}{9}
+\contentsline {subsection}{\numberline {4.1}Paral\IeC {\textperiodcentered }lelisme en cl\IeC {\'u}ster de computaci\IeC {\'o}}{9}
+\contentsline {subsection}{\numberline {4.2}Llibreries de tercers}{9}

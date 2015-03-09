@@ -11,6 +11,7 @@
 \begin{document}
 \title{Millora de rendiment d'un sistema d'avaluació de traductors automàtics}
 \author{Ibai Gilabert Rodríguez}
+\date{20 de març de 2015}
 \maketitle
 \newpage
 
@@ -29,71 +30,107 @@ Director: Jordi Turmo
 
 \section{Introducció}
 
-El camp de la traducció automàtica i, en definitiva, el tractament del llenguatge natural està en alça. La seva rellevància augmenta dia a dia. En la mesura que la nostra capacitat tecnologia creix els horitzons en aquesta àrea són cada vegada més i més enlluernadors.
+El camp de la traducció automàtica i, en definitiva, el tractament del llenguatge natural està en alça. La seva rellevància augmenta dia a dia, en la mesura que la nostra capacitat tecnologia creix els horitzons en aquesta àrea són cada vegada més i més enlluernadors.
 \\
 
-El NLP és perse molt complexe, computacionalment parlant. Requereix de molts recursos, temps i memòria principalment, el que implica haver de disposar d'entorns d'execució d'altres prestacions.
+L'objectiu d'aquest projecte és fer-ho real. És aprofitar tota la capacitat tecnològica de la que disposem de manera que esdevingui el NLP \textit{(Natural language processing)} una empresa més tractable.
 \\
 
-L'objectiu d'aquest projecte és fer-ho real. És aprofitar tota la capacitat tecnològica de la que disposem de manera que faci del NLP \textit{(Natural language processing)} una empresa més tractable.
+El NLP és \textit{per se} molt complex computacionalment parlant. Requereix de molts recursos, principalment temps i memòria, el que implica haver de disposar d'entorns d'execució d'altres prestacions.
+\\
 
 \subsection{Context}
-Prenem com a \textit{baseline} un sistema plenament funcional: ASIYA\cite{asiya}. ASIYA és una eina que posa a disposició un ventall molt ampli i heterogeni de mètriques d'avaluació i meta-avaluació, la majoria d'elles són usables i perfectament vàlides per a ser executades de manera singular. Així que ASIYA actua més aviat com una interfície per tota aquesta amalgama de mètriques.
+Prenem com a \textit{baseline} un sistema plenament funcional: ASIYA\cite{asiya}. ASIYA és una eina que posa a disposició un ventall molt ampli i heterogeni de mètriques d'avaluació i meta-avaluació, la majoria d'elles són usables i perfectament vàlides per a ser executades de manera singular. Així que ASIYA actua més aviat com una interfície per tota aquesta amalgama de mètriques. El principal problema és la ineficiència. Aquesta ineficiència procedeix del comput seqüencial de càlculs molt lents i amb requeriments de memòria dispars.
 \\
 
-En l'actualitat no hi ha cap sistema, per quantitat i qualitat, com ASIYA, com a mínim d'aquestes característiques. No obstant, el seu principal handicap són els recursos que exigeix. Tot i que algunes mètriques fan us d'eines externes com ara processadors lingüístics que, per motius de manteniment i flexibilitat no tocarem i tractarem com a caixes tancades i completament opaques, sí és cert que es deixa entreveure una certa concurrència en el processament de les dades. 
+En l'actualitat no hi ha cap sistema, per quantitat i qualitat, com ASIYA, com a mínim d'aquestes característiques. No obstant, el seu principal handicap són els recursos que exigeix. Tot i que algunes mètriques fan us d'eines externes com ara processadors lingüístics que, per motius de manteniment i flexibilitat no toquem i tractem com a caixes tancades i completament opaques, sí és cert que es deixa entreveure una certa concurrència en el processament de les dades. 
 \\
 
 Aquí és on el projecte agafa sentit. Com podem fragmentar l'execució d'ASIYA de manera que mitjançant alguna arquitectura paral·lela millorem l'ús dels recursos?
 \\
 
 \subsection{Abast}
-ASIYA és una eina flexible, adaptable i de fàcil integració. Això és una característica que no volem perdre com ja s'ha esmentat. Això vol dir que les tasques de manipulació de l'eina com afegir una mètrica, modificar un tipus de format, etc han de ser el més fàcils possible. Es persegueix una filosofia o idea de senzillesa en el seu ús i modificació. Adaptabilitat al cap i a la fi.
+Com ja s'ha esmentat ASIYA és una eina flexible, adaptable i de fàcil integració. Això és una característica que no volem perdre.  Això vol dir que les tasques de manipulació de l'eina com afegir mètriques, llengües; modificar formats, etc han de ser el més fàcils possible. Es persegueix una filosofia o idea de senzillesa en el seu ús i edició. Adaptabilitat al cap i a la fi.
 \\
 
-Així doncs si no volem modificar el còmput, el que ens queda es modificar les dades. Si tenim una entrada de mida $N$ la partirem en $n \in N$ fragments perquè ASIYA pugui executar els $n \in N$ fragments de manera paral·lela, aquesta és la idea.
+Així doncs si no volem modificar el còmput, el que ens queda es modificar les dades. Com a primera presa de contacte podem definir el nostre enfoc de la següent manera: si tenim una entrada de mida $N$ la partirem en $n \in N$, fragments perquè ASIYA pugui executar els $n \in N$ fragments de manera paral·lela, aquesta és la idea.
 \\
 
-Per portar-ho a terme, es plantejarà un redisseny íntegre de tot el sistema. Aquest serà en un llenguatge més adient per a les nostres necessitats (eficiència i concurrència). S'ha escollit \texttt{C++} per la seva estructura de classes, tipificació i compatibilitat amb diferents arquetips de programació paral·lela que veurem més endavant.
+Per portar-ho a terme, es plantejarà un redisseny íntegre de tot el sistema. Aquest serà en un llenguatge més adient per a les nostres necessitats (eficiència i concurrència). S'ha escollit \texttt{C++} per la seva estructura de classes, tipificació i compatibilitat amb diferents paradigmes de programació paral·lela que veurem més endavant.
+
 \newpage
 \section{Estat de l'Art}
-¿?
+Mastodòntics és un bon adjectiu per a descriure els recursos que molts procediments de tractament del llenguatge natural exigeixen. Ja s'ha comentat la necessitat d'un entorn d'execució d'altes capacitats. Per aquestes tasques de recerca i altres l'any 2010 va néixer el \textit{Laboratori de Recerca i Desenvolupament} (RDlab). Aquest ofereix un entorn ideal per a les nostres necessitats: \textit{"El nostre clúster de computació d’altes prestacions (HPC) proporciona un entorn perfecte per execucions massives"}\cite{cluster}
+\\
+
+Aquest sistema implementa un \textit{Sun Grid Engine}. El clúster el composen una seguit de nodes (independents entre ells i absolutament autònoms). Cadascun d'aquests nodes disposa d'uns recursos hardware variable i en constant actualització. Per fer ús del sistema els usuaris envien tasques \textit{(jobs)} i aquest les encua i les enviarà a executar seguint una sèrie de paràmetres (disponibiltiat, prioritat, etc) als nodes que s'escaiguin.
+\\
+
+Aquest mecanisme ens permet executar \textit{jobs} amb els quals crear altres \textit{jobs} que idealment s'executaran de manera paral·lela (el sistema de cues s'encarregarà de la planificació de recursos). 
+\\
+
+Entenent que és de menester un sistema HPC i essent aquesta la millor opció que tenim al nostre abast. Aprofitarem aquesta tecnologia amb la intenció d'implementar el paral·lelisme que desitgem. 
 
 \newpage
 \section{Planificació}
-S'ha produït canvis respecte la planificació inicial.
+Seguim amb l'esquema de prototipatge descrit a la fita inicial. No s'ha produït canvis respecte la metodologia descrita inicialment. Sí en canvi hem hagut d'adaptar-nos a diferents limitacions, restriccions i erros de plantejament recurrents en aquesta mena de projectes, però no afecten als costos del projecte ni a la planificació inicial.
 
-La planificació definitiva.
-No afecten als costos del projecte.
-Ens trobem en la fase 3 d'experimentació dels prototips.
+\subsection{Prototipatge}
 
-\subsection{Fase 1}
-\subsection{Fase 2}
-\subsection{Fase 3}
-\subsection{fase puta}
-Inicialment es plantejava la proposta de fonamentar la implementació, pel que fa a concurrència, en GPUs, degut a la disposició d'aquest tipus de tecnologia al sistema de clustering on es preveu l'execució. Aquesta idea va ser descartada degut a ...
+\subsubsection{Conceptualització}
+En aquesta fase es pretén analitzar els requeriments d’ASIYA. Com ja s'ha comentat, la naturalesa dels càlculs són ben diverses degut a la procedència de tercers. Aquests recursos externs no es poden modificar per temes d’actualització de versions, s’han de mantenir com a eines externes perquè sigui fàcil i flexible afegir-ne més. Per exemple, més llengües. Això no ha canviat. 
+\\
+
+D’altra banda, el nou disseny sí que ha de reflectir un intent per a unificar, estandaritzar i generalitzar tot allò que sigui possible, com ara els formats interns que usa l’eina o classes ocultes dins d’altres, etc. Un exemple d’això és la generalització de les mètriques en dos tipus ben diferenciats: “Mètrica Simple”, o homogènia \textit{(SingleMetric)} la qual es autosuficient per a realitzar la seva tasca i la “Mètrica Composta”, o heterogènia \textit{(ComplexMetric)} la qual té dependències d’altres mètriques o eines externes i requereix de la seva execució prèvia per al seu càlcul. Aquesta era una conceptualització inicial, no obstant en el resultat final hi ha mètriques que usen mètodes d’altres mètriques per conveniència.
+
+\subsubsection{Desenvolupar el primer prototip}
+Vam identificar un prototip amb els següents requisits, còmput de mètriques simples paral·lelitzades a nivell de document. No hi ha variació en aquest apartat.
+
+\subsubsection{Validació del primer prototip}
+Validació i correcció del primer prototip. S’ha experimentat amb  ell fins a obtenir resultats satisfactoris en termes d’usabilitat i rendiment.
+
+\subsubsection{Desenvolupar el segon prototip}
+Vam definir un segon prototip amb les següents característiques: Càlcul de mètriques compostes; adhesió de processaments lingüístics; i també un grau més de paral·lelisme. És a dir, l’execució de les mètriques en paral·lel. Tampoc hi ha hagut cap desviació en aquests requeriments.
+
+\subsubsection{Validació del segon prototip}
+De la mateixa manera que en el prototip 1 s’ha procedit a la validació i correcció del segon prototip. S’ha experimentat amb  ell fins a obtenir resultats satisfactoris en termes d’usabiltiat i  rendiment.
+
+\subsubsection{Experimentació i comparativa}
+En aquesta fase final provarem el sistema en tota la seva globalitat comparant els resultats obtinguts i contrastant-los amb ASIYA seqüencial. A més, aquests experiments serviran a mesurar més enllà del rendiment, el comportament de cada mètrica d'avaluació. Per exemple, trobar la mida òptima de les particions, veure com escala el sistema en nombre de mètriques, documents, etc.
+\\
+
+Actualment el projecte es troba en aquesta fase.
 
 \newpage
 \section{Anàlisi d'alternatives}
-Aprofitarem la tipologia del cluster (nodes independents), per a implementar el paral·lelisme de manera \textit{recursiva}. La idea és que 
+En un estadi inicial es plantejava la possibilitat d’adaptar la nova versió del sistema en una arquitectura de computació paral·lela estil GPGPU\cite{cuda}. Tot i que aquest paradigme prometia molt s’ha descartat per la poca versatilitat que ofereix. El model \textit{GPU computing} brinda molta “força bruta” pel que fa a càlcul estrictament parlant. D’altra banda, la poca o nul·la interrelació de les diferents mètriques -la compartició de memòria és fonamental en execucions eficients en GPUs- i la dispersa tipologia de les mateixes -implementades en llenguatges diferents- ens obliguen a optar per un esquema de propòsit general. 
+\\
 
-També s'ha hagut de fer ús de llibreries de tercers a fi de solventar les mancances del llenguatge nadiu. Per exemple, boost[ref], per a l'ús d'expressions regulars i tractament de fitxers a nivell de sistema operatiu.
+En l’informe inicial no s’especificava cap tipus d’arquitectura en concret i es deixava la porta oberta a diferents possibilitat. Hem estret el cercle.
 
-\newpage
-\section{Metodologia}
-Continuem amb la metodologia proposada a la fita inicial. Un esquema de prototipatge basat en els següents passos.
+\subsection{Paral·lelisme en clúster de computació}
 
-\newpage
-\section{Estat actual}
-Què hi ha fet?
+Descartada l’opció GPU hem apostat pel aprofitar la tipologia del clúster per a una solució que implementi el paral·lelisme de manera "recursiva".  La idea fonamental és que si donada una entrada determinada i indicant-li a ASIYA que s’executi de manera paral·lela, llavors processarà l’entrada, la partirà de la manera desitjada i encuarà tants processos ASIYA (seqüencials) com sigui necessari tenint en compte el nombre de mètriques, documents i mida d'aquests. Un cop s’hagi acabat els càlculs parcials, ASIYA els recull i genera la solució final. Podem veure-ho com un ASIYA \emph{master} invocant múltiples ASIYA \emph{slaves} ja que, \textit{de facto}, actuen d’aquesta manera.
+
+\subsection{Llibreries de tercers}
+Per a solventar les mancances i contratemps que hem trobat durant tot el procés de desenvolupament, també s'ha hagut de fer ús de llibreries de tercers. Són de menester ja que el llenguatge no les proporciona per defecte. Per exemple, \textit{boost}\cite{boost} per a l'ús d'expressions regulars i tractament de fitxers a nivell de sistema operatiu; o un altre exemple més tangible, un parser per a manipular fitxers xml, l'escollit, principalment per la seva lleugeresa, és \textit{libxml}\cite{libxml}.
 
 \newpage
 \begin{thebibliography}{10}
 \bibitem{asiya}
 \texttt{http://nlp.lsi.upc.edu/asiya/}
+
+\bibitem{cluster}
+\texttt{http://rdlab.lsi.upc.edu/index.php/serveis/cluster.html}
+
+\bibitem{cuda}
+\texttt{http://www.nvidia.com/object/cuda\_home\_new.html}
+
 \bibitem{boost}
 \texttt{https://www.boost.org}
 
+\bibitem{libxml}
+\texttt{http://xmlsoft.org/}
 \end{thebibliography}
 
 \end{document}
