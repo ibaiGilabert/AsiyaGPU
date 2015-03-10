@@ -1,16 +1,21 @@
 \select@language {catalan}
 \contentsline {section}{\numberline {1}Introducci\IeC {\'o}}{4}
 \contentsline {subsection}{\numberline {1.1}Context}{4}
-\contentsline {subsection}{\numberline {1.2}Abast}{4}
+\contentsline {paragraph}{Input}{4}
+\contentsline {paragraph}{Output}{4}
+\contentsline {subsection}{\numberline {1.2}Abast}{5}
 \contentsline {section}{\numberline {2}Estat de l'Art}{6}
-\contentsline {section}{\numberline {3}Planificaci\IeC {\'o}}{7}
-\contentsline {subsection}{\numberline {3.1}Prototipatge}{7}
-\contentsline {subsubsection}{\numberline {3.1.1}Conceptualitzaci\IeC {\'o}}{7}
-\contentsline {subsubsection}{\numberline {3.1.2}Desenvolupar el primer prototip}{7}
-\contentsline {subsubsection}{\numberline {3.1.3}Validaci\IeC {\'o} del primer prototip}{7}
-\contentsline {subsubsection}{\numberline {3.1.4}Desenvolupar el segon prototip}{7}
-\contentsline {subsubsection}{\numberline {3.1.5}Validaci\IeC {\'o} del segon prototip}{8}
-\contentsline {subsubsection}{\numberline {3.1.6}Experimentaci\IeC {\'o} i comparativa}{8}
-\contentsline {section}{\numberline {4}An\IeC {\`a}lisi d'alternatives}{9}
-\contentsline {subsection}{\numberline {4.1}Paral\IeC {\textperiodcentered }lelisme en cl\IeC {\'u}ster de computaci\IeC {\'o}}{9}
-\contentsline {subsection}{\numberline {4.2}Llibreries de tercers}{9}
+\contentsline {subsection}{\numberline {2.1}Models de computaci\IeC {\'o} paral\IeC {\textperiodcentered }lela}{6}
+\contentsline {subsubsection}{\numberline {2.1.1}Cl\IeC {\'u}ster de computaci\IeC {\'o}}{6}
+\contentsline {subsubsection}{\numberline {2.1.2}\textit {GPU Computing}}{6}
+\contentsline {section}{\numberline {3}Planificaci\IeC {\'o}}{9}
+\contentsline {subsection}{\numberline {3.1}Prototipatge}{9}
+\contentsline {subsubsection}{\numberline {3.1.1}Conceptualitzaci\IeC {\'o}}{9}
+\contentsline {subsubsection}{\numberline {3.1.2}Desenvolupar el primer prototip}{9}
+\contentsline {subsubsection}{\numberline {3.1.3}Validaci\IeC {\'o} del primer prototip}{9}
+\contentsline {subsubsection}{\numberline {3.1.4}Desenvolupar el segon prototip}{9}
+\contentsline {subsubsection}{\numberline {3.1.5}Validaci\IeC {\'o} del segon prototip}{10}
+\contentsline {subsubsection}{\numberline {3.1.6}Experimentaci\IeC {\'o} i comparativa}{10}
+\contentsline {section}{\numberline {4}An\IeC {\`a}lisi d'alternatives}{11}
+\contentsline {subsection}{\numberline {4.1}Paral\IeC {\textperiodcentered }lelisme en cl\IeC {\'u}ster de computaci\IeC {\'o}}{11}
+\contentsline {subsection}{\numberline {4.2}Llibreries de tercers}{11}
