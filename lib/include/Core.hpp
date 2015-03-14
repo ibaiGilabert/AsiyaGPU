@@ -16,7 +16,7 @@ class Core {
 private:
     Process proc;
 	map<string, string> job_qw;      								// <job_id, <sys_name, init_time> >
-	map<string, map<string, string> > fm_qw;      					// <sys_name, <metric_family, error_file> >
+	vector< map<string, map<string,string> > > fm_qw;      					// [thread]<sys_name, <metric_family, error_file> >
 
 	//Compute scores
 	void doMultiMetrics(string HYP, string REF, Scores &hOQ);

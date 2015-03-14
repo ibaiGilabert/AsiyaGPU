@@ -37,11 +37,11 @@ void LeM::LeM_f_create_doc(string input, string output, string G, const vector<v
     		int i = 1;
     		string docid = idx[i][0];
 	    	string str;
-	    	boost::regex re("\\s+$");
-        	boost::regex re2("\r");
+	    	//boost::regex re("\\s+$");
+        	//boost::regex re2("\r");
             while(getline(input_file, str)) {
-	        	str = boost::regex_replace(str, re, "");
-	            str = boost::regex_replace(str, re2, "");
+	        	str = boost::regex_replace(str, Common::reEND_SPACE, "");
+	            str = boost::regex_replace(str, Common::reLINE_BREAK, "");
 	            if (G == Common::G_SEG) { 				// seg-level
 	            	output_file << str << endl;
 	            }

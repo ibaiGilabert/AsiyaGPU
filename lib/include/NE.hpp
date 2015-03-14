@@ -32,6 +32,8 @@ private:
 public:
 	void doMetric(string TGT, string REF, string prefix, Scores &hOQ);
 
+	string create_NE_file(string input, string L, string C);	// CE
+
 };
 
 

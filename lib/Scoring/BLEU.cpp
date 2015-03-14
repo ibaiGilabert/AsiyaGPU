@@ -34,7 +34,7 @@ const map<string, int> BLEU::rBLEU = create_rBLEU();
 
 vector<double> BLEU::read_bleu(string reportBLEU) {
 	// description _ read BLEU value from report file
-    boost::regex re("^ +BLEU:.*");
+    //boost::regex re("^ +BLEU:.*");
 
     string str;
     bool individual = false;
@@ -43,13 +43,13 @@ vector<double> BLEU::read_bleu(string reportBLEU) {
     if (file) {
 	    while (getline(file, str)) {
 	    	boost::match_results<string::const_iterator> results;
-	        if (boost::regex_match(str, results, re)) {
+	        if (boost::regex_match(str, results, Common::reBLEU1)) {
 	            //cout << "\t That was a kind of line" << endl;
 	            string s = results[0];
 	            //cout << "line: |" << s << "|" << endl;
 
-				boost::regex re2("^\\s+BLEU:\\s+");	//, boost::regex::perl|boost::regex::icase);
-				s = boost::regex_replace(s, re2, "");
+				//boost::regex re2("^\\s+BLEU:\\s+");	//, boost::regex::perl|boost::regex::icase);
+				s = boost::regex_replace(s, Common::reBLEU2, "");
 
 				//cout << "\tline1: " << s << endl;
 
@@ -82,9 +82,9 @@ vector<double> BLEU::read_bleu(string reportBLEU) {
 }
 
 vector<vector<double> > BLEU::read_bleu_segments(string reportBLEU) {
-    boost::regex re1("^ +BLEU score using.*");
-    boost::regex re2("^ +cumulative-BLEU score using.*");
-    boost::regex re3("^ +individual-BLEU score using.*");
+    //boost::regex re1("^ +BLEU score using.*");
+    //boost::regex re2("^ +cumulative-BLEU score using.*");
+    //boost::regex re3("^ +individual-BLEU score using.*");
 
     vector<double> lbleu1, lbleu2, lbleu3, lbleu4;
     vector<double> lbleu1i, lbleu2i, lbleu3i, lbleu4i;
@@ -97,7 +97,7 @@ vector<vector<double> > BLEU::read_bleu_segments(string reportBLEU) {
 	    while (getline(file, str)) {
 	    	boost::match_results<string::const_iterator> results;
 
-	        if (boost::regex_match(str, results, re1)) {
+	        if (boost::regex_match(str, results, Common::reBLEU3)) {
 	            //cout << "\t That was a kind of line" << endl;
 	            string s = results[0];
 	            //cout << "line: |" << s << "|" << endl;
@@ -110,7 +110,7 @@ vector<vector<double> > BLEU::read_bleu_segments(string reportBLEU) {
 				lbleu4.push_back(atof(strs[10].c_str()));
 	   			//for (int i = 0; i < strs.size(); ++i) cout << "strs[" << i << "]: " << strs[i] << endl;
 			}
-			else if (boost::regex_match(str, results, re2)) {
+			else if (boost::regex_match(str, results, Common::reBLEU4)) {
 	            //cout << "\t That was a kind of line" << endl;
 	            string s = results[0];
 	            //cout << "line: |" << s << "|" << endl;
@@ -123,7 +123,7 @@ vector<vector<double> > BLEU::read_bleu_segments(string reportBLEU) {
 				lbleu4.push_back(atof(strs[10].c_str()));
 	   			//for (int i = 0; i < strs.size(); ++i) cout << "strs[" << i << "]: " << strs[i] << endl;
 			}
-			else if (boost::regex_match(str, results, re3)) {
+			else if (boost::regex_match(str, results, Common::reBLEU5)) {
 	            //cout << "\t That was a kind of line" << endl;
 	            string s = results[0];
 	            //cout << "line: |" << s << "|" << endl;
@@ -292,31 +292,14 @@ void BLEU::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 		string reportBLEUi4xml = ss4i.str();
 		string reportBLEUNxml = ssB.str();
 
-	    boost::filesystem::path reportBLEU1xml_path(reportBLEU1xml);
-		boost::filesystem::path reportBLEU2xml_path(reportBLEU2xml);
-	    boost::filesystem::path reportBLEU3xml_path(reportBLEU3xml);
-	    boost::filesystem::path reportBLEU4xml_path(reportBLEU4xml);
-	    boost::filesystem::path reportBLEUi2xml_path(reportBLEUi2xml);
-	    boost::filesystem::path reportBLEUi3xml_path(reportBLEUi3xml);
-	    boost::filesystem::path reportBLEUi4xml_path(reportBLEUi4xml);
-	    boost::filesystem::path reportBLEUNxml_path(reportBLEUNxml);
-		boost::filesystem::path reportBLEU1xml_ext(reportBLEU1xml + "." + Common::GZEXT);
-	    boost::filesystem::path reportBLEU2xml_ext(reportBLEU2xml + "." + Common::GZEXT);
-	    boost::filesystem::path reportBLEU3xml_ext(reportBLEU3xml + "." + Common::GZEXT);
-	    boost::filesystem::path reportBLEU4xml_ext(reportBLEU4xml + "." + Common::GZEXT);
-	    boost::filesystem::path reportBLEUi2xml_ext(reportBLEUi2xml + "." + Common::GZEXT);
-	    boost::filesystem::path reportBLEUi3xml_ext(reportBLEUi3xml + "." + Common::GZEXT);
-	    boost::filesystem::path reportBLEUi4xml_ext(reportBLEUi4xml + "." + Common::GZEXT);
-	    boost::filesystem::path reportBLEUNxml_ext(reportBLEUNxml + "." + Common::GZEXT);
-
-	    if ( (!exists(reportBLEU1xml_path) and !exists(reportBLEU1xml_ext)) or \
-	    (!exists(reportBLEU2xml_path) and !exists(reportBLEU2xml_ext)) or \
-	    (!exists(reportBLEU3xml_path) and !exists(reportBLEU3xml_ext)) or \
-	    (!exists(reportBLEU4xml_path) and !exists(reportBLEU4xml_ext)) or \
-	    (!exists(reportBLEUi2xml_path) and !exists(reportBLEUi2xml_ext)) or \
-	    (!exists(reportBLEUi3xml_path) and !exists(reportBLEUi3xml_ext)) or \
-	    (!exists(reportBLEUi4xml_path) and !exists(reportBLEUi4xml_ext)) or \
-	    (!exists(reportBLEUNxml_path) and !exists(reportBLEUNxml_ext)) or Config::remake) {
+	    if ( (!exists(boost::filesystem::path(reportBLEU1xml))  and !exists(boost::filesystem::path(reportBLEU1xml+"."+Common::GZEXT))) or
+		     (!exists(boost::filesystem::path(reportBLEU2xml))  and !exists(boost::filesystem::path(reportBLEU2xml+"."+Common::GZEXT))) or
+		     (!exists(boost::filesystem::path(reportBLEU3xml))  and !exists(boost::filesystem::path(reportBLEU3xml+"."+Common::GZEXT))) or
+		     (!exists(boost::filesystem::path(reportBLEU4xml))  and !exists(boost::filesystem::path(reportBLEU4xml+"."+Common::GZEXT))) or
+		     (!exists(boost::filesystem::path(reportBLEUi2xml)) and !exists(boost::filesystem::path(reportBLEUi2xml+"."+Common::GZEXT))) or
+		     (!exists(boost::filesystem::path(reportBLEUi3xml)) and !exists(boost::filesystem::path(reportBLEUi3xml+"."+Common::GZEXT))) or
+		     (!exists(boost::filesystem::path(reportBLEUi4xml)) and !exists(boost::filesystem::path(reportBLEUi4xml+"."+Common::GZEXT))) or
+		     (!exists(boost::filesystem::path(reportBLEUNxml))  and !exists(boost::filesystem::path(reportBLEUNxml+"."+Common::GZEXT))) or Config::remake) {
 	     	//my ($SYS, $SEGS) = BLEU::computeMultiBLEU($src, $out, $Href, $remakeREPORTS, $config->{CASE}, $tools, $verbose);
 	    	vector<double> SYS;
 	    	vector<vector<double> > SEG;

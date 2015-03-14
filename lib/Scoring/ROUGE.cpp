@@ -34,7 +34,7 @@ const map<string, int> ROUGE::rROUGE = create_rROUGE();
 
 vector<double> ROUGE::read_rouge(string reportROUGE) {
 	// description _ read ROUGE value from report file (for all segments)
-	boost::regex re("^X ROUGE-[SLW1-4][^ ]* Average_F.*");
+	//boost::regex re("^X ROUGE-[SLW1-4][^ ]* Average_F.*");
 
     string str;
     map<string, double> hROUGE;
@@ -43,7 +43,7 @@ vector<double> ROUGE::read_rouge(string reportROUGE) {
     if (file) {
 	    while (getline(file, str)) {
 	    	boost::match_results<string::const_iterator> results;
-	        if (boost::regex_match(str, results, re)) {
+	        if (boost::regex_match(str, results, Common::reROUGE1)) {
 	            //cout << "\t That was a kind of line" << endl;
 
 	            string s = results[0];
@@ -67,7 +67,7 @@ vector<double> ROUGE::read_rouge(string reportROUGE) {
 }
 
 vector<vector<double> > ROUGE::read_rouge_segments(string reportROUGE) {
-    boost::regex re("^X ROUGE-[SLW1-4][^ ]* Eval.*");
+    //boost::regex re("^X ROUGE-[SLW1-4][^ ]* Eval.*");
 
     vector<double> lROUGE1, lROUGE2, lROUGE3, lROUGE4;
     vector<double> lROUGEL, lROUGES, lROUGESU, lROUGEW;
@@ -80,7 +80,7 @@ vector<vector<double> > ROUGE::read_rouge_segments(string reportROUGE) {
 	    while (getline(file, str)) {
 	    	boost::match_results<string::const_iterator> results;
 
-	        if (boost::regex_match(str, results, re)) {
+	        if (boost::regex_match(str, results, Common::reROUGE2)) {
 	            //cout << "\t That was a kind of line" << endl;
 	            string s = results[0];
 	            //cout << "line: |" << s << "|" << endl;
@@ -162,14 +162,14 @@ void ROUGE::computeROUGE(string TGT, vector<double> &SYS, vector<vector<double> 
 				if (!exists(refJ_path) or Config::remake) {
 					ofstream refJ_file(ref_j.c_str());
 					if (refJ_file) {
-				        boost::regex re("\\s*$");	//, boost::regex::perl|boost::regex::icase);
-				        boost::regex re2("^\\s*");	//, boost::regex::perl|boost::regex::icase);
-						boost::regex re3("^[\\?\\!\\.]$");
-				        str = boost::regex_replace(str, re, "");
-				        str = boost::regex_replace(str, re2, "");
+				        //boost::regex re("\\s*$");	//, boost::regex::perl|boost::regex::icase);
+				        //boost::regex re2("^\\s*");	//, boost::regex::perl|boost::regex::icase);
+						//boost::regex re3("^[\\?\\!\\.]$");
+				        str = boost::regex_replace(str, Common::reEND_SPACE, "");
+				        str = boost::regex_replace(str, Common::reSTART_SPACE, "");
 
 		    			boost::match_results<string::const_iterator> results;
-				        if (str == "" or boost::regex_match(str, results, re3)) str = Common::EMPTY_ITEM;
+				        if (str.empty() or boost::regex_match(str, results, Common::reSPECIAL_CHAR)) str = Common::EMPTY_ITEM;
 						refJ_file << str << endl;
 
 				        refJ_file.close();
@@ -207,14 +207,14 @@ void ROUGE::computeROUGE(string TGT, vector<double> &SYS, vector<vector<double> 
     	if (!exists(outI_path) or Config::remake) {
 			ofstream outI_file(out_i.c_str());
 			if (outI_file) {
-				boost::regex re("\\s*$");	//, boost::regex::perl|boost::regex::icase);
-				boost::regex re2("^\\s*");	//, boost::regex::perl|boost::regex::icase);
-				boost::regex re3("^[\\?\\!\\.]$");
-				str = boost::regex_replace(str, re, "");
-				str = boost::regex_replace(str, re2, "");
+				//boost::regex re("\\s*$");	//, boost::regex::perl|boost::regex::icase);
+				//boost::regex re2("^\\s*");	//, boost::regex::perl|boost::regex::icase);
+				//boost::regex re3("^[\\?\\!\\.]$");
+				str = boost::regex_replace(str, Common::reEND_SPACE, "");
+				str = boost::regex_replace(str, Common::reSTART_SPACE, "");
 
 	    		boost::match_results<string::const_iterator> results;
-				if (str == "" or boost::regex_match(str, results, re3)) str = Common::EMPTY_ITEM;
+				if (str.empty() or boost::regex_match(str, results, Common::reSPECIAL_CHAR)) str = Common::EMPTY_ITEM;
 				outI_file << str << endl;
 
 				outI_file.close();

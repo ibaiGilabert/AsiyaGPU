@@ -300,7 +300,7 @@ string SP::create_chunk_file(string input, string L, string C) {
 		    if (WLPC) {
 		    	int i = 0;
 		    	int EMPTY = 1;
-    			boost::regex re("B-.*");
+    			//boost::regex re("B-.*");
 		    	vector<string> sentence;
 		    	string str;
 		    	while ( getline(WLPC, str) ) {
@@ -321,7 +321,7 @@ string SP::create_chunk_file(string input, string L, string C) {
 	    				vector<string> l;
 						boost::split(l, str, boost::is_any_of("\t "));
 					 	boost::match_results<string::const_iterator> results;
-					 	if (boost::regex_match(l[3], results, re)) {
+					 	if (boost::regex_match(l[3], results, Common::reSP_B)) {
 					 		vector<string> c;
 							boost::split(c, l[3], boost::is_any_of("-"));
 							sentence.push_back(c[1]);
@@ -508,9 +508,9 @@ int SP::FILE_parse_SVM(string input, string L, string C) {
 	string lpath = Config::tools+"/"+SP::SVMT+"/models/"+L+"/"+C+"/";
     string wlp_file = input+"."+SP::SPEXT+".wlp";
 
-    boost::regex re("^"+Common::L_SPA+".*");
+    //boost::regex re("^"+Common::L_SPA+".*");
     boost::match_results<string::const_iterator> results;
-    if (boost::regex_match(L, results, re)) {
+    if (boost::regex_match(L, results, Common::reL_SPA)) {
     	if (C == Common::CASE_CI) lpath += "Ancora_es_lc";
     	else lpath += "Ancora_es";
     }
@@ -715,7 +715,7 @@ void SP::FILE_parse_split(string input, string L, string C) {
 
 	    // process SPFILE
 		int EMPTY = 1;
-		boost::regex re("B-.*");
+		//boost::regex re("B-.*");
 		vector<string> Lp, Ll, Lc, LC;
 	    ifstream sp_file(spfile.c_str());
 	    if (sp_file) {
@@ -786,7 +786,7 @@ void SP::FILE_parse_split(string input, string L, string C) {
 				 	boost::match_results<string::const_iterator> results;
 				 	if (use_chunks) Lc.push_back(l[3]);
 				 	if (use_chunks and l[3] == "O") LC.push_back(l[3]);
-				 	else if (use_chunks and boost::regex_match(l[3], results, re)) {
+				 	else if (use_chunks and boost::regex_match(l[3], results, Common::reSP_B)) {
 				 		vector<string> C;
 					 	istringstream bufC(l[3]);
 					    for(string token; getline(bufC, token, '-'); )
@@ -852,7 +852,7 @@ void SP::FILE_parse_and_read(string input, string L, string C, vector<sParsed> &
 
 void SP::SNT_extract_features(const sParsed &snt, bool use_chunks, SNTfeatures &SNTc, SNTfeatures &SNTp) {
 	// description _ extracts features from a given shallow-parsed sentence.
-		boost::regex re("^[BI]-");
+		//boost::regex re("^[BI]-");
 		for(int i = 0; i < snt.size(); ++i) {
 		string word, lemma, pos, chunklabel;
 		if (use_chunks) {
@@ -865,7 +865,7 @@ void SP::SNT_extract_features(const sParsed &snt, bool use_chunks, SNTfeatures &
 		string chunk = chunklabel;
 		if (USE_LEMMAS) {
 		    	//fprintf(stderr, "\n\n chunK(a): %s", chunk.c_str());
-		    chunk = boost::regex_replace(chunk, re, "");
+		    chunk = boost::regex_replace(chunk, Common::reSP_BI, "");
 				//fprintf(stderr, "\t -> \t chunk(b): %s\n\n", chunk.c_str());
 			if (USE_LEMMAS) {
 				SNTc[chunk]["W"][lemma]++;
@@ -926,7 +926,7 @@ void SP::SNT_compute_overlap_scores(SNTfeatures &Tout_c, SNTfeatures &Tout_p, SN
 	
 		// additional --
 		if (Config::LANG == Common::L_SPA or Config::LANG == Common::L_CAT) {
-            boost::regex re_A("^A.*");
+            /*boost::regex re_A("^A.*");
             boost::regex re_C("^C.*");
             boost::regex re_D("^D.*");
             boost::regex re_F("^F.*");
@@ -937,37 +937,37 @@ void SP::SNT_compute_overlap_scores(SNTfeatures &Tout_c, SNTfeatures &Tout_p, SN
             boost::regex re_V("^V.*");
             boost::regex re_VA("^VA.*");
             boost::regex re_VS("^VS.*");
-            boost::regex re_VM("^VM.*");
+            boost::regex re_VM("^VM.*");*/
 			boost::match_results<string::const_iterator> results;
-            if (boost::regex_match(*it, results, re_A)) { ADD["A"] += hits_total.first; TADD["A"] += hits_total.second; }
-            else if (boost::regex_match(*it, results, re_C)) { ADD["C"] += hits_total.first; TADD["C"] += hits_total.second; }
-            else if (boost::regex_match(*it, results, re_D)) { ADD["D"] += hits_total.first; TADD["D"] += hits_total.second; }
-            else if (boost::regex_match(*it, results, re_F)) { ADD["F"] += hits_total.first; TADD["F"] += hits_total.second; }
-            else if (boost::regex_match(*it, results, re_I)) { ADD["I"] += hits_total.first; TADD["I"] += hits_total.second; }
-            else if (boost::regex_match(*it, results, re_N)) { ADD["N"] += hits_total.first; TADD["N"] += hits_total.second; }
-            else if (boost::regex_match(*it, results, re_P)) { ADD["P"] += hits_total.first; TADD["P"] += hits_total.second; }
-            else if (boost::regex_match(*it, results, re_S)) { ADD["S"] += hits_total.first; TADD["S"] += hits_total.second; }
-            else if (boost::regex_match(*it, results, re_V)) { ADD["V"] += hits_total.first; TADD["V"] += hits_total.second; }
-            else if (boost::regex_match(*it, results, re_VA)) { ADD["VA"] += hits_total.first; TADD["VA"] += hits_total.second; }
-            else if (boost::regex_match(*it, results, re_VS)) { ADD["VS"] += hits_total.first; TADD["VS"] += hits_total.second; }
-            else if (boost::regex_match(*it, results, re_VM)) { ADD["VM"] += hits_total.first; TADD["VM"] += hits_total.second; }
+            if (boost::regex_match(*it, results, Common::re_A)) { ADD["A"] += hits_total.first; TADD["A"] += hits_total.second; }
+            else if (boost::regex_match(*it, results, Common::re_C)) { ADD["C"] += hits_total.first; TADD["C"] += hits_total.second; }
+            else if (boost::regex_match(*it, results, Common::re_D)) { ADD["D"] += hits_total.first; TADD["D"] += hits_total.second; }
+            else if (boost::regex_match(*it, results, Common::re_F)) { ADD["F"] += hits_total.first; TADD["F"] += hits_total.second; }
+            else if (boost::regex_match(*it, results, Common::re_I)) { ADD["I"] += hits_total.first; TADD["I"] += hits_total.second; }
+            else if (boost::regex_match(*it, results, Common::re_N)) { ADD["N"] += hits_total.first; TADD["N"] += hits_total.second; }
+            else if (boost::regex_match(*it, results, Common::re_P)) { ADD["P"] += hits_total.first; TADD["P"] += hits_total.second; }
+            else if (boost::regex_match(*it, results, Common::re_S)) { ADD["S"] += hits_total.first; TADD["S"] += hits_total.second; }
+            else if (boost::regex_match(*it, results, Common::re_V)) { ADD["V"] += hits_total.first; TADD["V"] += hits_total.second; }
+            else if (boost::regex_match(*it, results, Common::re_VA)) { ADD["VA"] += hits_total.first; TADD["VA"] += hits_total.second; }
+            else if (boost::regex_match(*it, results, Common::re_VS)) { ADD["VS"] += hits_total.first; TADD["VS"] += hits_total.second; }
+            else if (boost::regex_match(*it, results, Common::re_VM)) { ADD["VM"] += hits_total.first; TADD["VM"] += hits_total.second; }
 		}
 		else if (Config::LANG == Common::L_ENG) {
-            boost::regex re_JJ("^JJ.*");
+            /*boost::regex re_JJ("^JJ.*");
             boost::regex re_NN("^NN.*");
             boost::regex re_PRP("^PRP.*");
             boost::regex re_RB("^RB.*");
             boost::regex re_VB("^VB.*");
             boost::regex re_W("^W.*");
-            boost::regex re_sch("^[\\#\\$\\'\\(\\)\\,\\.\\:\\`].*");
+            boost::regex re_sch("^[\\#\\$\\'\\(\\)\\,\\.\\:\\`].*");*/
 			boost::match_results<string::const_iterator> results;
-            if (boost::regex_match(*it, results, re_JJ)) { ADD["JJ"] += hits_total.first; TADD["JJ"] += hits_total.second; }
-            else if (boost::regex_match(*it, results, re_NN)) { ADD["NN"] += hits_total.first; TADD["NN"] += hits_total.second; }
-            else if (boost::regex_match(*it, results, re_PRP)) { ADD["PRP"] += hits_total.first; TADD["PRP"] += hits_total.second; }
-            else if (boost::regex_match(*it, results, re_RB)) { ADD["RB"] += hits_total.first; TADD["RB"] += hits_total.second; }
-            else if (boost::regex_match(*it, results, re_VB)) { ADD["VB"] += hits_total.first; TADD["VB"] += hits_total.second; }
-            else if (boost::regex_match(*it, results, re_W)) { ADD["W"] += hits_total.first; TADD["W"] += hits_total.second; }
-            else if (boost::regex_match(*it, results, re_sch)) { ADD["F"] += hits_total.first; TADD["F"] += hits_total.second; }           
+            if (boost::regex_match(*it, results, Common::re_JJ)) { ADD["JJ"] += hits_total.first; TADD["JJ"] += hits_total.second; }
+            else if (boost::regex_match(*it, results, Common::re_NN)) { ADD["NN"] += hits_total.first; TADD["NN"] += hits_total.second; }
+            else if (boost::regex_match(*it, results, Common::re_PRP)) { ADD["PRP"] += hits_total.first; TADD["PRP"] += hits_total.second; }
+            else if (boost::regex_match(*it, results, Common::re_RB)) { ADD["RB"] += hits_total.first; TADD["RB"] += hits_total.second; }
+            else if (boost::regex_match(*it, results, Common::re_VB)) { ADD["VB"] += hits_total.first; TADD["VB"] += hits_total.second; }
+            else if (boost::regex_match(*it, results, Common::re_W)) { ADD["W"] += hits_total.first; TADD["W"] += hits_total.second; }
+            else if (boost::regex_match(*it, results, Common::re_sch)) { ADD["F"] += hits_total.first; TADD["F"] += hits_total.second; }           
 		}
 	}
 	SCORES[SP::SPEXT+"-Op(*)"] = (TOTAL == 0) ? 0 : (HITS / TOTAL);
@@ -1086,9 +1086,9 @@ void SP::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 	for (set<string>::const_iterator it = rF.begin(); it != rF.end(); ++it) {
 		if (Config::Hmetrics.find(*it) != Config::Hmetrics.end()) {
 			GO_ON = true;
-            boost::regex re(".*NIST.*");
+            //boost::regex re(".*NIST.*");
             boost::match_results<string::const_iterator> results;
-            if (boost::regex_match(*it, results, re)) GO_NIST = true;
+            if (boost::regex_match(*it, results, Common::reSP_NIST)) GO_NIST = true;
 		}
 	}
 
@@ -1098,7 +1098,7 @@ void SP::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 		int DO_METRICS, DO_NIST_METRICS;
 		DO_METRICS = DO_NIST_METRICS = Config::remake;
 
-        boost::regex re(".*NIST.*");
+        //boost::regex re(".*NIST.*");
 
 		if (!DO_METRICS) {
 			for (set<string>::const_iterator it = rF.begin(); it != rF.end(); ++it) {
@@ -1108,7 +1108,7 @@ void SP::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 				if (Config::Hmetrics.find(*it) != Config::Hmetrics.end() and !exists(p) and !exists(p_gz)) {
 					DO_METRICS = 1;
 		            boost::match_results<string::const_iterator> results;
-		            if (boost::regex_match(*it, results, re)) DO_NIST_METRICS = 1;
+		            if (boost::regex_match(*it, results, Common::reSP_NIST)) DO_NIST_METRICS = 1;
 		        }
 			}
 		}
@@ -1160,7 +1160,7 @@ void SP::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 
 			for (set<string>::const_iterator it_m = rF.begin(); it_m != rF.end(); ++it_m) {
 			    boost::match_results<string::const_iterator> results;
-		        if (Config::Hmetrics.find(*it_m) != Config::Hmetrics.end() and !boost::regex_match(*it_m, results, re)) {
+		        if (Config::Hmetrics.find(*it_m) != Config::Hmetrics.end() and !boost::regex_match(*it_m, results, Common::reSP_NIST)) {
 		        	string report_xml = Common::DATA_PATH+"/"+Common::REPORTS+"/"+TGT+"/"+REF+"/"+*it_m+"."+Common::XMLEXT;
 					if ( (!exists(boost::filesystem::path(report_xml)) and !exists(boost::filesystem::path(report_xml+"."+Common::GZEXT))) or Config::remake) {
 						double SYS;

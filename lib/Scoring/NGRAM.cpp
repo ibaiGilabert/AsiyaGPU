@@ -66,13 +66,13 @@ void NGRAM::NGRAM_f_create_doc(string input, string output) {
 	    if (!output_file) { fprintf(stderr, "couldn't open output file: %s\n", output.c_str()); exit(1); }
 	    if (input_file) {
 	    	string str;
-  			boost::regex re("\\s*$"), re_1("^$"), re_2("^[!?.]$");
+  			//boost::regex re("\\s*$"), re_1("^$"), re_2("^[!?.]$");
 			boost::match_results<string::const_iterator> results;
   			while (getline(input_file, str)) {
-				str = boost::regex_replace(str, re, "");
+				str = boost::regex_replace(str, Common::reEND_SPACE, "");
 
-				if (boost::regex_match(str, results, re_1)) str = NGRAM::EMPTY_ITEM + " .";
-				else if (boost::regex_match(str, results, re_2)) str = NGRAM::EMPTY_ITEM + " " + str;
+				if (/*boost::regex_match(str, results, Common::reEMPTY)*/ str.empty()) str = NGRAM::EMPTY_ITEM + " .";
+				else if (boost::regex_match(str, results, Common::reSPECIAL_CHAR)) str = NGRAM::EMPTY_ITEM + " " + str;
 
 				//if (Config::CASE == Common::CASE_CI) boost::to_lower(str);
 				boost::to_lower(str);
@@ -94,7 +94,7 @@ void NGRAM::read_NGRAM_segments(string reportNGRAM, string opt, map<string, vect
 	    istringstream iss_h(str);
 	    for(string token; getline(iss_h, token, ','); ) lheader.push_back(token);
 
-		boost::regex re_t("^.*Tok.*$"), re_ch("^.*Char.*$"), re_co("^.*Cognates.*$"), re_l("^.*lenratio.*$");
+		//boost::regex re_t("^.*Tok.*$"), re_ch("^.*Char.*$"), re_co("^.*Cognates.*$"), re_l("^.*lenratio.*$");
 
 		//boost::regex re_c("Char");
 		boost::match_results<string::const_iterator> results;
@@ -107,9 +107,9 @@ void NGRAM::read_NGRAM_segments(string reportNGRAM, string opt, map<string, vect
 		    	string header = lheader[i];
 		    	double value = (laux[i] != "NaN") ? atof(laux[i].c_str()) : 0;
 
-    		    if (opt == NGRAM::NGRAMREF and boost::regex_match(header, results, re_t))
+    		    if (opt == NGRAM::NGRAMREF and boost::regex_match(header, results, Common::reNGRAM_t))
     		    	SEGS[header].push_back(value);
-    		    else if (opt == NGRAM::NGRAMSRC and (boost::regex_match(header, results, re_ch) or boost::regex_match(header, results, re_co) or boost::regex_match(header, results, re_l)) )
+    		    else if (opt == NGRAM::NGRAMSRC and (boost::regex_match(header, results, Common::reNGRAM_ch) or boost::regex_match(header, results, Common::reNGRAM_co) or boost::regex_match(header, results, Common::reNGRAM_re_l)) )
     		    	SEGS[header].push_back(value);
 		    }
 		}

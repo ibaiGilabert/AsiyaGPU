@@ -95,12 +95,12 @@ void ESA::ESA_f_create_doc(string input, string output) {
 	    if (!output_file) { fprintf(stderr, "couldn't open output file: %s\n", output.c_str()); exit(1); }
 	    if (input_file) {
 	    	string str;
-  			boost::regex re("\\s*$"), re_1("^$"), re_2("^[!?.]+$");
+  			//boost::regex re("\\s*$"), re_1("^$"), re_2("^[!?.]+$");
 			boost::match_results<string::const_iterator> results;
   			while (getline(input_file, str)) {
-				str = boost::regex_replace(str, re, "");
+				str = boost::regex_replace(str, Common::reEND_SPACE, "");
 
-				if (boost::regex_match(str, results, re_1) or boost::regex_match(str, results, re_2)) str = ESA::EMPTY_ITEM;
+				if (/*boost::regex_match(str, results, Common::reEMPTY)*/ str.empty() or boost::regex_match(str, results, Common::reSPECIAL_CHAR)) str = ESA::EMPTY_ITEM;
 
 				//if (Config::CASE == Common::CASE_CI) boost::to_lower(str);
 				boost::to_lower(str);
@@ -161,18 +161,18 @@ void ESA::computeESA(string metric, string TGT, string ref, vector<double> &SEG)
 
 	string pwd = boost::filesystem::current_path().string();
 
-	boost::regex re("\\.\\/");
+	//boost::regex re("\\.\\/");
     boost::match_results<string::const_iterator> results;
-    if (boost::regex_match(outRND, results, re)) {
-		boost::regex_replace(outRND, re, "");
+    if (boost::regex_match(outRND, results, Common::reCURRENT_DIR)) {
+		boost::regex_replace(outRND, Common::reCURRENT_DIR, "");
 		outRND = pwd+"/"+outRND;
 	}
-	if (boost::regex_match(refRND, results, re)) {
-    	boost::regex_replace(refRND, re, "");
+	if (boost::regex_match(refRND, results, Common::reCURRENT_DIR)) {
+    	boost::regex_replace(refRND, Common::reCURRENT_DIR, "");
 		refRND = pwd+"/"+refRND;
 	}
-    if (boost::regex_match(reportESA, results, re)) {
-		boost::regex_replace(reportESA, re, "");
+    if (boost::regex_match(reportESA, results, Common::reCURRENT_DIR)) {
+		boost::regex_replace(reportESA, Common::reCURRENT_DIR, "");
 		reportESA = pwd+"/"+reportESA;
 	}
 

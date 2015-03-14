@@ -64,13 +64,78 @@ const set<string> NE::rNEengSmall = create_rNEengSmall();
 const set<string> NE::rNEespcat;
 
 
+string NE::create_NE_file(string input, string L, string C) {
+	//description _ creates a one-sentence per line PoS file, and returns its name
+	string wlpcnercfile = input+"."+NE::NEEXT+".wlpcn";
+	string nefile = input+"."+NE::NEEXT+".ne";
+
+	if (!exists(boost::filesystem::path(nefile))) {
+		if (exists(boost::filesystem::path(nefile+"."+Common::GZEXT))) {
+			string sys_aux = Common::GUNZIP+" "+nefile+"."+Common::GZEXT;
+			system(sys_aux.c_str());
+		}
+		else {
+			FILE_parse(input, L, C);
+
+			if (!exists(boost::filesystem::path(wlpcnercfile)) and exists(boost::filesystem::path(wlpcnercfile+"."+Common::GZEXT))) {
+				string sys_aux = Common::GUNZIP+" "+wlpcnercfile+"."+Common::GZEXT;
+				system(sys_aux.c_str());
+			}
+
+			ofstream NE(nefile.c_str());
+		    if (!NE.is_open()) { fprintf(stderr, "couldn't open file: %s\n", nefile.c_str()); exit(1); }
+
+		    ifstream WLPCNERC(wlpcnercfile.c_str());
+		    if (WLPCNERC) {
+		    	int i = 0;
+		    	int EMPTY = 1;
+    			//boost::regex re("B-.*");
+		    	vector<string> sentence;
+		    	string str;
+		    	while ( getline(WLPCNERC, str) ) {
+		    		if (str.empty()) {	// sentence separator
+		    			if (EMPTY)		// empty sentence	
+	    					EMPTY = 0;
+		    			else {
+		    				NE << sentence[0];				// OJU!!!!!!
+		    				for (int j = 1; j < sentence.size(); ++j)
+		    					NE << " " << sentence[j];
+		    				NE << endl;
+		    				sentence.clear();
+		    				EMPTY = 1;
+		    			}
+	    			}
+	    			else {
+	    				vector<string> l;
+						boost::split(l, str, boost::is_any_of("\t "));
+					 	boost::match_results<string::const_iterator> results;
+					 	if (boost::regex_match(l[4], results, Common::reSP_B)) {
+					 		vector<string> ne;
+							boost::split(ne, l[4], boost::is_any_of("-"));
+							sentence.push_back(ne[1]);
+					 	}
+						EMPTY = 0;
+	    			}
+		    	}
+		    	NE.close();
+		    	WLPCNERC.close();
+		    	string sys_aux = Common::GZIP+" "+wlpcnercfile;
+		    	system(sys_aux.c_str());
+		    }
+		    else { fprintf(stderr, "couldn't open file: %s\n", wlpcnercfile.c_str()); exit(1); }
+		}
+	}
+
+	return nefile;
+}
+
 //typedef map<string, map< string, map<string, int> > > SNTfeatures;
 void NE::SNT_extract_features(const sParsed &snt, SNTfeatures &sntEXT) {
 	// description _ extracts features from a given NE-parsed sentence.
 	string type = "";
 	vector<string> lne;
-	boost::regex reB("^B-.*");
-	boost::regex reI("^I-.*");
+	//boost::regex reB("^B-.*");
+	//boost::regex reI("^I-.*");
 
 	for(int i = 0; i < snt.size(); ++i) {
 		string word = snt[i][0];
@@ -82,7 +147,7 @@ void NE::SNT_extract_features(const sParsed &snt, SNTfeatures &sntEXT) {
 		++sntEXT["bow"][(NE.size() == 1) ? NE[0] : NE[1]][word];
 		// exact matches -----------------------
 	 	boost::match_results<string::const_iterator> results;
-	 	if (ne == "O" or boost::regex_match(ne, results, reB)) {
+	 	if (ne == "O" or boost::regex_match(ne, results, Common::reNE_B)) {
 	 		if (lne.size() > 0 and type != "") {
 	 			string lne_aux = lne[0];	for (int k = 1; k < lne.size(); ++k) lne_aux += " "+lne[k];
 	 			++sntEXT["exact"][type][lne_aux];
@@ -90,9 +155,9 @@ void NE::SNT_extract_features(const sParsed &snt, SNTfeatures &sntEXT) {
  			if (NE.size() > 1) type = NE[1];
  			else type = "";
  			lne.clear();
- 			if (boost::regex_match(ne, results, reB)) lne.push_back(word);
+ 			if (boost::regex_match(ne, results, Common::reNE_B)) lne.push_back(word);
 	 	}
-	 	else if (boost::regex_match(ne, results, reI))
+	 	else if (boost::regex_match(ne, results, Common::reNE_I))
 	 		lne.push_back(word);
 	}
 }

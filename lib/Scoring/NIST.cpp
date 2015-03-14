@@ -35,7 +35,7 @@ const map<string, int> NIST::rNIST = create_rNIST();
 
 vector<double> NIST::read_nist(string reportNIST) {
 	// description _ read NIST value from report file
-    boost::regex re("^ +NIST:.*");
+    //boost::regex re("^ +NIST:.*");
 
     string str;
     bool individual = false;
@@ -44,13 +44,13 @@ vector<double> NIST::read_nist(string reportNIST) {
     if (file) {
 	    while (getline(file, str)) {
 	    	boost::match_results<string::const_iterator> results;
-	        if (boost::regex_match(str, results, re)) {
+	        if (boost::regex_match(str, results, Common::reNIST1)) {
 	            //cout << "\t That was a kind of line" << endl;
 	            string s = results[0];
 	            //cout << "line: |" << s << "|" << endl;
 
-				boost::regex re2("^\\s+NIST:\\s+");	//, boost::regex::perl|boost::regex::icase);
-				s = boost::regex_replace(s, re2, "");
+				//boost::regex re2("^\\s+NIST:\\s+");	//, boost::regex::perl|boost::regex::icase);
+				s = boost::regex_replace(s, Common::reNIST2, "");
 
 				//cout << "\tline1: " << s << endl;
 
@@ -86,9 +86,9 @@ vector<double> NIST::read_nist(string reportNIST) {
 
 vector<vector<double> > NIST::read_nist_segments(string reportNIST) {
 	// description _ read NIST-5 value from report file (for all segments)
-    boost::regex re1("^ +NIST score using.*");
-    boost::regex re2("^ +cumulative-NIST score using.*");
-    boost::regex re3("^ +individual-NIST score using.*");
+    //boost::regex re1("^ +NIST score using.*");
+    //boost::regex re2("^ +cumulative-NIST score using.*");
+    //boost::regex re3("^ +individual-NIST score using.*");
 
     vector<double> lnist1, lnist2, lnist3, lnist4, lnist5;
     vector<double> lnist1i, lnist2i, lnist3i, lnist4i, lnist5i;
@@ -101,7 +101,7 @@ vector<vector<double> > NIST::read_nist_segments(string reportNIST) {
 	    while (getline(file, str)) {
 	    	boost::match_results<string::const_iterator> results;
 
-	        if (boost::regex_match(str, results, re1)) {
+	        if (boost::regex_match(str, results, Common::reNIST3)) {
 	            //cout << "\t That was a kind of line" << endl;
 	            string s = results[0];
 	            //cout << "line: |" << s << "|" << endl;
@@ -116,7 +116,7 @@ vector<vector<double> > NIST::read_nist_segments(string reportNIST) {
 
 	   			//for (int i = 0; i < strs.size(); ++i) cout << "strs[" << i << "]: " << strs[i] << endl;
 			}
-			else if (boost::regex_match(str, results, re2)) {
+			else if (boost::regex_match(str, results, Common::reNIST4)) {
 	            //cout << "\t That was a kind of line" << endl;
 	            string s = results[0];
 	            //cout << "line: |" << s << "|" << endl;
@@ -131,7 +131,7 @@ vector<vector<double> > NIST::read_nist_segments(string reportNIST) {
 
 	   			//for (int i = 0; i < strs.size(); ++i) cout << "strs[" << i << "]: " << strs[i] << endl;
 			}
-			else if (boost::regex_match(str, results, re3)) {
+			else if (boost::regex_match(str, results, Common::reNIST5)) {
 	            //cout << "\t That was a kind of line" << endl;
 	            string s = results[0];
 	            //cout << "line: |" << s << "|" << endl;

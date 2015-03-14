@@ -3,8 +3,6 @@
 #include <sstream>
 #include <cfloat>
 
-#include <boost/regex.hpp>
-
 //FILE EXTENSIONS
 const string Common::SGMLEXT = "sgml";
 const string Common::REPORTEXT = "report";
@@ -219,10 +217,69 @@ const string Common::CE = "CE";
 const string Common::LeM = "LeM";
 const double Common::NOT_DEFINED = -DBL_MIN;
 
+// regular expressions
+const boost::regex Common::reBLEU1("^ +BLEU:.*");
+const boost::regex Common::reBLEU2("^\\s+BLEU:\\s+");
+const boost::regex Common::reBLEU3("^ +BLEU score using.*");
+const boost::regex Common::reBLEU4("^ +cumulative-BLEU score using.*");
+const boost::regex Common::reBLEU5("^ +individual-BLEU score using.*");
+
+const boost::regex Common::reEND_SPACE("\\s*$");
+//const boost::regex Common::reEMPTY("^$");
+const boost::regex Common::reSPECIAL_CHAR("^[!?.]+$");		// ESA, NGRAM
+const boost::regex Common::reCURRENT_DIR("\\.\\/");
+
+const boost::regex Common::reSTART_SPACE("^\\s*");
+//boost::regex re3("^[\\?\\!\\.]$");	// ROUGE
+
+const boost::regex Common::reLINE_BREAK("\r");
+const boost::regex Common::reNE_B("^B-.*");
+const boost::regex Common::reNE_I("^I-.*");
+
+const boost::regex Common::reNGRAM_t("^.*Tok.*$");
+const boost::regex Common::reNGRAM_ch("^.*Char.*$");
+const boost::regex Common::reNGRAM_co("^.*Cognates.*$");
+const boost::regex Common::reNGRAM_re_l("^.*lenratio.*$");
+
+const boost::regex Common::reNIST1("^ +NIST:.*");
+const boost::regex Common::reNIST2("^\\s+NIST:\\s+");
+const boost::regex Common::reNIST3("^ +NIST score using.*");
+const boost::regex Common::reNIST4("^ +cumulative-NIST score using.*");
+const boost::regex Common::reNIST5("^ +individual-NIST score using.*");
+
+const boost::regex Common::reROUGE1("^X ROUGE-[SLW1-4][^ ]* Average_F.*");
+const boost::regex Common::reROUGE2("^X ROUGE-[SLW1-4][^ ]* Eval.*");
+
+const boost::regex Common::reSP_B("^B-.*");
+const boost::regex Common::reL_SPA("^"+Common::L_SPA+".*");
+const boost::regex Common::reSP_BI("^[BI]-");
+const boost::regex Common::re_A("^A.*");
+const boost::regex Common::re_C("^C.*");
+const boost::regex Common::re_D("^D.*");
+const boost::regex Common::re_F("^F.*");
+const boost::regex Common::re_I("^I.*");
+const boost::regex Common::re_N("^N.*");
+const boost::regex Common::re_P("^P.*");
+const boost::regex Common::re_S("^S.*");
+const boost::regex Common::re_V("^V.*");
+const boost::regex Common::re_VA("^VA.*");
+const boost::regex Common::re_VS("^VS.*");
+const boost::regex Common::re_VM("^VM.*");
+const boost::regex Common::re_JJ("^JJ.*");
+const boost::regex Common::re_NN("^NN.*");
+const boost::regex Common::re_PRP("^PRP.*");
+const boost::regex Common::re_RB("^RB.*");
+const boost::regex Common::re_VB("^VB.*");
+const boost::regex Common::re_W("^W.*");
+const boost::regex Common::re_sch("^[\\#\\$\\'\\(\\)\\,\\.\\:\\`].*");
+const boost::regex Common::reSP_NIST(".*NIST.*");
+            
+
+
 
 void Common::execute_or_die(string command, string message) {
-    boost::regex re("\\R");
-    command = boost::regex_replace(command, re, "");
+    //boost::regex re("\\R");
+    //command = boost::regex_replace(command, re, "");
     if (system(command.c_str())) {
     	fprintf(stderr, "%s\n%s\n", message.c_str(), command.c_str()); exit(1);
     }

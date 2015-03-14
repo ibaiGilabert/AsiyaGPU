@@ -172,7 +172,7 @@ void Core::process_multi_metrics(string HYP, string REF) {
 
 	//Process proc;
 	//string erase = "rm ";
-	// LAUNCH
+	fm_qw.resize(Config::num_process);
 	for (int i = 1; i <= Config::num_process; ++i) {
 		fprintf(stderr, "get_split (%s): sys: %s/ ext: %s/ thread: %d\n", HYP.c_str(), TESTBED::Hsystems[HYP].c_str(), Common::TXTEXT.c_str(), i );
 		string TGT_split = TB_FORMAT::get_split(TESTBED::Hsystems[HYP], Common::TXTEXT, i);
@@ -182,7 +182,7 @@ void Core::process_multi_metrics(string HYP, string REF) {
 			string run_file = proc.make_run_file(config_file, HYP, REF, i, *it_fm);
 			string job_id = proc.run_job(run_file, *it_fm);
 			job_qw[job_id] = HYP;
-			fm_qw[HYP][*it_fm] = run_file+".e"+job_id;
+			fm_qw[i-1][HYP][*it_fm] = run_file+".e"+job_id;
 		}
 		/*string run_meteor_file = proc.make_run_file(config_file, HYP, REF, i, "METEOR");
 		job_qw.insert(proc.run_job(run_meteor_file, "METEOR")); */
@@ -353,10 +353,10 @@ double Core::do_scores(Scores &hOQ) {
 				// TIME	
 				max_split_time[*it_s] = Common::NOT_DEFINED;
 				for (int i = 1; i <= Config::num_process; ++i) {
-					for (set<string>::const_iterator it_fm = Config::Fmetrics.begin(); it_fm != Config::Fmetrics.end(); ++it_fm) {
-						string e_file = fm_qw[*it_s][*it_fm];
+					if (Config::verbose) fprintf(stderr, "[GET MAX TIME OF (%s) system]\n", it_s->c_str());
 
-						if (Config::verbose) fprintf(stderr, "[GET MAX TIME OF (%s) set]\n", it_fm->c_str());
+					for (set<string>::const_iterator it_fm = Config::Fmetrics.begin(); it_fm != Config::Fmetrics.end(); ++it_fm) {
+						string e_file = fm_qw[i-1][*it_s][*it_fm];
 
 						double job_time = proc.get_time(e_file);
 		            	if (job_time > max_split_time[*it_s]) max_split_time[*it_s] = job_time;

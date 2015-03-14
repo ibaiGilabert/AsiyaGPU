@@ -1,6 +1,7 @@
 #include "../include/CE.hpp"
 #include "../include/SP.hpp"
 #include "../include/Overlap.hpp"
+#include "../include/NE.hpp"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -12,7 +13,7 @@
 #include <sstream>
 #include <algorithm>
 
-#include <boost/regex.hpp>
+//#include <boost/regex.hpp>
 #include <boost/filesystem.hpp>
 #include <boost/algorithm/string.hpp>
 
@@ -1007,7 +1008,7 @@ void CE::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
          	}	
          	hOQ.save_hash_scores(pref, TGT, REF, SYS, d_scores, s_scores);
 		}
-/*
+
 		// Oe --- NE overlap
 	    stringstream reportCE_Oe;
 	    reportCE_Oe << Common::DATA_PATH << "/" << Common::REPORTS << "/" << TGT << "/" << CE::CEEXT << "/" << CE::CEEXT << "-Oe" << Common::XMLEXT;
@@ -1069,7 +1070,6 @@ void CE::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
          	}	
          	hOQ.save_hash_scores(pref, TGT, REF, SYS, d_scores, s_scores);
 		}
-*/
 
 /*
 		// --------------------------------

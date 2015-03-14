@@ -36,11 +36,11 @@ void PER::PER_f_create_doc(string input, string output) {
 	    if (!output_file) { fprintf(stderr, "couldn't open output file: %s\n", output.c_str()); exit(1); }
     	if (input_file) {
 	    	string str;
-	    	boost::regex re("\\s+$");
-        	boost::regex re2("\r");
+	    	//boost::regex re("\\s+$");
+        	//boost::regex re2("\r");
             while(getline(input_file, str)) {
-	        	str = boost::regex_replace(str, re, "");
-	            str = boost::regex_replace(str, re2, "");
+	        	str = boost::regex_replace(str, Common::reEND_SPACE, "");
+	            str = boost::regex_replace(str, Common::reLINE_BREAK, "");
 	            if (Config::CASE == Common::CASE_CI) boost::to_lower(str);
 	    		output_file << str << endl;
 	    	}

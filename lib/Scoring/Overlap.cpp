@@ -9,7 +9,6 @@
 #include <fstream>
 #include <sstream>
 
-#include <boost/regex.hpp>
 #include <boost/filesystem.hpp>
 #include <boost/algorithm/string.hpp>
 

@@ -5,6 +5,9 @@
 #include <vector>
 #include <map>
 #include <set>
+
+#include <boost/regex.hpp>
+
 using namespace std;
 
 
@@ -175,6 +178,54 @@ public:
 	static const string CE ;
 	static const string LeM;
 	static const double NOT_DEFINED;
+
+	static const boost::regex reBLEU1;
+	static const boost::regex reBLEU2;
+	static const boost::regex reBLEU3;
+	static const boost::regex reBLEU4;
+	static const boost::regex reBLEU5;
+	static const boost::regex reEND_SPACE;
+	static const boost::regex reSPECIAL_CHAR;
+	static const boost::regex reCURRENT_DIR;
+	static const boost::regex reSTART_SPACE;
+	static const boost::regex reLINE_BREAK;
+	static const boost::regex reNE_B;
+	static const boost::regex reNE_I;
+	static const boost::regex reNGRAM_t;
+	static const boost::regex reNGRAM_ch;
+	static const boost::regex reNGRAM_co;
+	static const boost::regex reNGRAM_re_l;
+	static const boost::regex reNIST1;
+	static const boost::regex reNIST2;
+	static const boost::regex reNIST3;
+	static const boost::regex reNIST4;
+	static const boost::regex reNIST5;
+	static const boost::regex reROUGE1;
+	static const boost::regex reROUGE2;
+	static const boost::regex reSP_B;
+	static const boost::regex reL_SPA;
+	static const boost::regex reSP_BI;
+	static const boost::regex re_A;
+	static const boost::regex re_C;
+	static const boost::regex re_D;
+	static const boost::regex re_F;
+	static const boost::regex re_I;
+	static const boost::regex re_N;
+	static const boost::regex re_P;
+	static const boost::regex re_S;
+	static const boost::regex re_V;
+	static const boost::regex re_VA;
+	static const boost::regex re_VS;
+	static const boost::regex re_VM;
+	static const boost::regex re_JJ;
+	static const boost::regex re_NN;
+	static const boost::regex re_PRP;
+	static const boost::regex re_RB;
+	static const boost::regex re_VB;
+	static const boost::regex re_W;
+	static const boost::regex re_sch;
+	static const boost::regex reSP_NIST;
+            
 
 	static void execute_or_die(string command, string message);
 	static double safe_division(double numerator, double denominator);

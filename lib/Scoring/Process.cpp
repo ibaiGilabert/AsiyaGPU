@@ -73,7 +73,11 @@ double Process::get_time(string e_file) {
     string exe_cat = "cat " + e_file + " | grep TOTAL";
     string time_out = exec(exe_cat.c_str());
 
-    return atof(time_out.c_str());
+    vector<string> strs;
+    boost::split(strs, time_out, boost::is_any_of("\t "));
+    if (strs.size() == 0) { fprintf(stderr, "[ERROR] Could not parse total time of split execution <%s>\n", e_file.c_str()); exit(1); }
+
+    return atof(strs[strs.size()-1].c_str());
 }
 
 string Process::getJobID(string cmd) {
