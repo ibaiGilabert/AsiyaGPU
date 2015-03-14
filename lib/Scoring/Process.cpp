@@ -68,6 +68,13 @@ void Process::get_s_time(string id, double &time) {
     }
 }
 
+double Process::get_time(string e_file) {
+    // get the total execution time from error file
+    string exe_cat = "cat " + e_file + " | grep TOTAL";
+    string time_out = exec(exe_cat.c_str());
+
+    return atof(time_out.c_str());
+}
 
 string Process::getJobID(string cmd) {
 	// get the id job from qsub's return value
@@ -113,10 +120,10 @@ string Process::run_job_dep(string run_file, string metric, string dep) {
 string Process::make_config_file(string SYS, string REF, string metric_set, int thread) {
     // build config file for one thread
     // return: config_file name
-    char buffer[64];
+    char buffer[100];
     sprintf(buffer, "%s.%.3d.%s", TESTBED::Hsystems[SYS].c_str(), thread, Common::TXTEXT.c_str());   // get the system split
 
-    char config_name[64];
+    char config_name[100];
     sprintf(config_name, "Asiya_%s_%s_%s_%.3d.config", metric_set.c_str(), SYS.c_str(), REF.c_str(), thread);
     //char c_thread[8];       sprintf(c_thread, "%.3d", thread);
     //strcat(config_name, c_thread);
@@ -149,7 +156,7 @@ string Process::make_config_file(string SYS, string REF, string metric_set, int 
 string Process::make_run_file(string config_file, string TGT, string REF, int thread, string metric) {
     // build run script file
     // return: script file name
-    char run_buffer[50], report_buffer[50];
+    char run_buffer[100], report_buffer[100];
     sprintf(run_buffer, "run_%s_%s_%s_%.3d.sh", metric.c_str(), TGT.c_str(), REF.c_str(), thread);   // get the system split
     sprintf(report_buffer, "run_%s_%s_%s_%.3d.report", metric.c_str(), TGT.c_str(), REF.c_str(), thread);   // get the system split
 
@@ -165,7 +172,7 @@ string Process::make_run_file(string config_file, string TGT, string REF, int th
         //run_file << endl << ". /home/soft/asiya/ASIYA12.04.PATH" << endl;
 
         stringstream s_cmd;
-        s_cmd << "./Asiya " << config_file << " -serialize " << (thread-1)*TB_FORMAT::chunk + 1 << " -g seg -eval single -metric_set metrics_" << metric << " > " << string(report_buffer);
+        s_cmd << "./Asiya " << config_file << " -serialize " << (thread-1)*TB_FORMAT::chunk + 1 << " -time -g seg -eval single -metric_set metrics_" << metric << " > " << string(report_buffer);
         string cmd = s_cmd.str();
 
         if (Config::verbose) fprintf(stderr, "[EXEC] %s\n", cmd.c_str());

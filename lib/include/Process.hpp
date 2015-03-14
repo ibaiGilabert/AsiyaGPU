@@ -14,6 +14,7 @@ private:
 public:
 	bool end(string id);
 	void get_s_time(string id, double &time);
+	double get_time(string e_file);
 
 	string make_config_file(string SYS, string REF, string metric_set, int thread);
 	string make_run_file(string config_file, string TGT, string REF, int thread, string metric);

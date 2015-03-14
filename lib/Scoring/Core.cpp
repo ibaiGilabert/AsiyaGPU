@@ -165,13 +165,13 @@ void Core::compute_metrics_combination(Scores &hOQ) {
 	}
 }
 
-void Core::process_multi_metrics(string HYP, const set<string> &Lref) {
+void Core::process_multi_metrics(string HYP, string REF) {
 	// read reports and build hOQ Scores structure
 	// List of Metrics
-	string REF = Common::join_set(Lref, '_');
+	//string REF = Common::join_set(Lref, '_');
 
 	//Process proc;
-	string erase = "rm ";
+	//string erase = "rm ";
 	// LAUNCH
 	for (int i = 1; i <= Config::num_process; ++i) {
 		fprintf(stderr, "get_split (%s): sys: %s/ ext: %s/ thread: %d\n", HYP.c_str(), TESTBED::Hsystems[HYP].c_str(), Common::TXTEXT.c_str(), i );
@@ -180,7 +180,9 @@ void Core::process_multi_metrics(string HYP, const set<string> &Lref) {
 		for (set<string>::const_iterator it_fm = Config::Fmetrics.begin(); it_fm != Config::Fmetrics.end(); ++it_fm) {
 			string config_file = proc.make_config_file(HYP, REF, *it_fm, i);
 			string run_file = proc.make_run_file(config_file, HYP, REF, i, *it_fm);
-			job_qw[proc.run_job(run_file, *it_fm)] = HYP;
+			string job_id = proc.run_job(run_file, *it_fm);
+			job_qw[job_id] = HYP;
+			fm_qw[HYP][*it_fm] = run_file+".e"+job_id;
 		}
 		/*string run_meteor_file = proc.make_run_file(config_file, HYP, REF, i, "METEOR");
 		job_qw.insert(proc.run_job(run_meteor_file, "METEOR")); */
@@ -189,8 +191,8 @@ void Core::process_multi_metrics(string HYP, const set<string> &Lref) {
 	}
 }
 
-void Core::rebuild_hash_scores(string TGT, const set<string> &Lref, Scores &hOQ) {
-	string REF = Common::join_set(Lref, '_');
+void Core::rebuild_hash_scores(string TGT, string REF, Scores &hOQ) {
+	//string REF = Common::join_set(Lref, '_');
     for (int i = 1; i <= Config::num_process; ++i) {
 		for (set<string>::const_iterator it_fm = Config::Fmetrics.begin(); it_fm != Config::Fmetrics.end(); ++it_fm) {
 	        //fprintf(stderr, "[LOAD]: ROUGE/ tgt: %s/ ref: %s/ split: %d\n", TGT.c_str(), REF.c_str(), i);
@@ -200,7 +202,7 @@ void Core::rebuild_hash_scores(string TGT, const set<string> &Lref, Scores &hOQ)
     }
 }
 
-void Core::doMultiMetrics(string HYP, const set<string> &Lref, Scores &hOQ) {
+void Core::doMultiMetrics(string HYP, string REF, Scores &hOQ) {
 	// description _ launches automatic MT evaluation metrics (for multiple references)
 	//                              * computes GTM (by calling Proteus java gtm) -> e = 1..3
 	//                              * computes BLEU score (by calling NIST mteval script) -> n = 4
@@ -216,7 +218,7 @@ void Core::doMultiMetrics(string HYP, const set<string> &Lref, Scores &hOQ) {
 	//                              * computes CP-based (Full Parsing)
 	//                              * computes SR-based (Semantic Role Labeling)
 	//                              * computes DR-based (Discourse Representation - Semantics)
-	string REF = Common::join_set(Lref, '_');
+	//string REF = Common::join_set(Lref, '_');
 
 	if (Config::verbose) fprintf(stderr, "computing similarities [%s - %s]...\n", HYP.c_str(), REF.c_str());
 
@@ -224,7 +226,7 @@ void Core::doMultiMetrics(string HYP, const set<string> &Lref, Scores &hOQ) {
 	pLeM->doMetric(HYP, REF, "", hOQ);
 	delete pLeM;*/
 
-	if (!Lref.empty()) {
+	if (!REF.empty()) {
 		SingleMetric *pBLEU = new BLEU;
 		SingleMetric *pNIST = new NIST;
 		//SingleMetric *pBLEUNIST = new BLEUNIST;
@@ -285,6 +287,9 @@ double Core::do_scores(Scores &hOQ) {
 	//cout << "do_scores -> eval_schemes <- " << endl;
 	//Config::printMapInt(Config::eval_schemes);
 
+	string REF = Common::join_set(Config::references, '_');
+
+
 	if (Config::eval_schemes.find(Common::S_SINGLE) != Config::eval_schemes.end() or \
 	Config::metaeval_schemes.find(Common::S_SINGLE) != Config::metaeval_schemes.end() or \
 	Config::optimize_schemes.find(Common::S_SINGLE) != Config::optimize_schemes.end() or \
@@ -296,12 +301,11 @@ double Core::do_scores(Scores &hOQ) {
 
 		for (set<string>::const_iterator it = Config::systems.begin(); it != Config::systems.end(); ++it) {	//systems Vs. references
 			if (Config::num_process) {
-				process_multi_metrics(*it, Config::references);						//read report files
-
+				process_multi_metrics(*it, REF);						//read report files
 			}
 			else {
 				double time1 = omp_get_wtime();
-				doMultiMetrics(*it, Config::references, hOQ);
+				doMultiMetrics(*it, REF, hOQ);
 				double time2 = omp_get_wtime();
 
 				double t = time2 - time1;	//= Common::get_raw_Benchmark;
@@ -322,29 +326,43 @@ double Core::do_scores(Scores &hOQ) {
 		}
 
 		if (Config::num_process) {
+
 			// WAIT
 			if (Config::verbose) fprintf(stderr, "[WAIT]\n");
-
-			map<string, double>	max_split_time;			// <system, max_time_split>
 			while (!job_qw.empty()) {
 				for (map<string, string>::iterator it_job = job_qw.begin(); it_job != job_qw.end(); ++it_job) {
-		        	string sys_name = it_job->second;
+		        	//string sys_name = it_job->second;
 
 		        	if (proc.end(it_job->first)) {
-		            	double job_time;	proc.get_s_time(it_job->first, job_time);
-		            	//double time2 = omp_get_wtime();
-    					//if ((time2-init_time) > max_split_time[sys_name]) max_split_time[sys_name] = time2-init_time;
-		            	if (job_time > max_split_time[sys_name]) max_split_time[sys_name] = job_time;
+		            	//double job_time;	proc.get_s_time(it_job->first, job_time);
+
+		            	//if (job_time > max_split_time[sys_name]) max_split_time[sys_name] = job_time;
 		            	job_qw.erase(it_job);
 					}
 		        }
 			}
+
+			map<string, double>	max_split_time;			// <system, max_time_split>
+
 			// REBUILD
 			if (Config::verbose) fprintf(stderr, "[REBUILD]\n");
-
 			double time_ri = omp_get_wtime();
-			for (set<string>::const_iterator it = Config::systems.begin(); it != Config::systems.end(); ++it) {
-		        rebuild_hash_scores(*it, Config::references, hOQ);
+			for (set<string>::const_iterator it_s = Config::systems.begin(); it_s != Config::systems.end(); ++it_s) {
+		        rebuild_hash_scores(*it_s, REF, hOQ);
+
+				// TIME	
+				max_split_time[*it_s] = Common::NOT_DEFINED;
+				for (int i = 1; i <= Config::num_process; ++i) {
+					for (set<string>::const_iterator it_fm = Config::Fmetrics.begin(); it_fm != Config::Fmetrics.end(); ++it_fm) {
+						string e_file = fm_qw[*it_s][*it_fm];
+
+						if (Config::verbose) fprintf(stderr, "[GET MAX TIME OF (%s) set]\n", it_fm->c_str());
+
+						double job_time = proc.get_time(e_file);
+		            	if (job_time > max_split_time[*it_s]) max_split_time[*it_s] = job_time;
+		            }
+				}
+
 			}
 		    if (Config::G != Common::G_SEG){
 		        fprintf(stderr, "[DOC REBUILD]\n");

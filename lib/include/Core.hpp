@@ -16,13 +16,14 @@ class Core {
 private:
     Process proc;
 	map<string, string> job_qw;      								// <job_id, <sys_name, init_time> >
+	map<string, map<string, string> > fm_qw;      					// <sys_name, <metric_family, error_file> >
 
 	//Compute scores
-	void doMultiMetrics(string HYP, const set<string> &Lref, Scores &hOQ);
+	void doMultiMetrics(string HYP, string REF, Scores &hOQ);
 
 	//Compute scores multi-threading
-	void process_multi_metrics(string HYP, const set<string> &Lref);
-	void rebuild_hash_scores(string TGT, const set<string> &Lref, Scores &hOQ);
+	void process_multi_metrics(string HYP, string REF);
+	void rebuild_hash_scores(string TGT, string REF, Scores &hOQ);
 
 	vector<string> get_sorted_metrics();
 	vector<string> get_sorted_systems();
