@@ -1,4 +1,4 @@
-#include "../include/SR.hpp"
+#include "../include/SRXLike.hpp"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -8,15 +8,15 @@
 #include <fstream>
 #include <sstream>
 
-#include <boost/regex.hpp>
-#include <boost/filesystem.hpp>
-#include <boost/algorithm/string.hpp>
+//#include <boost/regex.hpp>
+//#include <boost/filesystem.hpp>
+//#include <boost/algorithm/string.hpp>
 
 
-const string SRXLike::SREXTT = "SR";
+const string SRXLike::SREXT = "SR";
 const string SRXLike::XLike = "xlike/runxlikeparser.sh";
 
-set<string> SR::create_rSRspacat() {
+set<string> SRXLike::create_rSRspacat() {
 	set<string> rSRspacat;
 	rSRspacat.insert(SRXLike::SREXT+"-Nv"); rSRspacat.insert(SRXLike::SREXT+"-Ov"); rSRspacat.insert(SRXLike::SREXT+"-Or"); rSRspacat.insert(SRXLike::SREXT+"-Orv");
 	rSRspacat.insert(SRXLike::SREXT+"-Mrv(*)"); rSRspacat.insert(SRXLike::SREXT+"-Mrv(A0)"); rSRspacat.insert(SRXLike::SREXT+"-Mrv(A1)");
@@ -73,4 +73,4 @@ set<string> SR::create_rSRspacat() {
 	rSRspacat.insert(SRXLike::SREXT+"-Ora"); rSRspacat.insert(SRXLike::SREXT+"-Mra(*)"); rSRspacat.insert(SRXLike::SREXT+"-Ora(*)");
 	return rSRspacat;
 }
-set<string> SR::rSRspacat = create_rSRspacat();
+set<string> SRXLike::rSRspacat = create_rSRspacat();

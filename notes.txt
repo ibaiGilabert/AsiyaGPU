@@ -128,7 +128,8 @@ SHORTCUTS
 
     	#include <boost/algorithm/string.hpp>
 		std::vector<std::string> strs;
-		boost::split(strs, "string to split", boost::is_any_of("\t "));
+		boost::split(strs, "string to split", boost::is_any_of("\t ")); 	
+		// Add the flag 'boost::token_compress_on' to eliminate empty separators.
 
 		//ALTRA ALTERNATIVA (amb istringstream)
 

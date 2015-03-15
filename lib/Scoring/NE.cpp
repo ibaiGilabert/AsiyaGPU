@@ -97,9 +97,11 @@ string NE::create_NE_file(string input, string L, string C) {
 		    			if (EMPTY)		// empty sentence	
 	    					EMPTY = 0;
 		    			else {
-		    				NE << sentence[0];				// OJU!!!!!!
-		    				for (int j = 1; j < sentence.size(); ++j)
-		    					NE << " " << sentence[j];
+		    				if (sentence.size()) {
+			    				NE << sentence[0];
+			    				for (int j = 1; j < sentence.size(); ++j)
+			    					NE << " " << sentence[j];
+			    			}
 		    				NE << endl;
 		    				sentence.clear();
 		    				EMPTY = 1;
@@ -110,9 +112,9 @@ string NE::create_NE_file(string input, string L, string C) {
 						boost::split(l, str, boost::is_any_of("\t "));
 					 	boost::match_results<string::const_iterator> results;
 					 	if (boost::regex_match(l[4], results, Common::reSP_B)) {
-					 		vector<string> ne;
-							boost::split(ne, l[4], boost::is_any_of("-"));
-							sentence.push_back(ne[1]);
+					 		vector<string> lk;
+							boost::split(lk, l[4], boost::is_any_of("-"));
+							sentence.push_back(lk[1]);
 					 	}
 						EMPTY = 0;
 	    			}
@@ -249,7 +251,6 @@ void NE::FILE_parse(string input, string L, string C) {
 						"/jars/maxent-2.3.0.jar:"+toolBIOS+"/jars/trove.jar:"+toolBIOS+"/jars/antlr-2.7.5.jar:"+toolBIOS+"/jars/log4j.jar bios.nerc.Nerc --predict --namex="+
 						toolBIOS+"/data/nerc/"+NE::rLANG[L]+"/namex --numex="+toolBIOS+"/data/nerc/"+NE::rLANG[L]+"/numex --model=conll.paum."+((C == Common::CASE_CI)? "ci" : "cs")+
 						".model --type=paum --case-sensitive="+((C == Common::CASE_CI)? "false" : "true")+" --log4j=log4j.properties > "+nercfile+" 2> /dev/null";
-
 					Common::execute_or_die(exe, "[ERROR] problems running BIOS...");
 
 					sys_aux = Common::GZIP+" "+wpcfile;

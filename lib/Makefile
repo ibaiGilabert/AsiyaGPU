@@ -6,8 +6,8 @@ LDFLAGS	= -lboost_system -lboost_filesystem -lboost_regex -lboost_serialization 
 
 all: Asiya
 
-Asiya: Asiya.o Config.o Common.o Core.o Scores.o Process.o BLEU.o NIST.o GTM.o METEOR.o ROUGE.o NGRAM.o Overlap.o ESA.o TER.o WER.o PER.o LeM.o ULC.o SP.o CE.o NE.o TESTBED.o TB_FORMAT.o TB_NIST.o TB_RAW.o SC_FORMAT.o SC_ASIYA.o SC_NIST.o SC_RAW.o
-	g++ -o ../sample/Asiya Asiya.o Config.o Common.o Core.o Scores.o Process.o BLEU.o NIST.o GTM.o METEOR.o ROUGE.o NGRAM.o Overlap.o ESA.o TER.o WER.o PER.o LeM.o ULC.o SP.o CE.o NE.o TESTBED.o TB_FORMAT.o TB_NIST.o TB_RAW.o SC_FORMAT.o SC_ASIYA.o SC_NIST.o SC_RAW.o $(LDFLAGS) $(CFLAGS)
+Asiya: Asiya.o Config.o Common.o Core.o Scores.o Process.o BLEU.o NIST.o GTM.o METEOR.o ROUGE.o NGRAM.o Overlap.o ESA.o TER.o WER.o PER.o LeM.o ULC.o SP.o CE.o NE.o SR.o SRXLike.o TESTBED.o TB_FORMAT.o TB_NIST.o TB_RAW.o SC_FORMAT.o SC_ASIYA.o SC_NIST.o SC_RAW.o
+	g++ -o ../sample/Asiya Asiya.o Config.o Common.o Core.o Scores.o Process.o BLEU.o NIST.o GTM.o METEOR.o ROUGE.o NGRAM.o Overlap.o ESA.o TER.o WER.o PER.o LeM.o ULC.o SP.o CE.o NE.o SR.o SRXLike.o TESTBED.o TB_FORMAT.o TB_NIST.o TB_RAW.o SC_FORMAT.o SC_ASIYA.o SC_NIST.o SC_RAW.o $(LDFLAGS) $(CFLAGS)
 
 Asiya.o: Asiya.cpp
 	g++ -c Asiya.cpp $(CFLAGS)
@@ -77,6 +77,12 @@ CE.o: include/CE.hpp Scoring/CE.cpp
 
 NE.o: include/NE.hpp Scoring/NE.cpp
 	g++ -c Scoring/NE.cpp $(CFLAGS)
+
+SR.o: include/SR.hpp Scoring/SR.cpp
+	g++ -c Scoring/SR.cpp $(CFLAGS)
+
+SRXLike.o: include/SRXLike.hpp Scoring/SRXLike.cpp
+	g++ -c Scoring/SRXLike.cpp $(CFLAGS)
 
 TESTBED.o: include/TESTBED.hpp InOut/TESTBED.cpp
 	g++ -c InOut/TESTBED.cpp $(CFLAGS)

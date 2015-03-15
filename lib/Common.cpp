@@ -274,8 +274,25 @@ const boost::regex Common::re_W("^W.*");
 const boost::regex Common::re_sch("^[\\#\\$\\'\\(\\)\\,\\.\\:\\`].*");
 const boost::regex Common::reSP_NIST(".*NIST.*");
             
+/*
+const boost::regex Common::reCP4charniak1("^[\\s[:punct:]]*$");
+const boost::regex Common::reCP4charniak2(" \\( ");
+const boost::regex Common::reCP4charniak3(" \\) ");
+const boost::regex Common::reCP4charniak4(" -mgbLRB- ");
+const boost::regex Common::reCP4charniak5(" -mgbRRB- ");
 
+const boost::regex Common::reCPread_charniak1("^\\( \\(ROOT");
+const boost::regex Common::reCPread_charniak2("\\) \\)$");
+const boost::regex Common::reCPopen_tag("\\(.*");
+const boost::regex Common::reCPclose_tag("\\(.*\\)");
+*/
 
+const boost::regex Common::reRIGTH_PAR("\\)");
+const boost::regex Common::reLEFT_PAR("\\(");
+
+const boost::regex Common::reSR_punct("^[\\s[:punct:]]*$");
+const boost::regex Common::reSR_parse1("\"");
+const boost::regex Common::reSR_INSIDE_PAR("\\(.*\\)");
 
 void Common::execute_or_die(string command, string message) {
     //boost::regex re("\\R");

@@ -316,13 +316,13 @@ void CE::computeCE_segment_length_ratio(string source, string target, double &le
 	double denominator_short = max(source_length * compression_factor, (double)target_length);
 	short_score = Common::safe_division(numerator_short, denominator_short);
 
-	if (Config::verbose) {
+	/*if (Config::verbose) {
 		fprintf(stderr, "source length = %d\n", source_length);
 		fprintf(stderr, "target length = %d\n", target_length);
 		fprintf(stderr, "length(source, target) = %f / %f = %f\n", numerator_length, denominator_length, length_score);
 		fprintf(stderr, "long(source, target) = %f / %f = %f\n", numerator_long, denominator_long, long_score);
 		fprintf(stderr, "short(source, target) = %f / %f = %f\n", numerator_short, denominator_short, short_score);
-	}
+	}*/
 }
 
 void CE::computeCE_length_ratio(string TGT, double &SYSlength, double &SYSlong, double &SYSshort, vector<double> &SEGSlength, vector<double> &SEGSlong, vector<double> &SEGSshort) {
@@ -384,15 +384,15 @@ double CE::computeCE_segment_symbol_overlap(string source, string target) {
 
 	double score = Common::safe_division(hits_total.first, hits_total.second);
 
-	if (Config::verbose) {
+	/*if (Config::verbose) {
 		fprintf(stderr, "source = %s\n", source.c_str());
-		for (map<string, int>::const_iterator it = source_symbols.begin(); it != source_symbols.end(); ++it)
-			fprintf(stderr, "[%s -> %d]\n", it->first.c_str(), it->second);
+		//for (map<string, int>::const_iterator it = source_symbols.begin(); it != source_symbols.end(); ++it)
+		//	fprintf(stderr, "[%s -> %d]\n", it->first.c_str(), it->second);
 		fprintf(stderr, "target = %s\n", target.c_str());
-		for (map<string, int>::const_iterator it = target_symbols.begin(); it != target_symbols.end(); ++it)
-			fprintf(stderr, "[%s -> %d]\n", it->first.c_str(), it->second);
+		//for (map<string, int>::const_iterator it = target_symbols.begin(); it != target_symbols.end(); ++it)
+		//	fprintf(stderr, "[%s -> %d]\n", it->first.c_str(), it->second);
 		fprintf(stderr, "OVERLAP = %f / %f = %f\n", hits_total.first, hits_total.second, score);
-	}
+	}*/
 
 	return score;
 }
@@ -1061,7 +1061,7 @@ void CE::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 			sys_aux = Common::GZIP+" "+src_NEfile;	system(sys_aux.c_str());
 			sys_aux = Common::GZIP+" "+out_NEfile;	system(sys_aux.c_str());
 
-	    	string pref = CE::CEEXT+"-Oe";
+	    	string pref = CE::CEEXT+"-Ne";
 	    	vector<double> d_scores, s_scores;
 			TESTBED::get_seg_doc_scores(SEGS, 0, TGT, d_scores, s_scores);
 	    	if (Config::O_STORAGE == 1) {

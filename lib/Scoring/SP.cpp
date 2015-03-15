@@ -302,6 +302,7 @@ string SP::create_chunk_file(string input, string L, string C) {
 		    	int EMPTY = 1;
     			//boost::regex re("B-.*");
 		    	vector<string> sentence;
+			 	boost::match_results<string::const_iterator> results;
 		    	string str;
 		    	while ( getline(WLPC, str) ) {
 		    		if (str.empty()) {	// sentence separator
@@ -320,7 +321,6 @@ string SP::create_chunk_file(string input, string L, string C) {
 	    			else {
 	    				vector<string> l;
 						boost::split(l, str, boost::is_any_of("\t "));
-					 	boost::match_results<string::const_iterator> results;
 					 	if (boost::regex_match(l[3], results, Common::reSP_B)) {
 					 		vector<string> c;
 							boost::split(c, l[3], boost::is_any_of("-"));
@@ -719,8 +719,9 @@ void SP::FILE_parse_split(string input, string L, string C) {
 		vector<string> Lp, Ll, Lc, LC;
 	    ifstream sp_file(spfile.c_str());
 	    if (sp_file) {
+	    	boost::match_results<string::const_iterator> results;
 	    	string line;
-	    	while( getline(sp_file, line) ) {
+			while( getline(sp_file, line) ) {
 	    			//cout << "line: |" << line << "|" << endl;	//fprintf(stderr, "line: |%s|\n", line.c_str());
 	    		if (line.empty()) {
 		    		if (EMPTY) {	// empty sentence 
@@ -783,7 +784,7 @@ void SP::FILE_parse_split(string input, string L, string C) {
 
 				    Ll.push_back(l[1]);
 				 	Lp.push_back(l[2]);
-				 	boost::match_results<string::const_iterator> results;
+				 	//boost::match_results<string::const_iterator> results;
 				 	if (use_chunks) Lc.push_back(l[3]);
 				 	if (use_chunks and l[3] == "O") LC.push_back(l[3]);
 				 	else if (use_chunks and boost::regex_match(l[3], results, Common::reSP_B)) {

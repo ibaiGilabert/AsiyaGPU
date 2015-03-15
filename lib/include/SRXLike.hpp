@@ -4,16 +4,15 @@
 #include "SingleMetric.hpp"
 
 #include <vector>
-#include <map>
+#include <set>
 
 class SRXLike : public SingleMetric {
 private:
 	static set<string> create_rSRspacat();
 
-	static set<string> rSRspacat;
-	static const string SREXTT, XLike;
-
 public:
+	static set<string> rSRspacat;
+	static const string SREXT, XLike;
 
 };
 
