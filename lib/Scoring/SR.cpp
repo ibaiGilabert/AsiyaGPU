@@ -1,6 +1,7 @@
 #include "../include/SR.hpp"
 #include "../include/SRXLike.hpp"
 #include "../include/NE.hpp"
+#include "../include/Overlap.hpp"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -132,8 +133,7 @@ void SR::parse_SR(string input, string L, string C, vector<sParsed> &FILE_S, vec
 	string wlpcnercfile = input+"."+NE::NEEXT+".wlpcn";
 
 	NE ne;
-	//	void FILE_parse_and_read(string input, string L, string C, vector<sParsed> &FILE);	// SR
-	vector<sParsed> NERC;
+	vector<sParsed> NERC(FILE_S.size());
 	ne.FILE_parse_and_read(input, L, C, NERC);
 
 	//  -------------- WLPCN -----------------------------------------------------
@@ -142,7 +142,7 @@ void SR::parse_SR(string input, string L, string C, vector<sParsed> &FILE_S, vec
 		system(sys_aux.c_str());
 	}
 
-	vector<sParsed> wlpcn;
+	vector<sParsed> wlpcn(FILE_S.size());
 
 	ifstream CAND(input.c_str());
 	if (!CAND.is_open()) { fprintf(stderr, "couldn't open file: %s\n", input.c_str()); exit(1); }
@@ -239,8 +239,7 @@ void SR::parse_SR(string input, string L, string C, vector<sParsed> &FILE_S, vec
 		system(sys_aux.c_str());
 	}
 
-fprintf(stderr, "[wlpcn].size(): %d\n", (int)wlpcn.size());
-
+	//fprintf(stderr, "[wlpcn].size(): %d\n", (int)wlpcn.size());
 	ifstream AUX(srlfile.c_str());
 	if (AUX) {
 		int i = 0, j = 0;
@@ -291,6 +290,223 @@ fprintf(stderr, "[wlpcn].size(): %d\n", (int)wlpcn.size());
     }
 }
 
+//typedef map<string, vector<int> > rParsed;
+void SR::SNT_extract_features(const sParsed &snt_s, const vector<rParsed> &snt_r, const vector<vector<string> > &snt_v, SNTextract_feat &SNT) {
+	// description _ extracts features from a given SR-parsed sentence.
+	if (snt_s.size()) {		// if (snt is defined???)		OJU AQUI!
+		if (snt_r.size()) {
+			int i = 0;
+			while (i < snt_r.size()) {	// i -> num of predicates
+				string verb = snt_v[i][1];	 // verb of the predicate
+				for (rParsed::const_iterator it = snt_r[i].begin(); it != snt_r[i].end(); ++it) {	// each role of the predicate $i
+					string cleanrole = it->first;
+					cleanrole = boost::regex_replace(cleanrole, Common::reSR_sntC, "");	// C - continuation ARGUMENTS
+					cleanrole = boost::regex_replace(cleanrole, Common::reSR_sntR, "");	// R - reference ARGUMENTS
+					int j = 0;
+					while (j < it->second.size()) {
+						vector<string> Rwords;
+						int k = it->second[j];
+						int k_end = (j+1 < it->second.size() ? it->second[j+1] : k);
+						while (k <= k_end) {
+							if (k < snt_s.size()) {			// if defined	OJU AQUI!
+								string word = snt_s[k][0];
+								// bags-of-words ---------------
+								stringstream v_bow, a_bow;
+								v_bow << verb << "##" << word;
+								a_bow << cleanrole << "##" << i;
+								++SNT.A["bow"][cleanrole][word];
+								++SNT.A["Vbow"][cleanrole][v_bow.str()];
+								++SNT.A["Abow"][a_bow.str()][word];
+								Rwords.push_back(word);
+							}
+							// bags-of-rols ---------------
+							stringstream v_bor, a_bor;
+							v_bor << verb << "##" << cleanrole;
+							a_bor << cleanrole << "##" << i;
+							++SNT.B["bor"][cleanrole];
+							++SNT.B["Vbor"][v_bor.str()];
+							++SNT.B["Abor"][a_bor.str()];
+							++k;
+						}
+	                  	// exact role matches -----------------------
+	                  	string r_words = "";
+						if (Rwords.size()) {
+							r_words = Rwords[0];
+							for(int sub = 1; sub < Rwords.size(); ++sub) r_words = r_words+" "+Rwords[sub]; 
+						}
+						stringstream v_exact, a_exact;
+						v_exact << verb << "##" << r_words;
+						a_exact << cleanrole << "##" << i;
+						++SNT.A["exact"][cleanrole][r_words];
+						++SNT.A["Vexact"][cleanrole][v_exact.str()];
+						++SNT.A["Aexact"][a_exact.str()][r_words];
+						j += 2;
+					}
+				}
+				++i;
+			}
+		}
+		SNT.nVerbs = 0;
+		if (snt_v.size()) {
+			SNT.nVerbs = snt_v.size();
+			for (int i = 0; i < snt_v.size(); ++i)
+				++SNT.B["Verbs"][snt_v[i][1]];
+		}
+
+		if (snt_s.size()) {		// only for lexical overlap (e.g., to backoff when parsing fails) 
+			for (int i = 0; i < snt_s.size(); ++i) {
+				if (snt_s[i].size()) {			// if defined¿?			OJU AQUI!
+					string theworld = snt_s[i][0];
+					++SNT.B["BOW"][theworld];
+				}
+			}
+		}
+	}
+}
+
+void SR::SNT_compute_overlap_scores(SNTextract_feat &Tout, SNTextract_feat &Tref, int LC, map<string, double> &SCORES) {
+	// description _ computes distances between a candidate and a reference sentence (+features)
+	if (!Tout.A.empty() and !Tout.B.empty() and !Tref.A.empty() and Tref.B.empty()) {	// BOTH SEGMENTS AVAILABLE
+		Overlap Ov;
+
+		// BOTH SEGMENTS HAVE BEEN 'SUCCESSFULLY' SR-PARSED? (BOW for lexical overlap is always there)
+		if (Tref.B.size() > 1 and Tout.B.size() > 1) SCORES["OK"] = 1;
+		else SCORES["OK"] = 0;
+
+		// SR::SREXT-Nv ---------------------------------------------------------------------------------
+		int diff = abs( Tref.nVerbs - Tout.nVerbs );
+		SCORES[SR::SREXT+"-Nv"] = 1 / (diff == 0 ? 1 : diff);
+
+		// SR::SREXT-Ov --------------------------------------------------------------------------------
+		pair<double, double> hits_total = Ov.compute_overlap(Tout.B["Verbs"], Tref.B["Verbs"], 0);
+		SCORES[SR::SREXT+"-Ov"] = Common::safe_division(hits_total.first, hits_total.second);
+
+		// SR::SREXT-Or --------------------------------------------------------------------------------
+		hits_total = Ov.compute_overlap(Tout.B["bor"], Tref.B["bor"], 0);
+		SCORES[SR::SREXT+"-Or"] = Common::safe_division(hits_total.first, hits_total.second);
+	
+		// SR::SREXT-Orv -------------------------------------------------------------------------------
+		hits_total = Ov.compute_overlap(Tout.B["Vbor"], Tref.B["Vbor"], 0);
+		SCORES[SR::SREXT+"-Orv"] = Common::safe_division(hits_total.first, hits_total.second);
+		
+		// SR::SREXT-Mr(*) ----------------------------------------------------------------------------------
+		double HITS  = 0, TOTAL  = 0;
+		double PHITS = 0, PTOTAL = 0;
+		double RHITS = 0, RTOTAL = 0;
+
+		set<string> F;
+		for(map<string, map<string, int> >::const_iterator it = Tout.A["exact"].begin(); it != Tout.A["exact"].end(); ++it)
+			F.insert(it->first);
+		for(map<string, map<string, int> >::const_iterator it = Tref.A["exact"].begin(); it != Tref.A["exact"].end(); ++it)
+			F.insert(it->first);
+
+		for (set<string>::const_iterator it = F.begin(); it != F.end(); ++it) {
+			hits_total = Ov.compute_overlap(Tout.A["exact"][*it], Tref.A["exact"][*it], LC);
+			SCORES[SR::SREXT+"-Mr("+(*it)+")"] = Common::safe_division(hits_total.first, hits_total.second);
+			HITS += hits_total.first;	TOTAL += hits_total.second;
+			
+			hits_total = Ov.compute_precision(Tout.A["exact"][*it], Tref.A["exact"][*it], LC);
+			PHITS += hits_total.first;	PTOTAL += hits_total.second;
+			
+			hits_total = Ov.compute_recall(Tout.A["exact"][*it], Tref.A["exact"][*it], LC);
+			RHITS += hits_total.first;	RTOTAL += hits_total.second;
+		}
+		SCORES[SR::SREXT+"-Mr(*)"] = Common::safe_division(HITS, TOTAL);
+		double P = Common::safe_division(PHITS, PTOTAL);
+		double R = Common::safe_division(RHITS, RTOTAL);
+		SCORES[SR::SREXT+"-MPr(*)"] = P;
+		SCORES[SR::SREXT+"-MRr(*)"] = R;
+		SCORES[SR::SREXT+"-MFr(*)"] = Common::f_measure(P, R, 1);
+
+		// SR::SREXT-Or(*) ----------------------------------------------------------------------------------
+		HITS  = TOTAL  = 0;
+		PHITS = PTOTAL = 0;
+		RHITS = RTOTAL = 0;
+
+		F.clear();
+		for(map<string, map<string, int> >::const_iterator it = Tout.A["bow"].begin(); it != Tout.A["bow"].end(); ++it)
+			F.insert(it->first);
+		for(map<string, map<string, int> >::const_iterator it = Tref.A["bow"].begin(); it != Tref.A["bow"].end(); ++it)
+			F.insert(it->first);
+
+		for (set<string>::const_iterator it = F.begin(); it != F.end(); ++it) {
+			hits_total = Ov.compute_overlap(Tout.A["bow"][*it], Tref.A["bow"][*it], LC);
+			SCORES[SR::SREXT+"-Or("+(*it)+")"] = Common::safe_division(hits_total.first, hits_total.second);
+			HITS += hits_total.first;	TOTAL += hits_total.second;
+
+			hits_total = Ov.compute_precision(Tout.A["bow"][*it], Tref.A["bow"][*it], LC);
+			PHITS += hits_total.first;	PTOTAL += hits_total.second;
+
+			hits_total = Ov.compute_recall(Tout.A["bow"][*it], Tref.A["bow"][*it], LC);
+			RHITS += hits_total.first;	RTOTAL += hits_total.second;
+		}
+		SCORES[SR::SREXT+"-Or(*)"] = Common::safe_division(HITS, TOTAL);
+		P = Common::safe_division(PHITS, PTOTAL);
+		R = Common::safe_division(RHITS, RTOTAL);
+		SCORES[SR::SREXT+"-Pr(*)"] = P;
+		SCORES[SR::SREXT+"-Rr(*)"] = R;
+		SCORES[SR::SREXT+"-Fr(*)"] = Common::f_measure(P, R, 1);
+
+		// SR::SREXT-Mrv(*) ----------------------------------------------------------------------------------
+		HITS = TOTAL = 0;
+		F.clear();
+		for(map<string, map<string, int> >::const_iterator it = Tout.A["Vexact"].begin(); it != Tout.A["Vexact"].end(); ++it)
+			F.insert(it->first);
+		for(map<string, map<string, int> >::const_iterator it = Tref.A["Vexact"].begin(); it != Tref.A["Vexact"].end(); ++it)
+			F.insert(it->first);
+
+		for (set<string>::const_iterator it = F.begin(); it != F.end(); ++it) {
+			hits_total = Ov.compute_overlap(Tout.A["Vexact"][*it], Tref.A["Vexact"][*it], LC);
+			SCORES[SR::SREXT+"-Mrv("+(*it)+")"] = Common::safe_division(hits_total.first, hits_total.second);
+			HITS += hits_total.first;	TOTAL += hits_total.second;
+		}
+		SCORES[SR::SREXT+"-Mrv(*)"] = Common::safe_division(HITS, TOTAL);
+
+		// SR::SREXT-Orv(*) ----------------------------------------------------------------------------------
+		HITS = TOTAL = 0;
+		F.clear();
+		for(map<string, map<string, int> >::const_iterator it = Tout.A["Vbow"].begin(); it != Tout.A["Vbow"].end(); ++it)
+			F.insert(it->first);
+		for(map<string, map<string, int> >::const_iterator it = Tref.A["Vbow"].begin(); it != Tref.A["Vbow"].end(); ++it)
+			F.insert(it->first);
+
+		for (set<string>::const_iterator it = F.begin(); it != F.end(); ++it) {
+			hits_total = Ov.compute_overlap(Tout.A["Vbow"][*it], Tref.A["Vbow"][*it], LC);
+			SCORES[SR::SREXT+"-Orv("+(*it)+")"] = Common::safe_division(hits_total.first, hits_total.second);
+			HITS += hits_total.first;	TOTAL += hits_total.second;
+		}
+		SCORES[SR::SREXT+"-Orv(*)"] = Common::safe_division(HITS, TOTAL);
+
+		// SR::SREXT-Ol ------------------------------------------------------------------------------------
+		//  lexical overlap alone
+		hits_total = Ov.compute_overlap(Tout.B["BOW"], Tref.B["BOW"], LC);
+		SCORES[SR::SREXT+"-Ol"] = Common::safe_division(hits_total.first, hits_total.second);
+	}
+}
+
+
+
+void SR::FILE_compute_overlap_metrics(const vector<sParsed> &POUT_S, const vector< vector<rParsed> > &POUT_R, const vector< vector<vector<string> > > &POUT_V, 
+									  const vector<sParsed> &PREF_S, const vector< vector<rParsed> > &PREF_R, const vector< vector<vector<string> > > &PREF_V, 
+									  vector< map<string, double> > &SCORES) {
+	// description _ computes CHUNK scores (single reference)
+	//string LANG = Config::LANG;
+	SCORES.resize(PREF_S.size());
+	for (int topic = 0; topic < PREF_S.size(); ++topic) {
+		SNTextract_feat OUTSNT, REFSNT;
+
+		SNT_extract_features(POUT_S[topic], POUT_R[topic], POUT_V[topic], OUTSNT);
+
+		SNT_extract_features(PREF_S[topic], PREF_R[topic], PREF_V[topic], REFSNT);
+
+		//vector< map<string, double> > scores;
+		SNT_compute_overlap_scores(OUTSNT, REFSNT, (Config::CASE != Common::CASE_CI), SCORES[topic]);
+	}
+}
+
+
+
+
 void SR::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 	// description _ computes SR score (multiple references)
 	set<string> rF;
@@ -316,18 +532,75 @@ void SR::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 
 		if (DO_METRICS) {
 			// parse
+			vector<sParsed> FDout_S(TESTBED::wc[TGT]);
+			vector< vector<rParsed> > FDout_R(TESTBED::wc[TGT]);
+			vector< vector<vector<string> > > FDout_V(TESTBED::wc[TGT]);
+
 			if (Config::LANG == Common::L_SPA or Config::LANG == Common::L_CAT) {
 				//FDout = SRXLike::parse_SR();
 			}
 			else if (Config::LANG == Common::L_ENG) {
 				// RESIZE all vectors output to TESTBED::wc[TGT]
-				vector<sParsed> FDout_S(TESTBED::wc[TGT]);
-				vector< vector<rParsed> > FDout_R(TESTBED::wc[TGT]);
-				vector< vector<vector<string> > > FDout_V(TESTBED::wc[TGT]);
 				parse_SR(TESTBED::Hsystems[TGT], Config::LANG, Config::CASE, FDout_S, FDout_R, FDout_V);
 			}
 			else { fprintf(stderr, "[SR] tool for <%s> unavailable!!!\n", Config::LANG.c_str()); exit(1); }
 
+			Overlap Ov;
+			vector< map<string, double> > maxscores;
+			map< string, vector<double> > maxOK;
+			for (map<string, string>::const_iterator it_r = TESTBED::Hrefs.begin(); it_r != TESTBED::Hrefs.end(); ++it_r) {
+				vector<sParsed> FDref_S(TESTBED::wc[TGT]);
+				vector< vector<rParsed> > FDref_R(TESTBED::wc[TGT]);
+				vector< vector<vector<string> > > FDref_V(TESTBED::wc[TGT]);
+				
+				if (Config::LANG == Common::L_SPA or Config::LANG == Common::L_CAT) {
+					//FDref = SRXLike::parse_SR();
+				}
+				else if (Config::LANG == Common::L_ENG) {
+					parse_SR(it_r->second, Config::LANG, Config::CASE, FDref_S, FDref_R, FDref_V);
+				}
+				else { fprintf(stderr, "[SR] tool for <%s> unavailable!!!\n", Config::LANG.c_str()); exit(1); }
+
+				vector< map<string, double> > scores;
+				FILE_compute_overlap_metrics(FDout_S, FDout_R, FDout_V, FDref_S, FDref_R, FDref_V, scores);
+
+				for (set<string>::const_iterator it_rf = rF.begin(); it_rf != rF.end(); ++it_rf) {
+					if (Config::Hmetrics.count(*it_rf) or Config::Hmetrics.count((*it_rf)+"_b") or Config::Hmetrics.count((*it_rf)+"_i")) {
+						double SYS, MAXSYS;
+						vector<double> SEGS, MAXSEGS;
+						maxOK[*it_rf].resize(TESTBED::wc[TGT])
+						//Ov.get_segment_scores_M(maxscores, *it_rF, 0, maxOK, MAXSYS, MAXSEGS);
+
+						Ov.get_segment_scores(scores, *it_rF, 0, SYS, SEGS);
+						for (int i = 0; i < SEGS.size(); ++i) {		// update max scores
+							if (SEGS[i] != Common::NOT_DEFINED) {
+								if (i < MAXSEGS.size() and MAXSEGS[i] != Common::NOT_DEFINED) {
+									if (SEGS[i] > MAXSEGS[i]) {
+										if (scores[i].count(*it_rF)) {
+											maxscores[i][*it_rF] = scores[i][*it_rF];
+											maxOK[*it_rF][i] = scores[i]["OK"];
+										}
+									}
+
+								}
+								else {
+									maxscores[i][*it_rF] = scores[i][*it_rF];
+									maxOK[*it_rF][i] = scores[i]["OK"];
+								}
+							}
+							else {
+								maxscores[i][*it_rF] = scores[i][*it_rF];
+								maxOK[*it_rF][i] = scores[i]["OK"];
+							}
+						}
+					}
+				}
+
+
+
+
+
+			}
 		}
 	}
 

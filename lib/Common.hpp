@@ -230,6 +230,8 @@ public:
 	static const boost::regex reSR_punct;
 	static const boost::regex reSR_parse1;
 	static const boost::regex reSR_INSIDE_PAR;       
+	static const boost::regex reSR_sntC;
+	static const boost::regex reSR_sntR;
 
 	static void execute_or_die(string command, string message);
 	static double safe_division(double numerator, double denominator);

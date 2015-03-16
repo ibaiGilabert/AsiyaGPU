@@ -294,6 +294,11 @@ const boost::regex Common::reSR_punct("^[\\s[:punct:]]*$");
 const boost::regex Common::reSR_parse1("\"");
 const boost::regex Common::reSR_INSIDE_PAR("\\(.*\\)");
 
+const boost::regex Common::reSR_sntC("^C-");
+const boost::regex Common::reSR_sntR("^R-");
+
+
+
 void Common::execute_or_die(string command, string message) {
     //boost::regex re("\\R");
     //command = boost::regex_replace(command, re, "");

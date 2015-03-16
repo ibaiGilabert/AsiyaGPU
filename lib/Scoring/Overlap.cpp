@@ -432,6 +432,63 @@ void Overlap::computeMultiFl(string out, double &MAXSYS, vector<double> &MAXSEG)
 	MAXSYS /= MAXSEG.size();
 }
 
+void Overlap::get_segment_scores_M(vector< map<string, double> > &scores, string feature, int mode, map<string, vector<double> > &OK, double &SYSscore, vector<double> &SEGSscore) {
+	// description _ retrieves scores at the segment level for the given feature
+	//               as well as the average system score (dealing with void values
+	//               according to the given 'mode' value) ---> (multiple reference setting)
+	SYSscore = 0;
+	int N = 0;
+	for (int i = 0; i < scores.size(); ++i) {
+		int n = 0;
+		double seg_score = 0;
+		if (scores[i].count(feature)) {
+			if (scores[i][feature] != Common::NOT_DEFINED) {
+				if (scores[i].count("OK")) {
+					if (scores[i]["OK"] == 1) {
+						seg_score = scores[i][feature];
+						n = 1;
+					}
+				}
+				else {
+					if (OK.count(feature)) {
+						if (i < OK[feature].size() and OK[feature][i] != Common::NOT_DEFINED) {
+							if (OK[feature][i] == 1) {
+								seg_score = scores[i][feature];
+								n = 1;
+							}
+						}
+						else {
+							seg_score = scores[i][feature];
+							n = 1;
+						}
+					}
+					else {
+						seg_score = scores[i][feature];
+						n = 1;
+					}
+				}
+			}
+		}
+
+		SYSscore += seg_score;
+		N += n;
+		if (n == 0) {
+			if (mode == 0) seg_score = Common::NOT_DEFINED;
+			else if (mode == 1) seg_score = 1;
+			else if (mode == 2) seg_score = 0;	
+		}
+		SEGSscore.push_back(seg_score);
+	}
+
+	if (N == 0) {
+		if (mode == 0) SYSscore = 0;
+		else if (mode == 1) SYSscore = 1;
+		else if (mode == 2) SYSscore = 0;		
+	}
+	else
+		SYSscore /= N;
+}
+
 void Overlap::get_segment_scores(vector< map<string, double> > &scores, string feature, int mode, double &SYSscore, vector<double> &SEGSscore) {
 	// description _ retrieves scores at the segment level for the given feature
 	//               as well as the average system score (dealing with void values
