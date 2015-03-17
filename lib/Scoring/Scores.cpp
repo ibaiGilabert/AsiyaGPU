@@ -168,9 +168,9 @@ void Scores::set_max_seg_score(string metric, double value) {
 
 void Scores::add_metrics(string TGT, string REF, set<string> &M, string G, vector< map<string, double> > &scores) {
 	// description _ adds a given metric scores (reading from the associated XML report) into the given score structure
-	SC_ASIYA sc_format;
+	SC_ASIYA sc_asiya;
 	for (set<string>::const_iterator it = M.begin(); it != M.end(); ++it) {
-		vector<double> Mscores = sc_format.read_scores_list(TGT, REF, *it, G, *this);
+		vector<double> Mscores = sc_asiya.read_scores_list(TGT, REF, *it, G, *this);
 		for (int t = 0; t < Mscores.size(); ++t) {
 			scores[t][*it] = Mscores[t]; 
 		}

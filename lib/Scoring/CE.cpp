@@ -576,7 +576,7 @@ void CE::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 		mCE[i] = *it;
 	for (i = 0; i < mCE.size() and !GO; ++i) {
 		//string aux = prefix + mCE[i];
-		if (Config::Hmetrics.find(prefix+mCE[i]) != Config::Hmetrics.end()) GO = 1;
+		if (Config::Hmetrics.count(prefix+mCE[i])) GO = 1;
 	}
 
 	if (GO) {
@@ -592,7 +592,7 @@ void CE::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 		// TRANSLATION DIFFICULTY ###
        	// LENGTH
 	    string ce_srclen = CE::CEEXT + "-srclen";
-	    if ( ((!exists(boost::filesystem::path(reportCEsrclenXML)) and !exists(boost::filesystem::path(reportCEsrclenXML+"."+Common::GZEXT))) or Config::remake) and Config::Hmetrics[ce_srclen] ) {	//source length ratio
+	    if ( ((!exists(boost::filesystem::path(reportCEsrclenXML)) and !exists(boost::filesystem::path(reportCEsrclenXML+"."+Common::GZEXT))) or Config::remake) and Config::Hmetrics.count(ce_srclen) ) {	//source length ratio
 	    	double sys_score;
 	    	vector<double> SEGS, doc_scores, seg_scores;
 	    	
@@ -617,7 +617,7 @@ void CE::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 	    if (((!exists(boost::filesystem::path(reportCEsrclogpXML)) and !exists(boost::filesystem::path(reportCEsrclogpXML+"."+Common::GZEXT))) or
 	    	 (!exists(boost::filesystem::path(reportCEsrcipplXML)) and !exists(boost::filesystem::path(reportCEsrcipplXML+"."+Common::GZEXT))) or
     		 (!exists(boost::filesystem::path(reportCEsrcoovXML)) and !exists(boost::filesystem::path(reportCEsrcoovXML+"."+Common::GZEXT))) or Config::remake) and
-    		 (Config::Hmetrics[CE::CEEXT+"-srclogp"] or Config::Hmetrics[CE::CEEXT+"-srcippl"] or Config::Hmetrics[CE::CEEXT+"-srcoov"])) {	//source language modeling
+    		 (Config::Hmetrics.count(CE::CEEXT+"-srclogp") or Config::Hmetrics.count(CE::CEEXT+"-srcippl") or Config::Hmetrics.count(CE::CEEXT+"-srcoov"))) {	//source language modeling
 
 	    	double SYSoov, SYSlogp, SYSippl;
 	    	vector<double> SEGSoov, SEGSlogp, SEGSippl;
@@ -660,7 +660,7 @@ void CE::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 
 	    if (((!exists(boost::filesystem::path(reportCEsrclogp_posXML)) and !exists(boost::filesystem::path(reportCEsrclogp_posXML+"."+Common::GZEXT))) or
     		 (!exists(boost::filesystem::path(reportCEsrcippl_posXML)) and !exists(boost::filesystem::path(reportCEsrcippl_posXML+"."+Common::GZEXT))) or Config::remake) and
-    		 (Config::Hmetrics[CE::CEEXT+"-srclogpP"] or Config::Hmetrics[CE::CEEXT+"-srcipplP"])) {	//source PoS language modeling
+    		 (Config::Hmetrics.count(CE::CEEXT+"-srclogpP") or Config::Hmetrics.count(CE::CEEXT+"-srcipplP"))) {	//source PoS language modeling
 
 	    	string src_posfile = sp.create_PoS_file(TESTBED::src, Config::SRCLANG, Config::SRCCASE);
 			double SYSoov, SYSlogp, SYSippl;
@@ -696,7 +696,7 @@ void CE::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 
 	    if (((!exists(boost::filesystem::path(reportCEsrclogp_chunkXML)) and !exists(boost::filesystem::path(reportCEsrclogp_chunkXML+"."+Common::GZEXT))) or
     		 (!exists(boost::filesystem::path(reportCEsrcippl_chunkXML)) and !exists(boost::filesystem::path(reportCEsrcippl_chunkXML+"."+Common::GZEXT))) or Config::remake) and
-    		 (Config::Hmetrics[CE::CEEXT+"-srclogpC"] or Config::Hmetrics[CE::CEEXT+"-srcipplC"])) {	//source Chunk language modeling
+    		 (Config::Hmetrics.count(CE::CEEXT+"-srclogpC") or Config::Hmetrics.count(CE::CEEXT+"-srcipplC"))) {	//source Chunk language modeling
 
 	    	string src_chunkfile = sp.create_chunk_file(TESTBED::src, Config::SRCLANG, Config::SRCCASE);
 			double SYSoov, SYSlogp, SYSippl;
@@ -738,7 +738,7 @@ void CE::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 	    if (((!exists(boost::filesystem::path(reportCElogpXML)) and !exists(boost::filesystem::path(reportCElogpXML+"."+Common::GZEXT))) or
 	    	 (!exists(boost::filesystem::path(reportCEipplXML)) and !exists(boost::filesystem::path(reportCEipplXML+"."+Common::GZEXT))) or
     		 (!exists(boost::filesystem::path(reportCEoovXML)) and !exists(boost::filesystem::path(reportCEoovXML+"."+Common::GZEXT))) or Config::remake) and
-    		 (Config::Hmetrics[CE::CEEXT+"-logp"] or Config::Hmetrics[CE::CEEXT+"-ippl"] or Config::Hmetrics[CE::CEEXT+"-oov"])) {	// target language modeling
+    		 (Config::Hmetrics.count(CE::CEEXT+"-logp") or Config::Hmetrics.count(CE::CEEXT+"-ippl") or Config::Hmetrics.count(CE::CEEXT+"-oov"))) {	// target language modeling
 
 	    	double SYSoov, SYSlogp, SYSippl;
 	    	vector<double> SEGSoov, SEGSlogp, SEGSippl;
@@ -781,7 +781,7 @@ void CE::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 
 	    if (((!exists(boost::filesystem::path(reportCElogp_posXML)) and !exists(boost::filesystem::path(reportCElogp_posXML+"."+Common::GZEXT))) or
     		 (!exists(boost::filesystem::path(reportCEippl_posXML)) and !exists(boost::filesystem::path(reportCEippl_posXML+"."+Common::GZEXT))) or Config::remake) and
-    		 (Config::Hmetrics[CE::CEEXT+"-logpP"] or Config::Hmetrics[CE::CEEXT+"-ipplP"])) {	//source PoS language modeling
+    		 (Config::Hmetrics.count(CE::CEEXT+"-logpP") or Config::Hmetrics.count(CE::CEEXT+"-ipplP"))) {	//source PoS language modeling
 
 	    	string out_posfile = sp.create_PoS_file(TESTBED::Hsystems[TGT], Config::LANG, Config::CASE);
 			double SYSoov, SYSlogp, SYSippl;
@@ -817,7 +817,7 @@ void CE::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 
 	    if (((!exists(boost::filesystem::path(reportCElogp_chunkXML)) and !exists(boost::filesystem::path(reportCElogp_chunkXML+"."+Common::GZEXT))) or
     		 (!exists(boost::filesystem::path(reportCEippl_chunkXML)) and !exists(boost::filesystem::path(reportCEippl_chunkXML+"."+Common::GZEXT))) or Config::remake) and
-    		 (Config::Hmetrics[CE::CEEXT+"-logpC"] or Config::Hmetrics[CE::CEEXT+"-ipplC"])) {	//source Chunk language modeling
+    		 (Config::Hmetrics.count(CE::CEEXT+"-logpC") or Config::Hmetrics.count(CE::CEEXT+"-ipplC"))) {	//source Chunk language modeling
 
 	    	string out_chunkfile = sp.create_chunk_file(TESTBED::Hsystems[TGT], Config::LANG, Config::CASE);
 			double SYSoov, SYSlogp, SYSippl;
@@ -859,7 +859,7 @@ void CE::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 	    if (((!exists(boost::filesystem::path(reportCElongXML)) and !exists(boost::filesystem::path(reportCElengthXML+"."+Common::GZEXT))) or
 	    	 (!exists(boost::filesystem::path(reportCElongXML)) and !exists(boost::filesystem::path(reportCElongXML+"."+Common::GZEXT))) or
     		 (!exists(boost::filesystem::path(reportCEshortXML)) and !exists(boost::filesystem::path(reportCEshortXML+"."+Common::GZEXT))) or Config::remake) and
-    		 (Config::Hmetrics[CE::CEEXT+"-length"] or Config::Hmetrics[CE::CEEXT+"-long"] or Config::Hmetrics[CE::CEEXT+"-short"])) {	// source / target length ratio
+    		 (Config::Hmetrics.count(CE::CEEXT+"-length") or Config::Hmetrics.count(CE::CEEXT+"-long") or Config::Hmetrics.count(CE::CEEXT+"-short"))) {	// source / target length ratio
 
 	    	double SYSlength, SYSlong, SYSshort;
 	    	vector<double> SEGSlength, SEGSlong, SEGSshort;
@@ -900,7 +900,7 @@ void CE::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 		string reportCEsymbolXML = reportCEsymbol.str();
 
 	    if (((!exists(boost::filesystem::path(reportCEsymbolXML)) and !exists(boost::filesystem::path(reportCEsymbolXML+"."+Common::GZEXT))) or Config::remake) 
-	    	and Config::Hmetrics[CE::CEEXT+"-symbols"]) {	// source / target punctuation and numerical symbols overlap
+	    	and Config::Hmetrics.count(CE::CEEXT+"-symbols")) {	// source / target punctuation and numerical symbols overlap
 
 			double SYS;
 			vector<double> SEGS;
@@ -922,7 +922,7 @@ void CE::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 		string reportCE_OpXML = reportCE_Op.str();
 
 	    if (((!exists(boost::filesystem::path(reportCE_OpXML)) and !exists(boost::filesystem::path(reportCE_OpXML+"."+Common::GZEXT))) or Config::remake) 
-	    	and Config::Hmetrics[CE::CEEXT+"-Op"]) {
+	    	and Config::Hmetrics.count(CE::CEEXT+"-Op")) {
 
 			SP sp;
 	    	Overlap ov;
@@ -953,7 +953,7 @@ void CE::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 		string reportCE_OcXML = reportCE_Oc.str();
 
 	    if (((!exists(boost::filesystem::path(reportCE_OcXML)) and !exists(boost::filesystem::path(reportCE_OcXML+"."+Common::GZEXT))) or Config::remake) 
-	    	and Config::Hmetrics[CE::CEEXT+"-Oc"]) {
+	    	and Config::Hmetrics.count(CE::CEEXT+"-Oc")) {
 
 			SP sp;
 	    	Overlap ov;
@@ -984,7 +984,7 @@ void CE::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 		string reportCE_NcXML = reportCE_Nc.str();
 
 	    if (((!exists(boost::filesystem::path(reportCE_NcXML)) and !exists(boost::filesystem::path(reportCE_NcXML+"."+Common::GZEXT))) or Config::remake) 
-	    	and Config::Hmetrics[CE::CEEXT+"-Nc"]) {
+	    	and Config::Hmetrics.count(CE::CEEXT+"-Nc")) {
 
 			SP sp;
 	    	Overlap ov;
@@ -1015,7 +1015,7 @@ void CE::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 		string reportCE_OeXML = reportCE_Oe.str();
 
 	    if (((!exists(boost::filesystem::path(reportCE_OeXML)) and !exists(boost::filesystem::path(reportCE_OeXML+"."+Common::GZEXT))) or Config::remake) 
-	    	and Config::Hmetrics[CE::CEEXT+"-Oe"]) {
+	    	and Config::Hmetrics.count(CE::CEEXT+"-Oe")) {
 
 			NE ne;
 	    	Overlap ov;
@@ -1046,7 +1046,7 @@ void CE::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 		string reportCE_NeXML = reportCE_Ne.str();
 
 	    if (((!exists(boost::filesystem::path(reportCE_NeXML)) and !exists(boost::filesystem::path(reportCE_NeXML+"."+Common::GZEXT))) or Config::remake) 
-	    	and Config::Hmetrics[CE::CEEXT+"-Ne"]) {
+	    	and Config::Hmetrics.count(CE::CEEXT+"-Ne")) {
 
 			NE ne;
 	    	Overlap ov;

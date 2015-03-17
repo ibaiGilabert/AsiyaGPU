@@ -259,7 +259,7 @@ void SR::parse_SR(string input, string L, string C, vector<sParsed> &FILE_S, vec
 					vector<string> l(2);	l[0] = boost::lexical_cast<string>(j);	l[1] = entry[0];
 					FILE_V[i].push_back(l);
 				}
-				FILE_R[i].resize(entry.size());
+				FILE_R[i].resize(entry.size()-1);
 				TAG.resize(entry.size());
 				for (int k = 1; k < entry.size(); ++k) {
 					if (entry[k] != "*") {
@@ -295,6 +295,25 @@ void SR::SNT_extract_features(const sParsed &snt_s, const vector<rParsed> &snt_r
 	// description _ extracts features from a given SR-parsed sentence.
 	if (snt_s.size()) {		// if (snt is defined???)		OJU AQUI!
 		if (snt_r.size()) {
+
+	/*fprintf(stderr, "---- snt_r ----\n");
+	for (int r = 0; r < snt_r.size(); ++r) {
+		map<string, vector<int> > r_aux = snt_r[r];
+		for (map<string, vector<int> >::const_iterator it = r_aux.begin(); it != r_aux.end(); ++it) {
+			fprintf(stderr, "[%s", it->first.c_str());
+			for(int l = 0; l < it->second.size(); ++l) fprintf(stderr, ", %d\n", it->second[l]);
+		}
+	}
+	fprintf(stderr, "---------------\n");*/
+
+    /*fprintf(stderr, "check snt_v[%d] (%d)\n", i, (int)snt_v[i].size());
+    for (int v = 0; v < snt_v[i].size(); ++v) {
+            fprintf(stderr, "PUTA!!!!\n");
+            fprintf(stderr, "snt_v[%d][%d]: %s\n", i, v, (snt_v[i][v]).c_str());
+    }
+    fprintf(stderr, "vale o no?\n");*/
+
+
 			int i = 0;
 			while (i < snt_r.size()) {	// i -> num of predicates
 				string verb = snt_v[i][1];	 // verb of the predicate
@@ -538,12 +557,45 @@ void SR::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 
 			if (Config::LANG == Common::L_SPA or Config::LANG == Common::L_CAT) {
 				//FDout = SRXLike::parse_SR();
+				//fprintf(stderr, "USE SRXlike parse_SR\n");
 			}
 			else if (Config::LANG == Common::L_ENG) {
 				// RESIZE all vectors output to TESTBED::wc[TGT]
 				parse_SR(TESTBED::Hsystems[TGT], Config::LANG, Config::CASE, FDout_S, FDout_R, FDout_V);
+
+				/*fprintf(stderr, "------- FDout_R ------\n");
+				for (int i = 0; i < FDout_R.size(); ++i) {
+					fprintf(stderr, "\tFDout_R[%d]\n", i);
+					for (int j = 0; j < FDout_R[i].size(); ++j) {
+						fprintf(stderr, "\t\tFDout_R[%d][%d]\n", i, j);
+						rParsed aux = FDout_R[i][j];
+
+						for(rParsed::const_iterator it = aux.begin(); it != aux.end(); ++it) {
+							fprintf(stderr, "\t\t\t[%s", it->first.c_str());
+							for(int l = 0; l < it->second.size(); ++l) fprintf(stderr, ", %d", it->second[l]);
+							fprintf(stderr, "]\n");
+						}
+					}
+				}
+				fprintf(stderr, "----------------------\n");*/
+
+				//fprintf(stderr, "USE SR parse_SR\n");
 			}
 			else { fprintf(stderr, "[SR] tool for <%s> unavailable!!!\n", Config::LANG.c_str()); exit(1); }
+
+				/*fprintf(stderr, "----- parse_v ------\n");
+				for (int x = 0; x < FDout_V.size(); ++x) {
+					
+					fprintf(stderr, "\tFDout_v[%d]\n", x);
+					for (int y = 0; y < FDout_V[x].size(); ++y) {
+						
+						fprintf(stderr, "\t\tFDout_v[%d][%d]\n", x, y);
+						for (int z = 0; z < FDout_V[x][y].size(); ++z) {
+							fprintf(stderr, "\t\t\t FDòut_v[%d][%d][%d] = %s\n", x, y, z, FDout_V[x][y][z].c_str());
+						}
+					}
+				}
+				fprintf(stderr, "--------------------\n");*/
 
 			Overlap Ov;
 			vector< map<string, double> > maxscores;
@@ -595,6 +647,16 @@ void SR::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 						}
 					}
 				}
+		fprintf(stderr, "----------- maxscores -----------\n");
+		for (int m = 0; m < maxscores.size(); ++m) {
+			map<string, double> aux_m = maxscores[m];
+			fprintf(stderr, "\tmaxscores[%d]\n", m);
+			for (map<string, double>::const_iterator it = aux_m.begin(); it != aux_m.end(); ++it) {
+				fprintf(stderr, "\t\t[%s -> %f]\n", it->first.c_str(), it->second);
+			}
+		}
+		fprintf(stderr, "---------------------------------\n");
+
 
 				for (set<string>::const_iterator it_rF = rF.begin(); it_rF != rF.end(); ++it_rF) {
 					if (Config::Hmetrics.count(*it_rF)) {

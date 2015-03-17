@@ -665,6 +665,8 @@ void Config::validate_configuration() {
             boost::regex re_SP("^SP.*");
             boost::regex re_CE("^CE.*");
             boost::regex re_NE("^NE.*");
+            //boost::regex re_CP("^CP.*");
+            boost::regex re_SR("^SR.*");
 
             /*boost::regex re_SP("SP");
             boost::regex re_CP("CP");
@@ -692,6 +694,9 @@ void Config::validate_configuration() {
             else if (boost::regex_match(*it, results, re_SP)) Config::Fmetrics.insert("SP");
             else if (boost::regex_match(*it, results, re_CE)) Config::Fmetrics.insert("CE");
             else if (boost::regex_match(*it, results, re_NE)) Config::Fmetrics.insert("NE");
+            //else if (boost::regex_match(*it, results, re_CP)) Config::Fmetrics.insert("CP");
+            else if (boost::regex_match(*it, results, re_SR)) Config::Fmetrics.insert("SR");
+
         }
 
         fprintf(stderr, "METRICS (families): ");

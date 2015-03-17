@@ -103,7 +103,7 @@ void TER::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 		mTER[i] = *it;
 
 	for (i = 0; i < mTER.size() and !GO; ++i) {
-		if (Config::Hmetrics.find(mTER[i]) != Config::Hmetrics.end()) GO = 1;
+		if (Config::Hmetrics.count(mTER[i])) GO = 1;
 	}
 
 	if (GO) {
@@ -111,7 +111,7 @@ void TER::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 
 	    string pref_ter = "-"+TER::TEREXT+"base";
 		string reportTERxml = Common::DATA_PATH + "/" + Common::REPORTS + "/" + TGT + "/" + REF + "/" + pref_ter + "." + Common::XMLEXT;
-    	if ( ((!exists(boost::filesystem::path(reportTERxml)) and !exists(boost::filesystem::path(reportTERxml+"."+Common::GZEXT))) or Config::remake) and Config::Hmetrics[pref_ter]) {
+    	if ( ((!exists(boost::filesystem::path(reportTERxml)) and !exists(boost::filesystem::path(reportTERxml+"."+Common::GZEXT))) or Config::remake) and Config::Hmetrics.count(pref_ter)) {
 	     	MetricScore res;
 	     	computeTER(TGT, TER::TEREXT+"base", 1, res);
 
@@ -123,7 +123,7 @@ void TER::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 	    }
 	    pref_ter = TER::TEREXT + "base";
     	reportTERxml = Common::DATA_PATH + "/" + Common::REPORTS + "/" + TGT + "/" + REF + "/" + pref_ter + "." + Common::XMLEXT;
-	    if ( ((!exists(boost::filesystem::path(reportTERxml)) and !exists(boost::filesystem::path(reportTERxml+"."+Common::GZEXT))) or Config::remake) and Config::Hmetrics[pref_ter]) {
+	    if ( ((!exists(boost::filesystem::path(reportTERxml)) and !exists(boost::filesystem::path(reportTERxml+"."+Common::GZEXT))) or Config::remake) and Config::Hmetrics.count(pref_ter)) {
 	     	MetricScore res;
 	     	computeTER(TGT, TER::TEREXT+"base", 0, res);
 
@@ -135,7 +135,7 @@ void TER::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 	    }
 	    pref_ter = "-"+TER::TEREXT;
 	    reportTERxml = Common::DATA_PATH + "/" + Common::REPORTS + "/" + TGT + "/" + REF + "/" + pref_ter + "." + Common::XMLEXT;
-	    if ( ((!exists(boost::filesystem::path(reportTERxml)) and !exists(boost::filesystem::path(reportTERxml+"."+Common::GZEXT))) or Config::remake) and Config::Hmetrics[pref_ter]) {
+	    if ( ((!exists(boost::filesystem::path(reportTERxml)) and !exists(boost::filesystem::path(reportTERxml+"."+Common::GZEXT))) or Config::remake) and Config::Hmetrics.count(pref_ter)) {
 	     	MetricScore res;
 	     	computeTER(TGT, TER::TEREXT, 1, res);
 
@@ -147,7 +147,7 @@ void TER::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 	    }
 	    pref_ter = TER::TEREXT;
 	    reportTERxml = Common::DATA_PATH + "/" + Common::REPORTS + "/" + TGT + "/" + REF + "/" + pref_ter + "." + Common::XMLEXT;
-	    if ( ((!exists(boost::filesystem::path(reportTERxml)) and !exists(boost::filesystem::path(reportTERxml+"."+Common::GZEXT))) or Config::remake) and Config::Hmetrics[pref_ter]) {
+	    if ( ((!exists(boost::filesystem::path(reportTERxml)) and !exists(boost::filesystem::path(reportTERxml+"."+Common::GZEXT))) or Config::remake) and Config::Hmetrics.count(pref_ter)) {
 	     	MetricScore res;
 	     	computeTER(TGT, TER::TEREXT, 0, res);
 
@@ -159,7 +159,7 @@ void TER::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 	    }
 	    pref_ter = "-" + TER::TEREXT + "p";
 	    reportTERxml = Common::DATA_PATH + "/" + Common::REPORTS + "/" + TGT + "/" + REF + "/" + pref_ter + "." + Common::XMLEXT;
-	    if ( ((!exists(boost::filesystem::path(reportTERxml)) and !exists(boost::filesystem::path(reportTERxml+"."+Common::GZEXT))) or Config::remake) and Config::Hmetrics[pref_ter]) {
+	    if ( ((!exists(boost::filesystem::path(reportTERxml)) and !exists(boost::filesystem::path(reportTERxml+"."+Common::GZEXT))) or Config::remake) and Config::Hmetrics.count(pref_ter)) {
 	     	MetricScore res;
 	     	computeTER(TGT, TER::TEREXT+"p", 1, res);
 
@@ -171,7 +171,7 @@ void TER::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 	    }
 	    pref_ter = TER::TEREXT + "p";
 	    reportTERxml = Common::DATA_PATH + "/" + Common::REPORTS + "/" + TGT + "/" + REF + "/" + pref_ter + "." + Common::XMLEXT;
-	    if ( ((!exists(boost::filesystem::path(reportTERxml)) and !exists(boost::filesystem::path(reportTERxml+"."+Common::GZEXT))) or Config::remake) and Config::Hmetrics[pref_ter]) {
+	    if ( ((!exists(boost::filesystem::path(reportTERxml)) and !exists(boost::filesystem::path(reportTERxml+"."+Common::GZEXT))) or Config::remake) and Config::Hmetrics.count(pref_ter)) {
 	     	MetricScore res;
 	     	computeTER(TGT, TER::TEREXT+"p", 0, res);
 
@@ -183,7 +183,7 @@ void TER::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 	    }
 	    pref_ter = "-" + TER::TEREXT + "p-A";
 	    reportTERxml = Common::DATA_PATH + "/" + Common::REPORTS + "/" + TGT + "/" + REF + "/" + pref_ter + "." + Common::XMLEXT;
-	    if ( ((!exists(boost::filesystem::path(reportTERxml)) and !exists(boost::filesystem::path(reportTERxml+"."+Common::GZEXT))) or Config::remake) and Config::Hmetrics[pref_ter]) {
+	    if ( ((!exists(boost::filesystem::path(reportTERxml)) and !exists(boost::filesystem::path(reportTERxml+"."+Common::GZEXT))) or Config::remake) and Config::Hmetrics.count(pref_ter)) {
 	     	MetricScore res;
 	     	computeTER(TGT, TER::TEREXT+"p-A", 1, res);
 
@@ -195,7 +195,7 @@ void TER::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 	    }
 	    pref_ter = TER::TEREXT + "p-A";
 	    reportTERxml = Common::DATA_PATH + "/" + Common::REPORTS + "/" + TGT + "/" + REF + "/" + pref_ter + "." + Common::XMLEXT;
-	    if ( ((!exists(boost::filesystem::path(reportTERxml)) and !exists(boost::filesystem::path(reportTERxml+"."+Common::GZEXT))) or Config::remake) and Config::Hmetrics[pref_ter]) {
+	    if ( ((!exists(boost::filesystem::path(reportTERxml)) and !exists(boost::filesystem::path(reportTERxml+"."+Common::GZEXT))) or Config::remake) and Config::Hmetrics.count(pref_ter)) {
 	     	MetricScore res;
 	     	computeTER(TGT, TER::TEREXT+"p-A", 0, res);
 
