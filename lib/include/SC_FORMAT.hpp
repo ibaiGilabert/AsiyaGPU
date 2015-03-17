@@ -23,6 +23,7 @@ public:
 
 	//read scores
 	virtual map<string, double> read_scores_file(string file, string G, int do_neg) {}
+	virtual vector<double> read_scores_list(string TGT, string REF, string METRIC, string G, Scores &hOQ) {}
 
 	//write scores
 	virtual void write_report(string TGT, string REF, string METRIC, const MetricScore &m) {}

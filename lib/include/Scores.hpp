@@ -61,6 +61,10 @@ public:
 	oMap get_doc_scores(int doc_id) const;
 	oMap get_seg_scores(int seg_id) const;
 
+	double get_sys_score(string METRIC, string TGT, string REF);
+	double get_doc_score(string METRIC, string TGT, string REF, int doc_id);
+	double get_seg_score(string METRIC, string TGT, string REF, int seg_id);
+
 	int get_num_doc_scores() const;
 	int get_num_seg_scores() const;
 
@@ -82,6 +86,8 @@ public:
 	void set_max_sys_score(string metric, double value);
 	void set_max_doc_score(string metric, double value);
 	void set_max_seg_score(string metric, double value);
+
+	void add_metrics(string TGT, string REF, set<string> &M, string G, vector< map<string, double> > &scores);		// SR
 
 	//Save
 	void save_hash_scores(string metric_name, string system_name, string refere_name, const MetricScore &scores);

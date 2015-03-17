@@ -43,7 +43,7 @@
     string Config::model;
 
     char* Config::PATH;*/
-    map<string, int>            Config::Hmetrics,           Config::eval_schemes,       Config::metaeval_schemes;
+    set<string>                 Config::Hmetrics,           Config::eval_schemes,       Config::metaeval_schemes;
     map<string, int>            Config::optimize_schemes,   Config::metaeval_criteria,  Config::optimize_criteria;
     set<string>                 Config::Fmetrics,           Config::metrics,            Config::systems,            Config::references;
     //vector<string>              Config::COMBO;  //metrics,  systems,        references;
@@ -156,8 +156,8 @@ void Config::Dumper() {
     cout << "\tLANG -> " << Config::LANG << endl;
     cout << "\ttokenize -> " << Config::tokenize << endl;
     cout << "\tHmetrics -> (" << Config::Hmetrics.size() << ")" << endl;
-    for (map<string, int>::const_iterator it = Config::Hmetrics.begin(); it != Config::Hmetrics.end(); ++it) {
-        cout << "\t\t" << it->first << " -> " << it->second << endl;
+    for (set<string>::const_iterator it = Config::Hmetrics.begin(); it != Config::Hmetrics.end(); ++it) {
+        cout << "\t\t" << *it << endl;
     }
     cout << "\tn_resamplings -> " << Config::n_resamplings << endl;
     cout << "\tdo_metric_names -> " << Config::do_metric_names << endl;
@@ -188,10 +188,10 @@ void Config::Dumper() {
     for (set<string>::const_iterator it = Config::metrics.begin(); it != Config::metrics.end(); ++it) {
         cout << "\t\t" << *it << endl;
     }
-    cout << "\teval_schemes-> (" << Config::Hmetrics.size() << ")" << endl;
+    /*cout << "\teval_schemes-> (" << Config::Hmetrics.size() << ")" << endl;
     for (map<string, int>::const_iterator it = Config::eval_schemes.begin(); it != Config::eval_schemes.end(); ++it) {
         cout << "\t\t" << it->first << " -> " << it->second << endl;
-    }
+    }*/
     cout << "\tO -> " << Config::O << endl;
     cout << "\ttsearch -> " << Config::tsearch << endl;
     cout << "\tSRCCASE -> " << Config::SRCCASE << endl;
@@ -237,7 +237,8 @@ void Config::process_command_line_options(map<string, string> Options, vector<st
         while (i != j) {
             //fprintf(stderr, "Added%s to metrics (command line options)\n", i->c_str());
             Config::metrics.insert(*i);
-            Config::Hmetrics[*i] = 1;
+            //Config::Hmetrics[*i] = 1;
+            Config::Hmetrics.insert(*i);
             ++i;
         }
     }
@@ -271,7 +272,7 @@ void Config::process_command_line_options(map<string, string> Options, vector<st
         while (i != j) {
             string aux = *i;
 
-            if (Common::eval_schemes.find(aux) != Common::eval_schemes.end()) Config::eval_schemes[aux] = 1;
+            if (Common::eval_schemes.find(aux) != Common::eval_schemes.end()) Config::eval_schemes.insert(aux);
             else { fprintf(stderr, "[ERROR] unknown evaluation method '%s'\n", aux.c_str()); exit(1); }
 
             //cout << "Added " << *i << " to eval_schemes (command line options)" << endl;
@@ -555,7 +556,8 @@ void Config::process_config_file(char* config_file, map<string, string> Options)
                     while (i != j) {
                         //cout << "Add " << *i << " to Hmetrics/metrics" << endl;
                         //fprintf(stderr, "Add %s to Hmetrics/metrics\n", i->c_str());
-                        Config::Hmetrics[*i] = 1;
+                        //Config::Hmetrics[*i] = 1;
+                        Config::Hmetrics.insert(*i);
                         Config::metrics.insert(*i);
                         ++i;
                     }

@@ -204,6 +204,8 @@ TODO LIST
 	-	LOCAL
 				->	Completar els BiDict de CE. (amb les mètriques de nist_xml no ho puc provar [no hi ha dict] [i actualment NO FUNCIONA])
 
+				-> Netejar el codi. Per exemple els "map<string, int>", de Config, la majoria son de facto "set<string>"
+
 	-	CLUSTER
 
 

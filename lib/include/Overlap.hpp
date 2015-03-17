@@ -11,7 +11,6 @@ private:
 	static set<string> create_rOl();
 
 	static const string OlEXT, PlEXT, RlEXT , FlEXT;
-	static const set<string> rOl;
 
 	void extract_temrs(const map<string, int> &h_cand, const map<string, int> &h_ref, int LC, map<string, double> &t_cand, map<string, double> &t_ref, map<string, double> &t_tot);
 
@@ -37,6 +36,7 @@ public:
 	void get_segment_scores(vector< map<string, double> > &scores, string feature, int mode, double &SYSscore, vector<double> &SEGSscore);	// NE
 	void get_segment_scores_M(vector< map<string, double> > &scores, string feature, int mode, map<string, vector<double> > &OK, double &SYSscore, vector<double> &SEGSscore);	// SR
 
+	static const set<string> rOl;		// SR
 
 	void doMetric(string TGT, string REF, string prefix, Scores &hOQ);
 

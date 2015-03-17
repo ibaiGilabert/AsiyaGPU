@@ -280,7 +280,7 @@ void SC_ASIYA::read_report(string TGT, string REF, string METRIC, Scores &hOQ) {
             xmlNodePtr cur_node = root_node->children;
             int son = 0;
             while (cur_node != NULL) {
-                cout << "son: " << ++son << "; type: " << cur_node->name << endl;
+                //cout << "son: " << ++son << "; type: " << cur_node->name << endl;
                 cur_node = cur_node->next;
             }
             //read_xml(root_node, out_txt, out_idx, m, "source", "", "");
@@ -288,6 +288,90 @@ void SC_ASIYA::read_report(string TGT, string REF, string METRIC, Scores &hOQ) {
         xmlFreeDoc(doc);
     }
 }
+
+vector<double> SC_ASIYA::read_scores_list(string TGT, string REF, string METRIC, string G, Scores &hOQ) {
+    // description _ reads a list of segment MT scores for a given metric
+    //               from a given XML report file onto memory. (single reference)
+    vector<double> SCORES;
+
+    // Look into the scores structure
+    if (G == Common::G_SYS and hOQ.exists_sys_score(METRIC, TGT, REF)) {
+        SCORES.push_back(hOQ.get_sys_score(METRIC, TGT, REF));
+        return SCORES;
+    }
+    else if (G == Common::G_DOC and hOQ.exists_doc_score(METRIC, TGT, REF)) {
+        for (int d = 0; d < hOQ.get_num_doc_scores(); ++d) {
+            SCORES.push_back(hOQ.get_doc_score(METRIC, TGT, REF, d));
+        }
+        return SCORES;
+    }
+    else if (G == Common::G_SEG and hOQ.exists_seg_score(METRIC, TGT, REF)) {
+        for (int d = 0; d < hOQ.get_num_seg_scores(); ++d) {
+            SCORES.push_back(hOQ.get_seg_score(METRIC, TGT, REF, d));
+        }
+        return SCORES;
+    }
+
+    // now try in the report file
+    string report_xml = Common::DATA_PATH+"/"+Common::REPORTS+"/"+TGT+"/"+REF+"/"+METRIC+"."+Common::XMLEXT;
+
+    if (!exists(boost::filesystem::path(report_xml)) or exists(boost::filesystem::path(report_xml+"."+Common::GZEXT))) {
+        srand(time(NULL));
+        string randomXML, randomXML2;
+        if (Config::verbose) fprintf(stderr, "reading XML REPORT <%s>\n", report_xml.c_str());
+    
+        if (!exists(boost::filesystem::path(report_xml))) {
+            string report_xml2 = TESTBED::replace_special_characters(report_xml);
+            
+            double r = rand() % (Common::NRAND + 1);   //random number [0, Common::NRAND];
+            stringstream ss, ss2;
+            ss << Common::DATA_PATH << "/" << Common::TMP << "/" << boost::filesystem::path(randomXML).filename().string() << "." << r;
+            ss2 << Common::DATA_PATH << "/" << Common::TMP << "/" << boost::filesystem::path(randomXML2).filename().string() << "." << r;
+            randomXML = ss.str();
+            randomXML2 = ss2.str();
+
+            string sys_aux = Common::GUNZIP + " -c " + report_xml2+"."+Common::GZEXT + " > " + randomXML2;
+            system(sys_aux.c_str());
+        }
+
+
+        xmlDocPtr doc;
+        if (exists(boost::filesystem::path(report_xml)))
+            doc = xmlReadFile(report_xml.c_str(), NULL, 0);
+        else
+            doc = xmlReadFile(randomXML.c_str(), NULL, 0);
+        if (doc == NULL) { fprintf(stderr, "[ERROR] Failed to parse XML REPORT"); exit(1); }
+
+        xmlNodePtr root_node = xmlDocGetRootElement(doc);
+        string REPORT = string( (char*)root_node->children->next->name );
+
+        if (G == Common::G_SYS) {
+            string score = string( (char*)xmlGetProp(root_node->children->next, (const xmlChar*)"score") );
+            SCORES.push_back(atof(score.c_str()));
+        }
+        if (G == Common::G_DOC or G == Common::G_SEG) {
+            xmlNodePtr cur_node = root_node->children;
+            int son = 0;
+            while (cur_node != NULL) {
+                //cout << "son: " << ++son << "; type: " << cur_node->name << endl;
+                if (G == Common::G_DOC) {
+                    string score = string( (char*)xmlGetProp(cur_node->children->next, (const xmlChar*)"score") );
+                    SCORES.push_back( atof(score.c_str()) );
+                }
+                else if (G == Common::G_SEG) {
+                    xmlNodePtr seg_node = cur_node->children;
+                    string score = string( (char*)xmlNodeGetContent(seg_node->children->next) );
+  //DEBUG           string score = string( (char*)xmlGetProp(seg_node->children->next, (const xmlChar*)"score") );
+                    SCORES.push_back( atof(score.c_str()) );
+                }
+                cur_node = cur_node->next;    
+            }
+        }
+        xmlFreeDoc(doc);
+    }
+}
+
+
 
 /*
     while (i < idx.size()) {

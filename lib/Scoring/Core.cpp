@@ -37,13 +37,13 @@ vector<string> Core::get_sorted_metrics() {
 	vector<string> sorted_metrics;
 
 	set<string> st = Config::metrics;
-	if (Config::eval_schemes[Common::S_SINGLE]) {
+	if (Config::eval_schemes.count(Common::S_SINGLE)) {
 		sorted_metrics = vector<string>(st.begin(), st.end());
 
 		//sorted_metrics = vector<string>(Config::metrics.begin(), Config::metrics().end());
 		//if (Config::SORT == Common::SORT_NAME) //already sorted (set)
 	}
-	if (Config::eval_schemes[Common::S_ULC]) sorted_metrics.push_back(ULC::ULC_NAME);
+	if (Config::eval_schemes.count(Common::S_ULC)) sorted_metrics.push_back(ULC::ULC_NAME);
 	//if (Config::eval_schemes[Common::S_QUEEN]) sorted_metrics.push_back(QARLA::QUEEN);
 
 	return sorted_metrics;
@@ -64,6 +64,7 @@ void Core::find_max_metric_scores(Scores &hOQ, const set<string> &systems, const
 	//               can be later computed as are Xnorm(i) = X(i) / MAX(i)
 	//               (max metric scores are stored onto the configuration object)
 	string REF = Common::join_set(references, '_');
+	//SC_ASIYA sc_asiya;
 	for(set<string>::const_iterator it_m = Config::metrics.begin(); it_m != Config::metrics.end(); ++it_m) {
 		string ref_tmp = REF;
 
@@ -76,6 +77,8 @@ void Core::find_max_metric_scores(Scores &hOQ, const set<string> &systems, const
 		if (hOQ.get_max_seg_score(*it_m) == Common::NOT_DEFINED) hOQ.set_max_seg_score(*it_m, 0);
 
 		for(set<string>::const_iterator it_s = systems.begin(); it_s != systems.end(); ++it_s) {
+			//sc_asiya.read_report(*it_s, REF, *it_m, hOQ);
+
 			if (Config::G == Common::G_SYS or Config::G == Common::G_ALL) {
 				if (hOQ.get_sys_scores()[*it_m][*it_s][ref_tmp] < hOQ.get_min_sys_score(*it_m))
 					hOQ.set_min_sys_score(*it_m, hOQ.get_sys_scores()[*it_m][*it_s][ref_tmp]);
@@ -470,7 +473,7 @@ double Core::do_scores(Scores &hOQ) {
 
 void Core::do_print(Scores &hOQ) {
 	// description _ Print metric scores in the given format
-	if (Config::eval_schemes[Common::S_SINGLE] or Config::eval_schemes[Common::S_ULC] or Config::eval_schemes[Common::S_QUEEN]) {
+	if (Config::eval_schemes.count(Common::S_SINGLE) or Config::eval_schemes.count(Common::S_ULC) or Config::eval_schemes.count(Common::S_QUEEN)) {
 		//if (Config::O_DEFAULT)
 
 	}

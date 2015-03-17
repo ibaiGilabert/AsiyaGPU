@@ -297,6 +297,8 @@ const boost::regex Common::reSR_INSIDE_PAR("\\(.*\\)");
 const boost::regex Common::reSR_sntC("^C-");
 const boost::regex Common::reSR_sntR("^R-");
 
+const boost::regex Common::reSR_b(".*\\_b$");
+const boost::regex Common::reSR_i(".*\\_i$");
 
 
 void Common::execute_or_die(string command, string message) {

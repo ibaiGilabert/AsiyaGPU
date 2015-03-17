@@ -528,14 +528,15 @@ void Overlap::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 	int GO , i;
 	GO = i = 0;
 	vector<string> mOl(Overlap::rOl.size());
-	for (set<string>::const_iterator it = Overlap::rOl.begin(); it != Overlap::rOl.end(); ++it, ++i) mOl[i] = *it;
+	for (set<string>::const_iterator it = Overlap::rOl.begin(); it != Overlap::rOl.end(); ++it, ++i) 
+		mOl[i] = *it;
 	for (i = 0; i < mOl.size() and !GO; ++i) {
 		if (Config::Hmetrics.find(mOl[i]) != Config::Hmetrics.end()) GO = 1;
 	}
 
 	if (GO) {
 		if (Config::Hmetrics.find(Overlap::OlEXT) != Config::Hmetrics.end()) {
-			if (Config::verbose == 1) fprintf(stderr, "%s\n", Overlap::OlEXT.c_str());
+			if (Config::verbose) fprintf(stderr, "%s\n", Overlap::OlEXT.c_str());
 			//stringstream ssReport;
 			//ssReport << Common::DATA_PATH << "/" << Common::REPORTS << "/" << TGT << "/" << REF << "/" << Overlap::OlEXT << "/" << Common::XMLEXT;
 			string reportXML = Common::DATA_PATH+"/"+Common::REPORTS+"/"+TGT+"/"+REF+"/"+Overlap::OlEXT+"/"+Common::XMLEXT;
@@ -555,7 +556,7 @@ void Overlap::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 			}
 		}
 		if (Config::Hmetrics.find(Overlap::PlEXT) != Config::Hmetrics.end()) {
-			if (Config::verbose == 1) fprintf(stderr, "%s\n", Overlap::PlEXT.c_str());
+			if (Config::verbose) fprintf(stderr, "%s\n", Overlap::PlEXT.c_str());
 
 			string reportXML = Common::DATA_PATH+"/"+Common::REPORTS+"/"+TGT+"/"+REF+"/"+Overlap::PlEXT+"/"+Common::XMLEXT;
 			string reportXML_gz = reportXML+"."+Common::GZEXT;
@@ -575,7 +576,7 @@ void Overlap::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 			}
 		}
 		if (Config::Hmetrics.find(Overlap::RlEXT) != Config::Hmetrics.end()) {
-			if (Config::verbose == 1) fprintf(stderr, "%s\n", Overlap::RlEXT.c_str());
+			if (Config::verbose) fprintf(stderr, "%s\n", Overlap::RlEXT.c_str());
 
 			string reportXML = Common::DATA_PATH+"/"+Common::REPORTS+"/"+TGT+"/"+REF+"/"+Overlap::RlEXT+"/"+Common::XMLEXT;
 			string reportXML_gz = reportXML+"."+Common::GZEXT;
@@ -595,7 +596,7 @@ void Overlap::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 			}
 		}
 		if (Config::Hmetrics.find(Overlap::FlEXT) != Config::Hmetrics.end()) {
-			if (Config::verbose == 1) fprintf(stderr, "%s\n", Overlap::FlEXT.c_str());
+			if (Config::verbose) fprintf(stderr, "%s\n", Overlap::FlEXT.c_str());
 
 			string reportXML = Common::DATA_PATH+"/"+Common::REPORTS+"/"+TGT+"/"+REF+"/"+Overlap::FlEXT+"/"+Common::XMLEXT;
 			string reportXML_gz = reportXML+"."+Common::GZEXT;

@@ -27,7 +27,8 @@ private:
 
 public:
 	//static map<string, map<string, double> > max_score,	min_score;
-	static map<string, int> 	Hmetrics, 	/*wc,*/ 	eval_schemes,	metaeval_schemes,	optimize_schemes,	metaeval_criteria,	optimize_criteria;
+	static set<string> 	Hmetrics, 	/*wc,*/ 	eval_schemes,	metaeval_schemes;
+	static map<string, int>	optimize_schemes,	metaeval_criteria,	optimize_criteria;
 	//static vector<string> 		COMBO;	//metrics,	systems,		references;
 	//static map<string, vector<vector<string> > > 	IDX;
 	static set<string> Fmetrics,	metrics,	systems,	references;

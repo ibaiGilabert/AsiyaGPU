@@ -232,6 +232,8 @@ public:
 	static const boost::regex reSR_INSIDE_PAR;       
 	static const boost::regex reSR_sntC;
 	static const boost::regex reSR_sntR;
+	static const boost::regex reSR_b;
+	static const boost::regex reSR_i;
 
 	static void execute_or_die(string command, string message);
 	static double safe_division(double numerator, double denominator);

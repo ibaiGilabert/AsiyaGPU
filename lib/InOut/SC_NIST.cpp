@@ -56,6 +56,7 @@ map<string, double> SC_NIST::read_scores_file(string file, string G, int do_neg)
     return scores;
 }
 
+
 /*void SC_NIST::print_scores() {
     // description _ print metric scores in NIST 'MetricsMATR' format (i.e., onto .scr files)
     //              -> all systems (system, document, segment levels) into the corresponding output files

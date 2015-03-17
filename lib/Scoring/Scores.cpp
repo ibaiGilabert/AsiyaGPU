@@ -1,5 +1,6 @@
 #include "../include/Scores.hpp"
 #include "../include/SC_NIST.hpp"
+#include "../include/SC_ASIYA.hpp"
 #include "../include/TESTBED.hpp"
 #include "../Common.hpp"
 #include "../Config.hpp"
@@ -56,6 +57,18 @@ MetricScore Scores::read_scores(string basename, string TGT, string sep, int do_
 	read_scores.seg_scores = read_scores_G(basename, Common::G_SEG, TGT, sep, do_neg);
 
 	return read_scores;
+}
+
+double Scores::get_sys_score(string METRIC, string TGT, string REF) {
+	return sys[METRIC][TGT][REF];
+}
+
+double Scores::get_doc_score(string METRIC, string TGT, string REF, int doc_id) {
+	return doc[doc_id][METRIC][TGT][REF];
+}
+
+double Scores::get_seg_score(string METRIC, string TGT, string REF, int seg_id) {
+	return seg[seg_id][METRIC][TGT][REF];	
 }
 
 oMap Scores::get_sys_scores() const {
@@ -151,6 +164,17 @@ void Scores::set_max_doc_score(string metric, double value) {
 
 void Scores::set_max_seg_score(string metric, double value) {
 	max_seg_score[metric] = value;
+}
+
+void Scores::add_metrics(string TGT, string REF, set<string> &M, string G, vector< map<string, double> > &scores) {
+	// description _ adds a given metric scores (reading from the associated XML report) into the given score structure
+	SC_ASIYA sc_format;
+	for (set<string>::const_iterator it = M.begin(); it != M.end(); ++it) {
+		vector<double> Mscores = sc_format.read_scores_list(TGT, REF, *it, G, *this);
+		for (int t = 0; t < Mscores.size(); ++t) {
+			scores[t][*it] = Mscores[t]; 
+		}
+	}
 }
 
 /*void Scores::save_struct_scores(const char* filename) {

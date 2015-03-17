@@ -564,11 +564,11 @@ void SR::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 				vector< map<string, double> > scores;
 				FILE_compute_overlap_metrics(FDout_S, FDout_R, FDout_V, FDref_S, FDref_R, FDref_V, scores);
 
-				for (set<string>::const_iterator it_rf = rF.begin(); it_rf != rF.end(); ++it_rf) {
-					if (Config::Hmetrics.count(*it_rf) or Config::Hmetrics.count((*it_rf)+"_b") or Config::Hmetrics.count((*it_rf)+"_i")) {
+				for (set<string>::const_iterator it_rF = rF.begin(); it_rF != rF.end(); ++it_rF) {
+					if (Config::Hmetrics.count(*it_rF) or Config::Hmetrics.count((*it_rF)+"_b") or Config::Hmetrics.count((*it_rF)+"_i")) {
 						double SYS, MAXSYS;
 						vector<double> SEGS, MAXSEGS;
-						maxOK[*it_rf].resize(TESTBED::wc[TGT])
+						maxOK[*it_rF].resize(TESTBED::wc[TGT]);
 						//Ov.get_segment_scores_M(maxscores, *it_rF, 0, maxOK, MAXSYS, MAXSEGS);
 
 						Ov.get_segment_scores(scores, *it_rF, 0, SYS, SEGS);
@@ -596,9 +596,29 @@ void SR::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 					}
 				}
 
+				for (set<string>::const_iterator it_rF = rF.begin(); it_rF != rF.end(); ++it_rF) {
+					if (Config::Hmetrics.count(*it_rF)) {
+						string reportXML = Common::DATA_PATH+"/"+Common::REPORTS+"/"+TGT+"/"+REF+*it_rF+"."+Common::XMLEXT;
+						if (!exists(boost::filesystem::path(reportXML)) and !exists(boost::filesystem::path(reportXML+"."+Common::GZEXT)) or Config::remake) {
+						 	boost::match_results<string::const_iterator> results;
+							if (boost::regex_match(*it_rF, results, Common::reSR_b) or boost::regex_match(*it_rF, results, Common::reSR_i)) {
+								int verbo = Config::verbose;			Config::verbose = 0;
+								set<string> M = Config::Hmetrics;		Config::Hmetrics = Overlap::rOl;
 
+								Ov.doMetric(TGT, REF, "", hOQ);
 
+								Config::verbose = verbo;
+								Config::Hmetrics = M;
 
+								set<string> sOl = Overlap::rOl;
+		/* SIZE MAXSCORES? */	hOQ.add_metrics(TGT, REF, /*Overlap::rOl*/ sOl, Common::G_SEG, maxscores);
+
+							}
+
+						}
+
+					}
+				}
 
 			}
 		}

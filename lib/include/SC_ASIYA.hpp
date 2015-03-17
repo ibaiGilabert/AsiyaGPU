@@ -18,6 +18,8 @@ public:
 	void write_report(string TGT, string REF, string METRIC, const MetricScore &m);
 	void write_report(string TGT, string REF, string METRIC, double sys_score, const vector<double> &doc_scores, const vector<double> &seg_scores);
 
+	vector<double> read_scores_list(string TGT, string REF, string METRIC, string G, Scores &hOQ);
+
 	//void rebuild_scores(string TGT, string REF, string METRIC_SET, Scores &hOQ);
 
 };
