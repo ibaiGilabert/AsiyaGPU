@@ -10,8 +10,6 @@ class Overlap : public SingleMetric {
 private:
 	static set<string> create_rOl();
 
-	static const string OlEXT, PlEXT, RlEXT , FlEXT;
-
 	void extract_temrs(const map<string, int> &h_cand, const map<string, int> &h_ref, int LC, map<string, double> &t_cand, map<string, double> &t_ref, map<string, double> &t_tot);
 
 	//void computeOl(string out, string ref, double &SYS, vector<double> &SEG);
@@ -35,6 +33,12 @@ public:
 
 	void get_segment_scores(vector< map<string, double> > &scores, string feature, int mode, double &SYSscore, vector<double> &SEGSscore);	// NE
 	void get_segment_scores_M(vector< map<string, double> > &scores, string feature, int mode, map<string, vector<double> > &OK, double &SYSscore, vector<double> &SEGSscore);	// SR
+
+	double compute_average_score(vector< map<string, double> > &scores, string metric);	// SR
+	void merge_metrics_M(vector< map<string, double> > &scores, string metric1, string metric2, int mode, map< string, vector<double> > &OK, double &SYS, vector<double> &SEGS);
+
+
+	static const string OlEXT, PlEXT, RlEXT , FlEXT;	// SR
 
 	static const set<string> rOl;		// SR
 

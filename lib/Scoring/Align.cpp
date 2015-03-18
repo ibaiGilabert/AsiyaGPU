@@ -257,6 +257,6 @@ void Align::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
          	hOQ.save_hash_scores(pref_Align, TGT, REF, res);
 	    }
 
-        hOQ.save_struct_scores(TB_FORMAT::make_serial("Align", TGT, REF));
+        hOQ.save_struct_scores(TB_FORMAT::make_serial(Align::ALIGNEXT, TGT, REF));
 	}
 }

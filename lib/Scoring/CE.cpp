@@ -1070,6 +1070,8 @@ void CE::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
          	}	
          	hOQ.save_hash_scores(pref, TGT, REF, SYS, d_scores, s_scores);
 		}
+        if (Config::serialize)
+        	hOQ.save_struct_scores(TB_FORMAT::make_serial(CE::CEEXT, TGT, REF));
 
 /*
 		// --------------------------------

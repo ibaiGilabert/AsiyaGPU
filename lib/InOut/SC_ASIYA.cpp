@@ -313,6 +313,7 @@ vector<double> SC_ASIYA::read_scores_list(string TGT, string REF, string METRIC,
     }
 
     // now try in the report file
+    // I don't even know if it is necessary
     string report_xml = Common::DATA_PATH+"/"+Common::REPORTS+"/"+TGT+"/"+REF+"/"+METRIC+"."+Common::XMLEXT;
 
     if (!exists(boost::filesystem::path(report_xml)) or exists(boost::filesystem::path(report_xml+"."+Common::GZEXT))) {

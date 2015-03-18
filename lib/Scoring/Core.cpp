@@ -16,6 +16,7 @@
 #include "../include/NE.hpp"
 //#include "../include/CP.hpp"
 #include "../include/SR.hpp"
+#include "../include/Align.hpp"
 #include "../include/ULC.hpp"
 #include "../include/SC_RAW.hpp"
 #include "../include/TESTBED.hpp"
@@ -250,6 +251,7 @@ void Core::doMultiMetrics(string HYP, string REF, Scores &hOQ) {
 		SingleMetric *pNE = new NE;
 		//SingleMetric *pCP = new CP;
 		SingleMetric *pSR = new SR;
+		//SingleMetric *pAlign = new Align;
 
 		pBLEU->doMetric(HYP, REF, "", hOQ);
 		pNIST->doMetric(HYP, TESTBED::Hsystems[HYP], REF, TESTBED::Hrefs, "", hOQ);
@@ -269,8 +271,9 @@ void Core::doMultiMetrics(string HYP, string REF, Scores &hOQ) {
 		pNE->doMetric(HYP, REF, "", hOQ);
 		//pCP->doMetric(HYP, REF, "", hOQ);
 		pSR->doMetric(HYP, REF, "", hOQ);
+		//pAlign->doMetric(HYP, REF, "", hOQ);
 
-		delete pBLEU, pNIST, pMETEOR, pROUGE, pGTM, pNGRAM, pOverlap, pESA, pTER, pWER, pPER, pLeM, pSP, pCE, pNE, /*pCP, */pSR;
+		delete pBLEU, pNIST, pMETEOR, pROUGE, pGTM, pNGRAM, pOverlap, pESA, pTER, pWER, pPER, pLeM, pSP, pCE, pNE, /*pCP, */pSR/*, pAlign*/;
 	}
 }
 

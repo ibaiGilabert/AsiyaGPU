@@ -667,6 +667,7 @@ void Config::validate_configuration() {
             boost::regex re_NE("^NE.*");
             //boost::regex re_CP("^CP.*");
             boost::regex re_SR("^SR.*");
+            boost::regex re_ALGN("^ALGN.*");
 
             /*boost::regex re_SP("SP");
             boost::regex re_CP("CP");
@@ -696,6 +697,7 @@ void Config::validate_configuration() {
             else if (boost::regex_match(*it, results, re_NE)) Config::Fmetrics.insert("NE");
             //else if (boost::regex_match(*it, results, re_CP)) Config::Fmetrics.insert("CP");
             else if (boost::regex_match(*it, results, re_SR)) Config::Fmetrics.insert("SR");
+            else if (boost::regex_match(*it, results, re_ALGN)) Config::Fmetrics.insert("ALGN");
 
         }
 

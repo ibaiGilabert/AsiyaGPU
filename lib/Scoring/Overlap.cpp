@@ -43,6 +43,93 @@ void Overlap::extract_temrs(const map<string, int> &h_cand, const map<string, in
 	}
 }
 
+double Overlap::compute_average_score(vector< map<string, double> > &scores, string metric) {
+	// description _ retrieves average metric score
+	double SYSscore = 0;
+	int N = 0;
+
+	for (int i = 0; i < scores.size(); ++i) {
+		int n = 0;		// feature exists? 0:no, 1:yes
+		double SEGscore = 0;
+		if (scores[i].count(metric)) {
+			if (scores[i][metric] != Common::NOT_DEFINED) {
+				if (scores[i].count("OK")) {
+					if (scores[i]["OK"] == 1) {
+						SEGscore = scores[i][metric];
+						n = 1;
+					}
+				}
+				else {
+					SEGscore = scores[i][metric];
+					n = 1;
+				}
+			}
+		}
+		SYSscore += SEGscore;
+		N += n;
+	}
+
+	return Common::safe_division(SYSscore, N);
+}
+
+void Overlap::merge_metrics_M(vector< map<string, double> > &scores, string metric1, string metric2, int mode, map<string, vector<double> > &OK, double &SYS, vector<double> &SEGS) {
+	// description _ merge metrics 1 and 2 according to the given mode
+	double avg1 = compute_average_score(scores, metric1);
+
+	double SYSscore = 0;
+	int N = 0;
+	for (int i = 0; i < scores.size(); ++i) {
+		int n1 = 0, n2 = 0;		// feature exists? 0:no, 1:yes
+		if (scores[i].count(metric1)) {
+			if (scores[i].count("OK")) {
+				if (scores[i]["OK"] == 1)
+					n1 = 1;
+			}
+			else {
+				if (OK[metric1].size()) {
+					if (OK[metric1][i] != Common::NOT_DEFINED) {
+						if (OK[metric1][i])
+							n1 = 1;
+					}
+					else 
+						n1 = 1;
+				}
+				else 
+					n1 = 1;
+			}
+		}
+
+		if (scores[i].count(metric2)) n2 = 1;
+
+		double seg_score = 0;
+		double x1 = 0, x2 = 0;
+		if (scores[i][metric1] != Common::NOT_DEFINED) x1 = scores[i][metric1];
+		if (scores[i][metric2] != Common::NOT_DEFINED) x2 = scores[i][metric2];
+		
+		if (n1 and n2) {
+			if (mode == 0) seg_score = x1;
+			else if (mode == 1) seg_score = (x1+x2)/2.f;
+		}
+		else if (n1 and !n2) seg_score = x1;
+		else if (!n1 and n2) {
+			if (mode == 0) seg_score = x2*avg1;
+			else if (mode == 1) seg_score = x2/2.f;
+		}
+		else
+			seg_score = 0;
+		
+		if (n1) {
+			SYSscore += seg_score;
+			++N;
+		}
+
+		SEGS.push_back(seg_score);
+	}
+
+	SYS = Common::safe_division(SYSscore, N);
+}
+
+
 pair<double, double> Overlap::compute_overlap(const map<string, int> &hO, const map<string, int> &hR, int LC) {
 	// description _ computes overlap between elems in candidate and reference hash of features
 	double hits, total;
@@ -587,7 +674,7 @@ void Overlap::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 				vector<double> d_scores, s_scores;
 		    	TESTBED::get_seg_doc_scores(SEG, 0, TGT, d_scores, s_scores);
 		    	if (Config::O_STORAGE == 1) {
-					sc_asiya.write_report(TGT, REF, Overlap::PlEXT, SYS, d_scores, s_scores);
+					sc_asiya.write_report(TGT, REF, Overlap::RlEXT, SYS, d_scores, s_scores);
 					fprintf(stderr, "SC_ASIYA DOCUMENT %s CREATED\n", Overlap::RlEXT.c_str());
 				}
 				hOQ.save_hash_scores(Overlap::RlEXT, TGT, REF, SYS, d_scores, s_scores);

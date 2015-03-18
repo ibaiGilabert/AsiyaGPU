@@ -397,6 +397,9 @@ exit(1);*/
 
 				}
 			}
+			
+	        if (Config::serialize)
+	        	hOQ.save_struct_scores(TB_FORMAT::make_serial(NE::NEEXT, TGT, REF));
 		}
 	}
 }

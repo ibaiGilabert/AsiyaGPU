@@ -1184,6 +1184,9 @@ void SP::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 				for (map<string, string>::const_iterator it_r = TESTBED::Hrefs.begin(); it_r != TESTBED::Hrefs.end(); ++it_r)
 					remove_parse_plit_file(it_r->second);
 			}
+
+	        if (Config::serialize)
+	        	hOQ.save_struct_scores(TB_FORMAT::make_serial(SP::SPEXT, TGT, REF));
 		}
 	}
 }

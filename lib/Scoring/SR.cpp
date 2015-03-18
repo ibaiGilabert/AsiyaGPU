@@ -385,8 +385,9 @@ void SR::SNT_extract_features(const sParsed &snt_s, const vector<rParsed> &snt_r
 
 void SR::SNT_compute_overlap_scores(SNTextract_feat &Tout, SNTextract_feat &Tref, int LC, map<string, double> &SCORES) {
 	// description _ computes distances between a candidate and a reference sentence (+features)
-	if (!Tout.A.empty() and !Tout.B.empty() and !Tref.A.empty() and Tref.B.empty()) {	// BOTH SEGMENTS AVAILABLE
-		Overlap Ov;
+	if (!Tout.A.empty() and !Tout.B.empty() and !Tref.A.empty() and !Tref.B.empty()) {	// BOTH SEGMENTS AVAILABLE
+	//if (Tout.A.size() and Tout.B.size() and Tref.A.size() and Tref.B.size()) {	// BOTH SEGMENTS AVAILABLE
+			Overlap Ov;
 
 		// BOTH SEGMENTS HAVE BEEN 'SUCCESSFULLY' SR-PARSED? (BOW for lexical overlap is always there)
 		if (Tref.B.size() > 1 and Tout.B.size() > 1) SCORES["OK"] = 1;
@@ -516,10 +517,72 @@ void SR::FILE_compute_overlap_metrics(const vector<sParsed> &POUT_S, const vecto
 
 		SNT_extract_features(POUT_S[topic], POUT_R[topic], POUT_V[topic], OUTSNT);
 
+		/*fprintf(stderr, "---- OUTSNT.A (%d) ----\n", (int)OUTSNT.A.size());
+		for(map<string, map<string, map<string, int> > >::const_iterator it_ = OUTSNT.A.begin(); it_ != OUTSNT.A.end(); ++it_) {
+			fprintf(stderr, "\t%s -> {\n", it_->first.c_str());
+			
+			map<string, map<string, int> > aux_a = it_->second;
+			for(map<string, map<string, int> >::const_iterator it_a = aux_a.begin(); it_a != aux_a.end(); ++it_a) {
+				fprintf(stderr, "\t\t%s -> {\n", it_a->first.c_str());
+				
+				map<string, int> aux_aa = it_a->second;
+				for(map<string, int>::const_iterator it_aa = aux_aa.begin(); it_aa != aux_aa.end(); ++it_aa) {
+					fprintf(stderr, "\t\t\t[%s -> %d]\n", it_aa->first.c_str(), it_aa->second);
+				}
+			}
+		} 
+		fprintf(stderr, "-----------------\n");
+		fprintf(stderr, "---- OUTSNT.B (%d) ----\n", (int)OUTSNT.B.size());	
+		for(map<string, map<string, int> >::const_iterator it_b = OUTSNT.B.begin(); it_b != OUTSNT.B.end(); ++it_b) {
+			fprintf(stderr, "\t%s -> {\n", it_b->first.c_str());
+			
+			map<string, int> aux_bb = it_b->second;
+			for(map<string, int>::const_iterator it_bb = aux_bb.begin(); it_bb != aux_bb.end(); ++it_bb) {
+				fprintf(stderr, "\t\t[%s -> %d]\n", it_bb->first.c_str(), it_bb->second);
+			}
+		}
+		fprintf(stderr, "-----------------\n");
+		fprintf(stderr, "-> nVerbs: (%d)\n", OUTSNT.nVerbs);
+		fprintf(stderr, "-----------------\n");*/
+
 		SNT_extract_features(PREF_S[topic], PREF_R[topic], PREF_V[topic], REFSNT);
 
-		//vector< map<string, double> > scores;
+
+		/*fprintf(stderr, "---- REFSNT.A (%d) ----\n", (int)REFSNT.A.size());
+		for(map<string, map<string, map<string, int> > >::const_iterator it_ = REFSNT.A.begin(); it_ != REFSNT.A.end(); ++it_) {
+			fprintf(stderr, "\t%s -> {\n", it_->first.c_str());
+			
+			map<string, map<string, int> > aux_a = it_->second;
+			for(map<string, map<string, int> >::const_iterator it_a = aux_a.begin(); it_a != aux_a.end(); ++it_a) {
+				fprintf(stderr, "\t\t%s -> {\n", it_a->first.c_str());
+				
+				map<string, int> aux_aa = it_a->second;
+				for(map<string, int>::const_iterator it_aa = aux_aa.begin(); it_aa != aux_aa.end(); ++it_aa) {
+					fprintf(stderr, "\t\t\t[%s -> %d]\n", it_aa->first.c_str(), it_aa->second);
+				}
+			}
+		} 
+		fprintf(stderr, "-----------------\n");
+		fprintf(stderr, "---- REFSNT.B (%d) ----\n", (int)REFSNT.B.size());	
+		for(map<string, map<string, int> >::const_iterator it_b = REFSNT.B.begin(); it_b != REFSNT.B.end(); ++it_b) {
+			fprintf(stderr, "\t%s -> {\n", it_b->first.c_str());
+			
+			map<string, int> aux_bb = it_b->second;
+			for(map<string, int>::const_iterator it_bb = aux_bb.begin(); it_bb != aux_bb.end(); ++it_bb) {
+				fprintf(stderr, "\t\t[%s -> %d]\n", it_bb->first.c_str(), it_bb->second);
+			}
+		}
+		fprintf(stderr, "-----------------\n");
+		fprintf(stderr, "-> nVerbs: (%d)\n", REFSNT.nVerbs);
+		fprintf(stderr, "-----------------\n");*/
+
+
 		SNT_compute_overlap_scores(OUTSNT, REFSNT, (Config::CASE != Common::CASE_CI), SCORES[topic]);
+		/*fprintf(stderr, "---- TOPIC (%d) ----\n", (int)SCORES[topic].size());
+		for(map<string, double>::const_iterator it = SCORES[topic].begin(); it != SCORES[topic].end(); ++it) {
+			fprintf(stderr, "\t[%s -> %f]\n", it->first.c_str(), it->second);
+		}*/
+
 	}
 }
 
@@ -598,8 +661,15 @@ void SR::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 				fprintf(stderr, "--------------------\n");*/
 
 			Overlap Ov;
-			vector< map<string, double> > maxscores;
+			vector< map<string, double> > maxscores(TESTBED::wc[TGT]);
+			/*for (int i = 0; i < maxscores.size(); ++i) {
+				for (set<string>::const_iterator it_rF = rF.begin(); it_rF != rF.end(); ++it_rF)
+					maxscores[i][*it_rF] = Common::NOT_DEFINED;
+			}*/
+
 			map< string, vector<double> > maxOK;
+
+
 			for (map<string, string>::const_iterator it_r = TESTBED::Hrefs.begin(); it_r != TESTBED::Hrefs.end(); ++it_r) {
 				vector<sParsed> FDref_S(TESTBED::wc[TGT]);
 				vector< vector<rParsed> > FDref_R(TESTBED::wc[TGT]);
@@ -621,9 +691,15 @@ void SR::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 						double SYS, MAXSYS;
 						vector<double> SEGS, MAXSEGS;
 						maxOK[*it_rF].resize(TESTBED::wc[TGT]);
-						//Ov.get_segment_scores_M(maxscores, *it_rF, 0, maxOK, MAXSYS, MAXSEGS);
+						Ov.get_segment_scores_M(maxscores, *it_rF, 0, maxOK, MAXSYS, MAXSEGS);
 
 						Ov.get_segment_scores(scores, *it_rF, 0, SYS, SEGS);
+
+					/*fprintf(stderr, "\tSYS: %f\n", SYS);
+					fprintf(stderr, "\tSEGS: [ |");
+					for(int i = 0; i < SEGS.size(); ++i) fprintf(stderr, "%f|", SEGS[i]);
+					fprintf(stderr, "| ]\n");*/
+
 						for (int i = 0; i < SEGS.size(); ++i) {		// update max scores
 							if (SEGS[i] != Common::NOT_DEFINED) {
 								if (i < MAXSEGS.size() and MAXSEGS[i] != Common::NOT_DEFINED) {
@@ -647,7 +723,57 @@ void SR::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 						}
 					}
 				}
-		fprintf(stderr, "----------- maxscores -----------\n");
+			}
+
+			for (set<string>::const_iterator it_rF = rF.begin(); it_rF != rF.end(); ++it_rF) {
+				if (Config::Hmetrics.count(*it_rF)) {
+					string reportXML = Common::DATA_PATH+"/"+Common::REPORTS+"/"+TGT+"/"+REF+*it_rF+"."+Common::XMLEXT;
+					if (!exists(boost::filesystem::path(reportXML)) and !exists(boost::filesystem::path(reportXML+"."+Common::GZEXT)) or Config::remake) {
+					 	boost::match_results<string::const_iterator> results;
+						if (boost::regex_match(*it_rF, results, Common::reSR_b) or boost::regex_match(*it_rF, results, Common::reSR_i)) {
+							int verbo = Config::verbose;			Config::verbose = 0;
+							set<string> M = Config::Hmetrics;		Config::Hmetrics = Overlap::rOl;
+
+							Ov.doMetric(TGT, REF, "", hOQ);
+
+							Config::verbose = verbo;
+							Config::Hmetrics = M;
+
+							set<string> sOl = Overlap::rOl;
+	/* SIZE MAXSCORES? */	hOQ.add_metrics(TGT, REF, /*Overlap::rOl*/ sOl, Common::G_SEG, maxscores);
+						}
+						double SYS;
+						vector<double> SEG, d_scores, s_scores;
+						if (boost::regex_match(*it_rF, results, Common::reSR_b)) {
+							string backm = *it_rF;	backm = boost::regex_replace(backm, Common::reSR_b_end, "");
+							Ov.merge_metrics_M(maxscores, backm, Overlap::OlEXT, 0, maxOK, SYS, SEG);
+						}
+						else if (boost::regex_match(*it_rF, results, Common::reSR_i)) {
+							string backm = *it_rF;	backm = boost::regex_replace(backm, Common::reSR_i_end, "");
+							Ov.merge_metrics_M(maxscores, backm, Overlap::OlEXT, 1, maxOK, SYS, SEG);
+						}
+						else {
+							Ov.get_segment_scores_M(maxscores, *it_rF, 2, maxOK, SYS, SEG);
+						}
+						TESTBED::get_seg_doc_scores(SEG, 0, TGT, d_scores, s_scores);
+						if (Config::O_STORAGE == 1) {
+							sc_asiya.write_report(TGT, REF, *it_rF, SYS, d_scores, s_scores);
+							fprintf(stderr, "SC_ASIYA DOCUMENT %s CREATED\n", it_rF->c_str());
+						}
+			         	hOQ.save_hash_scores(*it_rF, TGT, REF, SYS, d_scores, s_scores);
+					}
+
+				}
+			}
+
+			if (Config::serialize)
+        		hOQ.save_struct_scores(TB_FORMAT::make_serial(SR::SREXT, TGT, REF));
+		}
+	}
+}
+
+
+		/*fprintf(stderr, "----------- maxscores -----------\n");
 		for (int m = 0; m < maxscores.size(); ++m) {
 			map<string, double> aux_m = maxscores[m];
 			fprintf(stderr, "\tmaxscores[%d]\n", m);
@@ -655,75 +781,7 @@ void SR::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 				fprintf(stderr, "\t\t[%s -> %f]\n", it->first.c_str(), it->second);
 			}
 		}
-		fprintf(stderr, "---------------------------------\n");
-
-
-				for (set<string>::const_iterator it_rF = rF.begin(); it_rF != rF.end(); ++it_rF) {
-					if (Config::Hmetrics.count(*it_rF)) {
-						string reportXML = Common::DATA_PATH+"/"+Common::REPORTS+"/"+TGT+"/"+REF+*it_rF+"."+Common::XMLEXT;
-						if (!exists(boost::filesystem::path(reportXML)) and !exists(boost::filesystem::path(reportXML+"."+Common::GZEXT)) or Config::remake) {
-						 	boost::match_results<string::const_iterator> results;
-							if (boost::regex_match(*it_rF, results, Common::reSR_b) or boost::regex_match(*it_rF, results, Common::reSR_i)) {
-								int verbo = Config::verbose;			Config::verbose = 0;
-								set<string> M = Config::Hmetrics;		Config::Hmetrics = Overlap::rOl;
-
-								Ov.doMetric(TGT, REF, "", hOQ);
-
-								Config::verbose = verbo;
-								Config::Hmetrics = M;
-
-								set<string> sOl = Overlap::rOl;
-		/* SIZE MAXSCORES? */	hOQ.add_metrics(TGT, REF, /*Overlap::rOl*/ sOl, Common::G_SEG, maxscores);
-
-							}
-
-						}
-
-					}
-				}
-
-			}
-		}
-	}
-
-	/*
-	vector<string> mSR(SR::rLANG[Config::LANG].size());
-
-	int GO, i;
-	GO = i = 0;
-	for (set<string>::const_iterator it = SR::rLANG[Config::LANG].begin(); it != SR::rLANG[Config::LANG].end(); ++it, ++i)
-		mSR[i] = *it;
-
-
-	for (i = 0; i < mSR.size() and !GO; ++i) {
-		if (Config::Hmetrics.find(mSR[i]) != Config::Hmetrics.end()) GO = 1;
-	}
-	
-	if (GO) {
-		if (Config::verbose) fprintf(stderr, "%s...\n", rSReng.insert(SR::SREXT.c_str());
-
-		for (i = 0; i < mSR.size(); ++i) {
-			string reportSRxml = Common::DATA_PATH+"/"+Common::REPORTS+"/"+TGT+"/"+REF+"/"+prefix+mSR[i]+"."+Common::XMLEXT;
-		    boost::filesystem::path reportSRxml_path(reportSRxml);
-	   		boost::filesystem::path reportSRxml_gz(reportSRxml+"."+Common::GZEXT);
-	   		if ( (!exists(reportSRxml_path) and !exists(reportSRxml_gz)) or Config::remake) {
-	   			double SYS;
-	   			vector<double> SEG, d_scores, s_scores;
-
-	   			computeMultiSR(mSR[i], TGT, SYS, SEG);
-				TESTBED::get_seg_doc_scores(SEG, 0, TGT, d_scores, s_scores);
-
-				string pref = prefix + mSR[i];
-		    	if (Config::O_STORAGE == 1) {
-					sc_asiya.write_report(TGT, REF, pref, SYS, d_scores, s_scores);
-					fprintf(stderr, "SC_ASIYA DOCUMENT %s CREATED\n", pref.c_str());
-				}
-	         	hOQ.save_hash_scores(pref, TGT, REF, SYS, d_scores, s_scores);
-		        if (Config::serialize) hOQ.save_struct_scores(TB_FORMAT::make_serial(rSReng.insert(SR::SREXT, TGT, REF));
-	   		}
-		}
-	}*/
-}
+		fprintf(stderr, "---------------------------------\n");*/
 
 
 /*

@@ -172,7 +172,7 @@ string Process::make_run_file(string config_file, string TGT, string REF, int th
         run_file << "#$ -m eas" << endl;
         run_file << "#$ -M gilabert@cs.upc.edu" << endl;
         run_file << "#$ -l h_vmem=5G" << endl;                 //LA MEMORIA QUE CADA METRICA DEMANI
-        run_file << "#$ -q short@node115,short@node116,short@node117,short@node315,short@node316" << endl << endl;
+        //run_file << "#$ -q short@node115,short@node116,short@node117,short@node315,short@node316" << endl << endl;
         //run_file << endl << ". /home/soft/asiya/ASIYA12.04.PATH" << endl;
 
         stringstream s_cmd;

@@ -299,7 +299,8 @@ const boost::regex Common::reSR_sntR("^R-");
 
 const boost::regex Common::reSR_b(".*\\_b$");
 const boost::regex Common::reSR_i(".*\\_i$");
-
+const boost::regex Common::reSR_b_end("\\_b$");
+const boost::regex Common::reSR_i_end("\\_i$");
 
 void Common::execute_or_die(string command, string message) {
     //boost::regex re("\\R");
