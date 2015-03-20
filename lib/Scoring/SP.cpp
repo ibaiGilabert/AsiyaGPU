@@ -216,6 +216,136 @@ SP::SP() {
 SP::~SP() {}
 
 
+void SP::load_parser_file(string file, int thread, vector<string> &wc, vector<string> &wp, vector<string> &wpc, vector<string> &wlp, vector<string> &wlpc) {
+    string wc_file   = TB_FORMAT::get_parser_file(file, SP::SPEXT, Common::TOKEXT, "wc", thread);
+    string wp_file   = TB_FORMAT::get_parser_file(file, SP::SPEXT, Common::TOKEXT, "wp", thread);
+    string wpc_file  = TB_FORMAT::get_parser_file(file, SP::SPEXT, Common::TOKEXT, "wpc", thread);
+    string wlp_file  = TB_FORMAT::get_parser_file(file, SP::SPEXT, Common::TOKEXT, "wlp", thread);
+    string wlpc_file = TB_FORMAT::get_parser_file(file, SP::SPEXT, Common::TOKEXT, "wlpc", thread);
+
+    ifstream in_file;
+
+    in_file.open(wc_file.c_str());
+    if (in_file) {
+        string str;
+        while( getline(in_file, str) )
+            wc.push_back(str);
+        in_file.close();
+    }
+    else { fprintf(stderr, "[rebuild_parser_files] Could not open: <%s> input file\n", wc_file.c_str()); exit(1); }
+
+    in_file.open(wp_file.c_str());
+    if (in_file) {
+        string str;
+        while( getline(in_file, str) )
+            wp.push_back(str);
+        in_file.close();
+    }
+    else { fprintf(stderr, "[rebuild_parser_files] Could not open: <%s> input file\n", wp_file.c_str()); exit(1); }
+
+    in_file.open(wpc_file.c_str());
+    if (in_file) {
+        string str;
+        while( getline(in_file, str) )
+            wpc.push_back(str);
+        in_file.close();
+    }
+    else { fprintf(stderr, "[rebuild_parser_files] Could not open: <%s> input file\n", wpc_file.c_str()); exit(1); }
+
+    in_file.open(wlp_file.c_str());
+    if (in_file) {
+        string str;
+        while( getline(in_file, str) )
+            wlp.push_back(str);
+        in_file.close();
+    }
+    else { fprintf(stderr, "[rebuild_parser_files] Could not open: <%s> input file\n", wlp_file.c_str()); exit(1); }
+
+    in_file.open(wlpc_file.c_str());
+    if (in_file) {
+        string str;
+        while( getline(in_file, str) )
+            wlpc.push_back(str);
+        in_file.close();
+    }
+    else { fprintf(stderr, "[rebuild_parser_files] Could not open: <%s> input file\n", wlpc_file.c_str()); exit(1); }
+}
+
+void SP::write_parser_file(string file, const vector<string> &wc, const vector<string> &wp, const vector<string> &wpc, const vector<string> &wlp, const vector<string> &wlpc) {
+	string wc_complete   = file+"."+SP::SPEXT+".wc";
+	string wp_complete   = file+"."+SP::SPEXT+".wp";
+	string wpc_complete  = file+"."+SP::SPEXT+".wpc";
+	string wlp_complete  = file+"."+SP::SPEXT+".wlp";
+	string wlpc_complete = file+"."+SP::SPEXT+".wlpc";
+
+	ofstream out_file;
+
+	out_file.open(wc_complete.c_str());
+	if (out_file) {
+	    for(int i = 0; i < wc.size(); ++i)
+	        out_file << wc[i] << endl;
+	    out_file.close();
+	}
+	else { fprintf(stderr, "[rebuild_parser_files] Could not open: <%s> output file\n", wc_complete.c_str()); exit(1); }
+
+	out_file.open(wp_complete.c_str());
+	if (out_file) {
+	    for(int i = 0; i < wp.size(); ++i)
+	        out_file << wp[i] << endl;
+	    out_file.close();
+	}
+	else { fprintf(stderr, "[rebuild_parser_files] Could not open: <%s> output file\n", wp_complete.c_str()); exit(1); }
+
+	out_file.open(wpc_complete.c_str());
+	if (out_file) {
+	    for(int i = 0; i < wpc.size(); ++i)
+	        out_file << wpc[i] << endl;
+	    out_file.close();
+	}
+	else { fprintf(stderr, "[rebuild_parser_files] Could not open: <%s> output file\n", wpc_complete.c_str()); exit(1); }
+
+	out_file.open(wlp_complete.c_str());
+	if (out_file) {
+	    for(int i = 0; i < wlp.size(); ++i)
+	        out_file << wlp[i] << endl;
+	    out_file.close();
+	}
+	else { fprintf(stderr, "[rebuild_parser_files] Could not open: <%s> output file\n", wlp_complete.c_str()); exit(1); }
+
+	out_file.open(wlpc_complete.c_str());
+	if (out_file) {
+	    for(int i = 0; i < wlpc.size(); ++i)
+	        out_file << wlpc[i] << endl;
+	    out_file.close();
+	}
+	else { fprintf(stderr, "[rebuild_parser_files] Could not open: <%s> output file\n", wlpc_complete.c_str()); exit(1); }
+}
+
+void SP::rebuild_files() {
+    vector<string> wc, wp, wpc, wlp, wlpc;
+
+	for (map<string, string>::const_iterator it_s = TESTBED::Hsystems.begin(); it_s != TESTBED::Hsystems.end(); ++it_s) {
+		for (map<string, string>::const_iterator it_r = TESTBED::Hrefs.begin(); it_r != TESTBED::Hrefs.end(); ++it_r) {
+			for (int thread = 1; thread <= Config::num_process; ++thread) {
+			    string syst_tok = TB_FORMAT::get_split(/*TESTBED::Hsystems[*it_s]*/it_s->second, Common::TOKEXT, thread);
+			    string source_tok    = TB_FORMAT::get_split(TESTBED::src, Common::TOKEXT, thread);
+			    string reference_tok = TB_FORMAT::get_split(/*TESTBED::Hrefs[REF]*/it_r->second, Common::TOKEXT, thread);
+			  
+			    string source_tgt_tok 	 = TESTBED::replace_extension(source_tok, it_s->first)+"."+Common::TOKEXT;
+			    string reference_tgt_tok = TESTBED::replace_extension(reference_tok, it_s->first)+"."+Common::TOKEXT;
+	        	
+	        	load_parser_file(syst_tok, thread, 			wc, wp, wpc, wlp, wlpc);
+	        	load_parser_file(reference_tgt_tok, thread, wc, wp, wpc, wlp, wlpc);
+	        	load_parser_file(source_tgt_tok, thread,	wc, wp, wpc, wlp, wlpc);
+			}
+
+			write_parser_file(it_s->second,	wc, wp, wpc, wlp, wlpc);
+			write_parser_file(TESTBED::src,	wc, wp, wpc, wlp, wlpc);
+			write_parser_file(it_r->second,	wc, wp, wpc, wlp, wlpc);
+		}
+	}
+}
+
 string SP::create_PoS_file(string input, string L, string C) {
 	// description _ creates a one-sentence per line PoS file, and returns its name
 	string wlpcfile = input+"."+SP::SPEXT+".wlpc";
@@ -1148,7 +1278,7 @@ void SP::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 					}
 				}
 
-				if (GO_NIST and DO_NIST_METRICS) {
+				if (!Config::num_process and GO_NIST and DO_NIST_METRICS) {
 					FILE_parse_split(it_r->second, Config::LANG, Config::CASE);
 				}
 			}
@@ -1178,7 +1308,7 @@ void SP::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 		        }
 			}
 
-			if (GO_NIST and DO_NIST_METRICS) {
+			if (!Config::num_process and GO_NIST and DO_NIST_METRICS) {
 				FILE_parse_split(TESTBED::Hsystems[TGT], Config::LANG, Config::CASE);
 				FILE_compute_MultiNIST_metrics(TGT, REF, hOQ);
 				remove_parse_plit_file(TESTBED::Hsystems[TGT]);
@@ -1192,6 +1322,47 @@ void SP::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 	}
 }
 
+void SP::doNIST(string TGT, string REF, string prefix, Scores &hOQ) {
+	set<string> rF;
+	if (Config::LANG == Common::L_SPA or Config::LANG == Common::L_CAT) rF = SP::rSPspacat;
+	else rF = SP::rSPeng;
+
+	bool GO_NIST = false;
+	for (set<string>::const_iterator it = rF.begin(); it != rF.end(); ++it) {
+		if (Config::Hmetrics.find(*it) != Config::Hmetrics.end()) {
+			boost::match_results<string::const_iterator> results;
+            if (boost::regex_match(*it, results, Common::reSP_NIST)) GO_NIST = true;
+		}
+	}
+
+	if (GO_NIST) {
+		if (Config::verbose) fprintf(stderr, "%s-NIST\n", SP::SPEXT.c_str());
+
+		int DO_NIST_METRICS = Config::remake;
+		if (!DO_NIST_METRICS) {
+			for (set<string>::const_iterator it = rF.begin(); it != rF.end(); ++it) {
+				string reportXML = Common::DATA_PATH+"/"+Common::REPORTS+"/"+TGT+"/"+REF+"/"+*it+"."+Common::XMLEXT;
+				boost::filesystem::path p(reportXML);
+				boost::filesystem::path p_gz(reportXML+"."+Common::GZEXT);
+				if (Config::Hmetrics.find(*it) != Config::Hmetrics.end() and !exists(p) and !exists(p_gz)) {
+					boost::match_results<string::const_iterator> results;
+		            if (boost::regex_match(*it, results, Common::reSP_NIST)) DO_NIST_METRICS = 1;
+		        }
+			}
+		}
+		if (DO_NIST_METRICS) {
+
+			for (map<string, string>::const_iterator it_r = TESTBED::Hrefs.begin(); it_r != TESTBED::Hrefs.end(); ++it_r)
+				FILE_parse_split(it_r->second, Config::LANG, Config::CASE);
+
+			FILE_parse_split(TESTBED::Hsystems[TGT], Config::LANG, Config::CASE);
+			FILE_compute_MultiNIST_metrics(TGT, REF, hOQ);
+			remove_parse_plit_file(TESTBED::Hsystems[TGT]);
+			for (map<string, string>::const_iterator it_r = TESTBED::Hrefs.begin(); it_r != TESTBED::Hrefs.end(); ++it_r)
+				remove_parse_plit_file(it_r->second);
+	    }
+	}
+}
 			/*for (int i = 0; i < scores.size(); ++i) {
                             fprintf(stderr, "--- SCORES[%d] ---\n", i);
                             for(map<string, double>::const_iterator it = scores[i].begin(); it != scores[i].end(); ++it)

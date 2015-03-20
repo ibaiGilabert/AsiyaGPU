@@ -180,10 +180,7 @@ void Core::process_multi_metrics(string HYP, string REF) {
 	//string erase = "rm ";
 	fm_qw.resize(Config::num_process);
 	for (int i = 1; i <= Config::num_process; ++i) {
-		///fprintf(stderr, "get_split (%s): sys: %s/ ext: %s/ thread: %d\n", HYP.c_str(), TESTBED::Hsystems[HYP].c_str(), Common::TXTEXT.c_str(), i);
-		//string TGT_split = TB_FORMAT::get_split(TESTBED::Hsystems[HYP], Common::TXTEXT, i);
-
-																	// REF > 1 NO FUNCIONARA !!!!!
+																	// REF > 1 NO FUNCIONARA !!!!! (o si)
 		
 		for (set<string>::const_iterator it_fm = Config::Fmetrics.begin(); it_fm != Config::Fmetrics.end(); ++it_fm) {
 			string config_file = proc.make_config_file(HYP, REF, *it_fm, i);
@@ -192,10 +189,6 @@ void Core::process_multi_metrics(string HYP, string REF) {
 			job_qw[job_id] = HYP;
 			fm_qw[i-1][HYP][*it_fm] = run_file+".e"+job_id;
 		}
-		/*string run_meteor_file = proc.make_run_file(config_file, HYP, REF, i, "METEOR");
-		job_qw.insert(proc.run_job(run_meteor_file, "METEOR")); */
-
-		// Crear cada config i script, despres llançar-lo iterativament per cada metrica.
 	}
 }
 
@@ -361,8 +354,16 @@ double Core::do_scores(Scores &hOQ) {
 			// REBUILD
 			if (Config::verbose) fprintf(stderr, "[REBUILD]\n");
 			double time_ri = omp_get_wtime();
+
 			for (set<string>::const_iterator it_s = Config::systems.begin(); it_s != Config::systems.end(); ++it_s) {
 		        rebuild_hash_scores(*it_s, REF, hOQ);
+
+				// DEPENDENCY METRIC
+		        if (Config::Fmetrics.count("SP")) {		// need to rebuild SP files for NIST execution (sequential)
+		        	SP sp;
+		        	sp.rebuild_files();
+	    		   	sp.doNIST(*it_s, REF, "", hOQ);
+		    	}
 
 				// TIME	
 				max_split_time[*it_s] = Common::NOT_DEFINED;

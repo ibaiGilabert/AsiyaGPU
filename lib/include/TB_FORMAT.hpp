@@ -38,6 +38,7 @@ public:
 	void split_txt_idx(string file);
 	
 	static string get_split(string file, string ext, int thread);
+	static char* get_parser_file(string file, string parser, string ext, string type, int thread);
 	static char* get_serial(string METRIC, string TGT, string REF, int thread);
 	static int get_thread(string file);
 	//static string get_formated_thread(string file);

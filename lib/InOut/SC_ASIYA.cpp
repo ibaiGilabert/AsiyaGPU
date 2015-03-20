@@ -4,6 +4,7 @@
 
 #include <fstream>
 #include <sstream>
+//#include <queue>
 
 #include <boost/filesystem.hpp>
 #include <boost/algorithm/string.hpp>
@@ -371,8 +372,6 @@ vector<double> SC_ASIYA::read_scores_list(string TGT, string REF, string METRIC,
         xmlFreeDoc(doc);
     }
 }
-
-
 
 /*
     while (i < idx.size()) {

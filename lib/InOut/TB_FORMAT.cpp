@@ -117,6 +117,13 @@ string TB_FORMAT::get_split(string file, string ext, int thread) {
     return string(split_file);
 }
 
+char* TB_FORMAT::get_parser_file(string file, string parser, string ext, string type, int thread) {
+    // EX (upv-combo, tok, SP, conll, 1)
+    char* buffer = new char[150];
+    sprintf(buffer, "%s.%.3d.%s.%s.%s", file.c_str(), thread, ext.c_str(), parser.c_str(), type.c_str());
+    return buffer;
+}
+
 char* TB_FORMAT::get_serial(string METRIC, string TGT, string REF, int thread) {
     char* buffer = new char[150];
     sprintf(buffer, "serialized_%s_%s.%.3d_%s.%.3d.%s", METRIC.c_str(), TGT.c_str(), thread, REF.c_str(), thread, TGT.c_str());

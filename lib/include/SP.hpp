@@ -28,6 +28,9 @@ private:
 	static const string SVMT, 	BIOS;
 	int USE_LEMMAS, USE_DICTS, USE_CHUNKS;
 
+	void load_parser_file(string file, int thread, vector<string> &wc, vector<string> &wp, vector<string> &wpc, vector<string> &wlp, vector<string> &wlpc);
+	void write_parser_file(string file, const vector<string> &wc, const vector<string> &wp, const vector<string> &wpc, const vector<string> &wlp, const vector<string> &wlpc);
+
 	int FILE_parse_BKLY(string input, string L, string C);
 	int FILE_parse_SVM(string input, string L, string C);
 
@@ -49,11 +52,14 @@ public:
 	~SP();
 
 	void doMetric(string TGT, string REF, string prefix, Scores &hOQ);
+	void doNIST(string TGT, string REF, string prefix, Scores &hOQ);
 
 	void FILE_merge_BIOS(string input1, string input2, string output);		// NE
 	
 	void FILE_parse(string input, string L, string C);		// NE
 	void FILE_parse_and_read(string input, string L, string C, vector<sParsed> &FILE);	// NE
+
+	void rebuild_files();		// Core
 	
 	string create_PoS_file(string input, string L, string C);		// CE
 	string create_chunk_file(string input, string L, string C);		// CE
