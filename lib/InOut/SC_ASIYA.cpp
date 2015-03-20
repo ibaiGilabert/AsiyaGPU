@@ -241,7 +241,7 @@ void SC_ASIYA::read_report(string TGT, string REF, string METRIC, Scores &hOQ) {
     boost::filesystem::path p (report_xml);
     boost::filesystem::path p_gz (report_xml_gz);
 
-    srand(time(NULL));
+    //srand(time(NULL));
     double nr = rand() % (Common::NRAND + 1);   //random number [0, Common::NRAND];
     string randomXML, randomXML2;
 
@@ -318,7 +318,7 @@ vector<double> SC_ASIYA::read_scores_list(string TGT, string REF, string METRIC,
     string report_xml = Common::DATA_PATH+"/"+Common::REPORTS+"/"+TGT+"/"+REF+"/"+METRIC+"."+Common::XMLEXT;
 
     if (!exists(boost::filesystem::path(report_xml)) or exists(boost::filesystem::path(report_xml+"."+Common::GZEXT))) {
-        srand(time(NULL));
+        //srand(time(NULL));
         string randomXML, randomXML2;
         if (Config::verbose) fprintf(stderr, "reading XML REPORT <%s>\n", report_xml.c_str());
     

@@ -187,7 +187,7 @@ void CE::load_bidict(string source_lang, string target_lang, map<string, map<str
 void CE::compute_language_modeling_features(string file, string lang, string cs, string variant, double &SYSoov, double &SYSlogp, double &SYSippl, vector<double> &SEGSoov, vector<double> &SEGSlogp, vector<double> &SEGSippl) {
 	// description _ compute language modeling features (logp, inverse perplexity and oov proportion)
 	//               variants -> (raw, pos, chunk) according to the type of linguistic units
-	srand(time(NULL));
+	//srand(time(NULL));
 	double nr = rand() % (Common::NRAND + 1);
 	stringstream ss_tmp_out;	ss_tmp_out << file << "." << CE::LM_ext << "." << nr;
 	string tmp_out = ss_tmp_out.str();

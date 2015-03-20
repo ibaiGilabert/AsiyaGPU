@@ -162,7 +162,7 @@ void BLEU::computeBLEU(string TGT, vector<double> &SYS, vector<vector<double> > 
 	string toolBLEU = tBLEU.str();
 	fprintf(stderr, "toolBLEU -> %s\n", toolBLEU.c_str());
 
-	srand(time(NULL));
+	//srand(time(NULL));
 	double nr = rand() % (Common::NRAND + 1);	//random number [0, Common::NRAND];
 	stringstream ssRef, ssSrc, ssOut, ssReport;
 

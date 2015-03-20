@@ -70,6 +70,8 @@
 
 void Config::default_config() {
 
+    srand(time(NULL));
+
 	//Config CONFIG;
 
     /*my $ug = new Data::UUID;

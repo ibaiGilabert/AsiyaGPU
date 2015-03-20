@@ -82,7 +82,7 @@ void GTM::computeGTM(string TGT, int e, double &SYS, vector<double> &SEG) {
 	string t_id;
     if (Config::serialize) t_id = "_" + TGT;//TB_FORMAT::get_formated_thread(TGT);
 
-	srand(time(NULL));
+	//srand(time(NULL));
 	vector<string> LrefTGMsgml;
 	for (map<string, string>::const_iterator it = TESTBED::Hrefs.begin(); it != TESTBED::Hrefs.end(); ++it) {
 		string ref = it->second;

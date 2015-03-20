@@ -358,10 +358,15 @@ double Core::do_scores(Scores &hOQ) {
 			for (set<string>::const_iterator it_s = Config::systems.begin(); it_s != Config::systems.end(); ++it_s) {
 		        rebuild_hash_scores(*it_s, REF, hOQ);
 
+    fprintf(stderr, "[DEPENDENCY METRIC]\n");
+
 				// DEPENDENCY METRIC
 		        if (Config::Fmetrics.count("SP")) {		// need to rebuild SP files for NIST execution (sequential)
 		        	SP sp;
+		fprintf(stderr, "TO REBUILD FILES\n");
 		        	sp.rebuild_files();
+
+        fprintf(stderr, "TO DO NIST\n");
 	    		   	sp.doNIST(*it_s, REF, "", hOQ);
 		    	}
 

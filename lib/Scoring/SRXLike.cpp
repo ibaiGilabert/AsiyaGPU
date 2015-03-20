@@ -174,7 +174,7 @@ void SRXLike::parse_SR(string input, string L, string C, vector<sParsed> &FILE_S
 	// description _ responsible for SR
 	//               (WORD + PoS)  ->  (WORD + SR)
 	string srlfile = input+"."+SRXLike::SREXT;
-	srand(time(NULL));
+	//srand(time(NULL));
 
 	if (L == Common::L_SPA or L == Common::L_CAT) {
 		if (!exists(boost::filesystem::path(srlfile)) and !exists(boost::filesystem::path(srlfile+"."+Common::GZEXT))) {

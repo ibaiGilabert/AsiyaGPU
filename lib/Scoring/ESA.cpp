@@ -152,7 +152,7 @@ void ESA::computeESA(string metric, string TGT, string ref, vector<double> &SEG)
 		system(sys_aux.c_str());
 	}
 
-	srand(time(NULL));
+	//srand(time(NULL));
 	stringstream ssReport;
 	ssReport << Common::DATA_PATH << "/" << Common::TMP << "/" << rand()%(Common::NRAND + 1) << "." << ESA::ESAEXT << t_id << "." << Common::REPORTEXT;
 	string reportESA = ssReport.str();

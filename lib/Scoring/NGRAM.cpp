@@ -118,7 +118,7 @@ void NGRAM::read_NGRAM_segments(string reportNGRAM, string opt, map<string, vect
 }
 
 void NGRAM::computeNGRAM(string opt, string ref, string TGT, int issrcbased, map<string, vector<double> > &SEGS) {
-	srand(time(NULL));
+	//srand(time(NULL));
 	double nr = rand() % (Common::NRAND + 1);	//random number [0, Common::NRAND];
 	string t_id;
     if (Config::serialize) t_id = "_" + TGT;//TB_FORMAT::get_formated_thread(TGT);

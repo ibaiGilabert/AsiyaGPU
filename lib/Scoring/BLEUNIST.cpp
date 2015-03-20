@@ -49,7 +49,7 @@ pair<MetricScore, MetricScore> BLEUNIST::computeBLEUNIST(string TGT) {
 
 	cout << "toolBLEUNIST ->" << toolBLEUNIST << endl << endl;
 
-	srand(time(NULL));
+	//srand(time(NULL));
 	double nr = rand() % (Common::NRAND + 1);	//random number [0, Common::NRAND];
 	stringstream ssSrc, ssOut, ssRef;
 	ssSrc << Common::DATA_PATH << "/" << Common::TMP << "/" << nr << "." << Common::SRCEXT << "." << BLEUNIST::NISTEXT << "." << Common::XMLEXT;

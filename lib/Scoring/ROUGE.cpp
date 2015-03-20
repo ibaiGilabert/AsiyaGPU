@@ -127,7 +127,7 @@ void ROUGE::computeROUGE(string TGT, vector<double> &SYS, vector<vector<double> 
 	string toolROUGE = tROUGE.str();
 	fprintf(stderr, "toolROUGE -> %s\n", toolROUGE.c_str());
 
-	srand(time(NULL));
+	//srand(time(NULL));
 	double nr = rand() % (Common::NRAND + 1);	//random number [0, Common::NRAND];
 	string t_id;
     if (Config::serialize) t_id = "_" + TGT;//TB_FORMAT::get_formated_thread(TGT);

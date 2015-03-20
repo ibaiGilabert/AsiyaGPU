@@ -149,7 +149,7 @@ int TB_FORMAT::get_thread(string file) {
 
 void TB_FORMAT::tokenize_file(string file, string lang) {
     // description _ tokenizes the given file
-    srand(time(NULL));
+    //srand(time(NULL));
     double nr = rand() % (Common::NRAND + 1);       // random number [0, Common::NRAND];
     string basename = boost::filesystem::path(file).filename().string();
     

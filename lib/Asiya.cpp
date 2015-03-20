@@ -88,7 +88,6 @@ int main(int argc, char *argv[]) {
 	int narg = 1;
 	if (argc < narg) usage;
 
-
 	Config CONFIG;
 	vector<string> metaeval_options, optimize_options;
 

@@ -375,7 +375,7 @@ void TB_NIST::SGML_f_create_mteval_doc(string input, string output, int type) {
     xmlNewProp(root_node, BAD_CAST "srclang", BAD_CAST "dummylang");
     xmlNewProp(root_node, BAD_CAST "trglang", BAD_CAST "dummylang");
 
-    srand(time(NULL));
+    //srand(time(NULL));
     //string randomInput, randomInput2;
 
     SGML_f_create_create_doc(input, output, sysid, doc, root_node);
@@ -417,7 +417,7 @@ void TB_NIST::SGML_f_create_mteval_multidoc(const map<string, string> &HREF, str
     xmlNewProp(root_node, BAD_CAST "srclang", BAD_CAST "dummylang");
     xmlNewProp(root_node, BAD_CAST "trglang", BAD_CAST "dummylang");
 
-    srand(time(NULL));
+    //srand(time(NULL));
     //string randomInput, randomInput2;
 
     //for (map<string, string>::const_iterator it = TESTBED::Hrefs.begin(); it != TESTBED::Hrefs.end(); ++it) {
@@ -437,7 +437,7 @@ void TB_NIST::SGML_GTM_f_create_mteval_doc(string input, string output) {
     xmlNodePtr root_node = NULL;
     xmlDocSetRootElement(doc, root_node);
 
-    srand(time(NULL));
+    //srand(time(NULL));
     //SGML_f_create_create_doc(input, output, "dummysys", doc, root_node);
 
     string randomInput, randomInput2;
@@ -620,7 +620,7 @@ void TB_NIST::f_create_mteval_doc(string input, string output, string TGT, strin
         cout << "\tcas: " << cas << endl;
         cout << "\ttype: " << type << endl << ")" << endl;
     */
-    srand(time(NULL));
+    //srand(time(NULL));
     f_create_create_doc(input, output, TGT, cas, type);
 }
 
@@ -644,7 +644,7 @@ void TB_NIST::f_create_mteval_multidoc(const map<string, string> &HREF, string o
         cout << "\tcas: " << cas << endl;
         cout << "\ttype: " << type << endl << ")" << endl;
     */
-    srand(time(NULL));
+    //srand(time(NULL));
     //for (map<string, string>::const_iterator it = TESTBED::Hrefs.begin(); it != TESTBED::Hrefs.end(); ++it) {
     for (map<string, string>::const_iterator it = HREF.begin(); it != HREF.end(); ++it) {
         f_create_create_doc(it->second, output, it->first, cas, type);

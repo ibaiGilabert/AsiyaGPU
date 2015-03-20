@@ -26,7 +26,7 @@ const set<string> TER::rTER = create_rTER();
 
 void TER::computeTER(string TGT, string variant, int do_neg, MetricScore &res) {
 	// description _ computes -TERp score (multiple references)
-	srand(time(NULL));
+	//srand(time(NULL));
 	double nr = rand() % (Common::NRAND + 1);	//random number [0, Common::NRAND];
 
 	string sysid = TESTBED::IDX[TGT][1][2];

@@ -175,7 +175,7 @@ void NIST::computeNIST(string TGT, string out, const map<string, string> &HREF, 
 
 	//cout << "toolNIST ->" << toolNIST << endl << endl;
 
-	srand(time(NULL));
+	//srand(time(NULL));
 	double nr = rand() % (Common::NRAND + 1);	//random number [0, Common::NRAND];
 	stringstream ssRef, ssSrc, ssOut, ssReport;
 	ssRef << Common::DATA_PATH << "/" << Common::TMP << "/" << nr << "." << Common::REFEXT << "." << NIST::NISTEXT << "." << Common::SGMLEXT;

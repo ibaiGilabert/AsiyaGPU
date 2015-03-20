@@ -70,7 +70,7 @@ void METEOR::computeMETEOR(string TGT, string variant, MetricScore &res) {
 	if (METEOR::rLANG.find(Config::LANG) != METEOR::rLANG.end()) lang = "-l " + METEOR::rLANG[Config::LANG];
     if (Config::serialize) t_id = "_" + TGT;//TB_FORMAT::get_formated_thread(TGT);
 
-	srand(time(NULL));
+	//srand(time(NULL));
 	double nr = rand() % (Common::NRAND + 1);	//random number [0, Common::NRAND];
 
 	string sysid = TESTBED::IDX[TGT][1][2];
