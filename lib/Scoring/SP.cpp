@@ -470,7 +470,8 @@ void SP::FILE_parse_BIOS(string input, string L, string C) {
 			string sys_aux = Common::GUNZIP+" "+wp_file+"."+Common::GZEXT;
 			system(sys_aux.c_str());
 		}
-		string command = "cat "+ wp_file+" | java -Dfile.encoding=UTF-8 -Xmx1024m -cp "+Config::tools+"/"+SP::BIOS+"/output/classes/:"+ 
+		string Xmx = "-Xmx4G";	// -Xmx1024m
+		string command = "cat "+ wp_file+" | java -Dfile.encoding=UTF-8 "+Xmx+" -cp "+Config::tools+"/"+SP::BIOS+"/output/classes/:"+ 
                              Config::tools+"/mill/output/classes:"+Config::tools+"/"+SP::BIOS+"/jars/maxent-2.3.0.jar:"+
                              Config::tools+"/"+SP::BIOS+"/jars/trove.jar:"+Config::tools+"/"+SP::BIOS+"/jars/antlr-2.7.5.jar:"+
                              Config::tools+"/"+SP::BIOS+"/jars/log4j.jar bios.chunker.Chunker"+

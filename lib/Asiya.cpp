@@ -97,7 +97,7 @@ int main(int argc, char *argv[]) {
 
 	// -- process configuration options -------------------------------------------------------------------
 	process_configuration();
-	exit(1);	//We should end asiya properly...
+	//exit(1);	//We should end asiya properly...
 }
 
 

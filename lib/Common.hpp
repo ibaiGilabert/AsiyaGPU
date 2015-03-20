@@ -179,6 +179,10 @@ public:
 	static const string LeM;
 	static const double NOT_DEFINED;
 
+	static const boost::regex reTB_tok1;
+	static const boost::regex reTB_tok2;
+	static const boost::regex reTB_tok3;
+	static const boost::regex reTB_tok4;
 	static const boost::regex reBLEU1;
 	static const boost::regex reBLEU2;
 	static const boost::regex reBLEU3;

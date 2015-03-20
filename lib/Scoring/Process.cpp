@@ -121,21 +121,44 @@ string Process::run_job_dep(string run_file, string metric, string dep) {
     return getJobID(qsub_r);
 }
 
-string Process::make_config_file(string SYS, string REF, string metric_set, int thread) {
+string Process::make_config_file(string TGT, string REF, string metric_set, int thread) {
     // build config file for one thread
     // return: config_file name
-    char buffer[100];
-    sprintf(buffer, "%s.%.3d.%s", TESTBED::Hsystems[SYS].c_str(), thread, Common::TXTEXT.c_str());   // get the system split
+    //char buffer[100];
+    //sprintf(buffer, "%s.%.3d.%s", TESTBED::Hsystems[SYS].c_str(), thread, Common::TXTEXT.c_str());   // get the system split
+    string source_txt    = TB_FORMAT::get_split(TESTBED::src, Common::TXTEXT, thread);
+    string reference_txt = TB_FORMAT::get_split(TESTBED::Hrefs[REF], Common::TXTEXT, thread);
+    string syst_txt      = TB_FORMAT::get_split(TESTBED::Hsystems[TGT], Common::TXTEXT, thread);
+  
+    string source_tgt_txt = TESTBED::replace_extension(source_txt, TGT)+"."+Common::TXTEXT;
+    string reference_tgt_txt = TESTBED::replace_extension(reference_txt, TGT)+"."+Common::TXTEXT;
 
-    char config_name[100];
-    sprintf(config_name, "Asiya_%s_%s_%s_%.3d.config", metric_set.c_str(), SYS.c_str(), REF.c_str(), thread);
-    //char c_thread[8];       sprintf(c_thread, "%.3d", thread);
-    //strcat(config_name, c_thread);
+    // idx
+    string source_idx    = TB_FORMAT::get_split(TESTBED::src, Common::IDXEXT, thread);
+    string reference_idx = TB_FORMAT::get_split(TESTBED::Hrefs[REF], Common::IDXEXT, thread);
 
-    string source = TB_FORMAT::get_split(TESTBED::src, Common::TXTEXT, thread);
-    string reference = TB_FORMAT::get_split(TESTBED::Hrefs[REF], Common::TXTEXT, thread);
-    string syst = TB_FORMAT::get_split(TESTBED::Hsystems[SYS], Common::TXTEXT, thread);
+    string source_tgt_idx = TESTBED::replace_extension(source_idx, TGT)+"."+Common::IDXEXT;
+    string reference_tgt_idx = TESTBED::replace_extension(reference_idx, TGT)+"."+Common::IDXEXT;
+    
 
+    // copy txt files    
+    string cmd, err;
+    cmd = "cp "+reference_txt+" "+reference_tgt_txt;    err = "[ERROR] could not copy <"+reference_txt+"> into <"+reference_tgt_txt+">";
+    Common::execute_or_die(cmd, err);
+    
+    cmd = "cp "+source_txt+" "+source_tgt_txt;          err = "[ERROR] could not copy <"+source_txt+"> into <"+source_tgt_txt+">";
+    Common::execute_or_die(cmd, err);
+
+    // copy idx files
+    cmd = "cp "+reference_idx+" "+reference_tgt_idx;    err = "[ERROR] could not copy <"+reference_idx+"> into <"+reference_tgt_idx+">";
+    Common::execute_or_die(cmd, err);
+
+    cmd = "cp "+source_idx+" "+source_tgt_idx;          err = "[ERROR] could not copy <"+source_idx+"> into <"+source_tgt_idx+">";
+    Common::execute_or_die(cmd, err);
+    
+    char config_name[150];
+    sprintf(config_name, "Asiya_%s_%s_%s_%.3d.config", metric_set.c_str(), TGT.c_str(), REF.c_str(), thread);
+    
     ofstream config_file(config_name);
     if (config_file) {
         config_file << "input=raw" << endl << endl;
@@ -144,9 +167,9 @@ string Process::make_config_file(string SYS, string REF, string metric_set, int 
         config_file << "srccase=" << Config::SRCCASE << endl;
         config_file << "trglang=" << Config::LANG << endl;
         config_file << "trgcase=" << Config::CASE << endl << endl;;
-        config_file << "src=" << source << endl;
-        config_file << "ref=" << reference << endl;
-        config_file << "sys=" << syst << endl << endl;
+        config_file << "src=" << source_tgt_txt << endl;
+        config_file << "ref=" << reference_tgt_txt << endl;
+        config_file << "sys=" << syst_txt << endl << endl;
         config_file << "metrics_" << metric_set << "=";
         for(set<string>::const_iterator it = Config::metrics.begin(); it != Config::metrics.end(); ++it)
             config_file << *it << " ";
@@ -171,7 +194,7 @@ string Process::make_run_file(string config_file, string TGT, string REF, int th
         run_file << "#$ -cwd" << endl;
         run_file << "#$ -m eas" << endl;
         run_file << "#$ -M gilabert@cs.upc.edu" << endl;
-        run_file << "#$ -l h_vmem=5G" << endl;                 //LA MEMORIA QUE CADA METRICA DEMANI
+        run_file << "#$ -l h_vmem=10G" << endl;                 //LA MEMORIA QUE CADA METRICA DEMANI
         //run_file << "#$ -q short@node115,short@node116,short@node117,short@node315,short@node316" << endl << endl;
         //run_file << endl << ". /home/soft/asiya/ASIYA12.04.PATH" << endl;
 

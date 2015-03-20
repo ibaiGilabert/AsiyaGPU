@@ -126,8 +126,8 @@ void Core::find_max_scores(Scores &hOQ) {
 			find_max_metric_scores(hOQ, ref_s, all_other_refs);
 		}
 	}
-	hOQ.print_min_scores();
-	hOQ.print_max_scores();
+	//hOQ.print_min_scores();
+	//hOQ.print_max_scores();
 }
 
 void Core::compute_metrics_combination(Scores &hOQ) {
@@ -180,9 +180,11 @@ void Core::process_multi_metrics(string HYP, string REF) {
 	//string erase = "rm ";
 	fm_qw.resize(Config::num_process);
 	for (int i = 1; i <= Config::num_process; ++i) {
-		fprintf(stderr, "get_split (%s): sys: %s/ ext: %s/ thread: %d\n", HYP.c_str(), TESTBED::Hsystems[HYP].c_str(), Common::TXTEXT.c_str(), i );
-		string TGT_split = TB_FORMAT::get_split(TESTBED::Hsystems[HYP], Common::TXTEXT, i);
+		///fprintf(stderr, "get_split (%s): sys: %s/ ext: %s/ thread: %d\n", HYP.c_str(), TESTBED::Hsystems[HYP].c_str(), Common::TXTEXT.c_str(), i);
+		//string TGT_split = TB_FORMAT::get_split(TESTBED::Hsystems[HYP], Common::TXTEXT, i);
 
+																	// REF > 1 NO FUNCIONARA !!!!!
+		
 		for (set<string>::const_iterator it_fm = Config::Fmetrics.begin(); it_fm != Config::Fmetrics.end(); ++it_fm) {
 			string config_file = proc.make_config_file(HYP, REF, *it_fm, i);
 			string run_file = proc.make_run_file(config_file, HYP, REF, i, *it_fm);

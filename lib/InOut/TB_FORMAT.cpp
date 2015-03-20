@@ -24,6 +24,7 @@ map<string, string> TB_FORMAT::create_rLANGTOK() {
 map<string, string> TB_FORMAT::rLANGTOK = create_rLANGTOK();
 
 
+//void TB_FORMAT::split_file(const char* in_file, const char* out_file, const char* ext) {
 void TB_FORMAT::split_file(const char* file, const char* ext) {
     // split file for s processes
     double n_segs = TESTBED::get_num_segs();
@@ -47,9 +48,11 @@ cout << "chunk: " << chunk << endl;*/
         int c_file = 1;
         int c_seg = 0;
         //int c_line = 0;
+
         sprintf(buffer, "%s.%.3d.%s", basename_abs.c_str(), c_file, ext);
         //fprintf(stderr, "[SPLIT] input to read <%s> /ext: %s/ output: %s\n", file, ext, buffer);
         output_file.open(buffer);
+        if (!output_file.is_open()) { fprintf(stderr, "couldn't open output file: %s\n", buffer); exit(1); }
 
         if (strcmp (Common::IDXEXT.c_str(), ext) == 0) {
             getline(input_file, header);    //get header
@@ -77,15 +80,15 @@ cout << "chunk: " << chunk << endl;*/
             Config::num_process = c_file;
             fprintf(stderr, "--- NUM_PROCESS UNIFORMED TO CORPUS SIZE (%d) ---\n", Config::num_process);
         }
-    } else { fprintf(stderr, "couldn't open file: %s\n", file); exit(1); }
+    } else { fprintf(stderr, "couldn't open input file: %s\n", file); exit(1); }
     //cout << "-----------------------------" << endl;
 }
 
+//void TB_FORMAT::split_txt_idx(string input, string output) {
 void TB_FORMAT::split_txt_idx(string file) {
     // description _ split input file into ".txt" and ".idx" format. 's' fragments.
-    boost::filesystem::path p (file);
+    //boost::filesystem::path p (file);
     //cout << "[SPLIT]: " << file << endl;
-
     split_file(file.c_str(), Common::TXTEXT.c_str());
     //cout << "[DONE]" << endl;
     //cout << "[SPLIT]: " << p.replace_extension(".idx") << endl;
@@ -115,13 +118,13 @@ string TB_FORMAT::get_split(string file, string ext, int thread) {
 }
 
 char* TB_FORMAT::get_serial(string METRIC, string TGT, string REF, int thread) {
-    char* buffer = new char[128];
-    sprintf(buffer, "serialized_%s_%s.%.3d_%s.%.3d", METRIC.c_str(), TGT.c_str(), thread, REF.c_str(), thread);
+    char* buffer = new char[150];
+    sprintf(buffer, "serialized_%s_%s.%.3d_%s.%.3d.%s", METRIC.c_str(), TGT.c_str(), thread, REF.c_str(), thread, TGT.c_str());
     return buffer;
 }
 
 char* TB_FORMAT::make_serial(string METRIC, string TGT, string REF) {
-    char* buffer = new char[128];
+    char* buffer = new char[150];
     sprintf(buffer, "serialized_%s_%s_%s", METRIC.c_str(), TGT.c_str(), REF.c_str());
     return buffer;
 }
@@ -158,13 +161,12 @@ void TB_FORMAT::tokenize_file(string file, string lang) {
         string str;
         while ( getline(i_file, str) ) {
             if (lang == Common::L_ENG) {     // special cases
-                boost::regex re("");
-                str = boost::regex_replace(str, re, "");
-                // ...
-
+                str = boost::regex_replace(str, Common::reTB_tok1, "'s ");
+                str = boost::regex_replace(str, Common::reTB_tok2, "'re ");
+                str = boost::regex_replace(str, Common::reTB_tok3, "'ll ");
+                str = boost::regex_replace(str, Common::reTB_tok4, "'nt ");
             }
             o_file << str << endl;
-            
         }
         o_file.close();
         i_file.close();

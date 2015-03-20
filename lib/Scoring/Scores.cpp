@@ -276,7 +276,7 @@ void Scores::load_struct_scores(char* filename) {
                 //string score = strs[3];
                 //hOQ.set_seg_score(n_seg, strs[0], strs[1], strs[2], strs[3]);
 		//fprintf(stderr, "\t->loaded n_seg: %s/ metric: %s/ tgt: %s/ ref: %s/ score: %s ->", strs[0].c_str(), strs[1].c_str(), strs[2].c_str(), strs[3].c_str(), strs[4].c_str());
-		seg[atof(strs[0].c_str())-1][strs[1]][strs[2]][strs[3]] = atof(strs[4].c_str());
+		seg[atof(strs[0].c_str())-1][strs[1]][strs[2]][boost::filesystem::path(strs[3]).stem().string()] = atof(strs[4].c_str());
 		//fprintf(stderr, " Check!\n");
 	}
 	score_file.close();

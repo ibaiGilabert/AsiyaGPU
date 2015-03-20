@@ -19,6 +19,7 @@ private:
 	static map<string, string> create_rLANGTOK();
 	
 protected:
+    //void split_file(const char* in_file, const char* out_file, const char* ext);
     void split_file(const char* file, const char* ext);
 
 	static void tokenize_file(string file, string lang);
@@ -33,7 +34,9 @@ public:
 
 	// split data files
 	//xmlNodePtr split_xml(xmlNodePtr a_node, ofstream &out_txt, ofstream &out_idx, string id, string docid, string genre, int chunk, int seg);
-    void split_txt_idx(string file);
+    //void split_txt_idx(string input, string output);
+	void split_txt_idx(string file);
+	
 	static string get_split(string file, string ext, int thread);
 	static char* get_serial(string METRIC, string TGT, string REF, int thread);
 	static int get_thread(string file);

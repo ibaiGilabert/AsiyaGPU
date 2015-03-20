@@ -612,6 +612,7 @@ void SR::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 			}
 		}
 
+		SRXLike srl;
 		if (DO_METRICS) {
 			// parse
 			vector<sParsed> FDout_S(TESTBED::wc[TGT]);
@@ -619,8 +620,7 @@ void SR::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 			vector< vector<vector<string> > > FDout_V(TESTBED::wc[TGT]);
 
 			if (Config::LANG == Common::L_SPA or Config::LANG == Common::L_CAT) {
-				//FDout = SRXLike::parse_SR();
-				//fprintf(stderr, "USE SRXlike parse_SR\n");
+				srl.parse_SR(TESTBED::Hsystems[TGT], Config::LANG, Config::CASE, FDout_S, FDout_R, FDout_V);
 			}
 			else if (Config::LANG == Common::L_ENG) {
 				// RESIZE all vectors output to TESTBED::wc[TGT]
@@ -676,7 +676,7 @@ void SR::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 				vector< vector<vector<string> > > FDref_V(TESTBED::wc[TGT]);
 				
 				if (Config::LANG == Common::L_SPA or Config::LANG == Common::L_CAT) {
-					//FDref = SRXLike::parse_SR();
+					srl.parse_SR(it_r->second, Config::LANG, Config::CASE, FDref_S, FDref_R, FDref_V);
 				}
 				else if (Config::LANG == Common::L_ENG) {
 					parse_SR(it_r->second, Config::LANG, Config::CASE, FDref_S, FDref_R, FDref_V);

@@ -217,6 +217,12 @@ const string Common::CE = "CE";
 const string Common::LeM = "LeM";
 const double Common::NOT_DEFINED = -DBL_MIN;
 
+// tokenize file
+const boost::regex Common::reTB_tok1(" +' ?s +");
+const boost::regex Common::reTB_tok2(" +' ?re +");
+const boost::regex Common::reTB_tok3(" +' ?ll +");
+const boost::regex Common::reTB_tok4(" +n ?' ?t +");
+
 // regular expressions
 const boost::regex Common::reBLEU1("^ +BLEU:.*");
 const boost::regex Common::reBLEU2("^\\s+BLEU:\\s+");
