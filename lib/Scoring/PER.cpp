@@ -126,45 +126,39 @@ void PER::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 	// description _ computes -PER score (multiple references)
 	vector<string> mPER(PER::rPER.size());
 
-	int GO, i;
-	GO = i = 0;
-	for (set<string>::const_iterator it = PER::rPER.begin(); it != PER::rPER.end(); ++it, ++i)
-		mPER[i] = *it;
-	for (i = 0; i < mPER.size() and !GO; ++i) {
-		if (Config::Hmetrics.find(mPER[i]) != Config::Hmetrics.end()) GO = 1;
+	int GO = 0;
+	for (set<string>::const_iterator it = PER::rPER.begin(); !GO and it != PER::rPER.end(); ++it) {
+		if (Config::Hmetrics.count(*it)) GO = 1;
 	}
-
+	
 	if (GO) {
 		if (Config::verbose ) fprintf(stderr, "%s...\n", PER::PEREXT.c_str());
 
-		for (i = 0; i < mPER.size(); ++i) {
-			string reportPERxml = Common::DATA_PATH+"/"+Common::REPORTS+"/"+TGT+"/"+REF+"/-"+PER::PEREXT+"."+Common::XMLEXT;
-			if ( (!exists(boost::filesystem::path(reportPERxml)) and !exists(boost::filesystem::path(reportPERxml+"."+Common::GZEXT))) or Config::remake) {
-	    		double SYS;
-	    		vector<double> SEG, d_scores, s_scores;
-	    		computePER(TGT, 1, SYS, SEG);
-				TESTBED::get_seg_doc_scores(SEG, 0, TGT, d_scores, s_scores);
-				if (Config::O_STORAGE == 1) {
-		    		sc_asiya.write_report(TGT, REF, "-PER", SYS, d_scores, s_scores);
-	         		cout << "SC_ASIYA DOCUMENT -PER CREATED" << endl;
-	         	}
-	         	hOQ.save_hash_scores("-PER", TGT, REF, SYS, d_scores, s_scores);
-	   		}
+		string reportPERxml = Common::DATA_PATH+"/"+Common::REPORTS+"/"+TGT+"/"+REF+"/-"+PER::PEREXT+"."+Common::XMLEXT;
+		if ( (!exists(boost::filesystem::path(reportPERxml)) and !exists(boost::filesystem::path(reportPERxml+"."+Common::GZEXT))) or Config::remake) {
+    		double SYS;
+    		vector<double> SEG, d_scores, s_scores;
+    		computePER(TGT, 1, SYS, SEG);
+			TESTBED::get_seg_doc_scores(SEG, 0, TGT, d_scores, s_scores);
+			if (Config::O_STORAGE == 1) {
+	    		sc_asiya.write_report(TGT, REF, "-PER", SYS, d_scores, s_scores);
+         		cout << "SC_ASIYA DOCUMENT -PER CREATED" << endl;
+         	}
+         	hOQ.save_hash_scores("-PER", TGT, REF, SYS, d_scores, s_scores);
+   		}
 
-			reportPERxml = Common::DATA_PATH+"/"+Common::REPORTS+"/"+TGT+"/"+REF+"/"+PER::PEREXT+"."+Common::XMLEXT;
-			if ( (!exists(boost::filesystem::path(reportPERxml)) and !exists(boost::filesystem::path(reportPERxml+"."+Common::GZEXT))) or Config::remake) {
-	    		double SYS;
-	    		vector<double> SEG, d_scores, s_scores;
-	    		computePER(TGT, 0, SYS, SEG);
-				TESTBED::get_seg_doc_scores(SEG, 0, TGT, d_scores, s_scores);
-				if (Config::O_STORAGE == 1) {
-		    		sc_asiya.write_report(TGT, REF, "PER", SYS, d_scores, s_scores);
-	         		cout << "SC_ASIYA DOCUMENT PER CREATED" << endl;
-	         	}
-	         	hOQ.save_hash_scores("PER", TGT, REF, SYS, d_scores, s_scores);
-	   		}
-		}
+		reportPERxml = Common::DATA_PATH+"/"+Common::REPORTS+"/"+TGT+"/"+REF+"/"+PER::PEREXT+"."+Common::XMLEXT;
+		if ( (!exists(boost::filesystem::path(reportPERxml)) and !exists(boost::filesystem::path(reportPERxml+"."+Common::GZEXT))) or Config::remake) {
+    		double SYS;
+    		vector<double> SEG, d_scores, s_scores;
+    		computePER(TGT, 0, SYS, SEG);
+			TESTBED::get_seg_doc_scores(SEG, 0, TGT, d_scores, s_scores);
+			if (Config::O_STORAGE == 1) {
+	    		sc_asiya.write_report(TGT, REF, "PER", SYS, d_scores, s_scores);
+         		cout << "SC_ASIYA DOCUMENT PER CREATED" << endl;
+         	}
+         	hOQ.save_hash_scores("PER", TGT, REF, SYS, d_scores, s_scores);
+   		}
         if (Config::serialize) hOQ.save_struct_scores(TB_FORMAT::make_serial(PER::PEREXT, TGT, REF));
-
 	}
 }

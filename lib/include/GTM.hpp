@@ -4,13 +4,14 @@
 #include "SingleMetric.hpp"
 
 #include <vector>
-#include <map>
+#include <set>
 
 class GTM : public SingleMetric {
 private:
-	static map<string, int> create_rGTM();
+	static set<string> create_rGTM();
+	
 	static const string GTMEXT, TGTM;
-	static const map<string, int> rGTM;
+	static const set<string> rGTM;
 
 	double read_GTM(string reportGTM);
 	vector<double> read_GTM_segments(string reportGTM);

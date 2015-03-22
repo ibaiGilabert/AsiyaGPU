@@ -612,23 +612,19 @@ void Overlap::get_segment_scores(vector< map<string, double> > &scores, string f
 
 void Overlap::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 	// description _ computes lexical overlap (multiple references)
-	int GO , i;
-	GO = i = 0;
-	vector<string> mOl(Overlap::rOl.size());
-	for (set<string>::const_iterator it = Overlap::rOl.begin(); it != Overlap::rOl.end(); ++it, ++i) 
-		mOl[i] = *it;
-	for (i = 0; i < mOl.size() and !GO; ++i) {
-		if (Config::Hmetrics.find(mOl[i]) != Config::Hmetrics.end()) GO = 1;
+	int GO = 0;
+	//vector<string> mOl(Overlap::rOl.size());
+	for (set<string>::const_iterator it = Overlap::rOl.begin(); !GO and it != Overlap::rOl.end(); ++it) { 
+		if (Config::Hmetrics.count(*it)) GO = 1;
 	}
-
+	
 	if (GO) {
 		if (Config::Hmetrics.find(Overlap::OlEXT) != Config::Hmetrics.end()) {
 			if (Config::verbose) fprintf(stderr, "%s\n", Overlap::OlEXT.c_str());
 			//stringstream ssReport;
 			//ssReport << Common::DATA_PATH << "/" << Common::REPORTS << "/" << TGT << "/" << REF << "/" << Overlap::OlEXT << "/" << Common::XMLEXT;
 			string reportXML = Common::DATA_PATH+"/"+Common::REPORTS+"/"+TGT+"/"+REF+"/"+Overlap::OlEXT+"/"+Common::XMLEXT;
-			string reportXML_gz = reportXML+"."+Common::GZEXT;
-	    	if ((!exists(boost::filesystem::path(reportXML)) and !exists(boost::filesystem::path(reportXML_gz))) or Config::remake) {
+			if ((!exists(boost::filesystem::path(reportXML)) and !exists(boost::filesystem::path(reportXML+"."+Common::GZEXT))) or Config::remake) {
 	    		double SYS;
 	    		vector<double> SEG;
 				computeMultiOl(TESTBED::Hsystems[TGT], SYS, SEG);
@@ -646,8 +642,7 @@ void Overlap::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 			if (Config::verbose) fprintf(stderr, "%s\n", Overlap::PlEXT.c_str());
 
 			string reportXML = Common::DATA_PATH+"/"+Common::REPORTS+"/"+TGT+"/"+REF+"/"+Overlap::PlEXT+"/"+Common::XMLEXT;
-			string reportXML_gz = reportXML+"."+Common::GZEXT;
-	    	if ((!exists(boost::filesystem::path(reportXML)) and !exists(boost::filesystem::path(reportXML_gz))) or Config::remake) {
+			if ((!exists(boost::filesystem::path(reportXML)) and !exists(boost::filesystem::path(reportXML+"."+Common::GZEXT))) or Config::remake) {
 	    		double SYS;
 	    		vector<double> SEG;
 	    		computeMultiPl(TESTBED::Hsystems[TGT], SYS, SEG);
@@ -666,8 +661,7 @@ void Overlap::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 			if (Config::verbose) fprintf(stderr, "%s\n", Overlap::RlEXT.c_str());
 
 			string reportXML = Common::DATA_PATH+"/"+Common::REPORTS+"/"+TGT+"/"+REF+"/"+Overlap::RlEXT+"/"+Common::XMLEXT;
-			string reportXML_gz = reportXML+"."+Common::GZEXT;
-	    	if ((!exists(boost::filesystem::path(reportXML)) and !exists(boost::filesystem::path(reportXML_gz))) or Config::remake) {
+			if ((!exists(boost::filesystem::path(reportXML)) and !exists(boost::filesystem::path(reportXML+"."+Common::GZEXT))) or Config::remake) {
 	    		double SYS;
 	    		vector<double> SEG;
 	    		computeMultiRl(TESTBED::Hsystems[TGT], SYS, SEG);
@@ -686,8 +680,7 @@ void Overlap::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 			if (Config::verbose) fprintf(stderr, "%s\n", Overlap::FlEXT.c_str());
 
 			string reportXML = Common::DATA_PATH+"/"+Common::REPORTS+"/"+TGT+"/"+REF+"/"+Overlap::FlEXT+"/"+Common::XMLEXT;
-			string reportXML_gz = reportXML+"."+Common::GZEXT;
-	    	if ((!exists(boost::filesystem::path(reportXML)) and !exists(boost::filesystem::path(reportXML_gz))) or Config::remake) {
+			if ((!exists(boost::filesystem::path(reportXML)) and !exists(boost::filesystem::path(reportXML+"."+Common::GZEXT))) or Config::remake) {
 	    		double SYS;
 	    		vector<double> SEG;
 	    		computeMultiFl(TESTBED::Hsystems[TGT], SYS, SEG);

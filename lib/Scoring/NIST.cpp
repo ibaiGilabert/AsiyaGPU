@@ -17,26 +17,25 @@ const string NIST::NISTEXT = "NIST";
 const string NIST::NISTEXTi = "NISTi";
 const string NIST::TNIST = "mteval-kit";
 
-map<string, int> NIST::create_rNIST() {
-	map<string, int> rNIST;
-	rNIST[NIST::NISTEXT] = 1;
-	rNIST[NIST::NISTEXT + "-1"] = 1;
-	rNIST[NIST::NISTEXT + "-2"] = 1;
-	rNIST[NIST::NISTEXT + "-3"] = 1;
-	rNIST[NIST::NISTEXT + "-4"] = 1;
-	rNIST[NIST::NISTEXT + "-5"] = 1;
-	rNIST[NIST::NISTEXTi + "-2"] = 1;
-	rNIST[NIST::NISTEXTi + "-3"] = 1;
-	rNIST[NIST::NISTEXTi + "-4"] = 1;
-	rNIST[NIST::NISTEXTi + "-5"] = 1;
+set<string> NIST::create_rNIST() {
+	set<string> rNIST;
+	rNIST.insert(NIST::NISTEXT);
+	rNIST.insert(NIST::NISTEXT+"-1");
+	rNIST.insert(NIST::NISTEXT+"-2");
+	rNIST.insert(NIST::NISTEXT+"-3");
+	rNIST.insert(NIST::NISTEXT+"-4");
+	rNIST.insert(NIST::NISTEXT+"-5");
+	rNIST.insert(NIST::NISTEXTi+"-2");
+	rNIST.insert(NIST::NISTEXTi+"-3");
+	rNIST.insert(NIST::NISTEXTi+"-4");
+	rNIST.insert(NIST::NISTEXTi+"-5");
 	return rNIST;
 }
-const map<string, int> NIST::rNIST = create_rNIST();
+const set<string> NIST::rNIST = create_rNIST();
 
-vector<double> NIST::read_nist(string reportNIST) {
+void NIST::read_nist(string reportNIST, vector<double> &SYS) {
 	// description _ read NIST value from report file
     //boost::regex re("^ +NIST:.*");
-
     string str;
     bool individual = false;
     vector<double> lnist(5), lnisti(5);
@@ -70,21 +69,22 @@ vector<double> NIST::read_nist(string reportNIST) {
 	    //for (int i = 0; i < 5; ++i) cout << "lnist[" << i << "]: " << lnist[i] << endl;
 	    //for (int i = 0; i < 5; ++i) cout << "lnisti[" << i << "]: " << lnisti[i] << endl;
 
-    vector<double> l(0);
-    l.insert(l.begin(), lnist.begin(), lnist.end());
+    //vector<double> SYS(0);
+    SYS.clear();
+    SYS.insert(SYS.begin(), lnist.begin(), lnist.end());
 	    /*cout << "l after first insertion: ";
 	    for (int i = 0; i < l.size(); ++i) cout << l[i] << ", ";
 	    cout << endl;*/
 
-    l.insert(l.begin() + 5, lnisti.begin(), lnisti.end());
+    SYS.insert(SYS.begin() + 5, lnisti.begin(), lnisti.end());
 	    /*cout << "l after second insertion: ";
 	    for (int i = 0; i < l.size(); ++i) cout << l[i] << ", ";
 	    cout << endl;*/
 
-	return l;
+	//return l;
 }
 
-vector<vector<double> > NIST::read_nist_segments(string reportNIST) {
+void NIST::read_nist_segments(string reportNIST, vector<vector<double> > &SEG) {
 	// description _ read NIST-5 value from report file (for all segments)
     //boost::regex re1("^ +NIST score using.*");
     //boost::regex re2("^ +cumulative-NIST score using.*");
@@ -93,7 +93,8 @@ vector<vector<double> > NIST::read_nist_segments(string reportNIST) {
     vector<double> lnist1, lnist2, lnist3, lnist4, lnist5;
     vector<double> lnist1i, lnist2i, lnist3i, lnist4i, lnist5i;
 
-    vector<vector<double> > SEG(10);
+    //vector<vector<double> > SEG(10);
+    SEG.resize(10);
 
     string str;
     ifstream file(reportNIST.c_str());
@@ -161,7 +162,7 @@ vector<vector<double> > NIST::read_nist_segments(string reportNIST) {
 			cout << endl;
 		}*/
 
-	return SEG;
+	//return SEG;
 }
 
 void NIST::computeNIST(string TGT, string out, const map<string, string> &HREF, vector<double> &SYS, vector<vector<double> > &SEG) {
@@ -213,8 +214,8 @@ void NIST::computeNIST(string TGT, string out, const map<string, string> &HREF, 
 		system (sysaux.c_str());
 	}
 
-	SYS = read_nist(ssReport.str());
-	SEG = read_nist_segments(ssReport.str());
+	read_nist(ssReport.str(), SYS);
+	read_nist_segments(ssReport.str(), SEG);
 }
 
 
@@ -268,76 +269,36 @@ MetricScore NIST::computeNISTN(string TGT, string out, const map<string, string>
 
 void NIST::doMetric(string TGT, string out, string REF, const map<string, string> &HREF, string prefix, Scores &hOQ) {
    // description _ computes NIST score (by calling NIST mteval script) -> n = 1..4 (multiple references)
-    vector<string> mNIST(NIST::rNIST.size());
-
-	int GO , i;
-	GO = i = 0;
-	for (map<string, int>::const_iterator it = NIST::rNIST.begin(); it != NIST::rNIST.end(); ++it, ++i) mNIST[i] = it->first;
-
-	for (i = 0; i < mNIST.size() and !GO; ++i) {
-		string aux = prefix + mNIST[i];
-		if (Config::Hmetrics.find(aux) != Config::Hmetrics.end()) GO = 1;
+	int GO = 0;
+	for (set<string>::const_iterator it = NIST::rNIST.begin(); !GO and it != NIST::rNIST.end(); ++it) {
+		if (Config::Hmetrics.count(prefix+(*it))) GO = 1;
 	}
 
 	if (GO) {
 		if (Config::verbose) fprintf(stderr, "%s\n", NIST::NISTEXT.c_str());
-		stringstream ss1, ss2, ss3, ss4, ss5, ss2i, ss3i, ss4i, ss5i, ssN;
-		ss1 << Common::DATA_PATH << "/" << Common::REPORTS << "/" << TGT << "/" << REF << "/" << prefix << NIST::NISTEXT << "-1." << Common::XMLEXT;
-		ss2 << Common::DATA_PATH << "/" << Common::REPORTS << "/" << TGT << "/" << REF << "/" << prefix << NIST::NISTEXT << "-2." << Common::XMLEXT;
-		ss3 << Common::DATA_PATH << "/" << Common::REPORTS << "/" << TGT << "/" << REF << "/" << prefix << NIST::NISTEXT << "-3." << Common::XMLEXT;
-		ss4 << Common::DATA_PATH << "/" << Common::REPORTS << "/" << TGT << "/" << REF << "/" << prefix << NIST::NISTEXT << "-4." << Common::XMLEXT;
-		ss5 << Common::DATA_PATH << "/" << Common::REPORTS << "/" << TGT << "/" << REF << "/" << prefix << NIST::NISTEXT << "-5." << Common::XMLEXT;
-		ss2i << Common::DATA_PATH << "/" << Common::REPORTS << "/" << TGT << "/" << REF << "/" << prefix << NIST::NISTEXTi << "-2." << Common::XMLEXT;
-		ss3i << Common::DATA_PATH << "/" << Common::REPORTS << "/" << TGT << "/" << REF << "/" << prefix << NIST::NISTEXTi << "-3." << Common::XMLEXT;
-		ss4i << Common::DATA_PATH << "/" << Common::REPORTS << "/" << TGT << "/" << REF << "/" << prefix << NIST::NISTEXTi << "-4." << Common::XMLEXT;
-		ss5i << Common::DATA_PATH << "/" << Common::REPORTS << "/" << TGT << "/" << REF << "/" << prefix << NIST::NISTEXTi << "-5." << Common::XMLEXT;
-		ssN << Common::DATA_PATH << "/" << Common::REPORTS << "/" << TGT << "/" << REF << "/" << prefix << NIST::NISTEXT << "." << Common::XMLEXT;
 
-		string reportNIST1xml = ss1.str();
-		string reportNIST2xml = ss2.str();
-		string reportNIST3xml = ss3.str();
-		string reportNIST4xml = ss4.str();
-		string reportNIST5xml = ss5.str();
-		string reportNISTi2xml = ss2i.str();
-		string reportNISTi3xml = ss3i.str();
-		string reportNISTi4xml = ss4i.str();
-		string reportNISTi5xml = ss5i.str();
-		string reportNISTNxml = ssN.str();
+		string reportNIST1xml  = Common::DATA_PATH+"/"+Common::REPORTS+"/"+TGT+"/"+REF+"/"+prefix+NIST::NISTEXT+"-1."+Common::XMLEXT;
+		string reportNIST2xml  = Common::DATA_PATH+"/"+Common::REPORTS+"/"+TGT+"/"+REF+"/"+prefix+NIST::NISTEXT+"-2."+Common::XMLEXT;
+		string reportNIST3xml  = Common::DATA_PATH+"/"+Common::REPORTS+"/"+TGT+"/"+REF+"/"+prefix+NIST::NISTEXT+"-3."+Common::XMLEXT;
+		string reportNIST4xml  = Common::DATA_PATH+"/"+Common::REPORTS+"/"+TGT+"/"+REF+"/"+prefix+NIST::NISTEXT+"-4."+Common::XMLEXT;
+		string reportNIST5xml  = Common::DATA_PATH+"/"+Common::REPORTS+"/"+TGT+"/"+REF+"/"+prefix+NIST::NISTEXT+"-5."+Common::XMLEXT;
+		string reportNISTi2xml = Common::DATA_PATH+"/"+Common::REPORTS+"/"+TGT+"/"+REF+"/"+prefix+NIST::NISTEXTi+"-2."+Common::XMLEXT;
+		string reportNISTi3xml = Common::DATA_PATH+"/"+Common::REPORTS+"/"+TGT+"/"+REF+"/"+prefix+NIST::NISTEXTi+"-3."+Common::XMLEXT;
+		string reportNISTi4xml = Common::DATA_PATH+"/"+Common::REPORTS+"/"+TGT+"/"+REF+"/"+prefix+NIST::NISTEXTi+"-4."+Common::XMLEXT;
+		string reportNISTi5xml = Common::DATA_PATH+"/"+Common::REPORTS+"/"+TGT+"/"+REF+"/"+prefix+NIST::NISTEXTi+"-5."+Common::XMLEXT;
+		string reportNISTNxml  = Common::DATA_PATH+"/"+Common::REPORTS+"/"+TGT+"/"+REF+"/"+prefix+NIST::NISTEXT+"."+Common::XMLEXT;
 
-	    boost::filesystem::path reportNIST1xml_path(reportNIST1xml);
-		boost::filesystem::path reportNIST2xml_path(reportNIST2xml);
-	    boost::filesystem::path reportNIST3xml_path(reportNIST3xml);
-	    boost::filesystem::path reportNIST4xml_path(reportNIST4xml);
-	    boost::filesystem::path reportNIST5xml_path(reportNIST5xml);
-	    boost::filesystem::path reportNISTi2xml_path(reportNISTi2xml);
-	    boost::filesystem::path reportNISTi3xml_path(reportNISTi3xml);
-	    boost::filesystem::path reportNISTi4xml_path(reportNISTi4xml);
-	    boost::filesystem::path reportNISTi5xml_path(reportNISTi5xml);
-	    boost::filesystem::path reportNISTNxml_path(reportNISTNxml);
+	    if ((!exists(boost::filesystem::path(reportNIST1xml)) and !exists(boost::filesystem::path(reportNIST1xml+"."+Common::GZEXT))) or
+	    	(!exists(boost::filesystem::path(reportNIST2xml)) and !exists(boost::filesystem::path(reportNIST2xml+"."+Common::GZEXT))) or
+	    	(!exists(boost::filesystem::path(reportNIST3xml)) and !exists(boost::filesystem::path(reportNIST3xml+"."+Common::GZEXT))) or
+	    	(!exists(boost::filesystem::path(reportNIST4xml)) and !exists(boost::filesystem::path(reportNIST4xml+"."+Common::GZEXT))) or
+	    	(!exists(boost::filesystem::path(reportNIST5xml)) and !exists(boost::filesystem::path(reportNIST5xml+"."+Common::GZEXT))) or
+	    	(!exists(boost::filesystem::path(reportNISTi2xml)) and !exists(boost::filesystem::path(reportNISTi2xml+"."+Common::GZEXT))) or
+	    	(!exists(boost::filesystem::path(reportNISTi3xml)) and !exists(boost::filesystem::path(reportNISTi3xml+"."+Common::GZEXT))) or
+	    	(!exists(boost::filesystem::path(reportNISTi4xml)) and !exists(boost::filesystem::path(reportNISTi3xml+"."+Common::GZEXT))) or
+	    	(!exists(boost::filesystem::path(reportNISTi5xml)) and !exists(boost::filesystem::path(reportNISTi5xml+"."+Common::GZEXT))) or
+	    	(!exists(boost::filesystem::path(reportNISTNxml)) and !exists(boost::filesystem::path(reportNISTNxml+"."+Common::GZEXT))) or Config::remake) {
 
-		boost::filesystem::path reportNIST1xml_ext(reportNIST1xml + "." + Common::GZEXT);
-	    boost::filesystem::path reportNIST2xml_ext(reportNIST2xml + "." + Common::GZEXT);
-	    boost::filesystem::path reportNIST3xml_ext(reportNIST3xml + "." + Common::GZEXT);
-	    boost::filesystem::path reportNIST4xml_ext(reportNIST4xml + "." + Common::GZEXT);
-	    boost::filesystem::path reportNIST5xml_ext(reportNIST5xml + "." + Common::GZEXT);
-	    boost::filesystem::path reportNISTi2xml_ext(reportNISTi2xml + "." + Common::GZEXT);
-	    boost::filesystem::path reportNISTi3xml_ext(reportNISTi3xml + "." + Common::GZEXT);
-	    boost::filesystem::path reportNISTi4xml_ext(reportNISTi4xml + "." + Common::GZEXT);
-		boost::filesystem::path reportNISTi5xml_ext(reportNISTi5xml + "." + Common::GZEXT);
-	    boost::filesystem::path reportNISTNxml_ext(reportNISTNxml + "." + Common::GZEXT);
-
-
-	    if ( (!exists(reportNIST1xml_path) and !exists(reportNIST1xml_ext)) or \
-	    (!exists(reportNIST2xml_path) and !exists(reportNIST2xml_ext)) or \
-	    (!exists(reportNIST3xml_path) and !exists(reportNIST3xml_ext)) or \
-	    (!exists(reportNIST4xml_path) and !exists(reportNIST4xml_ext)) or \
-	    (!exists(reportNIST5xml_path) and !exists(reportNIST5xml_ext)) or \
-	    (!exists(reportNISTi2xml_path) and !exists(reportNISTi2xml_ext)) or \
-	    (!exists(reportNISTi3xml_path) and !exists(reportNISTi3xml_ext)) or \
-	    (!exists(reportNISTi4xml_path) and !exists(reportNISTi4xml_ext)) or \
-	    (!exists(reportNISTi5xml_path) and !exists(reportNISTi5xml_ext)) or \
-	    (!exists(reportNISTNxml_path) and !exists(reportNISTNxml_ext)) or Config::remake) {
-			//my ($SYS, $SEGS) = NIST::computeMultiNIST($src, $out, $Href, $remakeREPORTS, $config->{CASE}, $tools, $verbose, $hOQ );
 	    	vector<double> SYS;
 	    	vector<vector<double> > SEG;
 	    	computeNIST(TGT, out, HREF, SYS, SEG);

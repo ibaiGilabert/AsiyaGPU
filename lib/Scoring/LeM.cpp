@@ -145,12 +145,9 @@ void LeM::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 	// description _ computes -LeM score (multiple references)
 	vector<string> mLeM(LeM::rLeM.size());
 
-	int GO, i;
-	GO = i = 0;
-	for (set<string>::const_iterator it = LeM::rLeM.begin(); it != LeM::rLeM.end(); ++it, ++i)
-		mLeM[i] = *it;
-	for (i = 0; i < mLeM.size() and !GO; ++i) {
-		if (Config::Hmetrics.find(mLeM[i]) != Config::Hmetrics.end()) GO = 1;
+	int GO = 0;
+	for (set<string>::const_iterator it = LeM::rLeM.begin(); !GO and it != LeM::rLeM.end(); ++it) {
+		if (Config::Hmetrics.count(*it)) GO = 1;
 	}
 
 	if (GO) {

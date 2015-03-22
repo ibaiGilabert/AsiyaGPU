@@ -44,7 +44,7 @@ cout << "chunk: " << chunk << endl;*/
     ifstream input_file(file);
     if (input_file) {
         string str, header;
-        char buffer[128];
+        char buffer[150];
         int c_file = 1;
         int c_seg = 0;
         //int c_line = 0;
@@ -101,7 +101,7 @@ void TB_FORMAT::split_txt_idx(string file) {
 string TB_FORMAT::get_split(string file, string ext, int thread) {
     boost::filesystem::path p (file);
     string basename = p.parent_path().string() + "/" + p.stem().string();
-    char split_file[100];
+    char split_file[150];
     if (ext == Common::TXTEXT) {
         sprintf(split_file,"%s.%.3d.%s", basename.c_str(), thread, Common::TXTEXT.c_str());
     } else if (ext == Common::IDXEXT) {
@@ -117,10 +117,10 @@ string TB_FORMAT::get_split(string file, string ext, int thread) {
     return string(split_file);
 }
 
-char* TB_FORMAT::get_parser_file(string file, string parser, string ext, string type, int thread) {
+char* TB_FORMAT::get_parser_file(const char* file, string parser, string ext, string type, int thread) {
     // EX (upv-combo, tok, SP, conll, 1)
     char* buffer = new char[150];
-    sprintf(buffer, "%s.%.3d.%s.%s.%s", file.c_str(), thread, ext.c_str(), parser.c_str(), type.c_str());
+    sprintf(buffer, "%s.%.3d.%s.%s.%s", file, thread, ext.c_str(), parser.c_str(), type.c_str());
     return buffer;
 }
 

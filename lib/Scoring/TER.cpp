@@ -75,7 +75,7 @@ void TER::computeTER(string TGT, string variant, int do_neg, MetricScore &res) {
     sc<<"java -Dfile.encoding=UTF-8 -jar "<<mem_options<<Config::tools<<"/"<<TER::TTERp<<"/dist/lib/terp.jar "<<phrase_db<<" "<<wn_dict<<" "<<caseopt<<" -n "<<Common::DATA_PATH<<"/"<<Common::TMP<<"/"<<nr<<t_id<<". -o nist -r "<<ssRef.str()<<" -h "<<ssOut.str()<<" "<<param<<" ";
 
     string ms = "[ERROR] problems running TERp...";
-    cout << "[TER] execute: " << sc.str() << endl;
+    //cout << "[TER] execute: " << sc.str() << endl;
     Common::execute_or_die(sc.str(), ms);
 
     stringstream basename;
@@ -95,15 +95,9 @@ void TER::computeTER(string TGT, string variant, int do_neg, MetricScore &res) {
 
 void TER::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 	// description _ computes -TER, -TERp and -TERp-A scores (multiple references)
-	vector<string> mTER(TER::rTER.size());
-
-	int GO , i;
-	GO = i = 0;
-	for (set<string>::const_iterator it = TER::rTER.begin(); it != TER::rTER.end(); ++it, ++i)
-		mTER[i] = *it;
-
-	for (i = 0; i < mTER.size() and !GO; ++i) {
-		if (Config::Hmetrics.count(mTER[i])) GO = 1;
+	int GO = 0;
+	for (set<string>::const_iterator it = TER::rTER.begin(); !GO and it != TER::rTER.end(); ++it) {
+		if (Config::Hmetrics.count(*it)) GO = 1;
 	}
 
 	if (GO) {
@@ -117,7 +111,8 @@ void TER::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 
  			if (Config::O_STORAGE == 1) {
 	    		sc_asiya.write_report(TGT, REF, pref_ter, res);
-         		cout << "SC_ASIYA DOCUMENT " << pref_ter << " CREATED" << endl;
+         		fprintf(stderr, "SC_ASIYA DOCUMENT %s CREATED\n", pref_ter.c_str());
+
          	}
          	hOQ.save_hash_scores(pref_ter, TGT, REF, res);
 	    }
@@ -129,7 +124,7 @@ void TER::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 
 	     	if (Config::O_STORAGE == 1) {
 	    		sc_asiya.write_report(TGT, REF, pref_ter, res);
-         		cout << "SC_ASIYA DOCUMENT " << pref_ter << " CREATED" << endl;
+         		fprintf(stderr, "SC_ASIYA DOCUMENT %s CREATED\n", pref_ter.c_str());
          	}
          	hOQ.save_hash_scores(pref_ter, TGT, REF, res);
 	    }
@@ -141,7 +136,7 @@ void TER::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 
 	     	if (Config::O_STORAGE == 1) {
 	    		sc_asiya.write_report(TGT, REF, pref_ter, res);
-         		cout << "SC_ASIYA DOCUMENT " << pref_ter << " CREATED" << endl;
+         		fprintf(stderr, "SC_ASIYA DOCUMENT %s CREATED\n", pref_ter.c_str());
          	}
          	hOQ.save_hash_scores(pref_ter, TGT, REF, res);
 	    }
@@ -153,7 +148,7 @@ void TER::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 
 	     	if (Config::O_STORAGE == 1) {
 	    		sc_asiya.write_report(TGT, REF, pref_ter, res);
-         		cout << "SC_ASIYA DOCUMENT " << pref_ter << " CREATED" << endl;
+         		fprintf(stderr, "SC_ASIYA DOCUMENT %s CREATED\n", pref_ter.c_str());
          	}
          	hOQ.save_hash_scores(pref_ter, TGT, REF, res);
 	    }
@@ -165,7 +160,7 @@ void TER::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 
 	     	if (Config::O_STORAGE == 1) {
 	    		sc_asiya.write_report(TGT, REF, pref_ter, res);
-         		cout << "SC_ASIYA DOCUMENT " << pref_ter << " CREATED" << endl;
+         		fprintf(stderr, "SC_ASIYA DOCUMENT %s CREATED\n", pref_ter.c_str());
          	}
          	hOQ.save_hash_scores(pref_ter, TGT, REF, res);
 	    }
@@ -177,7 +172,7 @@ void TER::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 
 	     	if (Config::O_STORAGE == 1) {
 	    		sc_asiya.write_report(TGT, REF, pref_ter, res);
-         		cout << "SC_ASIYA DOCUMENT " << pref_ter << " CREATED" << endl;
+         		fprintf(stderr, "SC_ASIYA DOCUMENT %s CREATED\n", pref_ter.c_str());
          	}
          	hOQ.save_hash_scores(pref_ter, TGT, REF, res);
 	    }
@@ -189,7 +184,7 @@ void TER::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 
 	     	if (Config::O_STORAGE == 1) {
 	    		sc_asiya.write_report(TGT, REF, pref_ter, res);
-         		cout << "SC_ASIYA DOCUMENT " << pref_ter << " CREATED" << endl;
+         		fprintf(stderr, "SC_ASIYA DOCUMENT %s CREATED\n", pref_ter.c_str());
          	}
          	hOQ.save_hash_scores(pref_ter, TGT, REF, res);
 	    }
@@ -201,10 +196,10 @@ void TER::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 
 	     	if (Config::O_STORAGE == 1) {
 	    		sc_asiya.write_report(TGT, REF, pref_ter, res);
-         		cout << "SC_ASIYA DOCUMENT " << pref_ter << " CREATED" << endl;
+         		fprintf(stderr, "SC_ASIYA DOCUMENT %s CREATED\n", pref_ter.c_str());
          	}
          	hOQ.save_hash_scores(pref_ter, TGT, REF, res);
 	    }
-	    if (Config::serialize) hOQ.save_struct_scores(TB_FORMAT::make_serial("TER", TGT, REF));
+	    if (Config::serialize) hOQ.save_struct_scores(TB_FORMAT::make_serial(TER::TEREXT, TGT, REF));
 	}
 }

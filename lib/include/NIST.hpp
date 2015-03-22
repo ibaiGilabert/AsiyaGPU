@@ -4,16 +4,17 @@
 #include "SingleMetric.hpp"
 
 #include <vector>
+#include <set>
 
 class NIST : public SingleMetric {
 private:
-	static map<string, int> create_rNIST();
+	static set<string> create_rNIST();
 
 	static const string NISTEXT,	NISTEXTi,	TNIST;
-	static const map<string, int> rNIST;
+	static const set<string> rNIST;
 
-	vector<double> read_nist(string reportNIST);
-	vector<vector<double> > read_nist_segments(string reportNIST);
+	void read_nist(string reportNIST, vector<double> &SYS);
+	void read_nist_segments(string reportNIST, vector<vector<double> > &SEG);
 
 	MetricScore computeNISTN(string TGT, string out, const map<string, string> &HREF);
 	void computeNIST(string TGT, string out, const map<string, string> &HREF, vector<double> &SYS, vector<vector<double> > &SEG);

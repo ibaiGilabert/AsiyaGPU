@@ -138,6 +138,9 @@ void NGRAM::computeNGRAM(string opt, string ref, string TGT, int issrcbased, map
 	NGRAM_f_create_doc(out, outRND);
 	NGRAM_f_create_doc(ref, refRND);
 
+//fprintf(stderr, "[NGRAM] f_create_doc <%s> CREATED\n", outRND.c_str());
+//fprintf(stderr, "[NGRAM] f_create_doc <%s> CREATED\n", refRND.c_str());
+
 	if (Config::verbose) fprintf(stderr, "building %s...\n", reportNGRAM.c_str());
 
 /*	string pwd = boost::filesystem::current_path().string();
@@ -181,6 +184,7 @@ void NGRAM::computeNGRAM(string opt, string ref, string TGT, int issrcbased, map
 	string mem_options = "-Xms1024M -Xmx3072M";
 	string toolNGRAM = "java -Dfile.encoding=UTF-8 "+mem_options+" -jar "+Config::tools+"/"+NGRAM::TNGRAMdir+"/"+NGRAM::TNGRAM;
 	string sc = "cd "+Config::tools+"/"+NGRAM::TNGRAMdir+"; "+toolNGRAM+" -i "+outRND+" -j "+refRND+" -o "+reportNGRAM+" > /dev/null 2> /dev/null ; cd "+pwd+";";
+//fprintf(stderr, "[NGRAM] EXE: %s\n", sc.c_str());
 	Common::execute_or_die(sc,"[ERROR] problems running NGRAM...");
 
 	read_NGRAM_segments(reportNGRAM, opt, SEGS);
@@ -201,8 +205,11 @@ void NGRAM::computeMultiNGRAM(string opt, string TGT, int issrcbased, map<string
     		for (map<string, vector<double> >::const_iterator it = SEGS.begin(); it != SEGS.end(); ++it) {
     			if (MAXSEG[it->first].empty()) MAXSEG[it->first] = vector<double>(it->second.size(), Common::NOT_DEFINED);
     			for (int i = 0; i < it->second.size(); ++i) {	// update max scores
-    				//if (MAXSEGS[key][i] == -1) MAXSEGS[key][i] = it->second[i];
-					if (it->second[i] > MAXSEG[it->first][i]) MAXSEG[it->first][i] = it->second[i];
+    				if (MAXSEG[it->first][i] != Common::NOT_DEFINED) {
+    					if (it->second[i] > MAXSEG[it->first][i]) MAXSEG[it->first][i] = it->second[i];
+    				}
+    				else 
+    					MAXSEG[it->first][i] = it->second[i];
     			}
     		}
     	}
@@ -212,26 +219,28 @@ void NGRAM::computeMultiNGRAM(string opt, string TGT, int issrcbased, map<string
 				maxsys += it->second[i];
 			MAXSYS[it->first] = Common::safe_division(maxsys, it->second.size());
 		}
-		/*cout << "[NGRAM] MAXSEG" << endl;
-		for (map<string, vector<double> >::const_iterator it = MAXSEG.begin(); it != MAXSEG.end(); ++it) {
-			cout << "\t" << it->first << "[" << it->second.size() << "]" << endl;
-			for (int i = 0; i < it->second.size(); ++i) {
-				cout << "\t\t" << it->second[i] << endl;
-			}
-		}
-		cout << "[NGRAM] MAXSYS:" << endl;
-		for (map<string, double>::const_iterator it = MAXSYS.begin(); it != MAXSYS.end(); ++it) {
-			cout << "\t" << it->first << " -> " << it->second << endl;
-		}*/
 	}
 	else if (opt== NGRAM::NGRAMSRC) {
 		map<string, vector<double> > SEGS;
 		computeNGRAM(NGRAM::NGRAMSRC, TESTBED::src, TGT, issrcbased, SEGS);
+
+        /*fprintf(stderr, "[NGRAM-SRC] SEGS (after computeNGRAM, TGT: %s)\n", TGT.c_str());
+        for(map<string, vector<double> >::const_iterator it = SEGS.begin(); it != SEGS.end(); ++it) {
+                fprintf(stderr, "\t%s -> [", it->first.c_str());
+                for(int k = 0; k < it->second.size(); ++k) {
+                        fprintf(stderr, " %f, ", it->second[k]);
+                }
+                fprintf(stderr, "]\n");
+        }*/
+
 		for (map<string, vector<double> >::const_iterator it = SEGS.begin(); it != SEGS.end(); ++it) {
 			if (MAXSEG[it->first].empty()) MAXSEG[it->first] = vector<double>(it->second.size(), Common::NOT_DEFINED);
 			for (int i = 0; i < it->second.size(); ++i) {	// update max scores
-				//if (MAXSEGS[key][i] == -1) MAXSEGS[key][i] = it->second[i];
-				if (it->second[i] > MAXSEG[it->first][i]) MAXSEG[it->first][i] = it->second[i];
+				if (MAXSEG[it->first][i] != Common::NOT_DEFINED) {
+					if (it->second[i] > MAXSEG[it->first][i]) MAXSEG[it->first][i] = it->second[i];
+				}
+				else 
+					MAXSEG[it->first][i] = it->second[i];
 			}
 		}
 		for (map<string, vector<double> >::const_iterator it = MAXSEG.begin(); it != MAXSEG.end(); ++it) {
@@ -244,68 +253,33 @@ void NGRAM::computeMultiNGRAM(string opt, string TGT, int issrcbased, map<string
 	}
 }
 
-
 void NGRAM::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 	// description _ computes NGRAM score (multiple references)
-	int GO , i;
-	GO = i = 0;
-	vector<string> mNGRAM(NGRAM::rNGRAM.size());
-	for (set<string>::const_iterator it = NGRAM::rNGRAM.begin(); it != NGRAM::rNGRAM.end(); ++it, ++i)
-		mNGRAM[i] = *it;
-	for (i = 0; i < mNGRAM.size() and !GO; ++i) {
-		if (Config::Hmetrics.find(mNGRAM[i]) != Config::Hmetrics.end()) GO = 1;
+	int GO = 0;
+	for (set<string>::const_iterator it = NGRAM::rNGRAM.begin(); !GO and it != NGRAM::rNGRAM.end(); ++it) {
+		if (Config::Hmetrics.count(*it)) GO = 1;
 	}
-
 	// reference-based measures
 	if (GO) {
 		if (Config::verbose) fprintf(stderr, "%s\n", NGRAM::NGRAMEXT.c_str());
 
-		stringstream ss2cos, ss3cos, ss4cos, ss5cos, ss2jac, ss3jac, ss4jac, ss5jac;
-		ss2cos << Common::DATA_PATH << "/" << Common::REPORTS << "/" << TGT << "/" << REF << "/" << prefix << NGRAM::NGRAMEXT << "-cosTok2ngrams." << Common::XMLEXT;
-		ss3cos << Common::DATA_PATH << "/" << Common::REPORTS << "/" << TGT << "/" << REF << "/" << prefix << NGRAM::NGRAMEXT << "-cosTok2ngrams." << Common::XMLEXT;
-		ss4cos << Common::DATA_PATH << "/" << Common::REPORTS << "/" << TGT << "/" << REF << "/" << prefix << NGRAM::NGRAMEXT << "-cosTok2ngrams." << Common::XMLEXT;
-		ss5cos << Common::DATA_PATH << "/" << Common::REPORTS << "/" << TGT << "/" << REF << "/" << prefix << NGRAM::NGRAMEXT << "-cosTok2ngrams." << Common::XMLEXT;
+		string reportNGRAMcos2 = Common::DATA_PATH+"/"+Common::REPORTS+"/"+TGT+"/"+REF+"/"+prefix+NGRAM::NGRAMEXT+"-cosTok2ngrams."+Common::XMLEXT;
+		string reportNGRAMcos3 = Common::DATA_PATH+"/"+Common::REPORTS+"/"+TGT+"/"+REF+"/"+prefix+NGRAM::NGRAMEXT+"-cosTok3ngrams."+Common::XMLEXT;
+		string reportNGRAMcos4 = Common::DATA_PATH+"/"+Common::REPORTS+"/"+TGT+"/"+REF+"/"+prefix+NGRAM::NGRAMEXT+"-cosTok4ngrams."+Common::XMLEXT;
+		string reportNGRAMcos5 = Common::DATA_PATH+"/"+Common::REPORTS+"/"+TGT+"/"+REF+"/"+prefix+NGRAM::NGRAMEXT+"-cosTok5ngrams."+Common::XMLEXT;
+		string reportNGRAMjac2 = Common::DATA_PATH+"/"+Common::REPORTS+"/"+TGT+"/"+REF+"/"+prefix+NGRAM::NGRAMEXT+"-jacTok2ngrams."+Common::XMLEXT;
+		string reportNGRAMjac3 = Common::DATA_PATH+"/"+Common::REPORTS+"/"+TGT+"/"+REF+"/"+prefix+NGRAM::NGRAMEXT+"-jacTok3ngrams."+Common::XMLEXT;
+		string reportNGRAMjac4 = Common::DATA_PATH+"/"+Common::REPORTS+"/"+TGT+"/"+REF+"/"+prefix+NGRAM::NGRAMEXT+"-jacTok4ngrams."+Common::XMLEXT;
+		string reportNGRAMjac5 = Common::DATA_PATH+"/"+Common::REPORTS+"/"+TGT+"/"+REF+"/"+prefix+NGRAM::NGRAMEXT+"-jacTok5ngrams."+Common::XMLEXT;
 
-		ss2jac << Common::DATA_PATH << "/" << Common::REPORTS << "/" << TGT << "/" << REF << "/" << prefix << NGRAM::NGRAMEXT << "-jacTok2ngrams." << Common::XMLEXT;
-		ss3jac << Common::DATA_PATH << "/" << Common::REPORTS << "/" << TGT << "/" << REF << "/" << prefix << NGRAM::NGRAMEXT << "-jacTok3ngrams." << Common::XMLEXT;
-		ss4jac << Common::DATA_PATH << "/" << Common::REPORTS << "/" << TGT << "/" << REF << "/" << prefix << NGRAM::NGRAMEXT << "-jacTok4ngrams." << Common::XMLEXT;
-		ss5jac << Common::DATA_PATH << "/" << Common::REPORTS << "/" << TGT << "/" << REF << "/" << prefix << NGRAM::NGRAMEXT << "-jacTok5ngrams." << Common::XMLEXT;
-
-		string reportNGRAMcos2 = ss2cos.str();
-		string reportNGRAMcos3 = ss3cos.str();
-		string reportNGRAMcos4 = ss4cos.str();
-		string reportNGRAMcos5 = ss5cos.str();
-		string reportNGRAMjac2 = ss2jac.str();
-		string reportNGRAMjac3 = ss3jac.str();
-		string reportNGRAMjac4 = ss4jac.str();
-		string reportNGRAMjac5 = ss5jac.str();
-
-	    boost::filesystem::path reportNGRAMcos2_path(reportNGRAMcos2);
-	    boost::filesystem::path reportNGRAMcos3_path(reportNGRAMcos3);
-	    boost::filesystem::path reportNGRAMcos4_path(reportNGRAMcos4);
-	    boost::filesystem::path reportNGRAMcos5_path(reportNGRAMcos5);
-	    boost::filesystem::path reportNGRAMjac2_path(reportNGRAMjac2);
-	    boost::filesystem::path reportNGRAMjac3_path(reportNGRAMjac3);
-	    boost::filesystem::path reportNGRAMjac4_path(reportNGRAMjac4);
-	    boost::filesystem::path reportNGRAMjac5_path(reportNGRAMjac5);
-
-	    boost::filesystem::path reportNGRAMcos2_gz(reportNGRAMcos2 + "." + Common::GZEXT);
-	    boost::filesystem::path reportNGRAMcos3_gz(reportNGRAMcos3 + "." + Common::GZEXT);
-	    boost::filesystem::path reportNGRAMcos4_gz(reportNGRAMcos4 + "." + Common::GZEXT);
-	    boost::filesystem::path reportNGRAMcos5_gz(reportNGRAMcos5 + "." + Common::GZEXT);
-	    boost::filesystem::path reportNGRAMjac2_gz(reportNGRAMjac2 + "." + Common::GZEXT);
-	    boost::filesystem::path reportNGRAMjac3_gz(reportNGRAMjac3 + "." + Common::GZEXT);
-	    boost::filesystem::path reportNGRAMjac4_gz(reportNGRAMjac4 + "." + Common::GZEXT);
-	    boost::filesystem::path reportNGRAMjac5_gz(reportNGRAMjac5 + "." + Common::GZEXT);
-
-	    if ( (!exists(reportNGRAMcos2_path) and !exists(reportNGRAMcos2_gz)) or \
-	    	(!exists(reportNGRAMcos3_path) and !exists(reportNGRAMcos3_gz)) or \
-    		(!exists(reportNGRAMcos4_path) and !exists(reportNGRAMcos4_gz)) or \
-			(!exists(reportNGRAMcos5_path) and !exists(reportNGRAMcos5_gz)) or \
-			(!exists(reportNGRAMjac2_path) and !exists(reportNGRAMjac2_gz)) or \
-			(!exists(reportNGRAMjac3_path) and !exists(reportNGRAMjac3_gz)) or \
-			(!exists(reportNGRAMjac4_path) and !exists(reportNGRAMjac4_gz)) or \
-			(!exists(reportNGRAMjac5_path) and !exists(reportNGRAMjac5_gz)) or Config::remake) {
+	    if ((!exists(boost::filesystem::path(reportNGRAMcos2)) and !exists(boost::filesystem::path(reportNGRAMcos2+"."+Common::GZEXT))) or
+	    	(!exists(boost::filesystem::path(reportNGRAMcos3)) and !exists(boost::filesystem::path(reportNGRAMcos3+"."+Common::GZEXT))) or
+	    	(!exists(boost::filesystem::path(reportNGRAMcos4)) and !exists(boost::filesystem::path(reportNGRAMcos4+"."+Common::GZEXT))) or
+	    	(!exists(boost::filesystem::path(reportNGRAMcos5)) and !exists(boost::filesystem::path(reportNGRAMcos5+"."+Common::GZEXT))) or
+	    	(!exists(boost::filesystem::path(reportNGRAMjac2)) and !exists(boost::filesystem::path(reportNGRAMjac2+"."+Common::GZEXT))) or
+	    	(!exists(boost::filesystem::path(reportNGRAMjac3)) and !exists(boost::filesystem::path(reportNGRAMjac3+"."+Common::GZEXT))) or
+	    	(!exists(boost::filesystem::path(reportNGRAMjac4)) and !exists(boost::filesystem::path(reportNGRAMjac4+"."+Common::GZEXT))) or
+	    	(!exists(boost::filesystem::path(reportNGRAMjac5)) and !exists(boost::filesystem::path(reportNGRAMjac5+"."+Common::GZEXT))) or Config::remake) {
 
 	    	map<string, double> SYS;
 	    	map<string, vector<double> > SEG;
@@ -313,97 +287,59 @@ void NGRAM::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 			for (map<string, double>::const_iterator it = SYS.begin(); it != SYS.end(); ++it) {
 				vector<double> d_scores, s_scores;
 		    	TESTBED::get_seg_doc_scores(SEG[it->first], 0, TGT, d_scores, s_scores);
-				string pref = prefix + NGRAM::NGRAMEXT + "-" + it->first;
+				string pref = prefix + NGRAM::NGRAMEXT+"-"+it->first;
 				if (Config::O_STORAGE == 1) {
 					sc_asiya.write_report(TGT, REF, pref, SYS[it->first], d_scores, s_scores);
 					fprintf(stderr, "SC_ASIYA DOCUMENT %s CREATED\n", pref.c_str());
 				}
-				hOQ.save_hash_scores(pref, TGT, REF, SYS[it->first], d_scores, s_scores);
+				hOQ.save_hash_scores(pref, TGT, REF, it->second, d_scores, s_scores);
 		        if (Config::serialize) hOQ.save_struct_scores(TB_FORMAT::make_serial(NGRAM::NGRAMEXT, TGT, REF));
-
 			}
 	    }
 	}
 
     // source-based measures (CE)
-	GO = i = 0;
-	mNGRAM.resize(NGRAM::rCENGRAM.size());
-	for (set<string>::const_iterator it = NGRAM::rCENGRAM.begin(); it != NGRAM::rCENGRAM.end(); ++it, ++i)
-		mNGRAM[i] = *it;
-	for (i = 0; i < mNGRAM.size() and !GO; ++i) {
-		if (Config::Hmetrics.find(mNGRAM[i]) != Config::Hmetrics.end()) GO = 1;
-	}
+	GO = 0;
+	for (set<string>::const_iterator it = NGRAM::rCENGRAM.begin(); !GO and it != NGRAM::rCENGRAM.end(); ++it)
+		if (Config::Hmetrics.count(*it)) GO = 1;
 
 	if (GO) {
-		if (Config::verbose) fprintf(stderr, "%s\n", NGRAM::CENGRAMEXT.c_str());
+		if (Config::verbose) fprintf(stderr, "%s\n", NGRAM::NGRAMEXT.c_str());
 
-		stringstream ss2cos, ss3cos, ss4cos, ss5cos, ss2jac, ss3jac, ss4jac, ss5jac, ssCjac, ssLen;
-		ss2cos << Common::DATA_PATH << "/" << Common::REPORTS << "/" << TGT << "/" << REF << "/" << prefix << NGRAM::NGRAMEXT << "-cosChar2ngrams." << Common::XMLEXT;
-		ss3cos << Common::DATA_PATH << "/" << Common::REPORTS << "/" << TGT << "/" << REF << "/" << prefix << NGRAM::NGRAMEXT << "-cosChar2ngrams." << Common::XMLEXT;
-		ss4cos << Common::DATA_PATH << "/" << Common::REPORTS << "/" << TGT << "/" << REF << "/" << prefix << NGRAM::NGRAMEXT << "-cosChar2ngrams." << Common::XMLEXT;
-		ss5cos << Common::DATA_PATH << "/" << Common::REPORTS << "/" << TGT << "/" << REF << "/" << prefix << NGRAM::NGRAMEXT << "-cosChar2ngrams." << Common::XMLEXT;
+		string reportNGRAMcos2 = Common::DATA_PATH+"/"+Common::REPORTS+"/"+TGT+"/"+REF+"/"+prefix+NGRAM::NGRAMEXT+"-cosChar2ngrams."+Common::XMLEXT;
+		string reportNGRAMcos3 = Common::DATA_PATH+"/"+Common::REPORTS+"/"+TGT+"/"+REF+"/"+prefix+NGRAM::NGRAMEXT+"-cosChar3ngrams."+Common::XMLEXT;
+		string reportNGRAMcos4 = Common::DATA_PATH+"/"+Common::REPORTS+"/"+TGT+"/"+REF+"/"+prefix+NGRAM::NGRAMEXT+"-cosChar4ngrams."+Common::XMLEXT;
+		string reportNGRAMcos5 = Common::DATA_PATH+"/"+Common::REPORTS+"/"+TGT+"/"+REF+"/"+prefix+NGRAM::NGRAMEXT+"-cosChar5ngrams."+Common::XMLEXT;
+		string reportNGRAMjac2 = Common::DATA_PATH+"/"+Common::REPORTS+"/"+TGT+"/"+REF+"/"+prefix+NGRAM::NGRAMEXT+"-jacChar2ngrams."+Common::XMLEXT;
+		string reportNGRAMjac3 = Common::DATA_PATH+"/"+Common::REPORTS+"/"+TGT+"/"+REF+"/"+prefix+NGRAM::NGRAMEXT+"-jacChar3ngrams."+Common::XMLEXT;
+		string reportNGRAMjac4 = Common::DATA_PATH+"/"+Common::REPORTS+"/"+TGT+"/"+REF+"/"+prefix+NGRAM::NGRAMEXT+"-jacChar4ngrams."+Common::XMLEXT;
+		string reportNGRAMjac5 = Common::DATA_PATH+"/"+Common::REPORTS+"/"+TGT+"/"+REF+"/"+prefix+NGRAM::NGRAMEXT+"-jacChar5ngrams."+Common::XMLEXT;
+		string reportNGRAMjacC = Common::DATA_PATH+"/"+Common::REPORTS+"/"+TGT+"/"+REF+"/"+prefix+NGRAM::NGRAMEXT+"-jacCognates."+Common::XMLEXT;
+		string reportNGRAMlen  = Common::DATA_PATH+"/"+Common::REPORTS+"/"+TGT+"/"+REF+"/"+prefix+NGRAM::NGRAMEXT+"-lenratio"+Common::XMLEXT;
 
-		ss2jac << Common::DATA_PATH << "/" << Common::REPORTS << "/" << TGT << "/" << REF << "/" << prefix << NGRAM::NGRAMEXT << "-jacChar2ngrams." << Common::XMLEXT;
-		ss3jac << Common::DATA_PATH << "/" << Common::REPORTS << "/" << TGT << "/" << REF << "/" << prefix << NGRAM::NGRAMEXT << "-jacChar3ngrams." << Common::XMLEXT;
-		ss4jac << Common::DATA_PATH << "/" << Common::REPORTS << "/" << TGT << "/" << REF << "/" << prefix << NGRAM::NGRAMEXT << "-jacChar4ngrams." << Common::XMLEXT;
-		ss5jac << Common::DATA_PATH << "/" << Common::REPORTS << "/" << TGT << "/" << REF << "/" << prefix << NGRAM::NGRAMEXT << "-jacChar5ngrams." << Common::XMLEXT;
-		ssCjac << Common::DATA_PATH << "/" << Common::REPORTS << "/" << TGT << "/" << REF << "/" << prefix << NGRAM::NGRAMEXT << "-jacCognates." << Common::XMLEXT;
-		ssLen << Common::DATA_PATH << "/" << Common::REPORTS << "/" << TGT << "/" << REF << "/" << prefix << NGRAM::NGRAMEXT << "-lenratio." << Common::XMLEXT;
-
-		string reportNGRAMcos2 = ss2cos.str();
-		string reportNGRAMcos3 = ss3cos.str();
-		string reportNGRAMcos4 = ss4cos.str();
-		string reportNGRAMcos5 = ss5cos.str();
-		string reportNGRAMjac2 = ss2jac.str();
-		string reportNGRAMjac3 = ss3jac.str();
-		string reportNGRAMjac4 = ss4jac.str();
-		string reportNGRAMjac5 = ss5jac.str();
-		string reportNGRAMjacC = ssCjac.str();
-		string reportNGRAMlen = ssLen.str();
-
-	    boost::filesystem::path reportNGRAMcos2_path(reportNGRAMcos2);
-	    boost::filesystem::path reportNGRAMcos3_path(reportNGRAMcos3);
-	    boost::filesystem::path reportNGRAMcos4_path(reportNGRAMcos4);
-	    boost::filesystem::path reportNGRAMcos5_path(reportNGRAMcos5);
-	    boost::filesystem::path reportNGRAMjac2_path(reportNGRAMjac2);
-	    boost::filesystem::path reportNGRAMjac3_path(reportNGRAMjac3);
-	    boost::filesystem::path reportNGRAMjac4_path(reportNGRAMjac4);
-	    boost::filesystem::path reportNGRAMjac5_path(reportNGRAMjac5);
-	    boost::filesystem::path reportNGRAMjacC_path(reportNGRAMjacC);
-	    boost::filesystem::path reportNGRAMlen_path(reportNGRAMlen);
-
-	    boost::filesystem::path reportNGRAMcos2_gz(reportNGRAMcos2 + "." + Common::GZEXT);
-	    boost::filesystem::path reportNGRAMcos3_gz(reportNGRAMcos3 + "." + Common::GZEXT);
-	    boost::filesystem::path reportNGRAMcos4_gz(reportNGRAMcos4 + "." + Common::GZEXT);
-	    boost::filesystem::path reportNGRAMcos5_gz(reportNGRAMcos5 + "." + Common::GZEXT);
-	    boost::filesystem::path reportNGRAMjac2_gz(reportNGRAMjac2 + "." + Common::GZEXT);
-	    boost::filesystem::path reportNGRAMjac3_gz(reportNGRAMjac3 + "." + Common::GZEXT);
-	    boost::filesystem::path reportNGRAMjac4_gz(reportNGRAMjac4 + "." + Common::GZEXT);
-	    boost::filesystem::path reportNGRAMjac5_gz(reportNGRAMjac5 + "." + Common::GZEXT);
-	    boost::filesystem::path reportNGRAMjacC_gz(reportNGRAMjacC + "." + Common::GZEXT);
-	    boost::filesystem::path reportNGRAMlen_gz(reportNGRAMlen + "." + Common::GZEXT);
-
-	    if ( (!exists(reportNGRAMcos2_path) and !exists(reportNGRAMcos2_gz)) or \
-	    	(!exists(reportNGRAMcos3_path) and !exists(reportNGRAMcos3_gz)) or \
-    		(!exists(reportNGRAMcos4_path) and !exists(reportNGRAMcos4_gz)) or \
-			(!exists(reportNGRAMcos5_path) and !exists(reportNGRAMcos5_gz)) or \
-			(!exists(reportNGRAMjacC_path) and !exists(reportNGRAMjacC_gz)) or \
-			(!exists(reportNGRAMjac2_path) and !exists(reportNGRAMjac2_gz)) or \
-			(!exists(reportNGRAMjac3_path) and !exists(reportNGRAMjac3_gz)) or \
-			(!exists(reportNGRAMjac4_path) and !exists(reportNGRAMjac4_gz)) or \
-			(!exists(reportNGRAMjac5_path) and !exists(reportNGRAMjac5_gz)) or \
-			(!exists(reportNGRAMlen_path) and !exists(reportNGRAMlen_gz)) or Config::remake) {
+	    if ((!exists(boost::filesystem::path(reportNGRAMcos2)) and !exists(boost::filesystem::path(reportNGRAMcos2+"."+Common::GZEXT))) or
+	    	(!exists(boost::filesystem::path(reportNGRAMcos3)) and !exists(boost::filesystem::path(reportNGRAMcos3+"."+Common::GZEXT))) or
+	    	(!exists(boost::filesystem::path(reportNGRAMcos4)) and !exists(boost::filesystem::path(reportNGRAMcos4+"."+Common::GZEXT))) or
+	    	(!exists(boost::filesystem::path(reportNGRAMcos5)) and !exists(boost::filesystem::path(reportNGRAMcos5+"."+Common::GZEXT))) or
+	    	(!exists(boost::filesystem::path(reportNGRAMjac2)) and !exists(boost::filesystem::path(reportNGRAMjac2+"."+Common::GZEXT))) or
+	    	(!exists(boost::filesystem::path(reportNGRAMjac3)) and !exists(boost::filesystem::path(reportNGRAMjac3+"."+Common::GZEXT))) or
+	    	(!exists(boost::filesystem::path(reportNGRAMjac4)) and !exists(boost::filesystem::path(reportNGRAMjac4+"."+Common::GZEXT))) or
+	    	(!exists(boost::filesystem::path(reportNGRAMjac5)) and !exists(boost::filesystem::path(reportNGRAMjac5+"."+Common::GZEXT))) or
+	    	(!exists(boost::filesystem::path(reportNGRAMjacC)) and !exists(boost::filesystem::path(reportNGRAMjacC+"."+Common::GZEXT))) or
+	    	(!exists(boost::filesystem::path(reportNGRAMlen))  and !exists(boost::filesystem::path(reportNGRAMlen+"."+Common::GZEXT)))  or Config::remake) {
 
 	    	map<string, double> SYS;
 	    	map<string, vector<double> > SEG;
-	    	computeMultiNGRAM(NGRAM::NGRAMSRC, TGT, 0, SYS, SEG);
+	    	computeMultiNGRAM(NGRAM::NGRAMSRC, TGT, 1, SYS, SEG);
 			for (map<string, double>::const_iterator it = SYS.begin(); it != SYS.end(); ++it) {
 				vector<double> d_scores, s_scores;
 		    	TESTBED::get_seg_doc_scores(SEG[it->first], 0, TGT, d_scores, s_scores);
-				string pref = prefix + NGRAM::NGRAMEXT + "-" + it->first;
-				sc_asiya.write_report(TGT, REF, pref, SYS[it->first], d_scores, s_scores);
+				string pref = prefix + NGRAM::NGRAMEXT+"-"+it->first;
+				sc_asiya.write_report(TGT, REF, pref, it->second, d_scores, s_scores);
 				fprintf(stderr, "SC_ASIYA DOCUMENT %s CREATED\n", pref.c_str());
 
+				hOQ.save_hash_scores(pref, TGT, REF, it->second, d_scores, s_scores);
+		        if (Config::serialize) hOQ.save_struct_scores(TB_FORMAT::make_serial(NGRAM::NGRAMEXT, TGT, REF));
 			}
 	    }
 	}

@@ -124,47 +124,41 @@ void WER::computeWER(string TGT, int do_neg, double &MAXSYS, vector<double> &MAX
 
 void WER::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 	// description _ computes -WER score (multiple references)
-	vector<string> mWER(WER::rWER.size());
-
-	int GO, i;
-	GO = i = 0;
-	for (set<string>::const_iterator it = WER::rWER.begin(); it != WER::rWER.end(); ++it, ++i)
-		mWER[i] = *it;
-	for (i = 0; i < mWER.size() and !GO; ++i) {
-		if (Config::Hmetrics.find(mWER[i]) != Config::Hmetrics.end()) GO = 1;
+	int GO = 0;
+	for (set<string>::const_iterator it = WER::rWER.begin(); !GO and it != WER::rWER.end(); ++it) {
+		if (Config::Hmetrics.count(*it)) GO = 1;
 	}
 
 	if (GO) {
 		if (Config::verbose ) fprintf(stderr, "%s...\n", WER::WEREXT.c_str());
 
-		for (i = 0; i < mWER.size(); ++i) {
-			string reportWERxml = Common::DATA_PATH+"/"+Common::REPORTS+"/"+TGT+"/"+REF+"/-"+WER::WEREXT+"."+Common::XMLEXT;
-			if ( (!exists(boost::filesystem::path(reportWERxml)) and !exists(boost::filesystem::path(reportWERxml+"."+Common::GZEXT))) or Config::remake) {
-	    		double SYS;
-	    		vector<double> SEG, d_scores, s_scores;
-	    		computeWER(TGT, 1, SYS, SEG);
-				TESTBED::get_seg_doc_scores(SEG, 0, TGT, d_scores, s_scores);
-				if (Config::O_STORAGE == 1) {
-		    		sc_asiya.write_report(TGT, REF, "-WER", SYS, d_scores, s_scores);
-	         		cout << "SC_ASIYA DOCUMENT -WER CREATED" << endl;
-	         	}
-	         	hOQ.save_hash_scores("-WER", TGT, REF, SYS, d_scores, s_scores);
-	   		}
+		string reportWERxml = Common::DATA_PATH+"/"+Common::REPORTS+"/"+TGT+"/"+REF+"/-"+WER::WEREXT+"."+Common::XMLEXT;
+		if ( (!exists(boost::filesystem::path(reportWERxml)) and !exists(boost::filesystem::path(reportWERxml+"."+Common::GZEXT))) or Config::remake) {
+    		double SYS;
+    		vector<double> SEG, d_scores, s_scores;
+    		computeWER(TGT, 1, SYS, SEG);
+			TESTBED::get_seg_doc_scores(SEG, 0, TGT, d_scores, s_scores);
+			if (Config::O_STORAGE == 1) {
+	    		sc_asiya.write_report(TGT, REF, "-WER", SYS, d_scores, s_scores);
+         		fprintf(stderr, "SC_ASIYA DOCUMENT -WER CREATED\n");
 
-			reportWERxml = Common::DATA_PATH+"/"+Common::REPORTS+"/"+TGT+"/"+REF+"/"+WER::WEREXT+"."+Common::XMLEXT;
-			if ( (!exists(boost::filesystem::path(reportWERxml)) and !exists(boost::filesystem::path(reportWERxml+"."+Common::GZEXT))) or Config::remake) {
-	    		double SYS;
-	    		vector<double> SEG, d_scores, s_scores;
-	    		computeWER(TGT, 0, SYS, SEG);
-				TESTBED::get_seg_doc_scores(SEG, 0, TGT, d_scores, s_scores);
-				if (Config::O_STORAGE == 1) {
-		    		sc_asiya.write_report(TGT, REF, "WER", SYS, d_scores, s_scores);
-	         		cout << "SC_ASIYA DOCUMENT WER CREATED" << endl;
-	         	}
-	         	hOQ.save_hash_scores("WER", TGT, REF, SYS, d_scores, s_scores);
-	   		}
-		}
-        if (Config::serialize) hOQ.save_struct_scores(TB_FORMAT::make_serial(WER::WEREXT, TGT, REF));
+         	}
+         	hOQ.save_hash_scores("-WER", TGT, REF, SYS, d_scores, s_scores);
+   		}
 
+		reportWERxml = Common::DATA_PATH+"/"+Common::REPORTS+"/"+TGT+"/"+REF+"/"+WER::WEREXT+"."+Common::XMLEXT;
+		if ( (!exists(boost::filesystem::path(reportWERxml)) and !exists(boost::filesystem::path(reportWERxml+"."+Common::GZEXT))) or Config::remake) {
+    		double SYS;
+    		vector<double> SEG, d_scores, s_scores;
+    		computeWER(TGT, 0, SYS, SEG);
+			TESTBED::get_seg_doc_scores(SEG, 0, TGT, d_scores, s_scores);
+			if (Config::O_STORAGE == 1) {
+	    		sc_asiya.write_report(TGT, REF, "WER", SYS, d_scores, s_scores);
+         		fprintf(stderr, "SC_ASIYA DOCUMENT WER CREATED\n");
+         	}
+         	hOQ.save_hash_scores("WER", TGT, REF, SYS, d_scores, s_scores);
+   		}
+
+		if (Config::serialize) hOQ.save_struct_scores(TB_FORMAT::make_serial(WER::WEREXT, TGT, REF));
 	}
 }

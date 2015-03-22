@@ -162,7 +162,6 @@ string Process::make_config_file(string TGT, string REF, string metric_set, int 
     ofstream config_file(config_name);
     if (config_file) {
         config_file << "input=raw" << endl << endl;
-        //config_file << "data_path=" << Common::DATA_PATH << endl << endl;
         config_file << "srclang=" << Config::SRCLANG << endl;
         config_file << "srccase=" << Config::SRCCASE << endl;
         config_file << "trglang=" << Config::LANG << endl;
@@ -195,11 +194,14 @@ string Process::make_run_file(string config_file, string TGT, string REF, int th
         run_file << "#$ -m eas" << endl;
         run_file << "#$ -M gilabert@cs.upc.edu" << endl;
         run_file << "#$ -l h_vmem=10G" << endl;                 //LA MEMORIA QUE CADA METRICA DEMANI
+        //run_file << endl << "DATAPATH=" << Common::DATA_PATH << endl;
+
+        run_file << endl;
         //run_file << "#$ -q short@node115,short@node116,short@node117,short@node315,short@node316" << endl << endl;
         //run_file << endl << ". /home/soft/asiya/ASIYA12.04.PATH" << endl;
 
         stringstream s_cmd;
-        s_cmd << "./Asiya " << config_file << " -serialize " << (thread-1)*TB_FORMAT::chunk + 1 << " -time -g seg -eval single -metric_set metrics_" << metric << " > " << string(report_buffer);
+        s_cmd << "./Asiya " << config_file << " -serialize " << (thread-1)*TB_FORMAT::chunk + 1 << " -time -g seg -eval single -metric_set metrics_" << metric << " -data_path=" << Common::DATA_PATH << " > " << string(report_buffer);
         string cmd = s_cmd.str();
 
         if (Config::verbose) fprintf(stderr, "[EXEC] %s\n", cmd.c_str());

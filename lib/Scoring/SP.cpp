@@ -217,11 +217,31 @@ SP::~SP() {}
 
 
 void SP::load_parser_file(string file, int thread, vector<string> &wc, vector<string> &wp, vector<string> &wpc, vector<string> &wlp, vector<string> &wlpc) {
-    string wc_file   = TB_FORMAT::get_parser_file(file, SP::SPEXT, Common::TOKEXT, "wc", thread);
+    /*string wc_file   = TB_FORMAT::get_parser_file(file, SP::SPEXT, Common::TOKEXT, "wc", thread);
     string wp_file   = TB_FORMAT::get_parser_file(file, SP::SPEXT, Common::TOKEXT, "wp", thread);
     string wpc_file  = TB_FORMAT::get_parser_file(file, SP::SPEXT, Common::TOKEXT, "wpc", thread);
     string wlp_file  = TB_FORMAT::get_parser_file(file, SP::SPEXT, Common::TOKEXT, "wlp", thread);
-    string wlpc_file = TB_FORMAT::get_parser_file(file, SP::SPEXT, Common::TOKEXT, "wlpc", thread);
+    string wlpc_file = TB_FORMAT::get_parser_file(file, SP::SPEXT, Common::TOKEXT, "wlpc", thread);*/
+	string wc_file   = file+"."+SP::SPEXT+".wc";
+	string wp_file   = file+"."+SP::SPEXT+".wp";
+	string wpc_file  = file+"."+SP::SPEXT+".wpc";
+	string wlp_file  = file+"."+SP::SPEXT+".wlp";
+	string wlpc_file = file+"."+SP::SPEXT+".wlpc";
+
+	if (!exists(boost::filesystem::path(wc_file)) and exists(boost::filesystem::path(wc_file+"."+Common::GZEXT)))
+		system(	string(Common::GUNZIP+" "+wc_file+"."+Common::GZEXT).c_str() );
+	
+	if (!exists(boost::filesystem::path(wp_file)) and exists(boost::filesystem::path(wp_file+"."+Common::GZEXT)))
+		system(	string(Common::GUNZIP+" "+wp_file+"."+Common::GZEXT).c_str() );
+	
+	if (!exists(boost::filesystem::path(wpc_file)) and exists(boost::filesystem::path(wpc_file+"."+Common::GZEXT)))
+		system(	string(Common::GUNZIP+" "+wpc_file+"."+Common::GZEXT).c_str() );
+	
+	if (!exists(boost::filesystem::path(wlp_file)) and exists(boost::filesystem::path(wlp_file+"."+Common::GZEXT)))
+		system(	string(Common::GUNZIP+" "+wlp_file+"."+Common::GZEXT).c_str() );
+	
+	if (!exists(boost::filesystem::path(wlpc_file)) and exists(boost::filesystem::path(wlpc_file+"."+Common::GZEXT)))
+		system(	string(Common::GUNZIP+" "+wlpc_file+"."+Common::GZEXT).c_str() );
 
     ifstream in_file;
 
@@ -232,7 +252,7 @@ void SP::load_parser_file(string file, int thread, vector<string> &wc, vector<st
             wc.push_back(str);
         in_file.close();
     }
-    else { fprintf(stderr, "[rebuild_parser_files] Could not open: <%s> input file\n", wc_file.c_str()); exit(1); }
+    else { fprintf(stderr, "[load_parser_file] Could not open: <%s> input file\n", wc_file.c_str()); exit(1); }
 
     in_file.open(wp_file.c_str());
     if (in_file) {
@@ -241,7 +261,7 @@ void SP::load_parser_file(string file, int thread, vector<string> &wc, vector<st
             wp.push_back(str);
         in_file.close();
     }
-    else { fprintf(stderr, "[rebuild_parser_files] Could not open: <%s> input file\n", wp_file.c_str()); exit(1); }
+    else { fprintf(stderr, "[load_parser_file] Could not open: <%s> input file\n", wp_file.c_str()); exit(1); }
 
     in_file.open(wpc_file.c_str());
     if (in_file) {
@@ -250,7 +270,7 @@ void SP::load_parser_file(string file, int thread, vector<string> &wc, vector<st
             wpc.push_back(str);
         in_file.close();
     }
-    else { fprintf(stderr, "[rebuild_parser_files] Could not open: <%s> input file\n", wpc_file.c_str()); exit(1); }
+    else { fprintf(stderr, "[load_parser_file] Could not open: <%s> input file\n", wpc_file.c_str()); exit(1); }
 
     in_file.open(wlp_file.c_str());
     if (in_file) {
@@ -259,7 +279,7 @@ void SP::load_parser_file(string file, int thread, vector<string> &wc, vector<st
             wlp.push_back(str);
         in_file.close();
     }
-    else { fprintf(stderr, "[rebuild_parser_files] Could not open: <%s> input file\n", wlp_file.c_str()); exit(1); }
+    else { fprintf(stderr, "[load_parser_file] Could not open: <%s> input file\n", wlp_file.c_str()); exit(1); }
 
     in_file.open(wlpc_file.c_str());
     if (in_file) {
@@ -268,7 +288,7 @@ void SP::load_parser_file(string file, int thread, vector<string> &wc, vector<st
             wlpc.push_back(str);
         in_file.close();
     }
-    else { fprintf(stderr, "[rebuild_parser_files] Could not open: <%s> input file\n", wlpc_file.c_str()); exit(1); }
+    else { fprintf(stderr, "[load_parser_file] Could not open: <%s> input file\n", wlpc_file.c_str()); exit(1); }
 }
 
 void SP::write_parser_file(string file, const vector<string> &wc, const vector<string> &wp, const vector<string> &wpc, const vector<string> &wlp, const vector<string> &wlpc) {
@@ -278,70 +298,84 @@ void SP::write_parser_file(string file, const vector<string> &wc, const vector<s
 	string wlp_complete  = file+"."+SP::SPEXT+".wlp";
 	string wlpc_complete = file+"."+SP::SPEXT+".wlpc";
 
-	ofstream out_file;
+	if (!exists(boost::filesystem::path(wc_complete)) and !exists(boost::filesystem::path(wc_complete+"."+Common::GZEXT)) and 
+		!exists(boost::filesystem::path(wp_complete)) and !exists(boost::filesystem::path(wp_complete+"."+Common::GZEXT)) and
+		!exists(boost::filesystem::path(wpc_complete)) and !exists(boost::filesystem::path(wpc_complete+"."+Common::GZEXT)) and
+		!exists(boost::filesystem::path(wlp_complete)) and !exists(boost::filesystem::path(wlp_complete+"."+Common::GZEXT)) and
+		!exists(boost::filesystem::path(wlpc_complete)) and !exists(boost::filesystem::path(wlpc_complete+"."+Common::GZEXT)) ) {
 
-	out_file.open(wc_complete.c_str());
-	if (out_file) {
-	    for(int i = 0; i < wc.size(); ++i)
-	        out_file << wc[i] << endl;
-	    out_file.close();
-	}
-	else { fprintf(stderr, "[rebuild_parser_files] Could not open: <%s> output file\n", wc_complete.c_str()); exit(1); }
+		ofstream out_file;
+		out_file.open(wc_complete.c_str());
+		if (out_file) {
+		    for(int i = 0; i < wc.size(); ++i)
+		        out_file << wc[i] << endl;
+		    out_file.close();
+		}
+		else { fprintf(stderr, "[write_parser_file] Could not open: <%s> output file\n", wc_complete.c_str()); exit(1); }
 
-	out_file.open(wp_complete.c_str());
-	if (out_file) {
-	    for(int i = 0; i < wp.size(); ++i)
-	        out_file << wp[i] << endl;
-	    out_file.close();
-	}
-	else { fprintf(stderr, "[rebuild_parser_files] Could not open: <%s> output file\n", wp_complete.c_str()); exit(1); }
+		out_file.open(wp_complete.c_str());
+		if (out_file) {
+		    for(int i = 0; i < wp.size(); ++i)
+		        out_file << wp[i] << endl;
+		    out_file.close();
+		}
+		else { fprintf(stderr, "[write_parser_file] Could not open: <%s> output file\n", wp_complete.c_str()); exit(1); }
 
-	out_file.open(wpc_complete.c_str());
-	if (out_file) {
-	    for(int i = 0; i < wpc.size(); ++i)
-	        out_file << wpc[i] << endl;
-	    out_file.close();
-	}
-	else { fprintf(stderr, "[rebuild_parser_files] Could not open: <%s> output file\n", wpc_complete.c_str()); exit(1); }
+		out_file.open(wpc_complete.c_str());
+		if (out_file) {
+		    for(int i = 0; i < wpc.size(); ++i)
+		        out_file << wpc[i] << endl;
+		    out_file.close();
+		}
+		else { fprintf(stderr, "[write_parser_file] Could not open: <%s> output file\n", wpc_complete.c_str()); exit(1); }
 
-	out_file.open(wlp_complete.c_str());
-	if (out_file) {
-	    for(int i = 0; i < wlp.size(); ++i)
-	        out_file << wlp[i] << endl;
-	    out_file.close();
-	}
-	else { fprintf(stderr, "[rebuild_parser_files] Could not open: <%s> output file\n", wlp_complete.c_str()); exit(1); }
+		out_file.open(wlp_complete.c_str());
+		if (out_file) {
+		    for(int i = 0; i < wlp.size(); ++i)
+		        out_file << wlp[i] << endl;
+		    out_file.close();
+		}
+		else { fprintf(stderr, "[write_parser_file] Could not open: <%s> output file\n", wlp_complete.c_str()); exit(1); }
 
-	out_file.open(wlpc_complete.c_str());
-	if (out_file) {
-	    for(int i = 0; i < wlpc.size(); ++i)
-	        out_file << wlpc[i] << endl;
-	    out_file.close();
+		out_file.open(wlpc_complete.c_str());
+		if (out_file) {
+		    for(int i = 0; i < wlpc.size(); ++i)
+		        out_file << wlpc[i] << endl;
+		    out_file.close();
+		}
+		else { fprintf(stderr, "[write_parser_file] Could not open: <%s> output file\n", wlpc_complete.c_str()); exit(1); }
+
+	    /*system( string(Common::GZIP+" "+wc_complete).c_str() );
+		system( string(Common::GZIP+" "+wp_complete).c_str() );
+		system( string(Common::GZIP+" "+wpc_complete).c_str() );
+		system( string(Common::GZIP+" "+wlp_complete).c_str() );
+		system( string(Common::GZIP+" "+wlpc_complete).c_str() );*/
 	}
-	else { fprintf(stderr, "[rebuild_parser_files] Could not open: <%s> output file\n", wlpc_complete.c_str()); exit(1); }
 }
 
 void SP::rebuild_files() {
-    vector<string> wc, wp, wpc, wlp, wlpc;
 
 	for (map<string, string>::const_iterator it_s = TESTBED::Hsystems.begin(); it_s != TESTBED::Hsystems.end(); ++it_s) {
 		for (map<string, string>::const_iterator it_r = TESTBED::Hrefs.begin(); it_r != TESTBED::Hrefs.end(); ++it_r) {
+		    vector<string> wc_tgt, wc_ref, wp_tgt, wp_ref, wpc_tgt, wpc_ref, wlp_tgt, wlp_ref, wlpc_tgt, wlpc_ref;
 			for (int thread = 1; thread <= Config::num_process; ++thread) {
-			    string syst_tok = TB_FORMAT::get_split(/*TESTBED::Hsystems[*it_s]*/it_s->second, Common::TOKEXT, thread);
-			    string source_tok    = TB_FORMAT::get_split(TESTBED::src, Common::TOKEXT, thread);
-			    string reference_tok = TB_FORMAT::get_split(/*TESTBED::Hrefs[REF]*/it_r->second, Common::TOKEXT, thread);
-			  
-			    string source_tgt_tok 	 = TESTBED::replace_extension(source_tok, it_s->first)+"."+Common::TOKEXT;
-			    string reference_tgt_tok = TESTBED::replace_extension(reference_tok, it_s->first)+"."+Common::TOKEXT;
-	        	
-	        	load_parser_file(syst_tok, thread, 			wc, wp, wpc, wlp, wlpc);
-	        	load_parser_file(reference_tgt_tok, thread, wc, wp, wpc, wlp, wlpc);
-	        	load_parser_file(source_tgt_tok, thread,	wc, wp, wpc, wlp, wlpc);
+				//string base_src = boost::filesystem::path(TESTBED::src).replace_extension("").string();	// stem effect but keeping ".data/"
+				string base_ref = boost::filesystem::path(it_r->second).replace_extension("").string();
+
+				char src_file[150], ref_file[150];
+				//sprintf(src_file,"%s.%.3d.%s.%s", base_src.c_str(), thread, it_s->first.c_str(), Common::TOKEXT.c_str());
+				sprintf(ref_file,"%s.%.3d.%s.%s", base_ref.c_str(), thread, it_s->first.c_str(), Common::TOKEXT.c_str());
+
+				string syst_tok = TB_FORMAT::get_split(it_s->second, Common::TOKEXT, thread);
+
+				load_parser_file(syst_tok,			thread, wc_tgt, wp_tgt, wpc_tgt, wlp_tgt, wlpc_tgt);
+				load_parser_file(string(ref_file),	thread, wc_ref, wp_ref, wpc_ref, wlp_ref, wlpc_ref);
+				//load_parser_file(string(src_file),	thread,	wc, wp, wpc, wlp, wlpc);
 			}
 
-			write_parser_file(it_s->second,	wc, wp, wpc, wlp, wlpc);
-			write_parser_file(TESTBED::src,	wc, wp, wpc, wlp, wlpc);
-			write_parser_file(it_r->second,	wc, wp, wpc, wlp, wlpc);
+			write_parser_file(it_s->second,	wc_tgt, wp_tgt, wpc_tgt, wlp_tgt, wlpc_tgt);
+			//write_parser_file(TESTBED::src,	wc, wp, wpc, wlp, wlpc);
+			write_parser_file(it_r->second,	wc_ref, wp_ref, wpc_ref, wlp_ref, wlpc_ref);
 		}
 	}
 }
@@ -812,9 +846,13 @@ void SP::FILE_parse_split(string input, string L, string C) {
 	string spfile = (use_chunks) ? input+"."+SP::SPEXT+".wlpc" : input+"."+SP::SPEXT+".wlp";
 	if (!exists(boost::filesystem::path(spfile))) {
 		if (!exists(boost::filesystem::path(spfile+"."+Common::GZEXT))) {
-			string sys_aux = Common::GUNZIP+" "+spfile+"."+Common::GZEXT;	system(sys_aux.c_str());
+			system( string(Common::GUNZIP+" "+spfile+"."+Common::GZEXT).c_str() );	
 		}
-		else FILE_parse(input, L, C);
+		else {
+			FILE_parse(input, L, C);
+			if (exists(boost::filesystem::path(spfile+"."+Common::GZEXT)))
+				system( string(Common::GUNZIP+" "+spfile+"."+Common::GZEXT).c_str() );
+		}
 	}
 
 	string pfile = input+"."+SP::SPEXT+".P";
@@ -1182,6 +1220,12 @@ void SP::FILE_compute_MultiNIST_metrics(string TGT, string REF, Scores &hOQ) {
 	}
 
 	NIST nist;
+		/*fprintf(stderr, "----------- doNIST ---------\n");
+		fprintf(stderr, "TGT: %s, pfile_out: %s, REF: %s, %s-p\n", TGT.c_str(), pfile_out.c_str(), REF.c_str(), SP::SPEXT.c_str());
+		for (map<string, string>::const_iterator it = pHref.begin(); it != pHref.end(); ++it)
+			fprintf(stderr, "\t[%s -> %s]\n", it->first.c_str(), it->second.c_str());
+		fprintf(stderr, "------------------ ---------\n");*/
+
 	nist.doMetric(TGT, pfile_out, REF, pHref, SP::SPEXT+"-p", hOQ);
 	if (USE_LEMMAS)
 		nist.doMetric(TGT, lfile_out, REF, lHref, SP::SPEXT+"-l", hOQ);
@@ -1278,7 +1322,7 @@ void SP::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 					}
 				}
 
-				if (!Config::num_process and GO_NIST and DO_NIST_METRICS) {
+				if (!Config::serialize and GO_NIST and DO_NIST_METRICS) {
 					FILE_parse_split(it_r->second, Config::LANG, Config::CASE);
 				}
 			}
@@ -1308,7 +1352,7 @@ void SP::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 		        }
 			}
 
-			if (!Config::num_process and GO_NIST and DO_NIST_METRICS) {
+			if (!Config::serialize and GO_NIST and DO_NIST_METRICS) {
 				FILE_parse_split(TESTBED::Hsystems[TGT], Config::LANG, Config::CASE);
 				FILE_compute_MultiNIST_metrics(TGT, REF, hOQ);
 				remove_parse_plit_file(TESTBED::Hsystems[TGT]);
@@ -1336,7 +1380,7 @@ void SP::doNIST(string TGT, string REF, string prefix, Scores &hOQ) {
 	}
 
 	if (GO_NIST) {
-		if (Config::verbose) fprintf(stderr, "%s-NIST\n", SP::SPEXT.c_str());
+		if (Config::verbose) fprintf(stderr, "%s-[NIST]\n", SP::SPEXT.c_str());
 
 		int DO_NIST_METRICS = Config::remake;
 		if (!DO_NIST_METRICS) {

@@ -16,14 +16,14 @@
 const string GTM::GTMEXT = "GTM";
 const string GTM::TGTM = "gtm-1.4";	// version 1.4
 
-map<string, int> GTM::create_rGTM() {
-	map<string, int> rGTM;
-	rGTM[GTM::GTMEXT + "-1"] = 1;
-	rGTM[GTM::GTMEXT + "-2"] = 1;
-	rGTM[GTM::GTMEXT + "-3"] = 1;
+set<string> GTM::create_rGTM() {
+	set<string> rGTM;
+	rGTM.insert(GTM::GTMEXT+"-1");
+	rGTM.insert(GTM::GTMEXT+"-2");
+	rGTM.insert(GTM::GTMEXT+"-3");
 	return rGTM;
 }
-const map<string, int> GTM::rGTM = create_rGTM();
+const set<string> GTM::rGTM = create_rGTM();
 
 
 double GTM::read_GTM(string reportGTM) {
@@ -141,43 +141,21 @@ void GTM::computeGTM(string TGT, int e, double &SYS, vector<double> &SEG) {
 
 void GTM::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 	// description _ computes GTM F1 (by calling Proteus java gtm) -> e = 1..3 (multiple references)
-	vector<string> mGTM(GTM::rGTM.size());
-
-	int GO, i;
-	GO = i = 0;
-	for (map<string, int>::const_iterator it = GTM::rGTM.begin(); it != GTM::rGTM.end(); ++it, ++i) {
-		mGTM[i] = it->first;
-	}
-	for (i = 0; i < mGTM.size() and !GO; ++i) {
-		string aux = prefix + mGTM[i];
-		if (Config::Hmetrics.find(aux) != Config::Hmetrics.end()) GO = 1;
+	int GO = 0;
+	for (set<string>::const_iterator it = GTM::rGTM.begin(); !GO and it != GTM::rGTM.end(); ++it) {
+		if (Config::Hmetrics.count(prefix+(*it))) GO = 1;
 	}
 
-	//cout << "GTM ei!" << endl;
 	if (GO) {
-		//cout << "GO! GTM GO!" << endl;
 		if (Config::verbose) fprintf(stderr, "%s\n", GTM::GTMEXT.c_str());
 
-		stringstream ss1, ss2, ss3;
-		ss1 << Common::DATA_PATH << "/" << Common::REPORTS << "/" << TGT << "/" << REF << "/" << prefix << GTM::GTMEXT << "-1." << Common::XMLEXT;
-		ss2 << Common::DATA_PATH << "/" << Common::REPORTS << "/" << TGT << "/" << REF << "/" << prefix << GTM::GTMEXT << "-2." << Common::XMLEXT;
-		ss3 << Common::DATA_PATH << "/" << Common::REPORTS << "/" << TGT << "/" << REF << "/" << prefix << GTM::GTMEXT << "-3." << Common::XMLEXT;
-
-		string reportGTM1xml = ss1.str();
-		string reportGTM2xml = ss2.str();
-		string reportGTM3xml = ss3.str();
-
-	    boost::filesystem::path reportGTM1xml_path(reportGTM1xml);
-		boost::filesystem::path reportGTM2xml_path(reportGTM2xml);
-	    boost::filesystem::path reportGTM3xml_path(reportGTM3xml);
-
-	    boost::filesystem::path reportGTM1xml_gz(reportGTM1xml + "." + Common::GZEXT);
-		boost::filesystem::path reportGTM2xml_gz(reportGTM2xml + "." + Common::GZEXT);
-	    boost::filesystem::path reportGTM3xml_gz(reportGTM3xml + "." + Common::GZEXT);
+		string reportGTM1xml = Common::DATA_PATH+"/"+Common::REPORTS+"/"+TGT+"/"+REF+"/"+prefix+GTM::GTMEXT+"-1."+Common::XMLEXT;
+		string reportGTM2xml = Common::DATA_PATH+"/"+Common::REPORTS+"/"+TGT+"/"+REF+"/"+prefix+GTM::GTMEXT+"-2."+Common::XMLEXT;
+		string reportGTM3xml = Common::DATA_PATH+"/"+Common::REPORTS+"/"+TGT+"/"+REF+"/"+prefix+GTM::GTMEXT+"-3."+Common::XMLEXT;
 
 	    double SYS;
     	vector<double> SEG;
-		if ( (!exists(reportGTM1xml_path) and !exists(reportGTM1xml_gz)) or Config::remake) {
+		if ( (!exists(boost::filesystem::path(reportGTM1xml)) and !exists(boost::filesystem::path(reportGTM1xml+"."+Common::GZEXT))) or Config::remake) {
 			computeGTM(TGT, 1, SYS, SEG);
 	    	vector<double> d_scores, s_scores;
 			TESTBED::get_seg_doc_scores(SEG, 0, TGT, d_scores, s_scores);
@@ -186,11 +164,11 @@ void GTM::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 
 	    	if (Config::O_STORAGE == 1) {
 	    		sc_asiya.write_report(TGT, REF, prefG, SYS, d_scores, s_scores);
-         		cout << "SC_ASIYA DOCUMENT " << prefG << " CREATED" << endl;
+         		fprintf(stderr, "SC_ASIYA DOCUMENT %s CREATED\n", prefG.c_str());
          	}
          	hOQ.save_hash_scores(prefG, TGT, REF, SYS, d_scores, s_scores);
 	    }
-		if ( (!exists(reportGTM2xml_path) and !exists(reportGTM2xml_gz)) or Config::remake) {
+		if ( (!exists(boost::filesystem::path(reportGTM2xml)) and !exists(boost::filesystem::path(reportGTM2xml+"."+Common::GZEXT))) or Config::remake) {
 			computeGTM(TGT, 2, SYS, SEG);
 	    	vector<double> d_scores, s_scores;
          	TESTBED::get_seg_doc_scores(SEG, 0, TGT, d_scores, s_scores);
@@ -198,11 +176,11 @@ void GTM::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 			string prefG = prefix + GTM::GTMEXT + "-2";
 			if (Config::O_STORAGE == 1) {
 	    		sc_asiya.write_report(TGT, REF, prefG, SYS, d_scores, s_scores);
-         		cout << "SC_ASIYA DOCUMENT " << prefG << " CREATED" << endl;
+         		fprintf(stderr, "SC_ASIYA DOCUMENT %s CREATED\n", prefG.c_str());
          	}
 	    	hOQ.save_hash_scores(prefG, TGT, REF, SYS, d_scores, s_scores);
 		}
-	    if ( (!exists(reportGTM3xml_path) and !exists(reportGTM3xml_gz)) or Config::remake) {
+		if ( (!exists(boost::filesystem::path(reportGTM3xml)) and !exists(boost::filesystem::path(reportGTM3xml+"."+Common::GZEXT))) or Config::remake) {
 			computeGTM(TGT, 3, SYS, SEG);
 			vector<double> d_scores, s_scores;
 			TESTBED::get_seg_doc_scores(SEG, 0, TGT, d_scores, s_scores);
@@ -210,7 +188,7 @@ void GTM::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 	    	string prefG = prefix + GTM::GTMEXT + "-3";
          	if (Config::O_STORAGE == 1) {
 	    		sc_asiya.write_report(TGT, REF, prefG, SYS, d_scores, s_scores);
-         		cout << "SC_ASIYA DOCUMENT " << prefG << " CREATED" << endl;
+         		fprintf(stderr, "SC_ASIYA DOCUMENT %s CREATED\n", prefG.c_str());
          	}
          	hOQ.save_hash_scores(prefG, TGT, REF, SYS, d_scores, s_scores);
 		}

@@ -15,5 +15,6 @@ int main(int argc, char* argv[]) {
     cout << "extension: " << p.extension().string() << endl;
     cout << "extension-{.} " << (file.substr(file.find_last_of(".") + 1)) << endl;
     cout << "replace_ext (idx): " << p.replace_extension(".idx") << endl;
+    cout << "replace_ext (): " << p.replace_extension("") << endl;
   }
 }

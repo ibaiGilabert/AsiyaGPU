@@ -653,10 +653,10 @@ void Config::validate_configuration() {
             boost::regex re_GTM("^GTM.*");
             boost::regex re_NIST("^NIST.*");
             boost::regex re_ROUGE("^ROUGE.*");
-            boost::regex re_WER("^.*WER.*");
-            boost::regex re_PER("^.*PER.*");
-            boost::regex re_TER("^.*TER.*");
-            boost::regex re_LEM("^LeM$");
+            boost::regex re_WER("^-WER$");  //("^.*WER.*");
+            boost::regex re_PER("^-PER$");  //("^.*PER.*");
+            boost::regex re_TER("^-TER.*");  //("^.*TER.*");
+            boost::regex re_LEM("^LeM$");   //("^LeM$");
             boost::regex re_METEOR("^METEOR.*");
             boost::regex re_NGRAM("^NGRAM.*");
             boost::regex re_ESA("^ESA.*");

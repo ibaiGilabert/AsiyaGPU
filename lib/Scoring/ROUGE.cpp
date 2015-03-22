@@ -17,25 +17,24 @@ const string ROUGE::ROUGEXT = "ROUGE";
 const string ROUGE::TROUGE = "rouge-1.5.5";    // version 1.5.5
 const string ROUGE::CFGEXT = "config";
 
-map<string, int> ROUGE::create_rROUGE() {
-	map<string, int> rROUGE;
-	rROUGE[ROUGE::ROUGEXT + "-1"] = 1;
-	rROUGE[ROUGE::ROUGEXT + "-2"] = 1;
-	rROUGE[ROUGE::ROUGEXT + "-3"] = 1;
-	rROUGE[ROUGE::ROUGEXT + "-4"] = 1;
-	rROUGE[ROUGE::ROUGEXT + "-L"] = 1;
-	rROUGE[ROUGE::ROUGEXT + "-S*"] = 1;
-	rROUGE[ROUGE::ROUGEXT + "-SU*"] = 1;
-	rROUGE[ROUGE::ROUGEXT + "-W"] = 1;
+set<string> ROUGE::create_rROUGE() {
+	set<string> rROUGE;
+	rROUGE.insert(ROUGE::ROUGEXT+"-1");
+	rROUGE.insert(ROUGE::ROUGEXT+"-2");
+	rROUGE.insert(ROUGE::ROUGEXT+"-3");
+	rROUGE.insert(ROUGE::ROUGEXT+"-4");
+	rROUGE.insert(ROUGE::ROUGEXT+"-L");
+	rROUGE.insert(ROUGE::ROUGEXT+"-S*");
+	rROUGE.insert(ROUGE::ROUGEXT+"-SU*");
+	rROUGE.insert(ROUGE::ROUGEXT+"-W");
 	return rROUGE;
 }
-const map<string, int> ROUGE::rROUGE = create_rROUGE();
+const set<string> ROUGE::rROUGE = create_rROUGE();
 
 
-vector<double> ROUGE::read_rouge(string reportROUGE) {
+void ROUGE::read_rouge(string reportROUGE, vector<double> &SYS) {
 	// description _ read ROUGE value from report file (for all segments)
 	//boost::regex re("^X ROUGE-[SLW1-4][^ ]* Average_F.*");
-
     string str;
     map<string, double> hROUGE;
 
@@ -59,20 +58,20 @@ vector<double> ROUGE::read_rouge(string reportROUGE) {
         file.close();
     } else { fprintf(stderr, "couldn't open file: %s\n", reportROUGE.c_str()); exit(1); }
 
-    vector<double> lROUGE;
+    //vector<double> lROUGE;
     for (map<string, double>::const_iterator it = hROUGE.begin(); it != hROUGE.end(); ++it)
-    	lROUGE.push_back(it->second);
+    	SYS.push_back(it->second);
 
-    return lROUGE;
+    //return lROUGE;
 }
 
-vector<vector<double> > ROUGE::read_rouge_segments(string reportROUGE) {
+void ROUGE::read_rouge_segments(string reportROUGE, vector<vector<double> > &SEG) {
     //boost::regex re("^X ROUGE-[SLW1-4][^ ]* Eval.*");
-
     vector<double> lROUGE1, lROUGE2, lROUGE3, lROUGE4;
     vector<double> lROUGEL, lROUGES, lROUGESU, lROUGEW;
 
-    vector<vector<double> > SEG(8);
+    //vector<vector<double> > SEG(8);
+    SEG.resize(8);
 
     string str;
     ifstream file(reportROUGE.c_str());
@@ -114,11 +113,11 @@ vector<vector<double> > ROUGE::read_rouge_segments(string reportROUGE) {
 			cout << endl;
 		}
 */
-	return SEG;
+	//return SEG;
 }
 
 
-void ROUGE::computeROUGE(string TGT, vector<double> &SYS, vector<vector<double> > &SEG, int stemming) {
+void ROUGE::computeROUGE(string TGT, int stemming, vector<double> &SYS, vector<vector<double> > &SEG) {
 	stringstream tROUGE;
 	// description _ computes ROUGE scores -> n = 1..4, LCS, S*, SU*, W-1.2 (multiple references)
 	tROUGE << Config::tools << "/" << ROUGE::TROUGE << "/" << "ROUGE-1.5.5.pl -e " << Config::tools << "/" << ROUGE::TROUGE << "/data -z SPL -2 -1 -U -r 1000 -n 4 -w 1.2 -c 95 -d";
@@ -275,83 +274,41 @@ void ROUGE::computeROUGE(string TGT, vector<double> &SYS, vector<vector<double> 
 		}
 	}*/
 
-	SYS = read_rouge(reportROUGE);
-	SEG = read_rouge_segments(reportROUGE);
+	read_rouge(reportROUGE, SYS);
+	read_rouge_segments(reportROUGE, SEG);
 }
 
 void ROUGE::doMetric(string TGT, string REF, string prefix, int stemming, Scores &hOQ) {
    // description _ computes ROUGE score (by calling NIST mteval script) -> n = 1..4 (multiple references)
-
-	//map<string, int> M = Config::Hmetrics;
-	vector<string> mROUGE(ROUGE::rROUGE.size());
-
-	int GO, i;
-	GO = i = 0;
-	for (map<string, int>::const_iterator it = ROUGE::rROUGE.begin(); it != ROUGE::rROUGE.end(); ++it, ++i)
-		mROUGE[i] = it->first;
-
-	for (i = 0; i < mROUGE.size() and !GO; ++i) {
-		string aux = prefix + mROUGE[i];
-		if (Config::Hmetrics.find(aux) != Config::Hmetrics.end()) GO = 1;
+	int GO = 0;
+	for (set<string>::const_iterator it = ROUGE::rROUGE.begin(); !GO and it != ROUGE::rROUGE.end(); ++it) {
+		if (Config::Hmetrics.count(prefix+(*it))) GO = 1;
 	}
-
-	//cout << "ROUGE ei!" << endl;
 	if (GO) {
-		//cout << "GO! ROUGE GO!" << endl;
 		if (Config::verbose == 1) fprintf(stderr, "%s\n", ROUGE::ROUGEXT.c_str());
-		stringstream ss1, ss2, ss3, ss4, ssL, ssS, ssSU, ssW;
-		ss1 << Common::DATA_PATH << "/" << Common::REPORTS << "/" << TGT << "/" << REF << "/" << prefix << ROUGE::ROUGEXT << "-1." << Common::XMLEXT;
-		ss2 << Common::DATA_PATH << "/" << Common::REPORTS << "/" << TGT << "/" << REF << "/" << prefix << ROUGE::ROUGEXT << "-2." << Common::XMLEXT;
-		ss3 << Common::DATA_PATH << "/" << Common::REPORTS << "/" << TGT << "/" << REF << "/" << prefix << ROUGE::ROUGEXT << "-3." << Common::XMLEXT;
-		ss4 << Common::DATA_PATH << "/" << Common::REPORTS << "/" << TGT << "/" << REF << "/" << prefix << ROUGE::ROUGEXT << "-4." << Common::XMLEXT;
-		ssL << Common::DATA_PATH << "/" << Common::REPORTS << "/" << TGT << "/" << REF << "/" << prefix << ROUGE::ROUGEXT << "-L." << Common::XMLEXT;
-		ssS << Common::DATA_PATH << "/" << Common::REPORTS << "/" << TGT << "/" << REF << "/" << prefix << ROUGE::ROUGEXT << "-S*." << Common::XMLEXT;
-		ssSU << Common::DATA_PATH << "/" << Common::REPORTS << "/" << TGT << "/" << REF << "/" << prefix << ROUGE::ROUGEXT << "-SU*." << Common::XMLEXT;
-		ssW << Common::DATA_PATH << "/" << Common::REPORTS << "/" << TGT << "/" << REF << "/" << prefix << ROUGE::ROUGEXT << "-W." << Common::XMLEXT;
+	
+		string reportROUGE1xml  = Common::DATA_PATH+"/"+Common::REPORTS+"/"+TGT+"/"+REF+"/"+prefix+ROUGE::ROUGEXT+"-1."+Common::XMLEXT;
+		string reportROUGE2xml  = Common::DATA_PATH+"/"+Common::REPORTS+"/"+TGT+"/"+REF+"/"+prefix+ROUGE::ROUGEXT+"-2."+Common::XMLEXT;
+		string reportROUGE3xml  = Common::DATA_PATH+"/"+Common::REPORTS+"/"+TGT+"/"+REF+"/"+prefix+ROUGE::ROUGEXT+"-3."+Common::XMLEXT;
+		string reportROUGE4xml  = Common::DATA_PATH+"/"+Common::REPORTS+"/"+TGT+"/"+REF+"/"+prefix+ROUGE::ROUGEXT+"-4."+Common::XMLEXT;
+		string reportROUGELxml  = Common::DATA_PATH+"/"+Common::REPORTS+"/"+TGT+"/"+REF+"/"+prefix+ROUGE::ROUGEXT+"-L."+Common::XMLEXT;
+		string reportROUGESxml  = Common::DATA_PATH+"/"+Common::REPORTS+"/"+TGT+"/"+REF+"/"+prefix+ROUGE::ROUGEXT+"-S*."+Common::XMLEXT;
+		string reportROUGESUxml = Common::DATA_PATH+"/"+Common::REPORTS+"/"+TGT+"/"+REF+"/"+prefix+ROUGE::ROUGEXT+"-SU*."+Common::XMLEXT;
+		string reportROUGEWxml  = Common::DATA_PATH+"/"+Common::REPORTS+"/"+TGT+"/"+REF+"/"+prefix+ROUGE::ROUGEXT+"-W."+Common::XMLEXT;
 
-		string reportROUGE1xml = ss1.str();
-		string reportROUGE2xml = ss2.str();
-		string reportROUGE3xml = ss3.str();
-		string reportROUGE4xml = ss4.str();
-		string reportROUGELxml = ssL.str();
-		string reportROUGESxml = ssS.str();
-		string reportROUGESUxml = ssSU.str();
-		string reportROUGEWxml = ssW.str();
-
-	    boost::filesystem::path reportROUGE1xml_path(reportROUGE1xml);
-		boost::filesystem::path reportROUGE2xml_path(reportROUGE2xml);
-	    boost::filesystem::path reportROUGE3xml_path(reportROUGE3xml);
-	    boost::filesystem::path reportROUGE4xml_path(reportROUGE4xml);
-	    boost::filesystem::path reportROUGELxml_path(reportROUGELxml);
-	    boost::filesystem::path reportROUGESxml_path(reportROUGESxml);
-	    boost::filesystem::path reportROUGESUxml_path(reportROUGESUxml);
-	    boost::filesystem::path reportROUGEWxml_path(reportROUGEWxml);
-
-	    boost::filesystem::path reportROUGE1xml_gz(reportROUGE1xml + "." + Common::GZEXT);
-		boost::filesystem::path reportROUGE2xml_gz(reportROUGE2xml + "." + Common::GZEXT);
-	    boost::filesystem::path reportROUGE3xml_gz(reportROUGE3xml + "." + Common::GZEXT);
-	    boost::filesystem::path reportROUGE4xml_gz(reportROUGE4xml + "." + Common::GZEXT);
-	    boost::filesystem::path reportROUGELxml_gz(reportROUGELxml + "." + Common::GZEXT);
-	    boost::filesystem::path reportROUGESxml_gz(reportROUGESxml + "." + Common::GZEXT);
-	    boost::filesystem::path reportROUGESUxml_gz(reportROUGESUxml + "." + Common::GZEXT);
-	    boost::filesystem::path reportROUGEWxml_gz(reportROUGEWxml + "." + Common::GZEXT);
-
-	    if ( (!exists(reportROUGE1xml_path) and !exists(reportROUGE1xml_gz)) or \
-	    (!exists(reportROUGE2xml_path) and !exists(reportROUGE2xml_gz)) or \
-	    (!exists(reportROUGE3xml_path) and !exists(reportROUGE3xml_gz)) or \
-	    (!exists(reportROUGE4xml_path) and !exists(reportROUGE4xml_gz)) or \
-	    (!exists(reportROUGELxml_path) and !exists(reportROUGELxml_gz)) or \
-	    (!exists(reportROUGESxml_path) and !exists(reportROUGESxml_gz)) or \
-	    (!exists(reportROUGESUxml_path) and !exists(reportROUGESUxml_gz)) or \
-	    (!exists(reportROUGEWxml_path) and !exists(reportROUGEWxml_gz)) or Config::remake) {
-        	//my ($SYS, $SEGS) = ROUGE::computeMultiROUGE($src, $out, $Href, $remakeREPORTS, $TGT, $REF, $tools, $stemming, $verbose);
+	    if ((!exists(boost::filesystem::path(reportROUGE1xml)) and !exists(boost::filesystem::path(reportROUGE1xml+"."+Common::GZEXT))) or
+	    	(!exists(boost::filesystem::path(reportROUGE2xml)) and !exists(boost::filesystem::path(reportROUGE2xml+"."+Common::GZEXT))) or
+	    	(!exists(boost::filesystem::path(reportROUGE3xml)) and !exists(boost::filesystem::path(reportROUGE3xml+"."+Common::GZEXT))) or
+	    	(!exists(boost::filesystem::path(reportROUGE4xml)) and !exists(boost::filesystem::path(reportROUGE4xml+"."+Common::GZEXT))) or
+	    	(!exists(boost::filesystem::path(reportROUGELxml)) and !exists(boost::filesystem::path(reportROUGELxml+"."+Common::GZEXT))) or
+	    	(!exists(boost::filesystem::path(reportROUGESxml)) and !exists(boost::filesystem::path(reportROUGESxml+"."+Common::GZEXT))) or
+	    	(!exists(boost::filesystem::path(reportROUGESUxml)) and !exists(boost::filesystem::path(reportROUGESUxml+"."+Common::GZEXT))) or
+	    	(!exists(boost::filesystem::path(reportROUGEWxml)) and !exists(boost::filesystem::path(reportROUGEWxml+"."+Common::GZEXT))) or Config::remake) {
 
 	    	vector<double> SYS;
 	    	vector<vector<double> > SEG;
-	    	computeROUGE(TGT, SYS, SEG, stemming);
+	    	computeROUGE(TGT, stemming, SYS, SEG);
 
-
-//cout << "ROUGE computed" << endl;
          	string prefR = prefix + ROUGE::ROUGEXT + "-1";
         	vector<double> d_scores, s_scores;
         	TESTBED::get_seg_doc_scores(SEG[0], 0, TGT, d_scores, s_scores);
@@ -363,8 +320,6 @@ void ROUGE::doMetric(string TGT, string REF, string prefix, int stemming, Scores
          		fprintf(stderr, "SC_ASIYA DOCUMENT %s CREATED\n", prefR.c_str());
          	}
          	hOQ.save_hash_scores(prefR, TGT, REF, SYS[0], d_scores, s_scores);
-
-//cout << "hOQ -> First score saved" << endl;
 
 			prefR = prefix + ROUGE::ROUGEXT + "-2";
 			TESTBED::get_seg_doc_scores(SEG[1], 0, TGT, d_scores, s_scores);
@@ -422,12 +377,8 @@ void ROUGE::doMetric(string TGT, string REF, string prefix, int stemming, Scores
          	}
 	    	hOQ.save_hash_scores(prefR, TGT, REF, SYS[7], d_scores, s_scores);
 
-//cout << "May I serialize you?" << endl;
+            if (Config::serialize) hOQ.save_struct_scores(TB_FORMAT::make_serial("ROUGE", TGT, REF));
 
-            if (Config::serialize) //serialize
-                hOQ.save_struct_scores(TB_FORMAT::make_serial("ROUGE", TGT, REF));
-
-//cout << "ROUGE serialized" << endl;
                 /*cout << "-----------------------------------------ROUGE-SCORES---------------------------------" << endl;
                 hOQ.print_scores();
                 cout << "-------------------------------------------------------------------------------------" << endl;

@@ -221,39 +221,24 @@ void ESA::computeMultiESA(string metric, string TGT, double &MAXSYS, vector<doub
 
 void ESA::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 	// description _ computes ESA score (multiple references)
-	vector<string> mESA(ESA::rLANG[Config::LANG].size());
-
-	int GO, i;
-	GO = i = 0;
-	for (set<string>::const_iterator it = ESA::rLANG[Config::LANG].begin(); it != ESA::rLANG[Config::LANG].end(); ++it, ++i)
-		mESA[i] = *it;
-
-
-	for (i = 0; i < mESA.size() and !GO; ++i) {
-		if (Config::Hmetrics.find(mESA[i]) != Config::Hmetrics.end()) GO = 1;
+	int GO = 0;
+	for (set<string>::const_iterator it = ESA::rLANG[Config::LANG].begin(); !GO and it != ESA::rLANG[Config::LANG].end(); ++it) {
+		if (Config::Hmetrics.count(*it)) GO = 1;
 	}
-	/*for(map<string, set<string> >::const_iterator it = ESA::rLANG.begin(); it != ESA::rLANG.end(); ++it) {
-	        cout << "\t" << it->first << " -> " << endl;
-	        set<string> aux = it->second;
-	        for(set<string>::const_iterator is = aux.begin(); is != aux.end(); ++is) {
-	                cout << "\t\t[" << *is << "]" << endl;
-	        }
-	}*/
+
 	if (GO) {
 		if (Config::verbose) fprintf(stderr, "%s...\n", ESA::ESAEXT.c_str());
 
-		for (i = 0; i < mESA.size(); ++i) {
-			string reportESAxml = Common::DATA_PATH+"/"+Common::REPORTS+"/"+TGT+"/"+REF+"/"+prefix+mESA[i]+"."+Common::XMLEXT;
-		    boost::filesystem::path reportESAxml_path(reportESAxml);
-	   		boost::filesystem::path reportESAxml_gz(reportESAxml+"."+Common::GZEXT);
-	   		if ( (!exists(reportESAxml_path) and !exists(reportESAxml_gz)) or Config::remake) {
+		for (set<string>::const_iterator it = ESA::rLANG[Config::LANG].begin(); it != ESA::rLANG[Config::LANG].end(); ++it) {
+			string reportESAxml = Common::DATA_PATH+"/"+Common::REPORTS+"/"+TGT+"/"+REF+"/"+prefix+(*it)+"."+Common::XMLEXT;
+		    if ( (!exists(boost::filesystem::path(reportESAxml)) and !exists(boost::filesystem::path(reportESAxml+"."+Common::GZEXT))) or Config::remake) {
 	   			double SYS;
 	   			vector<double> SEG, d_scores, s_scores;
 
-	   			computeMultiESA(mESA[i], TGT, SYS, SEG);
+	   			computeMultiESA(*it, TGT, SYS, SEG);
 				TESTBED::get_seg_doc_scores(SEG, 0, TGT, d_scores, s_scores);
 
-				string pref = prefix + mESA[i];
+				string pref = prefix + (*it);
 		    	if (Config::O_STORAGE == 1) {
 					sc_asiya.write_report(TGT, REF, pref, SYS, d_scores, s_scores);
 					fprintf(stderr, "SC_ASIYA DOCUMENT %s CREATED\n", pref.c_str());

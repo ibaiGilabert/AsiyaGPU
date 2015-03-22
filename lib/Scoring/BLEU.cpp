@@ -17,25 +17,24 @@ const string BLEU::BLEUEXT = "BLEU";
 const string BLEU::BLEUEXTi = "BLEUi";
 const string BLEU::TBLEU = "mteval-kit";
 
-map<string, int> BLEU::create_rBLEU() {
-	map<string, int> rBLEU;
-	rBLEU[BLEU::BLEUEXT] = 1;
-	rBLEU[BLEU::BLEUEXT + "-1"] = 1;
-	rBLEU[BLEU::BLEUEXT + "-2"] = 1;
-	rBLEU[BLEU::BLEUEXT + "-3"] = 1;
-	rBLEU[BLEU::BLEUEXT + "-4"] = 1;
-	rBLEU[BLEU::BLEUEXTi + "-2"] = 1;
-	rBLEU[BLEU::BLEUEXTi + "-3"] = 1;
-	rBLEU[BLEU::BLEUEXTi + "-4"] = 1;
+set<string> BLEU::create_rBLEU() {
+	set<string> rBLEU;
+	rBLEU.insert(BLEU::BLEUEXT);
+	rBLEU.insert(BLEU::BLEUEXT+"-1");
+	rBLEU.insert(BLEU::BLEUEXT+"-2");
+	rBLEU.insert(BLEU::BLEUEXT+"-3");
+	rBLEU.insert(BLEU::BLEUEXT+"-4");
+	rBLEU.insert(BLEU::BLEUEXTi+"-2");
+	rBLEU.insert(BLEU::BLEUEXTi+"-3");
+	rBLEU.insert(BLEU::BLEUEXTi+"-4");
 	return rBLEU;
 }
-const map<string, int> BLEU::rBLEU = create_rBLEU();
+const set<string> BLEU::rBLEU = create_rBLEU();
 
 
-vector<double> BLEU::read_bleu(string reportBLEU) {
+void BLEU::read_bleu(string reportBLEU, vector<double> &SYS) {
 	// description _ read BLEU value from report file
     //boost::regex re("^ +BLEU:.*");
-
     string str;
     bool individual = false;
     vector<double> lbleu(4), lbleui(4);
@@ -68,20 +67,21 @@ vector<double> BLEU::read_bleu(string reportBLEU) {
 	    //for (int i = 0; i < 4; ++i) cout << "lbleu[" << i << "]: " << lbleu[i] << endl;
 	    //for (int i = 0; i < 4; ++i) cout << "lbleui[" << i << "]: " << lbleui[i] << endl;
 
-    vector<double> l(0);
-    l.insert(l.begin(), lbleu.begin(), lbleu.end());
+    //vector<double> l(0);
+    SYS.clear();
+    SYS.insert(SYS.begin(), lbleu.begin(), lbleu.end());
 	    /*cout << "l after first insertion: ";
 	    for (int i = 0; i < l.size(); ++i) cout << l[i] << ", ";
 	    cout << endl;*/
-    l.insert(l.begin() + 4, lbleui.begin(), lbleui.end());
+    SYS.insert(SYS.begin() + 4, lbleui.begin(), lbleui.end());
 	    /*cout << "l after second insertion: ";
 	    for (int i = 0; i < l.size(); ++i) cout << l[i] << ", ";
 	    cout << endl;*/
 
-	return l;
+	//return l;
 }
 
-vector<vector<double> > BLEU::read_bleu_segments(string reportBLEU) {
+void BLEU::read_bleu_segments(string reportBLEU, vector<vector<double> > &SEG) {
     //boost::regex re1("^ +BLEU score using.*");
     //boost::regex re2("^ +cumulative-BLEU score using.*");
     //boost::regex re3("^ +individual-BLEU score using.*");
@@ -89,7 +89,8 @@ vector<vector<double> > BLEU::read_bleu_segments(string reportBLEU) {
     vector<double> lbleu1, lbleu2, lbleu3, lbleu4;
     vector<double> lbleu1i, lbleu2i, lbleu3i, lbleu4i;
 
-    vector<vector<double> > SEG(8);
+    //vector<vector<double> > SEG(8);
+    SEG.resize(8);
 
     string str;
     ifstream file(reportBLEU.c_str());
@@ -150,7 +151,7 @@ vector<vector<double> > BLEU::read_bleu_segments(string reportBLEU) {
 			cout << endl;
 		}*/
 
-	return SEG;
+	//return SEG;
 }
 
 
@@ -201,8 +202,8 @@ void BLEU::computeBLEU(string TGT, vector<double> &SYS, vector<vector<double> > 
 		system (sysaux.c_str());
 	}
 
-	SYS = read_bleu(ssReport.str());
-	SEG = read_bleu_segments(ssReport.str());
+	read_bleu(ssReport.str(), SYS);
+	read_bleu_segments(ssReport.str(), SEG);
 }
 
 MetricScore BLEU::computeBLEUN(string TGT) {
@@ -255,42 +256,22 @@ MetricScore BLEU::computeBLEUN(string TGT) {
 
 void BLEU::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
    // description _ computes BLEU score (by calling NIST mteval script) -> n = 1..4 (multiple references)
-
-	//map<string, int> M = Config::Hmetrics;
-	vector<string> mBLEU(BLEU::rBLEU.size());
-
-	int GO , i;
-	GO = i = 0;
-	for (map<string, int>::const_iterator it = BLEU::rBLEU.begin(); it != BLEU::rBLEU.end(); ++it, ++i) {
-		//mBLEU.insert(it->first);
-		mBLEU[i] = it->first;
-	}
-
-	for (i = 0; i < mBLEU.size() and !GO; ++i) {
-		string aux = prefix + mBLEU[i];
-		if (Config::Hmetrics.find(aux) != Config::Hmetrics.end()) { GO = 1; }
+	int GO = 0;
+	for (set<string>::const_iterator it = BLEU::rBLEU.begin(); !GO and it != BLEU::rBLEU.end(); ++it) {
+		if (Config::Hmetrics.count(prefix+(*it))) GO = 1;
 	}
 
 	if (GO) {
 		if (Config::verbose) fprintf(stderr, "%s\n", BLEU::BLEUEXT.c_str());
-		stringstream ss1, ss2, ss3, ss4, ss2i, ss3i, ss4i, ssB;
-		ss1 << Common::DATA_PATH << "/" << Common::REPORTS << "/" << TGT << "/" << REF << "/" << prefix << BLEU::BLEUEXT << "-1." << Common::XMLEXT;
-		ss2 << Common::DATA_PATH << "/" << Common::REPORTS << "/" << TGT << "/" << REF << "/" << prefix << BLEU::BLEUEXT << "-2." << Common::XMLEXT;
-		ss3 << Common::DATA_PATH << "/" << Common::REPORTS << "/" << TGT << "/" << REF << "/" << prefix << BLEU::BLEUEXT << "-3." << Common::XMLEXT;
-		ss4 << Common::DATA_PATH << "/" << Common::REPORTS << "/" << TGT << "/" << REF << "/" << prefix << BLEU::BLEUEXT << "-4." << Common::XMLEXT;
-		ss2i << Common::DATA_PATH << "/" << Common::REPORTS << "/" << TGT << "/" << REF << "/" << prefix << BLEU::BLEUEXTi << "-2." << Common::XMLEXT;
-		ss3i << Common::DATA_PATH << "/" << Common::REPORTS << "/" << TGT << "/" << REF << "/" << prefix << BLEU::BLEUEXTi << "-3." << Common::XMLEXT;
-		ss4i << Common::DATA_PATH << "/" << Common::REPORTS << "/" << TGT << "/" << REF << "/" << prefix << BLEU::BLEUEXTi << "-4." << Common::XMLEXT;
-		ssB << Common::DATA_PATH << "/" << Common::REPORTS << "/" << TGT << "/" << REF << "/" << prefix << BLEU::BLEUEXT << "." << Common::XMLEXT;
 
-		string reportBLEU1xml = ss1.str();
-		string reportBLEU2xml = ss2.str();
-		string reportBLEU3xml = ss3.str();
-		string reportBLEU4xml = ss4.str();
-		string reportBLEUi2xml = ss2i.str();
-		string reportBLEUi3xml = ss3i.str();
-		string reportBLEUi4xml = ss4i.str();
-		string reportBLEUNxml = ssB.str();
+		string reportBLEU1xml  = Common::DATA_PATH+"/"+Common::REPORTS+"/"+TGT+"/"+REF+"/"+prefix+BLEU::BLEUEXT+"-1."+Common::XMLEXT;
+		string reportBLEU2xml  = Common::DATA_PATH+"/"+Common::REPORTS+"/"+TGT+"/"+REF+"/"+prefix+BLEU::BLEUEXT+"-2."+Common::XMLEXT;
+		string reportBLEU3xml  = Common::DATA_PATH+"/"+Common::REPORTS+"/"+TGT+"/"+REF+"/"+prefix+BLEU::BLEUEXT+"-3."+Common::XMLEXT;
+		string reportBLEU4xml  = Common::DATA_PATH+"/"+Common::REPORTS+"/"+TGT+"/"+REF+"/"+prefix+BLEU::BLEUEXT+"-4."+Common::XMLEXT;
+		string reportBLEUi2xml = Common::DATA_PATH+"/"+Common::REPORTS+"/"+TGT+"/"+REF+"/"+prefix+BLEU::BLEUEXTi+"-2."+Common::XMLEXT;
+		string reportBLEUi3xml = Common::DATA_PATH+"/"+Common::REPORTS+"/"+TGT+"/"+REF+"/"+prefix+BLEU::BLEUEXTi+"-3."+Common::XMLEXT;
+		string reportBLEUi4xml = Common::DATA_PATH+"/"+Common::REPORTS+"/"+TGT+"/"+REF+"/"+prefix+BLEU::BLEUEXTi+"-4."+Common::XMLEXT;
+		string reportBLEUNxml  = Common::DATA_PATH+"/"+Common::REPORTS+"/"+TGT+"/"+REF+"/"+prefix+BLEU::BLEUEXT+"."+Common::XMLEXT;
 
 	    if ( (!exists(boost::filesystem::path(reportBLEU1xml))  and !exists(boost::filesystem::path(reportBLEU1xml+"."+Common::GZEXT))) or
 		     (!exists(boost::filesystem::path(reportBLEU2xml))  and !exists(boost::filesystem::path(reportBLEU2xml+"."+Common::GZEXT))) or
@@ -410,69 +391,3 @@ void BLEU::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 	}
 
 }
-
-/*void BLEU::processMetric(string TGT, string REF, string prefix, Scores &hOQ) {
-	stringstream ss1, ss2, ss3, ss4, ss2i, ss3i, ss4i, ssB;
-	ss1 << Common::DATA_PATH << "/" << Common::REPORTS << "/" << TGT << "/" << REF << "/" << prefix << BLEU::BLEUEXT << "-1." << Common::XMLEXT;
-	ss2 << Common::DATA_PATH << "/" << Common::REPORTS << "/" << TGT << "/" << REF << "/" << prefix << BLEU::BLEUEXT << "-2." << Common::XMLEXT;
-	ss3 << Common::DATA_PATH << "/" << Common::REPORTS << "/" << TGT << "/" << REF << "/" << prefix << BLEU::BLEUEXT << "-3." << Common::XMLEXT;
-	ss4 << Common::DATA_PATH << "/" << Common::REPORTS << "/" << TGT << "/" << REF << "/" << prefix << BLEU::BLEUEXT << "-4." << Common::XMLEXT;
-	ss2i << Common::DATA_PATH << "/" << Common::REPORTS << "/" << TGT << "/" << REF << "/" << prefix << BLEU::BLEUEXTi << "-2." << Common::XMLEXT;
-	ss3i << Common::DATA_PATH << "/" << Common::REPORTS << "/" << TGT << "/" << REF << "/" << prefix << BLEU::BLEUEXTi << "-3." << Common::XMLEXT;
-	ss4i << Common::DATA_PATH << "/" << Common::REPORTS << "/" << TGT << "/" << REF << "/" << prefix << BLEU::BLEUEXTi << "-4." << Common::XMLEXT;
-	ssB << Common::DATA_PATH << "/" << Common::REPORTS << "/" << TGT << "/" << REF << "/" << prefix << BLEU::BLEUEXT << "." << Common::XMLEXT;
-
-    boost::filesystem::path reportBLEU1xml_path(ss1.str());
-	boost::filesystem::path reportBLEU2xml_path(ss2.str());
-    boost::filesystem::path reportBLEU3xml_path(ss3.str());
-    boost::filesystem::path reportBLEU4xml_path(ss4.str());
-    boost::filesystem::path reportBLEUi2xml_path(ss2i.str());
-    boost::filesystem::path reportBLEUi3xml_path(ss3i.str());
-    boost::filesystem::path reportBLEUi4xml_path(ss4i.str());
-    boost::filesystem::path reportBLEUNxml_path(ssB.str());
-
-	boost::filesystem::path reportBLEU1xml_ext(ss1.str() + "." + Common::GZEXT);
-    boost::filesystem::path reportBLEU2xml_ext(ss2.str() + "." + Common::GZEXT);
-    boost::filesystem::path reportBLEU3xml_ext(ss3.str() + "." + Common::GZEXT);
-    boost::filesystem::path reportBLEU4xml_ext(ss4.str() + "." + Common::GZEXT);
-    boost::filesystem::path reportBLEUi2xml_ext(ss2i.str() + "." + Common::GZEXT);
-    boost::filesystem::path reportBLEUi3xml_ext(ss3i.str() + "." + Common::GZEXT);
-    boost::filesystem::path reportBLEUi4xml_ext(ss4i.str() + "." + Common::GZEXT);
-    boost::filesystem::path reportBLEUNxml_ext(ssB.str() + "." + Common::GZEXT);
-
-    if ( (exists(reportBLEU1xml_path) and exists(reportBLEU1xml_ext)) or \
-    (exists(reportBLEU2xml_path) and exists(reportBLEU2xml_ext)) or \
-    (exists(reportBLEU3xml_path) and exists(reportBLEU3xml_ext)) or \
-    (exists(reportBLEU4xml_path) and exists(reportBLEU4xml_ext)) or \
-    (exists(reportBLEUi2xml_path) and exists(reportBLEUi2xml_ext)) or \
-    (exists(reportBLEUi3xml_path) and exists(reportBLEUi3xml_ext)) or \
-    (exists(reportBLEUi4xml_path) and exists(reportBLEUi4xml_ext)) or \
-    (exists(reportBLEUNxml_path) and exists(reportBLEUNxml_ext)) or Config::remake) {
-
- 		SC_ASIYA sc_asiya;
-
-		string prefB = prefix;	prefB += BLEU::BLEUEXT;	prefB += "-1";
-		sc_asiya.read_report(TGT, REF, prefB);
-
-		prefB = prefix + BLEU::BLEUEXT + "-2";
-		sc_asiya.read_report(TGT, REF, prefB);
-
-		prefB = prefix + BLEU::BLEUEXT + "-3";
-		sc_asiya.read_report(TGT, REF, prefB);
-
-		prefB = prefix + BLEU::BLEUEXT + "-4";
-		sc_asiya.read_report(TGT, REF, prefB);
-
-		prefB = prefix + BLEU::BLEUEXTi + "-2";
-		sc_asiya.read_report(TGT, REF, prefB);
-
-		prefB = prefix + BLEU::BLEUEXTi + "-3";
-		sc_asiya.read_report(TGT, REF, prefB);
-
-		prefB = prefix + BLEU::BLEUEXTi + "-4";
-		sc_asiya.read_report(TGT, REF, prefB);
-
-		sc_asiya.read_report(TGT, REF, BLEU::BLEUEXT);
-	}
-
-}*/

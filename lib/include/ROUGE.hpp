@@ -4,25 +4,25 @@
 #include "SingleMetric.hpp"
 
 #include <vector>
-#include <map>
+#include <set>
 
 class ROUGE : public SingleMetric {
 private:
-	static map<string, int> create_rROUGE();
+	static set<string> create_rROUGE();
 
-	vector<double> read_rouge(string reportROUGE);
-	vector<vector<double> > read_rouge_segments(string reportROUGE);
+	static const set<string> rROUGE;
+	static const string ROUGEXT, TROUGE, CFGEXT;
 
-	void computeROUGE(string TGT, vector<double> &SYS, vector<vector<double> > &SEG, int stemming);
+	void read_rouge(string reportROUGE, vector<double> &SYS);
+	void read_rouge_segments(string reportROUGE, vector<vector<double> > &SEG);
+
+	void computeROUGE(string TGT, int stemming, vector<double> &SYS, vector<vector<double> > &SEG);
 
 public:
 	ROUGE() {}
 	~ROUGE() {}
 
 	void doMetric(string TGT, string REF, string prefix, int stemming, Scores &hOQ);
-
-	static const string ROUGEXT, TROUGE, CFGEXT;
-	static const map<string, int> rROUGE;
 };
 
 

@@ -4,15 +4,17 @@
 #include "SingleMetric.hpp"
 
 #include <vector>
+#include <set>
 
 class BLEU : public SingleMetric {
 private:
-	static map<string, int> create_rBLEU();
+	static set<string> create_rBLEU();
+	
 	static const string BLEUEXT,	BLEUEXTi,	TBLEU;
-	static const map<string, int> rBLEU;
+	static const set<string> rBLEU;
 
-	vector<double> read_bleu(string reportBLEU);
-	vector<vector<double> > read_bleu_segments(string reportBLEU);
+	void read_bleu(string reportBLEU, vector<double> &SYS);
+	void read_bleu_segments(string reportBLEU, vector<vector<double> > &SEG);
 
 	MetricScore computeBLEUN(string TGT);
 	void computeBLEU(string TGT, vector<double> &SYS, vector<vector<double> > &SEG);

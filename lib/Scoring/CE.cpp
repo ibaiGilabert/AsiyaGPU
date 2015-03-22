@@ -566,17 +566,9 @@ void CE::computeCE_bidict_ambiguity(string lemma, map<string, map<string, int> >
 
 void CE::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 	// description _ computes CE scores   (no references)
-
-	//map<string, int> M = Config::Hmetrics;
-	vector<string> mCE(CE::rCE.size());
-
-	int GO, i;
-	GO = i = 0;
-	for (set<string>::const_iterator it = CE::rCE.begin(); it != CE::rCE.end(); ++it, ++i)
-		mCE[i] = *it;
-	for (i = 0; i < mCE.size() and !GO; ++i) {
-		//string aux = prefix + mCE[i];
-		if (Config::Hmetrics.count(prefix+mCE[i])) GO = 1;
+	int GO = 0;
+	for (set<string>::const_iterator it = CE::rCE.begin(); !GO and it != CE::rCE.end(); ++it) {
+		if (Config::Hmetrics.count(prefix+(*it))) GO = 1;
 	}
 
 	if (GO) {

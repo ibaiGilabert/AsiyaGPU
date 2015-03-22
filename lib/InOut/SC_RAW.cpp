@@ -6,6 +6,7 @@
 #include <iostream>
 #include <sstream>
 #include <iomanip>
+#include <numeric>
 
 #include <string.h>
 #include <stdlib.h>
@@ -13,10 +14,15 @@
 
 using namespace std;
 
+int sum_string_chars(int sum, const string& str) {
+    return sum + str.size();
+}
 
 void SC_RAW::print_MMATRIX_header(const vector<string> &sorted_metrics) {
     // description _ print matrix score header (on a metric basis)
-    char buffer[1024];
+    int chars = accumulate(sorted_metrics.begin(), sorted_metrics.end(), 0, sum_string_chars);
+
+    char buffer[2*chars];
     if (Config::G == Common::G_SYS) {
         sprintf(buffer, "%-*s %-*s", Config::setid_length, "SET", Config::sysid_length, "SYS");
     } else if (Config::G == Common::G_DOC) {
@@ -42,7 +48,9 @@ void SC_RAW::print_MMATRIX_header(const vector<string> &sorted_metrics) {
 void SC_RAW::print_system_scores_MMATRIX(string sys, const Scores &hOQ, const vector<string> &sorted_metrics, string ref) {
     // description _ print scores for a given system according to a given metric
     //int doALL =
-    char buffer[1024];
+    int chars = accumulate(sorted_metrics.begin(), sorted_metrics.end(), 0, sum_string_chars);
+
+    char buffer[2*chars];
     string SO = *Config::systems.begin();
     string setid = TESTBED::IDX[SO][0][0];
     string sysid = TESTBED::IDX[sys][1][2];
