@@ -358,15 +358,14 @@ double Core::do_scores(Scores &hOQ) {
 			for (set<string>::const_iterator it_s = Config::systems.begin(); it_s != Config::systems.end(); ++it_s) {
 		        rebuild_hash_scores(*it_s, REF, hOQ);
 
-    fprintf(stderr, "[DEPENDENCY METRIC]\n");
+    			//fprintf(stderr, "[DEPENDENCY METRIC]\n");
 
 				// DEPENDENCY METRIC
 		        if (Config::Fmetrics.count("SP")) {		// need to rebuild SP files for NIST execution (sequential)
 		        	SP sp;
-		fprintf(stderr, "TO REBUILD FILES\n");
+					//fprintf(stderr, "TO REBUILD FILES\n");
 		        	sp.rebuild_files();
-
-        fprintf(stderr, "TO DO NIST\n");
+        			//fprintf(stderr, "TO DO NIST\n");
 	    		   	sp.doNIST(*it_s, REF, "", hOQ);
 		    	}
 
@@ -499,7 +498,11 @@ void Core::do_print(Scores &hOQ) {
 	//cout << "config->{O}: " << Config::O << endl;
 
 	if (Config::O != Common::O_DEFAULT) format == Config::O;
-	vector<string> sorted_metrics = get_sorted_metrics();
+//fprintf(stderr, "[CORE] TO get_sorted_metrics\n");
+    vector<string> sorted_metrics = get_sorted_metrics();
+//fprintf(stderr, "\tsorted_metrics -> [");
+//for(int k = 0; k < sorted_metrics.size(); ++k) fprintf(stderr, " %s ", sorted_metrics[k].c_str());
+//fprintf(stderr, "]\n");
 
 	SC_RAW sc_raw;
 	sc_raw.print_scores_MMATRIX(hOQ, sorted_metrics);

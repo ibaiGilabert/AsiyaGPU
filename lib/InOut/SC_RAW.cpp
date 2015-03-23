@@ -20,7 +20,7 @@ int sum_string_chars(int sum, const string& str) {
 
 void SC_RAW::print_MMATRIX_header(const vector<string> &sorted_metrics) {
     // description _ print matrix score header (on a metric basis)
-    int chars = accumulate(sorted_metrics.begin(), sorted_metrics.end(), 0, sum_string_chars);
+    int chars = Config::setid_length + Config::sysid_length + Config::docid_length + Config::segid_length;
 
     char buffer[2*chars];
     if (Config::G == Common::G_SYS) {
@@ -48,7 +48,8 @@ void SC_RAW::print_MMATRIX_header(const vector<string> &sorted_metrics) {
 void SC_RAW::print_system_scores_MMATRIX(string sys, const Scores &hOQ, const vector<string> &sorted_metrics, string ref) {
     // description _ print scores for a given system according to a given metric
     //int doALL =
-    int chars = accumulate(sorted_metrics.begin(), sorted_metrics.end(), 0, sum_string_chars);
+    //int chars = accumulate(sorted_metrics.begin(), sorted_metrics.end(), 0, sum_string_chars);
+    int chars = Config::setid_length + Config::sysid_length + Config::docid_length + Config::segid_length;
 
     char buffer[2*chars];
     string SO = *Config::systems.begin();

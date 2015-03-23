@@ -182,7 +182,7 @@ string Process::make_config_file(string TGT, string REF, string metric_set, int 
 string Process::make_run_file(string config_file, string TGT, string REF, int thread, string metric) {
     // build run script file
     // return: script file name
-    char run_buffer[100], report_buffer[100];
+    char run_buffer[150], report_buffer[150];
     sprintf(run_buffer, "run_%s_%s_%s_%.3d.sh", metric.c_str(), TGT.c_str(), REF.c_str(), thread);   // get the system split
     sprintf(report_buffer, "run_%s_%s_%s_%.3d.report", metric.c_str(), TGT.c_str(), REF.c_str(), thread);   // get the system split
 
@@ -192,7 +192,7 @@ string Process::make_run_file(string config_file, string TGT, string REF, int th
         run_file << "#$ -V" << endl;
         run_file << "#$ -cwd" << endl;
         run_file << "#$ -m eas" << endl;
-        run_file << "#$ -M gilabert@cs.upc.edu" << endl;
+        //run_file << "#$ -M gilabert@cs.upc.edu" << endl;
         run_file << "#$ -l h_vmem=10G" << endl;                 //LA MEMORIA QUE CADA METRICA DEMANI
         //run_file << endl << "DATAPATH=" << Common::DATA_PATH << endl;
 

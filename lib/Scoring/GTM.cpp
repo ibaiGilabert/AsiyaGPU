@@ -77,7 +77,7 @@ void GTM::computeGTM(string TGT, int e, double &SYS, vector<double> &SEG) {
 	stringstream tGTM;
 	tGTM << "java -Dfile.encoding=UTF-8 " << mem_options << " -jar " << Config::tools << "/" << GTM::TGTM << "/gtm.jar +s +d";
 	string toolGTM = tGTM.str();
-	cout << "toolGTM ->" << toolGTM << endl << endl;
+	fprintf(stderr, "toolGTM -> %s\n", toolGTM.c_str());
 
 	string t_id;
     if (Config::serialize) t_id = "_" + TGT;//TB_FORMAT::get_formated_thread(TGT);
@@ -90,11 +90,10 @@ void GTM::computeGTM(string TGT, int e, double &SYS, vector<double> &SEG) {
 		stringstream ssRef;
 		ssRef << Common::DATA_PATH << "/" << Common::TMP << "/" << rand() % (Common::NRAND + 1) << "." << Common::REFEXT << "." <<  GTM::GTMEXT << t_id << "." << Common::SGMLEXT;
 		string refGTMsgml = ssRef.str();
- 	    boost::filesystem::path ref_path(refGTMsgml);
 
-		if (!exists(ref_path) or Config::remake) {
+		if (!exists(boost::filesystem::path(refGTMsgml)) or Config::remake)
 			TB_NIST::SGML_GTM_f_create_mteval_doc(ref, refGTMsgml);
-		}
+	
 		LrefTGMsgml.push_back(refGTMsgml);
 	}
 
@@ -193,6 +192,6 @@ void GTM::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
          	hOQ.save_hash_scores(prefG, TGT, REF, SYS, d_scores, s_scores);
 		}
         if (Config::serialize) //serialize
-            hOQ.save_struct_scores(TB_FORMAT::make_serial("GTM", TGT, REF));
+            hOQ.save_struct_scores(TB_FORMAT::make_serial(GTM::GTMEXT, TGT, REF));
 	}
 }
