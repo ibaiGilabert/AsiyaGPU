@@ -28,6 +28,13 @@ cp test_data.sh ws_corpus100/4
 cp clear.sh ws_corpus100/4
 cp Asiya ws_corpus100/4
 
+mkdir ws_corpus100/8
+cp -r ws_corpus100/data ws_corpus100/8/data
+cp Asiya-* ws_corpus100/8
+cp test_data.sh ws_corpus100/8
+cp clear.sh ws_corpus100/8
+cp Asiya ws_corpus100/8
+
 mkdir ws_corpus100/16
 cp -r ws_corpus100/data ws_corpus100/16/data
 cp Asiya-* ws_corpus100/16
@@ -72,6 +79,13 @@ cp Asiya-* ws_corpus200/4
 cp test_data.sh ws_corpus200/4
 cp clear.sh ws_corpus200/4
 cp Asiya ws_corpus200/4
+
+mkdir ws_corpus200/8
+cp -r ws_corpus200/data ws_corpus200/8/data
+cp Asiya-* ws_corpus200/8
+cp test_data.sh ws_corpus200/8
+cp clear.sh ws_corpus200/8
+cp Asiya ws_corpus200/8
 
 mkdir ws_corpus200/16
 cp -r ws_corpus200/data ws_corpus200/16/data
@@ -118,6 +132,13 @@ cp test_data.sh ws_corpus500/4
 cp clear.sh ws_corpus500/4
 cp Asiya ws_corpus500/4
 
+mkdir ws_corpus500/8
+cp -r ws_corpus500/data ws_corpus500/8/data
+cp Asiya-* ws_corpus500/8
+cp test_data.sh ws_corpus500/8
+cp clear.sh ws_corpus500/8
+cp Asiya ws_corpus500/8
+
 mkdir ws_corpus500/16
 cp -r ws_corpus500/data ws_corpus500/16/data
 cp Asiya-* ws_corpus500/16
@@ -163,6 +184,13 @@ cp test_data.sh ws_corpus1000/4
 cp clear.sh ws_corpus1000/4
 cp Asiya ws_corpus1000/4
 
+mkdir ws_corpus1000/8
+cp -r ws_corpus1000/data ws_corpus1000/8/data
+cp Asiya-* ws_corpus1000/8
+cp test_data.sh ws_corpus1000/8
+cp clear.sh ws_corpus1000/8
+cp Asiya ws_corpus1000/8
+
 mkdir ws_corpus1000/16
 cp -r ws_corpus1000/data ws_corpus1000/16/data
 cp Asiya-* ws_corpus1000/16
@@ -207,6 +235,13 @@ cp Asiya-* ws_corpus2000/4
 cp test_data.sh ws_corpus2000/4
 cp clear.sh ws_corpus2000/4
 cp Asiya ws_corpus2000/4
+
+mkdir ws_corpus2000/8
+cp -r ws_corpus2000/data ws_corpus2000/8/data
+cp Asiya-* ws_corpus2000/8
+cp test_data.sh ws_corpus2000/8
+cp clear.sh ws_corpus2000/8
+cp Asiya ws_corpus2000/8
 
 mkdir ws_corpus2000/16
 cp -r ws_corpus2000/data ws_corpus2000/16/data

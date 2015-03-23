@@ -27,9 +27,9 @@ do
                 folder=$cwd/$F/$R
                 #cp $cwd/$S $folder/$S
                 if [ "$jid" = "0" ]; then   
-                    jid="$(qsub  runAsiya_par.sh $folder $S $M $R)"
+                    jid="$(qsub -q medium runAsiya_par.sh $folder $S $M $R)"
                 else
-                    jid="$(qsub  -hold_jid $jid runAsiya_par.sh $folder $S $M $R)"
+                    jid="$(qsub -q medium -hold_jid $jid runAsiya_par.sh $folder $S $M $R)"
                 fi
                 IFS=' ' read -a array <<< "$jid" 
                 jid="${array[2]}"

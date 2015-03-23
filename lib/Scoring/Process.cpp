@@ -191,7 +191,7 @@ string Process::make_run_file(string config_file, string TGT, string REF, int th
         run_file << "#$ -S /bin/bash" << endl;
         run_file << "#$ -V" << endl;
         run_file << "#$ -cwd" << endl;
-        run_file << "#$ -m eas" << endl;
+        //run_file << "#$ -m eas" << endl;
         //run_file << "#$ -M gilabert@cs.upc.edu" << endl;
         run_file << "#$ -l h_vmem=10G" << endl;                 //LA MEMORIA QUE CADA METRICA DEMANI
         //run_file << endl << "DATAPATH=" << Common::DATA_PATH << endl;
