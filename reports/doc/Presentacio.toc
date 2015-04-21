@@ -1,0 +1,7 @@
+\beamer@endinputifotherversion {3.24pt}
+\select@language {catalan}
+\beamer@sectionintoc {1}{Introducci\IeC {\'o}}{3}{0}{1}
+\beamer@sectionintoc {2}{Abast}{4}{0}{2}
+\beamer@sectionintoc {3}{Decisions de disseny}{5}{0}{3}
+\beamer@sectionintoc {4}{Decisions d'arquitectura}{6}{0}{4}
+\beamer@sectionintoc {5}{Resultats}{7}{0}{5}
