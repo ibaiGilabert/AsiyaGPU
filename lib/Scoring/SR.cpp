@@ -201,9 +201,9 @@ void SR::parse_SR(string input, string L, string C, vector<sParsed> &FILE_S, vec
 				vector<string> line;
 				int countw = 0;
 				for (int elem = 0; elem < wlpcn[snt].size(); ++elem) {
-					string word = wlpcn[snt][elem][0];	word = boost::regex_replace(word, Common::reSR_parse1, "\\\"");
-					string pos  = wlpcn[snt][elem][2];	pos  = boost::regex_replace(pos, Common::reSR_parse1, "\\\"");
-					string ne 	= wlpcn[snt][elem][4];	ne   = boost::regex_replace(ne, Common::reSR_parse1, "\\\"");
+					string word = wlpcn[snt][elem][0];	word = boost::regex_replace(word, Common::reSR_parse1, "\\\\\"");
+					string pos  = wlpcn[snt][elem][2];	pos  = boost::regex_replace(pos, Common::reSR_parse1, "\\\\\"");
+					string ne 	= wlpcn[snt][elem][4];	ne   = boost::regex_replace(ne, Common::reSR_parse1, "\\\\\"");
 					string aux = word+" "+pos+" "+ne;
 					line.push_back(aux);
 					++countw;

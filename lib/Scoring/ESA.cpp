@@ -39,10 +39,10 @@ map<string, string> ESA::TESA_java = create_TESA_java();
 
 map<string, string> ESA::create_TESA_mem() {
 	map<string, string> TESA_mem;
-	TESA_mem[ESA::ESAEXT+"-en"] = " -Xms1024M -Xmx3072M ";
-	TESA_mem[ESA::ESAEXT+"-es"] = " -Xms1G -Xmx3G";
-	TESA_mem[ESA::ESAEXT+"-de"] = " -Xmx1G -Xmx3G";
-	TESA_mem[ESA::ESAEXT+"-fr"] = " -Xmx1G -Xmx3G";
+	TESA_mem[ESA::ESAEXT+"-en"] = " -Xms1G -Xmx20G";
+	TESA_mem[ESA::ESAEXT+"-es"] = " -Xms1G -Xmx20G";
+	TESA_mem[ESA::ESAEXT+"-de"] = " -Xms1G -Xmx30G";
+	TESA_mem[ESA::ESAEXT+"-fr"] = " -Xms1G -Xmx30G";
 	return TESA_mem;
 }
 map<string, string> ESA::TESA_mem = create_TESA_mem();
@@ -176,7 +176,9 @@ void ESA::computeESA(string metric, string TGT, string ref, vector<double> &SEG)
 		reportESA = pwd+"/"+reportESA;
 	}
 
-	string toolESA = ESA::TESA_java[metric]+" -Dfile.encoding=UTF-8 "+ESA::TESA_mem[metric]+" -jar "+Config::tools+"/"+ESA::TESA[metric];
+	string mem_options = " -Xms8G -Xmx16G ";
+	//string toolESA = ESA::TESA_java[metric]+" -Dfile.encoding=UTF-8 "+ESA::TESA_mem[metric]+" -jar "+Config::tools+"/"+ESA::TESA[metric];
+	string toolESA = ESA::TESA_java[metric]+" -Dfile.encoding=UTF-8 "+mem_options+" -jar "+Config::tools+"/"+ESA::TESA[metric];
 
 	//string sc = "cd "+Config::tools+"/"+ESA::TESAdir+"; "+toolESA+" -w "+Config::tools+"/"+ESA::TESAindex[metric]+" -i "+outRND+" -j "+refRND+" -o "+reportESA+" 2>"+reportESA+".err; cd "+pwd+";";
 	string sc = toolESA+" -w "+Config::tools+"/"+ESA::TESAindex[metric]+" -i "+outRND+" -j "+refRND+" -o "+reportESA+" 2>"+reportESA+".err;";

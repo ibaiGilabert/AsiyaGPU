@@ -1,8 +1,8 @@
 #$ -S /bin/bash
 #$ -V
 #$ -cwd
-#$ -m eas
-#$ -M gilabert@cs.upc.edu
+##$ -m eas
+##$ -M gilabert@cs.upc.edu
 #$ -l h_vmem=10G
 ##$ -q short@node115,short@node116,short@node117,short@node315,short@node316
 

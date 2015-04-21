@@ -765,6 +765,7 @@ void CE::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
          	hOQ.save_hash_scores(pref, TGT, REF, SYSoov, d_scores, s_scores);
         }
 
+// checkpoint 5
 		stringstream reportCElogp_pos, reportCEippl_pos;
 	    reportCElogp_pos << Common::DATA_PATH << "/" << Common::REPORTS << "/" << TGT << "/" << CE::CEEXT << "/" << CE::CEEXT << "-logpP." << Common::XMLEXT;
 		reportCEippl_pos << Common::DATA_PATH << "/" << Common::REPORTS << "/" << TGT << "/" << CE::CEEXT << "/" << CE::CEEXT << "-ipplP." << Common::XMLEXT;

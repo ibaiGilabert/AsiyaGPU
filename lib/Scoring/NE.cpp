@@ -291,9 +291,16 @@ void NE::FILE_parse_and_read(string input, string L, string C, vector<sParsed> &
 	if (file) {
 		int i = 0;
 		string str;
+		bool empty = true;
 		while ( getline(file, str) ) {
-			if (str.empty()) ++i;
+			if (str.empty()){
+				if (!empty) {
+					++i;
+					empty = true;
+				}
+			} 
 			else {
+				empty = false;
 				vector<string> snt;
 				boost::split(snt, str, boost::is_any_of("\t "));
 				FILE[i].push_back(snt); 

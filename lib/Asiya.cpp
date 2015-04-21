@@ -14,7 +14,7 @@
 
 using namespace std;
 
-int v, help;
+int help;
 map<string, string> Options;
 
 void usage() {
@@ -46,6 +46,7 @@ int main(int argc, char *argv[]) {
 	{
 		{"v",	        	no_argument,        0, 'v'},
 		{"help",        	no_argument,        0, 'h'},
+		{"remake",			no_argument,		0, 'k'},
 		{"time",			no_argument,		0, 't'},
 		{"metric_set",  	required_argument,  0, 'm'},
 		{"system_set",		required_argument,	0, 's'},
@@ -66,19 +67,20 @@ int main(int argc, char *argv[]) {
 	int opt, long_index;
 	while((opt = getopt_long_only(argc, argv, "", long_opts, &long_index)) != -1) {
 		switch (opt) {
-			case 'e': Options["eval"] = optarg; break;
-			case 'm': Options["metric_set"] = optarg; break;
-			case 's': Options["system_set"] = optarg; break;
-			case 'r': Options["reference_set"] = optarg; break;
-			case 'g': Options["g"] = optarg; break;
-			case 'i': Options["input"] = optarg; break;
-			case 'h': help = 1; break;
-			case 't': Options["time"] = "1"; break;
-			case 'v': Options["v"] = "1"; break;
-			case 'o': Options["output"] = optarg; break;
-			case 'd': Options["data_path"] = optarg; break;
-			case 'p': Options["paralel"] = optarg; break;
-			case 'z': Options["serialize"] = optarg; break;
+			case 'e': Options["eval"] = optarg; 			break;
+			case 'm': Options["metric_set"] = optarg; 		break;
+			case 's': Options["system_set"] = optarg; 		break;
+			case 'r': Options["reference_set"] = optarg; 	break;
+			case 'g': Options["g"] = optarg; 				break;
+			case 'i': Options["input"] = optarg; 			break;
+			case 'h': help = 1; 							break;
+			case 'k': Options["remake"] = "1";				break;
+			case 't': Options["time"] = "1"; 				break;
+			case 'v': Options["v"] = "1"; 					break;
+			case 'o': Options["output"] = optarg; 			break;
+			case 'd': Options["data_path"] = optarg; 		break;
+			case 'p': Options["paralel"] = optarg; 			break;
+			case 'z': Options["serialize"] = optarg; 		break;
 			//default: usage();
 		}
 	}

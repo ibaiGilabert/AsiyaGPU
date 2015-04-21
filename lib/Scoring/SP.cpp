@@ -412,9 +412,11 @@ string SP::create_PoS_file(string input, string L, string C) {
 		    			if (EMPTY)		// empty sentence	
 	    					EMPTY = 0;
 		    			else {
-		    				P << sentence[0];				// OJU!!!!!!
-		    				for (int j = 1; j < sentence.size(); ++j)
-		    					P << " " << sentence[j];
+		    				if (sentence.size()) {
+			    				P << sentence[0];
+			    				for (int j = 1; j < sentence.size(); ++j)
+			    					P << " " << sentence[j];
+		    				}
 		    				P << endl;
 		    				sentence.clear();
 		    				EMPTY = 1;
@@ -473,9 +475,11 @@ string SP::create_chunk_file(string input, string L, string C) {
 		    			if (EMPTY)		// empty sentence	
 	    					EMPTY = 0;
 		    			else {
-		    				C << sentence[0];				// OJU!!!!!!
-		    				for (int j = 1; j < sentence.size(); ++j)
-		    					C << " " << sentence[j];
+		    				if (sentence.size()) {
+			    				C << sentence[0];
+			    				for (int j = 1; j < sentence.size(); ++j)
+			    					C << " " << sentence[j];
+		    				}
 		    				C << endl;
 		    				sentence.clear();
 		    				EMPTY = 1;
@@ -536,9 +540,11 @@ string SP::create_lemma_file(string input, string L, string C) {
 		    			if (EMPTY)		// empty sentence	
 	    					EMPTY = 0;
 		    			else {
-		    				L << sentence[0];				// OJU!!!!!!
-		    				for (int j = 1; j < sentence.size(); ++j)
-		    					L << " " << sentence[j];
+		    				if (sentence.size()) {
+			    				L << sentence[0];
+			    				for (int j = 1; j < sentence.size(); ++j)
+			    					L << " " << sentence[j];
+		    				}
 		    				L << endl;
 		    				sentence.clear();
 		    				EMPTY = 1;
@@ -1004,14 +1010,22 @@ void SP::FILE_parse_and_read(string input, string L, string C, vector<sParsed> &
 		/*for (map<string, int>::const_iterator it = TESTBED::wc.begin(); it != TESTBED::wc.end(); ++it) {
 			fprintf(stderr, "\t[%s -> %d]\n", it->first.c_str(), it->second);
 		}*/
+		bool empty = true;	
 		while ( getline(sp_file, str) ) {
-			if (str.empty()) ++i;
+			if (str.empty()) {
+				if (!empty) {
+					++i;
+					empty = true;
+				}
+			}
 			else {
-				//if (i >= FILE.size());
+				empty = false;
+				//if (i >= FILE.size()) FILE[i] = sParsed();
 				wParsed word;
-			    istringstream iss(str);
+			    /*istringstream iss(str);
 				for(string token; getline(iss, token, ' '); )
-			        word.push_back(token);
+			        word.push_back(token);*/
+				boost::split(word, str, boost::is_any_of("\t "));
 				FILE[i].push_back(word); 
 			}
 		}
@@ -1153,7 +1167,7 @@ void SP::FILE_compute_overlap_metrics(const vector<sParsed> &FDout, const vector
 	//$LANG = CONFIG::LANG,
 	//$LC = ($CONFIG::CASE ne $Common::CASE_CI), 
 	//$UL = SP::USE_LEMMAS);
-	SCORES.resize(FDref.size());
+	//SCORES.resize(FDref.size());
 	bool use_chunks = SP::rLANGBIOS.find(Config::LANG) != SP::rLANGBIOS.end();
 	for (int topic = 0; topic < FDref.size(); ++topic) {
 		SNTfeatures OUTSNTc, OUTSNTp, REFSNTc, REFSNTp;
@@ -1300,7 +1314,7 @@ void SP::doMetric(string TGT, string REF, string prefix, Scores &hOQ) {
 				vector<sParsed> FDref(TESTBED::wc[it_r->first]);
 				FILE_parse_and_read(it_r->second, Config::LANG, Config::CASE, FDref);
 				
-				vector< map<string, double> > scores;
+				vector< map<string, double> > scores(FDref.size());
 				FILE_compute_overlap_metrics(FDout, FDref, scores);
 
 				for (set<string>::const_iterator it_m = rF.begin(); it_m != rF.end(); ++it_m) {

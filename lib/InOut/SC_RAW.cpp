@@ -51,7 +51,7 @@ void SC_RAW::print_system_scores_MMATRIX(string sys, const Scores &hOQ, const ve
     //int chars = accumulate(sorted_metrics.begin(), sorted_metrics.end(), 0, sum_string_chars);
     int chars = Config::setid_length + Config::sysid_length + Config::docid_length + Config::segid_length;
 
-    char buffer[2*chars];
+    char buffer[10*chars];
     string SO = *Config::systems.begin();
     string setid = TESTBED::IDX[SO][0][0];
     string sysid = TESTBED::IDX[sys][1][2];

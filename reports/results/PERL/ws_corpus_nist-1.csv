@@ -1,0 +1,17 @@
+Asiya.config
+
+METRIC
+SP, 15.15
+SR, 62.98
+CE, 21.32
+ESA, 3.03
+GTM, 0.56
+LEM, 0.43
+METEOR, 15.9
+NE, 0.31
+NGRAM, 3.35
+O, 0
+PER, 0.07
+ROUGE, 1.01
+TER, 40.38
+WER, 0.2

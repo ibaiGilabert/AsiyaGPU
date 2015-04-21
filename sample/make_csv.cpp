@@ -57,7 +57,7 @@ int main(int argc, char *argv[]) {
 					string file = path+"/" + (systems[j]+"."+splits[z]+".metrics_"+metrics[k]+".err");
 					//cout << "file: <" << file << ">" << endl;
 					if (exists(boost::filesystem::path(file)) ) {
-						string exe = "cat "+file+" | grep TOTAL";
+						string exe = "cat "+file+" | grep --text TOTAL";
 						//cout << "execute: " << exe << endl;
 						string res = exec(exe.c_str());
 						//cout << "res: " << res << endl;

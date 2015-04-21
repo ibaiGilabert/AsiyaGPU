@@ -1,0 +1,47 @@
+\select@language {catalan}
+\contentsline {section}{\numberline {1}Introducci\IeC {\'o}}{4}
+\contentsline {subsection}{\numberline {1.1}Context}{4}
+\contentsline {paragraph}{Input}{5}
+\contentsline {paragraph}{Output}{5}
+\contentsline {paragraph}{Par\IeC {\`a}metres}{5}
+\contentsline {subsection}{\numberline {1.2}Abast}{6}
+\contentsline {section}{\numberline {2}Estat de l'Art}{7}
+\contentsline {subsection}{\numberline {2.1}Models de computaci\IeC {\'o} paral\IeC {\textperiodcentered }lela}{7}
+\contentsline {subsubsection}{\numberline {2.1.1}\textit {GPU Computing}}{7}
+\contentsline {subsubsection}{\numberline {2.1.2}Cl\IeC {\'u}ster de computaci\IeC {\'o}}{9}
+\contentsline {section}{\numberline {3}Planificaci\IeC {\'o}}{11}
+\contentsline {subsection}{\numberline {3.1}Requisits d'usuari i disseny}{11}
+\contentsline {subsection}{\numberline {3.2}Primer prototip}{11}
+\contentsline {subsection}{\numberline {3.3}Validaci\IeC {\'o} del primer prototip}{12}
+\contentsline {subsection}{\numberline {3.4}Segon prototip}{12}
+\contentsline {subsection}{\numberline {3.5}Validaci\IeC {\'o} del segon prototip}{12}
+\contentsline {subsection}{\numberline {3.6}Experimentaci\IeC {\'o} i comparativa}{12}
+\contentsline {subsection}{\numberline {3.7}Diagrama de Gantt}{13}
+\contentsline {section}{\numberline {4}Implementaci\IeC {\'o}}{14}
+\contentsline {subsection}{\numberline {4.1}Diagrama de classes}{14}
+\contentsline {subsection}{\numberline {4.2}Metodologia d'\IeC {\'u}s}{16}
+\contentsline {subsection}{\numberline {4.3}Opcions de configuraci\IeC {\'o}}{17}
+\contentsline {subsection}{\numberline {4.4}Input/Output}{19}
+\contentsline {subsection}{\numberline {4.5}Opcions d'avaluaci\IeC {\'o}}{21}
+\contentsline {paragraph}{\textit {Single Metric}:}{21}
+\contentsline {paragraph}{\textit {Complex Metric}:}{21}
+\contentsline {subsection}{\numberline {4.6}Processadors ling\IeC {\@umlaut u}\IeC {\'\i }stics}{21}
+\contentsline {paragraph}{\textbf {Processos a nivell de paraula}:}{22}
+\contentsline {paragraph}{\textbf {Processos a nivell d'oraci\IeC {\'o}}:}{22}
+\contentsline {subsection}{\numberline {4.7}Alternatives}{23}
+\contentsline {subsection}{\numberline {4.8}Llibreries de tercers}{23}
+\contentsline {section}{\numberline {5}Experimentaci\IeC {\'o}}{24}
+\contentsline {paragraph}{Experiment 1}{24}
+\contentsline {paragraph}{Experiment 2}{24}
+\contentsline {subsection}{\numberline {5.1}\texttt {C++} \emph {Vs.} \texttt {PERL}}{24}
+\contentsline {subsubsection}{\numberline {5.1.1}Resultats}{25}
+\contentsline {subsubsection}{\numberline {5.1.2}Conclusions}{27}
+\contentsline {subsection}{\numberline {5.2}\texttt {C++} \emph {(Seq\IeC {\@umlaut u}encial) Vs.} \texttt {C++} \emph {(Paral\IeC {\textperiodcentered }lel)}}{29}
+\contentsline {subsubsection}{\numberline {5.2.1}Resultats}{29}
+\contentsline {subsubsection}{\numberline {5.2.2}Conclusions}{31}
+\contentsline {section}{\numberline {6}Conclusions i treball futur}{33}
+\contentsline {subsection}{\numberline {6.1}Conclusions}{33}
+\contentsline {subsection}{\numberline {6.2}Treball futur}{33}
+\contentsline {subsubsection}{\numberline {6.2.1}Millores en el planificador}{33}
+\contentsline {subsubsection}{\numberline {6.2.2}Millores en la usabilitat}{33}
+\contentsline {subsubsection}{\numberline {6.2.3}Altres lleng\IeC {\@umlaut u}es}{33}

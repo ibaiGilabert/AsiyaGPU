@@ -1,0 +1,8 @@
+El camp de la traducció automàtica i, en definitiva, el tractament del llenguatge natural està en alça. La seva rellevància augmenta dia a dia, en la mesura que la nostra capacitat tecnologia creix els horitzons en aquesta àrea són cada vegada més i més enlluernadors.
+\\
+
+L'objectiu d'aquest projecte és fer-ho real. És aprofitar tota la capacitat tecnològica de la que disposem de manera que esdevingui el NLP \textit{(Natural language processing)} una empresa més tractable. En concret com avaluar traductors automàtics. Tasca especialment conflictiva ja que fins i tot diferents humans poden estar en desacord en decidir si una traducció és correcte o no.
+\\
+
+El NLP és \textit{per se} molt complex computacionalment parlant. Requereix de molts recursos, principalment temps i memòria, el que implica haver de disposar d'entorns d'execució d'altres prestacions.
+\\
